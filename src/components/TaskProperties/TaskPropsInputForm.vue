@@ -37,6 +37,7 @@
         </div>
       </span>
       <textarea
+        id="textareaInput"
         ref="taskMsgEdit"
         v-model="taskMsg"
         class="form-control mt-[7px] text-group-design task-msg overflow-auto scroll-style dark:bg-gray-800 dark:text-gray-100 focus:ring-0 "
@@ -217,6 +218,7 @@ export default {
           this.$store.commit(TASK.MSG_EQUAL, this.task.uid, decodeURIComponent(this.taskMsg))
         })
       this.taskMsg = ''
+      document.getElementById('textareaInput').setAttribute('style', '')
     },
     createTaskMsg: function () {
       const date = new Date()
