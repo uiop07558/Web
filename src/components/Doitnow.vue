@@ -181,7 +181,6 @@ export default {
         this.$store.commit(REFRESH_FILES)
         this.$store.commit(REFRESH_MESSAGES)
         this.$store.commit(TASK.SELECT_TASK, this.firstTask)
-        this.$store.dispatch('fetchMessagesAndFiles', this.firstTask.uid)
 
         this.$store.dispatch(MSG.MESSAGES_REQUEST, this.firstTask.uid)
           .then(() => {
