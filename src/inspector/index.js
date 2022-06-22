@@ -34,9 +34,7 @@ export default function initInspectorSocket () {
 function parseMessage (data) {
   try {
     const parsedData = JSON.parse(data)
-    showNotify({ group: 'inspector', title: 'Инспектор', text: getInspectorMessage(parsedData.message, parsedData.task.taskJson), task: parsedData.task.taskJson }, isNotificationSoundOn.value)
-    const inspectorNotification = new Notification('Инспектор', { body: getInspectorMessage(parsedData.message, parsedData.task.taskJson), icon: '/favicon.ico' })
-    console.log(inspectorNotification)
+    showNotify({ uid: parsedData?.uid_json, group: 'inspector', title: 'Инспектор', text: getInspectorMessage(parsedData.message, parsedData.task.taskJson), task: parsedData.task.taskJson }, isNotificationSoundOn.value)
   } catch (e) {
     console.log(e)
   }
