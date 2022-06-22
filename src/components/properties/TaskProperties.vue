@@ -11,8 +11,8 @@ import * as TASK from '@/store/actions/tasks'
 import * as INSPECTOR from '@/store/actions/inspector'
 import { copyText } from 'vue3-clipboard'
 import linkify from 'vue-linkify'
-import ModalBoxConfirm from '@/components/modals/ModalBoxConfirm.vue'
 import { maska } from 'maska'
+import ModalBoxDelete from '@/components/Common/ModalBoxDelete.vue'
 import TaskPropsButtonDots from '@/components/TaskProperties/TaskPropsButtonDots.vue'
 import TaskPropsButtonFocus from '@/components/TaskProperties/TaskPropsButtonFocus.vue'
 import TaskPropsChatMessages from '@/components/TaskProperties/TaskPropsChatMessages.vue'
@@ -36,7 +36,7 @@ export default {
     TaskPropsButtonColor,
     Popper,
     Checklist,
-    ModalBoxConfirm,
+    ModalBoxDelete,
     TaskPropsCommentEditor
   },
   directives: {
@@ -216,14 +216,26 @@ export default {
 
     }
     const delTask = () => {
+      this.showConfirm = false
       if (isPropertiesMobileExpanded.value) {
         store.dispatch('asidePropertiesToggle', false)
       }
       const data = {
         uid: selectedTask.value.uid
       }
-      store.dispatch(TASK.REMOVE_TASK, data.uid).then(
-        resp => {
+      store.dispatch(TASK.REMOVE_TASK, data.uid)
+        .then(() => {
+          store.dispatch(TASK.DAYS_WITH_TASKS)
+            .then(() => {
+              const calendarDates = computed(() => store.state.calendar[1].dates)
+              const daysWithTasks = computed(() => store.state.tasks.daysWithTasks)
+              for (let i = 0; i < calendarDates.value.length; i++) {
+                const date = calendarDates.value[i].getDate() + '-' + (calendarDates.value[i].getMonth() + 1) + '-' + calendarDates.value[i].getFullYear()
+                if (!daysWithTasks.value.includes(date)) {
+                  store.state.calendar[1].dates.splice(store.state.calendar[1].dates.indexOf(calendarDates.value[i]), 1)
+                }
+              }
+            })
         })
     }
 
@@ -915,6 +927,16 @@ export default {
     }
   },
   computed: {
+    storeTasks () {
+      return this.$store.state.tasks.newtasks
+    },
+    modalBoxDeleteText () {
+      let text = 'Вы действительно хотите удалить задачу?'
+      if (this.storeTasks[this.selectedTask.uid].children.length > 0) {
+        text = 'Вы действительно хотите удалить задачу с подзадачами в количестве: ' + this.storeTasks[this.selectedTask.uid].children.length + '?'
+      }
+      return text
+    },
     canEditComment () {
       return (this.selectedTask.type === 1 || this.selectedTask.type === 2)
     },
@@ -1276,17 +1298,17 @@ export default {
 </script>
 
 <template>
-  <modal-box-confirm
+<!--  <modal-box-confirm
     v-model="showConfirm"
     button="warning"
-    has-button
     has-cancel
-    button-label="Удалить"
+    has-button
+    button-label="Да"
     @confirm="delTask"
   >
     <p
       v-if="tasks[selectedTask.uid]"
-      class="text-center"
+      class="text-[#7e7e80] text-[13px] leading-[18px] font-roboto whitespace-pre-line"
     >
       Вы действительно хотите удалить выбраную <strong>"{{ selectedTask.name }}"</strong> задачу
       <span
@@ -1295,7 +1317,14 @@ export default {
         (с подзадачами) в количестве: {{ tasks[selectedTask.uid].children.length }}
       </span>
     </p>
-  </modal-box-confirm>
+  </modal-box-confirm> -->
+  <ModalBoxDelete
+    v-show="showConfirm"
+    title="Удалить задачу"
+    :text="modalBoxDeleteText"
+    @cancel="showConfirm = false"
+    @yes="delTask(selectedTask)"
+  />
   <div
     class="break-words relative z-1"
     @mousedown="selectedFalse"
