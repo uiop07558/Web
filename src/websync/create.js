@@ -31,13 +31,12 @@ export default function processCreate (obj) {
       console.log('TYPE_OBJECT_PROJECT', obj)
       if (obj.obj.email_creator !== currentUserEmail()) {
         showNotify({
+          uid: obj.uid_json,
           group: 'top',
           title: 'Новый проект',
           obj: obj,
           text: obj.obj.name
         }, isNotificationSoundOn.value)
-        const websyncNotification = new Notification('Новый проект', { body: obj.obj.name })
-        console.log(websyncNotification)
       }
       createProject(obj)
       break
@@ -47,20 +46,12 @@ export default function processCreate (obj) {
         obj.obj.email_performer === currentUserEmail()
       ) {
         showNotify({
+          uid: obj.uid_json,
           group: 'top',
           title: 'Новое поручение',
           obj: obj,
           text: obj.obj.name
         }, isNotificationSoundOn.value)
-        const websyncNotification = new Notification('Новое поручение', {
-          body: obj.obj.name,
-          icon: '/favicon.ico'
-        })
-        websyncNotification.onclick = () => {
-          const link = `${window.location.origin}/task/${obj.obj.uid}`
-          window.open(link)
-        }
-        console.log('notify', websyncNotification)
       }
       createTask(obj)
       break
