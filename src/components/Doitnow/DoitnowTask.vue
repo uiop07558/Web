@@ -193,6 +193,7 @@
           :task-messages="taskMessages"
           :current-user-uid="user.current_user_uid"
           :show-all-messages="true"
+          @sendTaskMsg="sendTaskMsg"
         />
         <!-- input -->
         <TaskPropsInputForm
@@ -273,7 +274,6 @@
 </template>
 
 <script>
-import { ref } from 'vue'
 // import TaskListIconLabel from '@/components/TasksList/TaskListIconLabel.vue'
 // import TaskListTagLabel from '@/components/TasksList/TaskListTagLabel.vue'
 import { copyText } from 'vue3-clipboard'
@@ -290,6 +290,8 @@ import TaskStatus from '@/components/TasksList/TaskStatus.vue'
 import Icon from '@/components/Icon.vue'
 
 import * as TASK from '@/store/actions/tasks'
+import * as INSPECTOR from '@/store/actions/inspector.js'
+import * as MSG from '@/store/actions/taskmessages'
 
 /* Icons */
 import taskoptions from '@/icons/taskoptions.js'
@@ -372,16 +374,16 @@ export default {
     }
   },
   emits: ['clickTask', 'nextTask', 'changeValue', 'readTask'],
-  setup (props) {
-    const name = ref(props.task.name)
-    const isTaskHoverPopperActive = ref(false)
-    const checklistshow = ref(true)
+  data (props) {
+    const name = props.task.name
+    const isTaskHoverPopperActive = false
+    const checklistshow = true
     const toggleTaskHoverPopper = (val) => {
       isTaskHoverPopperActive.value = val
     }
-    const showConfirm = ref(false)
-    const showAllMessages = ref(false)
-    const isChatVisible = ref(false)
+    const showConfirm = false
+    const showAllMessages = false
+    const isChatVisible = false
     const createChecklist = () => {
       checklistshow.value = true
     }
@@ -526,6 +528,9 @@ export default {
     uppercase () {
       return this.colors[this.task.uid_marker]?.uppercase ?? false
     },
+    taskMessagesAndFiles () {
+      return this.$store.state.taskfilesandmessages.messages
+    },
     plural () {
       const todayDate = new Date()
       const dateEnd = new Date(this.task.date_end)
@@ -552,6 +557,9 @@ export default {
   methods: {
     resetFocusChecklist () {
       this.checklistshow = false
+    },
+    pad2 (n) {
+      return (n < 10 ? '0' : '') + n
     },
     endChangeComment (text) {
       this.$emit('changeValue', { comment: text })
@@ -810,6 +818,56 @@ export default {
         this.$store.commit(TASK.REMOVE_TASK, taskUid)
         this.$store.dispatch('asidePropertiesToggle', false)
       }
+    },
+    uuidv4: function () {
+      return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, c =>
+        (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
+      )
+    },
+    sendTaskMsg (msg) {
+      const date = new Date()
+      const month = this.pad2(date.getUTCMonth() + 1)
+      const day = this.pad2(date.getUTCDate())
+      const year = this.pad2(date.getUTCFullYear())
+      const hours = this.pad2(date.getUTCHours())
+      const minutes = this.pad2(date.getUTCMinutes())
+      const seconds = this.pad2(date.getUTCSeconds())
+      const dateCreate = year + '-' + month + '-' + day + 'T' + hours + ':' + minutes + ':' + seconds
+      const msgtask = this._linkify(msg)
+
+      const data = {
+        uid_task: this.task.uid,
+        uid_creator: this.user.current_user_uid,
+        uid_msg: this.uuidv4(),
+        date_create: dateCreate,
+        deleted: 0,
+        text: msg,
+        msg: msgtask
+      }
+
+      this.$store.dispatch(MSG.CREATE_MESSAGE_REQUEST, data)
+        .then((resp) => {
+          const lastInspectorMessage = this.taskMessagesAndFiles[this.taskMessagesAndFiles.length - 2].uid_creator === 'inspector' ? this.taskMessagesAndFiles[this.taskMessagesAndFiles.length - 2] : false
+          console.log('lastInspectorMessage: ', lastInspectorMessage)
+          if (lastInspectorMessage) {
+            this.$store.dispatch(INSPECTOR.ANSWER_INSPECTOR_TASK, { id: lastInspectorMessage.id, answer: 1 }).then(() => {
+              lastInspectorMessage.performer_answer = 1
+            })
+          }
+
+          this.$store.commit(TASK.HAS_MSGS, this.task.uid, true)
+          if (this.task.type === 2 || this.task.type === 3) {
+            if ([1, 5, 7, 8].includes(this.task.status)) {
+              const status = {
+                uid: this.task.uid,
+                value: 9
+              }
+              this.$store.commit(TASK.CHANGE_TASK_STATUS, status)
+            }
+          }
+          this.$store.commit(TASK.MSG_EQUAL, this.task.uid, decodeURIComponent(this.taskMsg))
+        })
+      this.taskMsg = ''
     },
     onChangeDates: function (begin, end) {
       const data = {

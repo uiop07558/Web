@@ -74,7 +74,6 @@ import * as MSG from '@/store/actions/taskmessages.js'
 import * as TASK from '@/store/actions/tasks.js'
 import InspectorModalBox from '@/components/Inspector/InspectorModalBox.vue'
 import Icon from '@/components/Icon.vue'
-import { ref } from 'vue'
 import arrowForw from '@/icons/arrow-forw-sm.js'
 import DoitnowEmpty from '@/components/Doitnow/DoitnowEmpty.vue'
 import DoitnowTask from '@/components/Doitnow/DoitnowTask.vue'
@@ -107,7 +106,7 @@ export default {
     projectTasks: [],
     unsortedTasks: [],
     overdueReaded: [],
-    showInspector: ref(false)
+    showInspector: false
   }),
   computed: {
     tasksCount () {

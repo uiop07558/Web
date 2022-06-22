@@ -43,7 +43,7 @@
         placeholder="Введите сообщение"
         rows="58"
         @input="onInputTaskMsg"
-        @keydown.enter.exact.prevent="sendTaskMsg()"
+        @keydown.enter.exact.prevent="sendTaskMsg"
         @keydown.enter.shift.exact.prevent="addNewLineTaskMsg"
       />
       <span class="table-cell text-center rounded-[8px] items-center align-middle justify-center max-w-[15px] max-h-[30px] cursor-pointer">
@@ -51,7 +51,7 @@
           type="button"
           name="btn-send"
           class="btn-send-custom rounded-lg bg-[#E0E1E3] p-3"
-          @click="sendTaskMsg()"
+          @click="sendTaskMsg"
         >
           <svg
             class="m-auto"
