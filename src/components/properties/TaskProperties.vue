@@ -2217,7 +2217,7 @@ export default {
         @dragover="allowDrop($refs.file_attach)"
         @dragstart="dragStart"
         @drag="dragging"
-        @keydown.enter.exact.prevent="sendTaskMsg()"
+        @keydown.enter.exact.prevent="sendTaskMsg"
         @keydown.enter.shift.exact.prevent="addNewLineTaskMsg"
       />
       <span class="input-group-addon input-group-btn-send dark:bg-gray-800 dark:text-gray-100">
@@ -2225,7 +2225,7 @@ export default {
           type="button"
           name="btn-send"
           class="btn-send-custom"
-          @click="sendTaskMsg()"
+          @click="sendTaskMsg"
         >
           <!--   <svg
             width="24"

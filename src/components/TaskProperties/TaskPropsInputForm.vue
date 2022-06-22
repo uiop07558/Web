@@ -73,7 +73,6 @@
   </div>
 </template>
 <script>
-import { ref } from 'vue'
 import * as INSPECTOR from '@/store/actions/inspector.js'
 import * as TASK from '@/store/actions/tasks.js'
 import * as FILES from '@/store/actions/taskfiles.js'
@@ -86,13 +85,20 @@ export default {
       default: () => ({})
     }
   },
+  emits: ['readTask'],
   data: () => ({
     isloading: false,
     files: [],
-    taskMsg: ref('')
+    taskMsg: ''
   }),
   computed: {
     user () {
+      return this.$store.state.user.user
+    },
+    selectedTask () {
+      return this.$store.state.tasks.selectedTask
+    },
+    cusers () {
       return this.$store.state.user.user
     },
     taskMessagesAndFiles () {
@@ -110,6 +116,9 @@ export default {
     })
   },
   methods: {
+    readTask () {
+      this.$emit('readTask')
+    },
     pad2: function (n) {
       return (n < 10 ? '0' : '') + n
     },
@@ -174,51 +183,64 @@ export default {
       this.$refs.taskMsgEdit.style.height = scrollHeight + 'px'
       document.documentElement.style.setProperty('--hex-parent-height', sendHeight + 'px')
     },
-    sendTaskMsg: function () {
-      const date = new Date()
-      const month = this.pad2(date.getUTCMonth() + 1)
-      const day = this.pad2(date.getUTCDate())
-      const year = this.pad2(date.getUTCFullYear())
-      const hours = this.pad2(date.getUTCHours())
-      const minutes = this.pad2(date.getUTCMinutes())
-      const seconds = this.pad2(date.getUTCSeconds())
-      const dateCreate = year + '-' + month + '-' + day + 'T' + hours + ':' + minutes + ':' + seconds
-      const msgtask = this._linkify(this.taskMsg)
-
+    sendTaskMsg: function (msg) {
+      // this.showAllMessages = true
+      // const date = new Date()
+      // const month = this.pad2(date.getUTCMonth() + 1)
+      // const day = this.pad2(date.getUTCDate())
+      // const year = this.pad2(date.getUTCFullYear())
+      // const hours = this.pad2(date.getUTCHours())
+      // const minutes = this.pad2(date.getUTCMinutes())
+      // const seconds = this.pad2(date.getUTCSeconds())
+      // const dateCreate = year + '-' + month + '-' + day + 'T' + hours + ':' + minutes + ':' + seconds
+      let msgtask = msg || this.taskMsg
+      console.log('msgtask', msgtask, msg, this.taskMsg)
+      msgtask = this.taskMsg.trim()
+      msgtask = this.taskMsg.replaceAll('&', '&amp;')
+      msgtask = this.taskMsg.replaceAll('<', '&lt;')
+      msgtask = this.taskMsg.replaceAll('>', '&gt;')
       const data = {
-        uid_task: this.task.uid,
-        uid_creator: this.user.current_user_uid,
+        uid_task: this.selectedTask.uid,
+        uid_creator: this.cusers.current_user_uid,
         uid_msg: this.uuidv4(),
-        date_create: dateCreate,
+        date_create: new Date().toISOString(),
         deleted: 0,
-        text: this.taskMsg,
+        uid_quote: this.currentAnswerMessageUid,
+        text: msgtask,
         msg: msgtask
       }
-
-      this.$store.dispatch(MSG.CREATE_MESSAGE_REQUEST, data)
-        .then((resp) => {
-          const lastInspectorMessage = this.taskMessagesAndFiles[this.taskMessagesAndFiles.length - 2].uid_creator === 'inspector' ? this.taskMessagesAndFiles[this.taskMessagesAndFiles.length - 2] : false
-          console.log('lastInspectorMessage: ', lastInspectorMessage)
-          if (lastInspectorMessage) {
+      this.$store.dispatch(MSG.CREATE_MESSAGE_REQUEST, data).then(
+        resp => {
+          // Answer last inspector message
+          const lastInspectorMessage = this.taskMessagesAndFiles.slice().reverse().find(message => message.uid_creator === 'inspector')
+          if (lastInspectorMessage && this.selectedTask.uid_performer === this.cusers.current_user_uid) {
             this.$store.dispatch(INSPECTOR.ANSWER_INSPECTOR_TASK, { id: lastInspectorMessage.id, answer: 1 }).then(() => {
               lastInspectorMessage.performer_answer = 1
             })
           }
 
-          this.$store.commit(TASK.HAS_MSGS, this.task.uid, true)
-          if (this.task.type === 2 || this.task.type === 3) {
-            if ([1, 5, 7, 8].includes(this.task.status)) {
-              const status = {
-                uid: this.task.uid,
-                value: 9
+          this.selectedTask.has_msgs = true
+          if (this.selectedTask.type === 2 || this.selectedTask.type === 3) {
+            if ([1, 5, 7, 8].includes(this.selectedTask.status)) {
+              if (((this.selectedTask.uid_customer === this.cusers.current_user_uid) && ((this.selectedTask.status === 1) || (this.selectedTask.status === 5)))) {
+                this.selectedTask.status = 9
+                this.$store.dispatch(TASK.CHANGE_TASK_STATUS, { uid: this.selectedTask.uid, value: 9 })
+              } else if (((this.selectedTask.uid_customer !== this.cusers.current_user_uid) && (this.selectedTask.status === 1))) {
+                this.selectedTask.status = 1
+                this.$store.dispatch(TASK.CHANGE_TASK_STATUS, { uid: this.selectedTask.uid, value: 1 })
               }
-              this.$store.commit(TASK.CHANGE_TASK_STATUS, status)
             }
           }
-          this.$store.commit(TASK.MSG_EQUAL, this.task.uid, decodeURIComponent(this.taskMsg))
+          this.selectedTask.msg = decodeURIComponent(this.taskMsg)
+          const wrapperElement = document.getElementById('content').lastElementChild
+          wrapperElement.scrollIntoView({ behavior: 'smooth' })
         })
+      this.currentAnswerMessageUid = ''
       this.taskMsg = ''
-      document.getElementById('textareaInput').setAttribute('style', '')
+      this.$nextTick(function () {
+        this.onInputTaskMsg()
+      })
+      this.readTask()
     },
     createTaskMsg: function () {
       const date = new Date()
