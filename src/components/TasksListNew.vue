@@ -98,7 +98,7 @@
         <div
           class="flex gap-[6px] items-center"
         >
-          <div class="flex-none h-[20px] w-[20px]">
+          <div class="flex-none h-[20px] w-[20px] leading-[20px]">
             <TaskStatus
               :task="props.node.info"
             />
