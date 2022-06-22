@@ -1,5 +1,5 @@
 import { notify } from 'notiwind'
-import { types } from '@/websync/types'
+import * as TYPES from '@/websync/types.js'
 
 export function visitChildren (arr, callback) {
   for (const value of arr) {
@@ -23,10 +23,16 @@ export function showNotify (notification, notificationSound = true) {
     const websyncNotification = new Notification(notification.title, { body: notification.text, tag: notification?.uid ?? '' })
 
     // set up click event for just created notification
-    if (notification.obj.type === types.TYPE_OBJECT_TASK) {
+    console.log('Creating system notification: ', notification)
+    if (notification?.obj?.type === TYPES.TYPE_OBJECT_TASK) {
       websyncNotification.onclick = () => {
         const link = `${window.location.origin}/task/${notification.obj.obj.uid}`
-        window.open(link)
+        window.location = link
+      }
+    } else if (notification?.task?.uid) {
+      websyncNotification.onclick = () => {
+        const link = `${window.location.origin}/task/${notification.task.uid}`
+        window.location = link
       }
     }
   }
