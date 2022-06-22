@@ -97,7 +97,7 @@
             Срок:
           </span>
           <span
-            v-show="typeof plural === 'string' && task.date_end !== '0001-01-01T00:00:00'"
+            v-show="plural"
             class="mb-2 w-[100px]"
           >
             Просрочено:
@@ -141,7 +141,7 @@
           </div>
           <!-- overdue -->
           <div
-            v-show="typeof plural === 'string' && task.date_end !== '0001-01-01T00:00:00'"
+            v-show="plural"
             class="flex mb-2"
           >
             <span class="ml-1 text-red-500">{{ plural }}</span>
@@ -193,12 +193,14 @@
           :task-messages="taskMessages"
           :current-user-uid="user.current_user_uid"
           :show-all-messages="true"
+          @answerMessage="answerMessage"
+          @readTask="readTask"
           @sendTaskMsg="sendTaskMsg"
         />
         <!-- input -->
         <TaskPropsInputForm
           :task="task"
-          @sendTaskMsg="$emit('readTask')"
+          @readTask="readTask"
         />
       </div>
     </div>
@@ -387,6 +389,7 @@ export default {
     const createChecklist = () => {
       checklistshow.value = true
     }
+    const currentAnswerMessageUid = ''
     const statuses = [
       undefined, // we don't have 0 status
       readyStatus,
@@ -406,6 +409,7 @@ export default {
       createChecklist,
       showConfirm,
       checklistshow,
+      currentAnswerMessageUid,
       showAllMessages,
       taskoptions,
       close,
@@ -441,6 +445,9 @@ export default {
     }
   },
   computed: {
+    taskMessagesAndFiles () {
+      return this.$store.state.taskfilesandmessages.messages
+    },
     isCustomer () {
       return this.task.uid_customer === this.user.current_user_uid
     },
@@ -529,8 +536,14 @@ export default {
       return this.colors[this.task.uid_marker]?.uppercase ?? false
     },
     plural () {
+      let time
+      if (this.isCustomer) {
+        time = this.task.date_end
+      } else {
+        time = this.task.customer_date_end
+      }
       const todayDate = new Date()
-      const dateEnd = new Date(this.task.date_end)
+      const dateEnd = new Date(time)
       todayDate.setHours(0, 0, 0, 0)
       dateEnd.setHours(0, 0, 0, 0)
       const date = Math.floor((todayDate - dateEnd) / (60 * 60 * 24 * 1000))
@@ -538,7 +551,7 @@ export default {
       if (date < 0) {
         return date
       } else if (date === 0) {
-        return '1 день'
+        return false
       } else {
         return date + ' ' + dayName
       }
@@ -552,6 +565,9 @@ export default {
     }
   },
   methods: {
+    readTask () {
+      this.$emit('readTask')
+    },
     resetFocusChecklist () {
       this.checklistshow = false
     },
@@ -745,7 +761,7 @@ export default {
       this.$emit('clickTask', task)
     },
     reDo () {
-      this.$emit('readTask')
+      this.readTask()
       if (this.task.uid_performer === this.user.current_user_uid && this.task.uid_customer === this.user.current_user_uid) {
         this.$store.dispatch(TASK.CHANGE_TASK_STATUS, { uid: this.task.uid, value: 7 })
       }
@@ -758,7 +774,7 @@ export default {
       this.nextTask()
     },
     accept () {
-      this.$emit('readTask')
+      this.readTask()
       if ((this.task.uid_performer === this.user.current_user_uid && this.task.uid_customer === this.user.current_user_uid) ||
       (this.task.uid_performer !== this.user.current_user_uid && this.task.uid_customer === this.user.current_user_uid)) {
         this.$store.dispatch(TASK.CHANGE_TASK_STATUS, { uid: this.task.uid, value: 1 })
@@ -768,7 +784,7 @@ export default {
       this.nextTask()
     },
     decline () {
-      this.$emit('readTask')
+      this.readTask()
       this.$store.dispatch(TASK.CHANGE_TASK_STATUS, { uid: this.task.uid, value: 6 })
       this.nextTask()
     },
@@ -866,6 +882,9 @@ export default {
         })
       this.taskMsg = ''
     },
+    onAnswerMessage: function (uid) {
+      this.currentAnswerMessageUid = uid
+    },
     onChangeDates: function (begin, end) {
       const data = {
         uid_task: this.task.uid,
@@ -882,7 +901,7 @@ export default {
               date_end: resp.str_date_end
             }
             this.$emit('changeValue', data)
-            this.$emit('readTask')
+            this.readTask()
             // this.selectedTask.term_user = resp.term
             // this.selectedTask.date_begin = resp.str_date_begin
             // this.selectedTask.date_end = resp.str_date_end

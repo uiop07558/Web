@@ -59,6 +59,7 @@
     @clickTask="onClickTask"
     @nextTask="nextTask"
     @changeValue="changeValue"
+    @readTask="readTask"
   />
   <DoitnowEmpty
     v-if="tasksCount === 0 && !isLoading"

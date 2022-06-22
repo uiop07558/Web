@@ -196,9 +196,11 @@ export default {
       default: false
     }
   },
-  emits: ['answerMessage', 'sendTaskMsg', 'deleteTaskMsg', 'deleteFiles', 'onPasteEvent'],
+  emits: ['answerMessage', 'sendTaskMsg', 'deleteTaskMsg', 'deleteFiles', 'onPasteEvent', 'readTask'],
   data: () => {
-    return { getInspectorMessage }
+    return {
+      getInspectorMessage
+    }
   },
   computed: {
     user () {
@@ -227,6 +229,11 @@ export default {
     }
   },
   methods: {
+    readTask () {
+      if (this.inDoitnow) {
+        this.$emit('readTask')
+      }
+    },
     uuidv4 () {
       return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, (c) =>
         (
@@ -273,6 +280,7 @@ export default {
             this.sendTaskMsg(answer)
           })
       }
+      this.readTask()
     },
     pad2 (n) {
       return (n < 10 ? '0' : '') + n
