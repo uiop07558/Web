@@ -11,21 +11,23 @@ export function visitChildren (arr, callback) {
 }
 
 export function showNotify (notification, notificationSound = true) {
-  notify(notification, 30000)
-  if (notificationSound) {
-    const nt = new Audio(require('@/assets/sounds/notification.mp3'))
-    nt.volume = 0.5
-    nt.play()
-  }
+  if (['denied', 'default'].includes(Notification.permission)) {
+    notify(notification, 30000)
+    if (notificationSound) {
+      const nt = new Audio(require('@/assets/sounds/notification.mp3'))
+      nt.volume = 0.5
+      nt.play()
+    }
+  } else {
+    // creating system notification
+    const websyncNotification = new Notification(notification.title, { body: notification.text, tag: notification?.uid ?? '' })
 
-  // creating system notification
-  const websyncNotification = new Notification(notification.title, { body: notification.text, tag: notification?.uid ?? '' })
-
-  // set up click event for just created notification
-  if (notification.obj.type === types.TYPE_OBJECT_TASK) {
-    websyncNotification.onclick = () => {
-      const link = `${window.location.origin}/task/${notification.obj.obj.uid}`
-      window.open(link)
+    // set up click event for just created notification
+    if (notification.obj.type === types.TYPE_OBJECT_TASK) {
+      websyncNotification.onclick = () => {
+        const link = `${window.location.origin}/task/${notification.obj.obj.uid}`
+        window.open(link)
+      }
     }
   }
 }
