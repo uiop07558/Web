@@ -528,9 +528,6 @@ export default {
     uppercase () {
       return this.colors[this.task.uid_marker]?.uppercase ?? false
     },
-    taskMessagesAndFiles () {
-      return this.$store.state.taskfilesandmessages.messages
-    },
     plural () {
       const todayDate = new Date()
       const dateEnd = new Date(this.task.date_end)
