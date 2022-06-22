@@ -433,7 +433,7 @@ const actionConfirmNewParams = (confirmed) => {
       createDate: new Date().toISOString()
     })
     messages.value.push({
-      message: 'Супер, что на счет меток?',
+      message: 'Супер, что насчет меток?',
       messageFromInspector: true,
       type: 'tagSelection',
       createDate: new Date().toISOString()

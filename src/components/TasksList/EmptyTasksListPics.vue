@@ -229,7 +229,7 @@ const goToNextDay = function () {
           class="cursor-pointer hover:text-gray-800 mr-2 text-green-500"
         />
         <p class="text-lg text-left text-gray-600">
-          Начинайте работу с меткой, создав задачу
+          Начните работу с меткой, создав задачу
         </p>
       </div>
     </div>

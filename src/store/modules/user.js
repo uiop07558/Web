@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { notify } from 'notiwind'
-import { USER_ERROR, USER_REQUEST, USER_SUCCESS, USER_CHANGE_PHOTO } from '../actions/user'
+import { USER_ERROR, USER_REQUEST, USER_SUCCESS, USER_CHANGE_PHOTO, USER_CHANGE_PHONE } from '../actions/user'
 
 const state = {
   user: false,
@@ -56,6 +56,32 @@ const actions = {
               group: 'api',
               title: 'REST API Error, please make screenshot',
               action: USER_CHANGE_PHOTO,
+              text: '123'
+            },
+            15000
+          )
+          reject(err)
+        })
+    })
+  },
+  [USER_CHANGE_PHONE]: ({ commit, dispatch }, data) => {
+    return new Promise((resolve, reject) => {
+      const url = process.env.VUE_APP_LEADERTASK_API + 'api/v1/account/phone'
+      axios({
+        data: data,
+        url: url,
+        method: 'PATCH'
+      })
+        .then((resp) => {
+          commit(USER_SUCCESS, resp)
+          resolve(resp)
+        })
+        .catch((err) => {
+          notify(
+            {
+              group: 'api',
+              title: 'REST API Error, please make screenshot',
+              action: USER_CHANGE_PHONE,
               text: '123'
             },
             15000
