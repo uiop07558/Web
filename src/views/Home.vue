@@ -119,7 +119,7 @@ const getTask = (uid) => {
       if (!isPropertiesMobileExpanded.value) {
         store.dispatch('asidePropertiesToggle', true)
       }
-      window.history.replaceState('smth', null, '/')
+      window.history.replaceState(null, null, '/')
     })
   }
 }
@@ -207,7 +207,7 @@ const getProject = (uid) => {
   }
   store.commit('updateStackWithInitValue', navElem)
   initNavStackWithFoundProjects(uid)
-  window.location = '/'
+  window.history.replaceState(null, null, '/')
 }
 
 const getBoard = (uid) => {
@@ -219,7 +219,7 @@ const getBoard = (uid) => {
   }
   store.commit('updateStackWithInitValue', navElem)
   initNavStackWithFoundBoards(uid)
-  window.location = '/'
+  window.history.replaceState(null, null, '/')
 }
 
 const getNavigator = () => {
