@@ -115,9 +115,12 @@ const getTask = (uid) => {
       store.commit('basic', { key: 'taskListSource', value: navElem.value })
 
       store.commit('basic', { key: 'propertiesState', value: 'task' })
-      store.dispatch(TASK.SELECT_TASK, resp.data.tasks[0])
-      if (!isPropertiesMobileExpanded.value) {
-        store.dispatch('asidePropertiesToggle', true)
+
+      if (resp.data.tasks.length > 0) {
+        store.dispatch(TASK.SELECT_TASK, resp.data.tasks[0])
+        if (!isPropertiesMobileExpanded.value) {
+          store.dispatch('asidePropertiesToggle', true)
+        }
       }
       window.history.replaceState(null, null, '/')
     })
