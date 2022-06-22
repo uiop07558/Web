@@ -2,12 +2,15 @@
 
 import { computed, ref } from 'vue'
 import { useStore } from 'vuex'
-import { USER_CHANGE_PHOTO } from '@/store/actions/user.js'
+import { USER_CHANGE_PHOTO, USER_CHANGE_PHONE } from '@/store/actions/user.js'
+
 import ModalBoxConfirm from '@/components/modals/ModalBoxCard.vue'
+import BoardModalBoxRename from '@/components/Board/BoardModalBoxRename.vue'
 const emit = defineEmits(['AccLogout'])
 const store = useStore()
 const user = computed(() => store.state.user.user)
 const showEditname = ref(false)
+const showEditphone = ref(false)
 //  const showEditemail = ref(false)
 const showEditpassword = ref(false)
 const tarif = () => {
@@ -28,6 +31,26 @@ const changeUserPhoto = (event) => {
     file: formData
   }
   store.dispatch(USER_CHANGE_PHOTO, data)
+}
+
+const changeUserPhone = (phone) => {
+  showEditphone.value = false
+  const date = new Date()
+  const timezone = date.getTimezoneOffset() / 60 * (-1)
+  const data = {
+    phone: phone,
+    timezone: timezone
+  }
+  store.dispatch(USER_CHANGE_PHONE, data)
+}
+
+const userPhone = function () {
+  const phone = user.value.current_user_phone
+  const index = phone.lastIndexOf(' ("')
+  if (index !== -1) {
+    return phone.slice(0, index)
+  }
+  return phone
 }
 </script>
 
@@ -58,6 +81,14 @@ const changeUserPhoto = (event) => {
       <div />
     </div>
   </modal-box-confirm>
+  <BoardModalBoxRename
+    v-show="showEditphone"
+    :show="showEditphone"
+    title="Телефон"
+    :value="userPhone()"
+    @cancel="showEditphone = false"
+    @save="changeUserPhone"
+  />
   <modal-box-confirm
     v-model="showEditpassword"
     button="warning"
@@ -186,6 +217,23 @@ const changeUserPhoto = (event) => {
               Изменить имя
             </button>
           </form>
+          <div class="mt-6">
+            <p class="text-base font-medium mb-2 text-[#4C4C4D]">
+              Телефон
+            </p>
+            <form class="mb-2">
+              <div class="text-sm landing-4 font-normal">
+                {{ userPhone(phone) }}
+              </div>
+              <button
+                type="button"
+                class="mt-2 text-[13px] landing-[13px] text-[#007BE5]"
+                @click="showEditphone = true"
+              >
+                Изменить телефон
+              </button>
+            </form>
+          </div>
           <div class="mb-2 mt-6">
             <p class="text-base font-medium mb-2 text-[#4C4C4D]">
               Email
