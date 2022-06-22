@@ -932,8 +932,8 @@ export default {
     },
     modalBoxDeleteText () {
       let text = 'Вы действительно хотите удалить задачу?'
-      if (this.storeTasks[this.selectedTask.uid].children.length > 0) {
-        text = 'Вы действительно хотите удалить задачу с подзадачами в количестве: ' + this.storeTasks[this.selectedTask.uid].children.length + '?'
+      if (this.storeTasks[this.selectedTask.uid]?.children?.length > 0) {
+        text = 'Вы действительно хотите удалить задачу с подзадачами в количестве: ' + this.storeTasks[this.selectedTask.uid]?.children?.length + '?'
       }
       return text
     },
@@ -1298,7 +1298,7 @@ export default {
 </script>
 
 <template>
-<!--  <modal-box-confirm
+  <!--  <modal-box-confirm
     v-model="showConfirm"
     button="warning"
     has-cancel
