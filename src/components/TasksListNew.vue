@@ -912,7 +912,7 @@ export default {
   computed: {
     modalBoxDeleteText () {
       let text = 'Вы действительно хотите удалить задачу?'
-      if (this.storeTasks[this.lastSelectedTaskUid]?.info.has_children) {
+      if (this.storeTasks[this.lastSelectedTaskUid]?.children.length > 0) {
         text = 'Вы действительно хотите удалить задачу с подзадачами в количестве: ' + this.storeTasks[this.lastSelectedTaskUid].children.length + '?'
       }
       return text
@@ -945,6 +945,7 @@ export default {
       return this.storeTasks
     },
     clickDeleteTask (uid) {
+      console.log(this.lastSelectedTaskUid)
       this.lastSelectedTaskUid = uid
       this.showConfirm = true
     }

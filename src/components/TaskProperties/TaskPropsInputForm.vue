@@ -37,13 +37,14 @@
         </div>
       </span>
       <textarea
+        id="textareaInput"
         ref="taskMsgEdit"
         v-model="taskMsg"
         class="form-control mt-[7px] text-group-design task-msg overflow-auto scroll-style dark:bg-gray-800 dark:text-gray-100 focus:ring-0 "
         placeholder="Введите сообщение"
         rows="58"
         @input="onInputTaskMsg"
-        @keydown.enter.exact.prevent="sendTaskMsg()"
+        @keydown.enter.exact.prevent="sendTaskMsg"
         @keydown.enter.shift.exact.prevent="addNewLineTaskMsg"
       />
       <span class="table-cell text-center rounded-[8px] items-center align-middle justify-center max-w-[15px] max-h-[30px] cursor-pointer">
@@ -51,7 +52,7 @@
           type="button"
           name="btn-send"
           class="btn-send-custom rounded-lg bg-[#E0E1E3] p-3"
-          @click="sendTaskMsg()"
+          @click="sendTaskMsg"
         >
           <svg
             class="m-auto"
@@ -217,6 +218,7 @@ export default {
           this.$store.commit(TASK.MSG_EQUAL, this.task.uid, decodeURIComponent(this.taskMsg))
         })
       this.taskMsg = ''
+      document.getElementById('textareaInput').setAttribute('style', '')
     },
     createTaskMsg: function () {
       const date = new Date()

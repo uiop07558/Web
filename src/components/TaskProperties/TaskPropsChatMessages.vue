@@ -167,6 +167,10 @@ export default {
     TaskPropsChatMessageFile
   },
   props: {
+    inDoitnow: {
+      type: Boolean,
+      default: false
+    },
     task: {
       type: Object,
       default: () => ({})

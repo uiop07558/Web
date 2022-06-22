@@ -67,12 +67,13 @@
 </template>
 
 <script>
+import { REFRESH_FILES } from '@/store/actions/taskfiles'
+import { REFRESH_MESSAGES } from '@/store/actions/taskmessages'
 import * as FILES from '@/store/actions/taskfiles.js'
 import * as MSG from '@/store/actions/taskmessages.js'
 import * as TASK from '@/store/actions/tasks.js'
 import InspectorModalBox from '@/components/Inspector/InspectorModalBox.vue'
 import Icon from '@/components/Icon.vue'
-import { ref } from 'vue'
 import arrowForw from '@/icons/arrow-forw-sm.js'
 import DoitnowEmpty from '@/components/Doitnow/DoitnowEmpty.vue'
 import DoitnowTask from '@/components/Doitnow/DoitnowTask.vue'
@@ -105,7 +106,7 @@ export default {
     projectTasks: [],
     unsortedTasks: [],
     overdueReaded: [],
-    showInspector: ref(false)
+    showInspector: false
   }),
   computed: {
     tasksCount () {
@@ -177,6 +178,11 @@ export default {
   watch: {
     firstTask (newtask, oldtask) {
       if (newtask) {
+        this.$store.commit(REFRESH_FILES)
+        this.$store.commit(REFRESH_MESSAGES)
+        this.$store.commit(TASK.SELECT_TASK, this.firstTask)
+        this.$store.dispatch('fetchMessagesAndFiles', this.firstTask.uid)
+
         this.$store.dispatch(MSG.MESSAGES_REQUEST, this.firstTask.uid)
           .then(() => {
             this.$store.dispatch(FILES.FILES_REQUEST, this.firstTask.uid)
@@ -287,6 +293,7 @@ export default {
       }
       if (this.todayTasks.length) {
         this.todayTasks.shift()
+        return
       }
       if (this.openedTasks.length) {
         this.openedTasks.shift()

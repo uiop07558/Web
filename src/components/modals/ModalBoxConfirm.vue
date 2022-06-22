@@ -55,27 +55,27 @@ const cancel = () => confirmCancel('cancel')
       @header-icon-click="cancel"
       @header-icon2-click="logout"
     >
-      <div class="space-y-3 items-center justify-center">
+      <div class="flex items-stretch mt-4 text-[#7e7e80] text-[13px] leading-[18px] font-roboto">
         <slot />
       </div>
 
       <div
-        class="flex items-stretch justify-between mt-5"
+        class="flex gap-[4px] justify-end mt-4"
       >
-        <jb-button
-          v-if="hasCancel"
-          class="w-full mr-5"
-          label="Нет"
-          :color="button"
-          outline
-          @click="cancel"
-        />
         <jb-button
           v-if="hasButton"
           :label="buttonLabel"
           :color="button"
-          class="w-full"
+          class="focus:ring min-w-[90px] focus:outline-none inline-flex cursor-pointer whitespace-nowrap justify-center items-center duration-150 px-[12px] py-[10px] rounded-md bg-[#ff9123] text-white text-[13px] leading-[15px] font-medium font-roboto"
           @click="confirm"
+        />
+        <jb-button
+          v-if="hasCancel"
+          class="focus:ring min-w-[90px] focus:outline-none inline-flex cursor-pointer whitespace-nowrap justify-center items-center duration-150 px-[12px] py-[10px] rounded-md border border-[#ff9123] bg-white text-[#ff9123] text-[13px] leading-[15px] font-medium font-roboto"
+          label="Нет"
+          :color="button"
+          outline
+          @click="cancel"
         />
       </div>
     </card-component>

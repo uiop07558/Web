@@ -373,7 +373,7 @@ export default {
       const currentUsersCount = this.$store.state.navigator.navigator.emps.items.length
       // если у нас куплены рабочие места
       // проверяем на превышение лицензии
-      if (user.count_workplaces !== 0 && user.count_workplaces !== currentUsersCount) {
+      if (user.count_workplaces !== 0 && user.count_workplaces <= currentUsersCount) {
         this.showUsersLimit = true
         return
       }

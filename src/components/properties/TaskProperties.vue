@@ -1298,6 +1298,26 @@ export default {
 </script>
 
 <template>
+<!--  <modal-box-confirm
+    v-model="showConfirm"
+    button="warning"
+    has-cancel
+    has-button
+    button-label="Да"
+    @confirm="delTask"
+  >
+    <p
+      v-if="tasks[selectedTask.uid]"
+      class="text-[#7e7e80] text-[13px] leading-[18px] font-roboto whitespace-pre-line"
+    >
+      Вы действительно хотите удалить выбраную <strong>"{{ selectedTask.name }}"</strong> задачу
+      <span
+        v-if="selectedTask.has_children"
+      >
+        (с подзадачами) в количестве: {{ tasks[selectedTask.uid].children.length }}
+      </span>
+    </p>
+  </modal-box-confirm> -->
   <ModalBoxDelete
     v-show="showConfirm"
     title="Удалить задачу"
