@@ -18,7 +18,7 @@
   <!-- Add task input -->
   <div
     v-if="taskListSource && !DONT_SHOW_TASK_INPUT_UIDS[taskListSource.uid]"
-    class="fixed-create flex mb-1 ml-0.5 bg-[#f4f5f7] z-1"
+    class="fixed-create flex mb-[4px] bg-[#f4f5f7] z-1"
   >
     <button
       class="bg-[#FF912380] px-2 rounded-[8px] text-black text-sm mr-1 hover:bg-[#F5DEB3]"
@@ -83,69 +83,42 @@
     v-if="status == 'success'"
     :nodes="storeTasks"
     :config="newConfig"
-    class="mt-0.5 ml-0.5"
     @nodeOpened="nodeExpanding"
     @nodeFocus="nodeSelected"
-    @focus="focused = true"
     @nodeDragend="nodeDragEnd"
   >
     <template #before-input="props">
       <div
         :id="props.node.info.uid"
-        ref="treetask"
-        class="pl-8 group task-node mb-1 font-['Roboto'] flex-col items-center w-full bg-white p-2 rounded-[8px] dark:bg-gray-900 dark:border-gray-700 relative border border-white"
+        class="group w-full pl-[31px] pr-[6px] py-[11px] mb-[4px] min-h-[42px] font-roboto flex-col bg-white rounded-[8px] relative"
         :style="{ backgroundColor: getValidBackColor(colors[props.node.info.uid_marker]?.back_color) }"
-        :class="{ 'bg-gray-200 dark:bg-gray-800': (props.node.info.status == 1 || props.node.info.status == 7) && props.node.info.uid_marker == '00000000-0000-0000-0000-000000000000', 'ring-1 ring-orange-400 border border-orange-400': props.node.id === lastSelectedTaskUid}"
-        autofocus
-        @keydown.esc="escapEvent"
-        @keyup.esc="escapEvent"
-        @click.shift="clickAndShift(props.node)"
-        @click.exact="selectedTasks = {}"
+        :class="{ 'ring-1 ring-orange-400': props.node.id === lastSelectedTaskUid}"
       >
-        <TaskListActionHoverPanel
-          class="absolute right-[8px] hidden group-hover:flex my-auto"
-          :is-my-task="props.node.info.uid_customer == user.current_user_uid"
-          :can-paste="Object.keys(copiedTasks).length"
-          @click.stop
-          @addSubtask="addSubtask(props.node.info)"
-          @changeFocus="changeFocus(props.node.info)"
-          @openMenu="toggleTaskHoverPopper(true)"
-          @closeMenu="toggleTaskHoverPopper(false)"
-          @tomorrow="moveTaskTomorrow(props.node.info)"
-          @copyName="copyTaskName(props.node.info)"
-          @copy="copyTask(props.node.info)"
-          @cut="cutTask(props.node.info)"
-          @paste="pasteCopiedTasks(props.node.id)"
-          @delete="clickDeleteTask(props.node.id)"
-        />
-
         <!-- Name, Status -->
         <div
-          class="flex"
+          class="flex gap-[6px] items-center"
         >
-          <div
-            class="flex items-center ml-1"
-          >
+          <div class="flex-none h-[20px] w-[20px]">
             <TaskStatus
               :task="props.node.info"
             />
-
-            <!-- Editable name -->
-            <contenteditable
-              v-model="props.node.info.name"
-              tag="div"
-              class="taskName p-0.5 ring-0 outline-none ml-1 break-all"
-              :contenteditable="props.node.info._isEditable"
-              placeholder="Введите название задачи"
-              :no-nl="true"
-              :no-html="true"
-              :class="{ 'uppercase': !props.node.info._isEditable && colors[props.node.info.uid_marker] && colors[props.node.info.uid_marker].uppercase, 'text-gray-500': props.node.info.status == 1 || props.node.info.status == 7, 'line-through': props.node.info.status == 1 || props.node.info.status == 7, 'font-extrabold': props.node.info.readed == 0 }"
-              :style="{ color: getValidForeColor(colors[props.node.info.uid_marker]?.fore_color) }"
-              @focusout="clearTaskFocus(props.node.info)"
-              @dblclick.stop="editTaskName(props.node.id)"
-              @keyup.enter="updateTask($event, props.node.info); props.node.info._isEditable = false;"
-            />
           </div>
+
+          <!-- Editable name -->
+          <contenteditable
+            v-model="props.node.info.name"
+            tag="div"
+            class="taskName p-0 ring-0 outline-none break-all cursor-default"
+            :contenteditable="props.node.info._isEditable"
+            placeholder="Введите название задачи"
+            :no-nl="true"
+            :no-html="true"
+            :class="{ 'uppercase': !props.node.info._isEditable && colors[props.node.info.uid_marker] && colors[props.node.info.uid_marker].uppercase, 'text-gray-500': props.node.info.status == 1 || props.node.info.status == 7, 'line-through': props.node.info.status == 1 || props.node.info.status == 7, 'font-extrabold': props.node.info.readed == 0 }"
+            :style="{ color: getValidForeColor(colors[props.node.info.uid_marker]?.fore_color) }"
+            @focusout="clearTaskFocus(props.node.info)"
+            @dblclick.stop="editTaskName(props.node.id)"
+            @keyup.enter="updateTask($event, props.node.info); props.node.info._isEditable = false;"
+          />
         </div>
 
         <!-- Tags, Overdue, Customer, Performer -->
@@ -279,6 +252,23 @@
             class="h-[22px]"
           />
         </div>
+
+        <TaskListActionHoverPanel
+          class="absolute right-[8px] top-[calc(50%-18px)] hidden group-hover:flex"
+          :is-my-task="props.node.info.uid_customer == user.current_user_uid"
+          :can-paste="Object.keys(copiedTasks).length"
+          @click.stop
+          @addSubtask="addSubtask(props.node.info)"
+          @changeFocus="changeFocus(props.node.info)"
+          @openMenu="toggleTaskHoverPopper(true)"
+          @closeMenu="toggleTaskHoverPopper(false)"
+          @tomorrow="moveTaskTomorrow(props.node.info)"
+          @copyName="copyTaskName(props.node.info)"
+          @copy="copyTask(props.node.info)"
+          @cut="cutTask(props.node.info)"
+          @paste="pasteCopiedTasks(props.node.id)"
+          @delete="clickDeleteTask(props.node.id)"
+        />
       </div>
     </template>
   </tree>
@@ -384,7 +374,6 @@ export default {
     const isPropertiesMobileExpanded = computed(() => store.state.isPropertiesMobileExpanded)
     const copiedTasks = computed(() => store.state.tasks.copiedTasks)
     const lastSelectedTaskUid = ref('')
-    const selectedTasks = ref({})
     const showConfirm = ref(false)
     const showInspector = ref(false)
     const isTaskHoverPopperActive = ref(false)
@@ -392,9 +381,6 @@ export default {
     const date = computed(() => {
       return lastVisitedDate.value.getDate() + '-' + lastVisitedDate.value.getMonth() + '-' + lastVisitedDate.value.getFullYear()
     })
-    const clickAndShift = (arg) => {
-      selectedTasks.value[arg.id] = arg.info
-    }
 
     const stop = ref(true)
     const draggables = document.querySelectorAll('.draggable')
@@ -744,25 +730,16 @@ export default {
     }
 
     const nodeSelected = (arg) => {
-      store.commit('basic', { key: 'propertiesState', value: 'task' })
-
       lastSelectedTaskUid.value = arg.id
-      store.dispatch(TASK.SELECT_TASK, arg.info)
-      if (!isPropertiesMobileExpanded.value && arg.info.name) {
-        store.dispatch('asidePropertiesToggle', true)
-      }
-    }
-    const escapEvent = () => {
-      console.log('work esc')
-      document.addEventListener('keyup', function (evt) {
-        console.log(evt.keyCode)
-        if (evt.keyCode === 27) {
-          if (this.isPropertiesMobileExpanded.value) {
-            store.dispatch('asidePropertiesToggle', false)
-          }
+      // nextTick поставил чтобы сначала выделилось, а потом делало
+      // всё остальное
+      nextTick(() => {
+        if (!isPropertiesMobileExpanded.value && arg.info.name) {
+          store.dispatch('asidePropertiesToggle', true)
         }
+        store.commit('basic', { key: 'propertiesState', value: 'task' })
+        store.dispatch(TASK.SELECT_TASK, arg.info)
       })
-      store.dispatch('asidePropertiesToggle', false)
     }
     const nodeDragEnd = (node) => {
       console.log(node.dragged.node.id)
@@ -827,7 +804,6 @@ export default {
     const isActive = true
     return {
       isActive,
-      escapEvent,
       changeFocus,
       clearTaskFocus,
       editTaskName,
@@ -840,8 +816,6 @@ export default {
       newConfig,
       showConfirm,
       showInspector,
-      selectedTasks,
-      clickAndShift,
       nodeDragEnd,
       isDark,
       status,
@@ -888,8 +862,7 @@ export default {
       'd35fe0bc-1747-4eb1-a1b2-3411e07a92a0': TASK.READY_FOR_COMPLITION_TASKS_REQUEST,
       '511d871c-c5e9-43f0-8b4c-e8c447e1a823': TASK.DELEGATED_TO_USER_TASKS_REQUEST,
       '11212e94-cedf-11ec-9d64-0242ac120002': TASK.SEARCH_TASK,
-      '47a38aa5-19c4-40d0-b8c0-56c3a420935d': TASK.ONE_TASK_REQUEST,
-      focused: true
+      '47a38aa5-19c4-40d0-b8c0-56c3a420935d': TASK.ONE_TASK_REQUEST
     }
     return {
       DONT_SHOW_TASK_INPUT_UIDS,
@@ -962,9 +935,6 @@ window.getSelection().removeAllRanges()
 .tree {
   margin-left: 0;
 }
-.taskName, .tag-label, .tag-overdue, .performer, .customer, .checklist-tag, .term-tag{
-  cursor: default;
-}
 
 .icon-wrapper {
   padding: 0;
@@ -1000,9 +970,6 @@ window.getSelection().removeAllRanges()
   word-wrap: break-word;
   font-size: 14px;
   outline: none
-}
-.node-wrapper:focus-within .task-node {
-  @apply ring-0 ring-orange-400 border border-orange-400
 }
 
 .node-wrapper.disabled .checkbox-wrapper.checked {

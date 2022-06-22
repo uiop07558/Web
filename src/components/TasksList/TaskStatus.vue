@@ -17,7 +17,8 @@ import repeat from '@/icons/repeat.js'
 
 const props = defineProps({
   task: {
-    type: Object
+    type: Object,
+    default: () => ({})
   },
   inDoitnow: {
     type: Boolean,
@@ -120,8 +121,8 @@ const changeTaskStatus = (uid, status) => {
   >
     <template #content="{ close }">
       <div
-        class="flex flex-col"
         v-if="!((props.task.uid_customer !== user.current_user_uid) && (props.task.status === 1))"
+        class="flex flex-col"
       >
         <div
           v-for="taskStatus in 10"
@@ -134,7 +135,7 @@ const changeTaskStatus = (uid, status) => {
             @click="changeTaskStatus(props.task.uid, taskStatus - 1)"
           >
             <div
-              class="border-2 border-gray-300 rounded-md mr-1 flex items-center justify-center"
+              class="border-2 border-gray-300 rounded-md flex items-center justify-center"
               style="min-width:20px; min-height: 20px;"
             >
               <Icon
@@ -152,7 +153,7 @@ const changeTaskStatus = (uid, status) => {
       </div>
     </template>
     <div
-      class="border-2 relative border-gray-300 rounded-md mr-1 bg-white flex items-center justify-center mt-0.5"
+      class="border-2 relative border-gray-300 rounded-md bg-white flex items-center justify-center"
       :class="{ 'cursor-pointer': [1, 2, 3].includes(props.task.type), 'cursor-not-allowed': props.task.type == 4 }"
       style="min-width:20px; min-height: 20px;"
     >
