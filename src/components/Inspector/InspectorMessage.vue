@@ -103,7 +103,6 @@ const computedColors = computed(() => {
   //
   return newColors
 })
-
 const computedTags = computed(() => {
   if (currentState.value !== 'tagSelection') return {}
   const inputLowerCase = inputMessage.value.toLowerCase()
@@ -341,6 +340,15 @@ const computedTimes = computed(() => {
   //
   return newTimes
 })
+const getContrastYIQ = function (hexcolor) {
+  if (!hexcolor) return null
+  hexcolor = hexcolor.replace('#', '')
+  const r = parseInt(hexcolor.substr(0, 2), 16)
+  const g = parseInt(hexcolor.substr(2, 2), 16)
+  const b = parseInt(hexcolor.substr(4, 2), 16)
+  const yiq = (r * 299 + g * 587 + b * 114) / 1000
+  return yiq >= 128 ? '#4C4C4D' : 'white'
+}
 </script>
 
 <template>
@@ -492,6 +500,7 @@ const computedTimes = computed(() => {
           >
             <div
               v-show="key < 4"
+              :style="{ 'color':getContrastYIQ(tag.back_color), 'background-color': tag.back_color || '#F4F5F7'}"
               class="flex items-center bg-[#F4F5F7] rounded-[4px] min-h-[28px]"
               style="padding: 4px 7px 4px 6px;"
               @click="props.selectTag(tag)"
@@ -504,7 +513,9 @@ const computedTimes = computed(() => {
                 :box="tagIcon.viewBox"
                 class="text-gray-500 mr-2 mt-0.5"
               />
-              <span class="text-[#4C4C4D] font-[400] text-[13px] leading-[15px]">{{
+              <span
+                class="font-[400] text-[13px] leading-[15px]"
+              >{{
                 tag.name.length > 16 ? tag.name.slice(0, 16) + '...' : tag.name
               }}</span>
             </div>
