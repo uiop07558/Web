@@ -60,7 +60,7 @@
               {{ messageText }}
             </div>
             <div
-              v-else
+              v-else-if="deletedStatus === 1"
               class="flex break-words whitespace-pre-line text-[#7E7E80]"
             >
               <svg
