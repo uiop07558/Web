@@ -16,9 +16,15 @@
         class="mt-1 text-sm dark:bg-gray-800 dark:text-gray-100"
         :class="{ 'bg-[#FCEBEB] msg-custom-chat-left': !isMyFile, 'bg-[#F4F5F7] msg-custom-chat-right mr-2': isMyFile }"
       >
+        <div class="mt-2 text-right text-[#7E7E80] font-medium mb-2 flex" v-if="!this.pics.includes(fileName.split('.').pop())">
         <FileMessage :file="file" />
-        <div class="mt-2 text-right text-[#7E7E80] font-medium mb-2">
-          {{ fileName }}
+
+          <span class="table">{{ fileName }}</span>
+        </div>
+        <div class="mt-2 text-right text-[#7E7E80] font-medium mb-2" v-else >
+          <FileMessage :file="file" />
+
+          <span>{{ fileName }}</span>
         </div>
         {{ quote }}
         <div
@@ -203,11 +209,13 @@ export default {
   emits: ['answer', 'deleteFiles', 'PasteEvent'],
   setup () {
     const isTaskHoverPopperActive = ref(false)
+    const pics = ['jpg', 'png', 'jpeg', 'git', 'bmp', 'gif', 'PNG', 'JPG', 'JPEG', 'BMP', 'GIF']
     const toggleTaskHoverPopper = (val) => {
       isTaskHoverPopperActive.value = val
     }
     return {
-      toggleTaskHoverPopper
+      toggleTaskHoverPopper,
+      pics
     }
   },
   computed: {
