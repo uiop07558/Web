@@ -1380,7 +1380,6 @@ export default {
         <strong>
           <div
             ref="TaskName"
-            v-linkify:options="{ className: 'text-blue-600', tagName: 'a' }"
             class="form-control taskName-custom dark:bg-gray-900 dark:text-gray-100 dark:border-gray-900"
             data-placeholder="Task Name"
             style="font-weight: bold; font-size: 18px"
