@@ -62,7 +62,7 @@ const tarif = () => tarifSelect('tarif')
       has-table
       acc-mod
       :title="title"
-      class="shadow-lg w-full md:w-3/5 lg:w-3/5 z-50  h-4/5"
+      class="shadow-lg w-full md:w-3/5 lg:w-3/5 z-50  h-[85%]"
       @header-icon-click="cancel"
       @header-icon2-click="logout"
       @acc="acc"

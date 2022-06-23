@@ -34,7 +34,9 @@ export default {
       const navElem = {
         name: 'Сегодня',
         key: 'taskListSource',
-        value: { uid: '901841d9-0016-491d-ad66-8ee42d2b496b', param: null }
+        value: { uid: '901841d9-0016-491d-ad66-8ee42d2b496b', param: new Date() },
+        typeVal: new Date(),
+        type: 'date'
       }
       this.$store.commit('updateStackWithInitValue', navElem)
       this.$store.commit('basic', { key: 'taskListSource', value: { uid: '901841d9-0016-491d-ad66-8ee42d2b496b', param: null } })

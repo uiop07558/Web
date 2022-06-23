@@ -57,7 +57,7 @@ const storeNavigator = computed(() => store.state.navigator.navigator)
 const navig = computed(() => store.state.navig)
 const getNavigatorLanguage = () => (navigator.languages && navigator.languages.length) ? navigator.languages[0] : navigator.userLanguage || navigator.language || navigator.browserLanguage || 'en'
 
-const lastVisitedDate = ref(navStack.value && navStack.value.length && navStack.value[navStack.value.length - 1].value && navStack.value[navStack.value.length - 1].value.uid && navStack.value[navStack.value.length - 1].value.uid === '901841d9-0016-491d-ad66-8ee42d2b496b' && navStack.value[navStack.value.length - 1].value.param ? new Date(navStack.value[navStack.value.length - 1].value.param) : new Date())
+const lastVisitedDate = navStack.value && navStack.value.length && navStack.value[navStack.value.length - 1].value && navStack.value[navStack.value.length - 1].value.uid && navStack.value[navStack.value.length - 1].value.uid === '901841d9-0016-491d-ad66-8ee42d2b496b' && navStack.value[navStack.value.length - 1].value.param ? new Date(navStack.value[navStack.value.length - 1].value.param) : new Date()
 const currentDate = computed({
   get: () => lastVisitedDate.value,
   set: val => {
@@ -158,7 +158,9 @@ const menuClick = (event, item) => {
     const navElem = {
       name: item.label,
       key: 'taskListSource',
-      value: { uid: item.uid, param: null }
+      value: { uid: item.uid, param: new Date() },
+      typeVal: new Date(),
+      type: 'date'
     }
     store.commit('updateStackWithInitValue', navElem)
     if (item.uid === '901841d9-0016-491d-ad66-8ee42d2b496b') { lastVisitedDate.value = new Date() } // desktop check
@@ -293,7 +295,7 @@ const tarifS = () => {
       <DatePicker
         id="Maincalendar"
         ref="calendarclass"
-        v-model="navigatorMenu.currentDate"
+        v-model="navStack[0].typeVal"
         dot="true"
         class="border-none pl-[22px] pr-[16px] calendar-nav-custom"
         :style="{ backgroundColor: datePickerBG }"

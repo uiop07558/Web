@@ -1,6 +1,6 @@
 <template>
   <div
-    class="tag-label cursor-default p-1 px-2 text-xs whitespace-nowrap rounded-[4px] mr-1 flex items-center"
+    class="tag-label cursor-default p-1 px-2 text-xs whitespace-nowrap rounded-[4px] flex items-center"
     :class="[colorTextClass, colorBgClass]"
     :style="colorBgStyle"
   >
@@ -13,7 +13,11 @@
       :width="iconWidth"
       :height="iconHeight"
     />
-    <img :src="image" v-if="image" class="rounded-[3px] text-base cursor-pointer w-[16px] h-[16px] mr-1"/>
+    <img
+      v-if="image"
+      :src="image"
+      class="rounded-[3px] text-base cursor-pointer w-[16px] h-[16px] mr-1"
+    >
     {{ text }}
   </div>
 </template>
@@ -59,7 +63,8 @@ export default {
       default: '12'
     },
     image: {
-      type: String
+      type: String,
+      default: ''
     }
   }
 }

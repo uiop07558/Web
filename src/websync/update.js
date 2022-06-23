@@ -1,5 +1,5 @@
 import * as TYPES from '@/websync/types.js'
-import { task } from '@/websync/task.js'
+import { task, updateTask } from '@/websync/task.js'
 import { getMessage } from '@/websync/task_message.js'
 import { updateCard } from '@/websync/card.js'
 import { updateEmployee } from '@/websync/employee.js'
@@ -18,7 +18,7 @@ export default function processUpdate (obj) {
       updateProject(obj)
       break
     case TYPES.TYPE_OBJECT_TASK:
-      //  updateTask(obj)
+      updateTask(obj)
       task(obj)
       break
     case TYPES.TYPE_OBJECT_CONTACT:

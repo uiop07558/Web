@@ -1550,6 +1550,8 @@ const mutations = {
     })
   },
   [TASK.ADD_TASK]: (state, task) => {
+    if (state.newtasks[task.uid]) return // check if task already exist
+
     if (!task._justCreated) {
       state.newConfig.roots.unshift(task.uid)
     }
