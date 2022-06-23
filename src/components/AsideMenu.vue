@@ -191,6 +191,20 @@ const menuClick = (event, item) => {
     }
   }
 }
+const onDayClick = (day) => {
+  store.dispatch(TASK.TASKS_REQUEST, new Date(day.date))
+  const navElem = {
+    name: dateToLabelFormat(day.date),
+    key: 'taskListSource',
+    value: { uid: '901841d9-0016-491d-ad66-8ee42d2b496b', param: new Date(day.date) },
+    typeVal: new Date(day.date),
+    type: 'date'
+  }
+  store.commit('updateStackWithInitValue', navElem)
+  lastVisitedDate.value = new Date() // desktop check
+  store.commit('basic', { key: 'taskListSource', value: { uid: '901841d9-0016-491d-ad66-8ee42d2b496b', param: null } })
+  store.commit('basic', { key: 'mainSectionState', value: 'tasks' })
+}
 const TitleName = () => {
   if (navig.value === 0) return ('Аккаунт')
   else if (navig.value === 1) return ('Тариф')
@@ -316,6 +330,7 @@ const tarifS = () => {
         in-month="true"
         in-prev-month="true"
         select-attribute="dates"
+        @dayclick="onDayClick"
       />
     </div>
     <div class="my-[10px]">
