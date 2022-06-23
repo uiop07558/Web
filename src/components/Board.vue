@@ -60,7 +60,7 @@
       @cancel="showMoveCard = false"
       @changePosition="onChangeCardPosition"
     />
-    <div class="flex items-start">
+    <div class="flex items-start overflow-y-auto">
       <template
         v-for="column in storeCards"
         :key="column.UID"
