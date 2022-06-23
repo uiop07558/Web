@@ -223,7 +223,6 @@ export default {
           }
         } else {
           this.$store.commit('basic', { key: 'taskListSource', value: { uid: '901841d9-0016-491d-ad66-8ee42d2b496b', param: null } })
-          // TODO: here we need localization
           this.$store.commit(
             'updateStackWithInitValue',
             { name: 'Today', key: 'taskListSource', value: { uid: '901841d9-0016-491d-ad66-8ee42d2b496b', param: null } }

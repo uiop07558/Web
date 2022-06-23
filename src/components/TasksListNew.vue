@@ -336,7 +336,6 @@ export default {
     const projects = computed(() => store.state.projects.projects)
     const createTaskText = ref('')
     const status = computed(() => store.state.tasks.status)
-    const localization = computed(() => store.state.localization.localization)
     const user = computed(() => store.state.user.user)
     const newConfig = computed(() => store.state.tasks.newConfig)
     const storeTasks = computed(() => store.state.tasks.newtasks)
@@ -849,8 +848,7 @@ export default {
       user,
       taskcomment,
       checklist,
-      colors: computed(() => store.state.colors.colors),
-      localization
+      colors: computed(() => store.state.colors.colors)
     }
   },
   data () {

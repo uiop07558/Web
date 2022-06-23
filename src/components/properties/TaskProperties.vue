@@ -819,7 +819,6 @@ export default {
       tags: computed(() => store.state.tasks.tags),
       employees: computed(() => store.state.employees.employees),
       projects: computed(() => store.state.projects.projects),
-      localization: computed(() => store.state.localization.localization),
       colors: computed(() => store.state.colors.colors),
       mycolors: computed(() => store.state.colors.mycolors),
       cusers: cusers,

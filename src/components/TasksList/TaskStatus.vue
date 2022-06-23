@@ -29,16 +29,16 @@ const props = defineProps({
 const emit = defineEmits(['nextTask'])
 
 const statusesLabels = [
-  'status_not_begin',
-  'status_ready',
-  'task_by_link',
-  'status_note',
-  'status_in_work',
-  'status_task_ready',
-  'status_paused',
-  'status_cancelled',
-  'status_reject',
-  'status_refine'
+  'Не началось',
+  'Задача выполнена',
+  'Задача по ссылке',
+  'Заметка',
+  'В работе',
+  'Готово к сдаче',
+  'Отложено',
+  'Отменено',
+  'Отклонено',
+  'На доработку'
 ]
 
 const statusColor = {
@@ -65,7 +65,6 @@ const store = useStore()
 const user = computed(() => store.state.user.user)
 const isTaskStatusPopperActive = ref(false)
 const isDark = computed(() => store.state.darkMode)
-const localization = computed(() => store.state.localization.localization)
 const storeNavigator = computed(() => store.state.navigator.navigator)
 const colors = computed(() => store.state.colors.colors)
 const calendarDates = computed(() => store.state.calendar[1].dates)
@@ -147,7 +146,7 @@ const changeTaskStatus = (uid, status) => {
                 :height="statuses[taskStatus - 1].height"
               />
             </div>
-            {{ localization[statusesLabels[taskStatus - 1]] }}
+            {{ statusesLabels[taskStatus - 1] }}
           </div>
         </div>
       </div>
