@@ -45,7 +45,7 @@ const changeUserPhone = (phone) => {
 }
 
 const userPhone = function () {
-  const phone = user.value.current_user_phone
+  const phone = user.value?.current_user_phone ?? ''
   const index = phone.lastIndexOf(' ("')
   if (index !== -1) {
     return phone.slice(0, index)

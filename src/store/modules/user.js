@@ -1,9 +1,13 @@
 import axios from 'axios'
 import { notify } from 'notiwind'
-import { USER_ERROR, USER_REQUEST, USER_SUCCESS, USER_CHANGE_PHOTO, USER_CHANGE_PHONE } from '../actions/user'
+import {
+  USER_CHANGE_PHONE, USER_CHANGE_PHOTO, USER_ERROR,
+  USER_REQUEST,
+  USER_SUCCESS
+} from '../actions/user'
 
 const state = {
-  user: false,
+  user: null,
   status: '',
   hasLoadedOnce: false
 }
