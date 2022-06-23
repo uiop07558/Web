@@ -1,17 +1,17 @@
+import { setLocalStorageItem } from '@/store/helpers/functions'
+import axios from 'axios'
+import { notify } from 'notiwind'
 import {
-  AUTH_REQUEST,
   AUTH_ERROR,
-  AUTH_SUCCESS,
   AUTH_LOGOUT,
   AUTH_REGISTER,
-  AUTH_RESET
+  AUTH_REQUEST,
+  AUTH_RESET,
+  AUTH_SUCCESS
 } from '../actions/auth'
 import { RESET_STATE_NAVIGATOR } from '../actions/navigator'
-import { setLocalStorageItem } from '@/store/helpers/functions'
-import { RESET_STATE_TASKS, PROJECT_TASKS_REQUEST } from '../actions/tasks'
 import { RESET_STATE_PROJECT } from '../actions/projects'
-import { notify } from 'notiwind'
-import axios from 'axios'
+import { PROJECT_TASKS_REQUEST, RESET_STATE_TASKS } from '../actions/tasks'
 
 const state = {
   token: localStorage.getItem('user-token') || '',
@@ -21,8 +21,8 @@ const state = {
 }
 
 const getters = {
-  isAuthenticated: state => !!state.token,
-  authStatus: state => state.status
+  isAuthenticated: (state) => !!state.token,
+  authStatus: (state) => state.status
 }
 
 const actions = {
@@ -30,21 +30,25 @@ const actions = {
     return new Promise((resolve, reject) => {
       commit(AUTH_REQUEST)
       axios({ url: uri, method: 'POST' })
-        .then(resp => {
+        .then((resp) => {
           setLocalStorageItem('user-token', resp.data.access_token)
           setLocalStorageItem('user-refresh-token', resp.data.refresh_token)
           axios.defaults.headers.common.Authorization = resp.data.access_token
           commit(AUTH_SUCCESS, resp)
           resolve(resp)
-        }).catch(err => {
+        })
+        .catch((err) => {
           commit(AUTH_ERROR, err)
           localStorage.removeItem('user-token')
-          notify({
-            group: 'api',
-            title: 'REST API Error, please make screenshot',
-            action: AUTH_REQUEST,
-            text: err.response.data
-          }, 15000)
+          notify(
+            {
+              group: 'api',
+              title: 'REST API Error, please make screenshot',
+              action: AUTH_REQUEST,
+              text: err.response?.data ?? err
+            },
+            15000
+          )
           reject(err)
         })
     })
@@ -54,22 +58,26 @@ const actions = {
       commit(AUTH_REGISTER)
       const uri = process.env.VUE_APP_LEADERTASK_API + 'api/v1/users/new'
       axios({ url: uri, data: user, method: 'POST' })
-        .then(resp => {
+        .then((resp) => {
           console.log(resp)
           setLocalStorageItem('user-token', resp.data.access_token)
           setLocalStorageItem('user-refresh-token', resp.data.refresh_token)
           axios.defaults.headers.common.Authorization = resp.data.access_token
           commit(AUTH_SUCCESS, resp)
           resolve(resp)
-        }).catch(err => {
+        })
+        .catch((err) => {
           commit(AUTH_ERROR, err)
           localStorage.removeItem('user-token')
-          notify({
-            group: 'api',
-            title: 'REST API Error, please make screenshot',
-            action: AUTH_REGISTER,
-            text: err.response.data
-          }, 15000)
+          notify(
+            {
+              group: 'api',
+              title: 'REST API Error, please make screenshot',
+              action: AUTH_REGISTER,
+              text: err.response?.data ?? err
+            },
+            15000
+          )
           reject(err)
         })
     })
@@ -86,17 +94,22 @@ const actions = {
       commit(PROJECT_TASKS_REQUEST)
       commit(AUTH_REQUEST)
       commit(AUTH_RESET)
-      axios.get(url)
-        .then(resp => {
+      axios
+        .get(url)
+        .then((resp) => {
           resolve(resp)
-        }).catch(err => {
+        })
+        .catch((err) => {
           commit(AUTH_ERROR, err)
-          notify({
-            group: 'api',
-            title: 'REST API Error, please make screenshot',
-            action: AUTH_LOGOUT,
-            text: err.response.data
-          }, 15000)
+          notify(
+            {
+              group: 'api',
+              title: 'REST API Error, please make screenshot',
+              action: AUTH_LOGOUT,
+              text: err.response?.data ?? err
+            },
+            15000
+          )
           reject(err)
         })
     })
@@ -104,10 +117,10 @@ const actions = {
 }
 
 const mutations = {
-  [AUTH_REQUEST]: state => {
+  [AUTH_REQUEST]: (state) => {
     state.status = 'loading'
   },
-  [AUTH_REGISTER]: state => {
+  [AUTH_REGISTER]: (state) => {
     state.status = 'loading'
   },
   [AUTH_SUCCESS]: (state, resp) => {
@@ -115,21 +128,16 @@ const mutations = {
     state.token = resp.data.access_token
     state.hasLoadedOnce = true
   },
-  [AUTH_ERROR]: state => {
+  [AUTH_ERROR]: (state) => {
     state.status = 'error'
     state.hasLoadedOnce = true
   },
-  [AUTH_LOGOUT]: state => {
+  [AUTH_LOGOUT]: (state) => {
     state.token = ''
     window.location.href += 'login'
   },
   [AUTH_RESET]: (state, index) => {
-    if (index === state.navStack.length - 1 || state.navStack.length === 1) {
-      return
-    }
-    console.log(state.navStack)
-    state.navStack.splice(index + 1, (state.navStack.length - 1) - index)
-    setLocalStorageItem('navStack', JSON.stringify(state.navStack))
+    setLocalStorageItem('navStack', '')
   }
 }
 
