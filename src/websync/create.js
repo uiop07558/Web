@@ -29,7 +29,6 @@ export default function processCreate (obj) {
       createTag(obj)
       break
     case TYPES.TYPE_OBJECT_PROJECT:
-      console.log('TYPE_OBJECT_PROJECT', obj)
       if (obj.obj.email_creator !== currentUserEmail()) {
         showNotify({
           uid: obj.uid_json,

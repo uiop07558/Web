@@ -36,7 +36,7 @@ const navig = computed(() => store.state.navig)
 
 const store = useStore()
 
-const user = computed(() => store.state.user.user)
+const licenseType = computed(() => store.state.user.user?.license_type ?? 0)
 
 const componentClass = computed(() => {
   const base = [
@@ -211,14 +211,53 @@ const submit = e => {
         </div>
         <div class="follow-us">
           <div class="social">
-            <div class="title" style="display:none;">
+            <div
+              class="title"
+              style="display:none;"
+            >
               <strong>Следите за нами</strong>
             </div>
             <ul class="networks">
-              <li class="android" title="Android"><a href="https://play.google.com/store/apps/details?id=com.ashberrysoft.leadertask&utm_source=leadertask.ru" title="Android" target="_blank">android</a></li>
-              <li class="ios" title="ios"><a href="https://apps.apple.com/ru/app/leadertask/id648864820?ls=1" title="ios" target="_blank">ios</a></li>
-              <li class="mac" title="mac"><a href="https://apps.apple.com/ru/app/leadertask/id1537366700?mt=12" title="mac" target="_blank">mac</a></li>
-              <li class="windows" title="windows"><a href="https://www.leadertask.com/download/leadertask.exe" title="windows" target="_blank">windows</a></li>
+              <li
+                class="android"
+                title="Android"
+              >
+                <a
+                  href="https://play.google.com/store/apps/details?id=com.ashberrysoft.leadertask&utm_source=leadertask.ru"
+                  title="Android"
+                  target="_blank"
+                >android</a>
+              </li>
+              <li
+                class="ios"
+                title="ios"
+              >
+                <a
+                  href="https://apps.apple.com/ru/app/leadertask/id648864820?ls=1"
+                  title="ios"
+                  target="_blank"
+                >ios</a>
+              </li>
+              <li
+                class="mac"
+                title="mac"
+              >
+                <a
+                  href="https://apps.apple.com/ru/app/leadertask/id1537366700?mt=12"
+                  title="mac"
+                  target="_blank"
+                >mac</a>
+              </li>
+              <li
+                class="windows"
+                title="windows"
+              >
+                <a
+                  href="https://www.leadertask.com/download/leadertask.exe"
+                  title="windows"
+                  target="_blank"
+                >windows</a>
+              </li>
             </ul>
           </div>
         </div>
@@ -226,8 +265,8 @@ const submit = e => {
       <div class="w-full flex-wrap">
         <header
           v-if="title"
-          :class="{'bg-[#FFF2E0]': user.license_type == 0, 'bg-[#FFF2E0]': user.license_type == 1, 'bg-[#FFF2E0]': user.license_type == 2, 'bg-[#FFF2E0]': user.license_type == 3}"
-          class="mt-[35.5px] flex w-full h-[5%] items-stretch mb-1 w-full"
+          :class="{'bg-[#FFF2E0]': licenseType == 0, 'bg-[#FFF2E0]': licenseType == 1, 'bg-[#FFF2E0]': licenseType == 2, 'bg-[#FFF2E0]': licenseType == 3}"
+          class="mt-[35.5px] flex w-full h-[5%] items-stretch mb-1"
         >
           <a
             v-if="computedHeaderIcon && navig === 3"

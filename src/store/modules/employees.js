@@ -59,7 +59,7 @@ const actions = {
     commit('ChangeEmployeeDep', data)
     return 'ok'
   },
-  [EMPLOYEE.CHANGE_EMPLOYEE_NAME]: ({ commit, dispatch }, data) => {
+  [EMPLOYEE.CHANGE_EMPLOYEE_NAME]: ({ commit, dispatch, rootState }, data) => {
     return new Promise((resolve, reject) => {
       const url =
         process.env.VUE_APP_LEADERTASK_API +
@@ -70,6 +70,11 @@ const actions = {
       axios({ url: url, method: 'PATCH' })
         .then((resp) => {
           commit('ChangeEmployeeName', data)
+          const currentUserEmail =
+            rootState.user.user?.current_user_email?.toLowerCase()
+          if (data.email.toLowerCase() === currentUserEmail) {
+            commit('ChangeCurrentUserName', data.name)
+          }
           resolve(resp)
         })
         .catch((err) => {

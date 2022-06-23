@@ -156,23 +156,23 @@
           />
           <!-- Customer -->
           <TaskListTagLabel
-            v-if="props.node.info.uid_customer != '00000000-0000-0000-0000-000000000000' && employees[props.node.info.uid_customer] && props.node.info.uid_customer != user.current_user_uid"
+            v-if="props.node.info.uid_customer != '00000000-0000-0000-0000-000000000000' && employees[props.node.info.uid_customer] && props.node.info.uid_customer != currentUserUid"
             :text="employees[props.node.info.uid_customer].name"
-            :color-bg-class="{ 'border-red-500': user.current_user_email == props.node.info.email_performer, 'bg-gray-400': user.current_user_email != props.node.info.email_performer, 'bg-opacity-50': props.node.info.status == 1 || props.node.info.status == 7, 'bg-red-500': user.current_user_email == props.node.info.email_performer }"
+            :color-bg-class="{ 'border-red-500': currentUserEmail == props.node.info.email_performer, 'bg-gray-400': currentUserEmail != props.node.info.email_performer, 'bg-opacity-50': props.node.info.status == 1 || props.node.info.status == 7, 'bg-red-500': currentUserEmail == props.node.info.email_performer }"
             icon-height="15"
             :image="employees[props.node.info.uid_customer] ? employees[props.node.info.uid_customer].fotolink : ''"
             class="h-[22px]"
           />
           <!-- Performer -->
           <TaskListTagLabel
-            v-if="props.node.info.email_performer && employeesByEmail[props.node.info.email_performer] && user.current_user_email != props.node.info.email_performer && employees[props.node.info.uid_customer].email != props.node.info.email_performer"
+            v-if="props.node.info.email_performer && employeesByEmail[props.node.info.email_performer] && currentUserEmail != props.node.info.email_performer && employees[props.node.info.uid_customer].email != props.node.info.email_performer"
             :text="employeesByEmail[props.node.info.email_performer].name"
             :icon-width="props.node.info.performerreaded ? performerRead.width : performerNotRead.width"
             :icon-height="props.node.info.performerreaded ? performerRead.height : performerNotRead.height"
             :icon-box="props.node.info.performerreaded ? performerRead.viewBox : performerNotRead.viewBox"
             :icon-path="props.node.info.performerreaded ? performerRead.path : performerNotRead.path"
             :image="employees[props.node.info.uid_performer] ? employees[props.node.info.uid_performer].fotolink : ''"
-            :color-bg-class="{ 'bg-gray-400': user.current_user_email != props.node.info.email_performer, 'bg-green-500': user.current_user_uid == props.node.info.uid_customer, 'bg-opacity-50': props.node.info.status == 1 || props.node.info.status == 7 }"
+            :color-bg-class="{ 'bg-gray-400': currentUserEmail != props.node.info.email_performer, 'bg-green-500': currentUserUid == props.node.info.uid_customer, 'bg-opacity-50': props.node.info.status == 1 || props.node.info.status == 7 }"
             class="h-[22px]"
           />
           <!-- Overdue -->
@@ -255,7 +255,7 @@
 
         <TaskListActionHoverPanel
           class="absolute right-[8px] top-[calc(50%-18px)] hidden group-hover:flex"
-          :is-my-task="props.node.info.uid_customer == user.current_user_uid"
+          :is-my-task="props.node.info.uid_customer == currentUserUid"
           :can-paste="Object.keys(copiedTasks).length"
           @click.stop
           @addSubtask="addSubtask(props.node.info)"
@@ -349,26 +349,6 @@ export default {
     const lastVisitedDate = computed(() => {
       return (navStack.value && navStack.value.length && navStack.value[navStack.value.length - 1].value && navStack.value[navStack.value.length - 1].value.uid && navStack.value[navStack.value.length - 1].value.uid === '901841d9-0016-491d-ad66-8ee42d2b496b' && navStack.value[navStack.value.length - 1].value.param ? new Date(navStack.value[navStack.value.length - 1].value.param) : new Date())
     })
-
-    /*
-    watch(() => {
-      if (storeTasks.value && settings.value) {
-        if (settings.value.add_task_to_begin && navStack.value[0].greedPath === 'new_private_projects') {
-          const tasksToLift = []
-          for (const elem in storeTasks.value) {
-            if (storeTasks.value[elem].info.email_performer === user.value.current_user_email) {
-              storeTasks.value[elem].info._justCreated = false
-              tasksToLift.push(storeTasks.value[elem].info)
-              store.commit(TASK.REMOVE_TASK, elem)
-            }
-          }
-          for (const elem in tasksToLift) {
-            store.commit(TASK.ADD_TASK, tasksToLift[elem])
-          }
-        }
-      }
-    })
-    */
 
     const isPropertiesMobileExpanded = computed(() => store.state.isPropertiesMobileExpanded)
     const copiedTasks = computed(() => store.state.tasks.copiedTasks)
@@ -741,19 +721,25 @@ export default {
       })
     }
     const nodeDragEnd = (node) => {
-      console.log(node.dragged.node.id)
       if (storeTasks.value[node.dragged.node.id]) {
         // change order in children
         if (storeTasks.value[node.dragged.node.id].parent) {
-          console.log('Переместил в чилдрен')
           const parent = storeTasks.value[storeTasks.value[node.dragged.node.id].parent]
           if (parent.children.length >= 1) {
             for (let i = 0; i < parent.children.length; i++) {
               if (parent.children[i] === node.dragged.node.id) {
                 if (i === 0) {
-                  storeTasks.value[parent.children[i]].info.order_new = storeTasks.value[parent.children[i + 1]].info.order_new - 0.1
+                  if (storeTasks.value[parent.children[i + 1]]?.info) {
+                    storeTasks.value[parent.children[i]].info.order_new = storeTasks.value[parent.children[i + 1]].info.order_new - 0.1
+                  } else {
+                    storeTasks.value[parent.children[i]].info.order_new = 1
+                  }
                 } else if (i > 0 && i !== parent.children.length - 1) {
-                  storeTasks.value[parent.children[i]].info.order_new = (storeTasks.value[parent.children[i - 1]].info.order_new + storeTasks.value[parent.children[i + 1]].info.order_new) / 2
+                  if (storeTasks.value[parent.children[i + 1]]?.info) {
+                    storeTasks.value[parent.children[i]].info.order_new = (storeTasks.value[parent.children[i - 1]].info.order_new + storeTasks.value[parent.children[i + 1]].info.order_new) / 2
+                  } else {
+                    storeTasks.value[parent.children[i]].info.order_new = 1
+                  }
                 } else {
                   storeTasks.value[parent.children[i]].info.order_new = storeTasks.value[parent.children[i - 1]].info.order_new + 0.1
                 }
@@ -881,6 +867,12 @@ export default {
     }
   },
   computed: {
+    currentUserEmail () {
+      return this.$store.state.user.user?.current_user_email ?? ''
+    },
+    currentUserUid () {
+      return this.$store.state.user.user?.current_user_uid ?? ''
+    },
     modalBoxDeleteText () {
       let text = 'Вы действительно хотите удалить задачу?'
       if (this.storeTasks[this.lastSelectedTaskUid]?.children.length > 0) {

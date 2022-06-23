@@ -349,6 +349,16 @@ const getContrastYIQ = function (hexcolor) {
   const yiq = (r * 299 + g * 587 + b * 114) / 1000
   return yiq >= 128 ? '#4C4C4D' : 'white'
 }
+
+const getValidForeColor = function (foreColor) {
+  if (foreColor && foreColor !== '#A998B6') return foreColor
+  return '#4c4c4d'
+}
+
+const getValidBackColor = function (backColor) {
+  if (backColor && backColor !== '#A998B6') return backColor
+  return '#f4f5f7'
+}
 </script>
 
 <template>
@@ -500,7 +510,7 @@ const getContrastYIQ = function (hexcolor) {
           >
             <div
               v-show="key < 4"
-              :style="{ 'color':getContrastYIQ(tag.back_color), 'background-color': tag.back_color || '#F4F5F7'}"
+              :style="{ 'color': getContrastYIQ(tag.back_color), 'background-color': getValidBackColor(tag.back_color) }"
               class="flex items-center bg-[#F4F5F7] rounded-[4px] min-h-[28px]"
               style="padding: 4px 7px 4px 6px;"
               @click="props.selectTag(tag)"
@@ -525,7 +535,9 @@ const getContrastYIQ = function (hexcolor) {
           >
             <span
               class="text-[#4C4C4D] font-[400] text-[13px] leading-[15px]"
-            >Я не смог найти метку {{ inputMessage }}</span>
+            >
+              Я не смог найти метку {{ inputMessage }}
+            </span>
           </p>
         </div>
 
@@ -543,12 +555,12 @@ const getContrastYIQ = function (hexcolor) {
               v-show="index < 4"
               class="flex items-center bg-[#F4F5F7] rounded-[4px] min-h-[28px] space-x-[6px]"
               style="padding: 4px 7px 4px 6px;"
-              :style="{ 'background-color': color.back_color || '#F4F5F7'}"
+              :style="{ 'background-color': getValidBackColor(color.back_color) }"
               @click="props.selectColor(color)"
             >
               <icon
                 v-if="color.uid !== 'no_set'"
-                :style="{ 'color': color.fore_color || '#F4F5F7'}"
+                :style="{ 'color': getValidForeColor(color.fore_color) }"
                 :path="colorIcon.path"
                 :width="18"
                 :height="18"
@@ -556,7 +568,7 @@ const getContrastYIQ = function (hexcolor) {
                 class="text-gray-500 mr-0.3 mt-0.5 mb-0.5 ml-0.5"
               />
               <span
-                :style="{ 'color': color.fore_color || '#4C4C4D' }"
+                :style="{ 'color': getValidForeColor(color.fore_color) }"
                 class="text-[#4C4C4D] font-[400] text-[13px] leading-[15px]"
               >{{
                 color.name.length > 16
@@ -568,7 +580,9 @@ const getContrastYIQ = function (hexcolor) {
           <span
             v-if="Object.keys(computedColors).length === 0"
             class="text-[#4C4C4D] font-[400] text-[13px] leading-[15px]"
-          >Я не смог найти цвет {{ inputMessage }}</span>
+          >
+            Я не смог найти цвет {{ inputMessage }}
+          </span>
         </div>
 
         <!-- Select time -->
