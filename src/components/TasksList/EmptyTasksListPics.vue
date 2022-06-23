@@ -14,9 +14,9 @@ const shouldShowEmptyPics = computed(() => {
   } else { return false }
 })
 const DATE_UID = '901841d9-0016-491d-ad66-8ee42d2b496b'
-const TAG_UID = '00a5b3de-9474-404d-b3ba-83f488ac6d30'
+// const TAG_UID = '00a5b3de-9474-404d-b3ba-83f488ac6d30'
 const COLOR_UID = 'ed8039ae-f3de-4369-8f32-829d401056e9'
-const PRIVATE_PROJECT_UID = '7af232ff-0e29-4c27-a33b-866b5fd6eade'
+// const PRIVATE_PROJECT_UID = '7af232ff-0e29-4c27-a33b-866b5fd6eade'
 const currentImageIndex = ref(Math.floor(Math.random() * 3))
 const dateToLabelFormat = function (calendarDate) {
   const day = calendarDate.getDate()
@@ -94,7 +94,7 @@ const goToNextDay = function () {
   </div>
 
   <!-- PROJECT -->
-  <div v-if="navStack[navStack.length - 1].value?.uid == PRIVATE_PROJECT_UID">
+  <div v-if="navStack[navStack.length - 1].greedPath == 'projects_children'">
     <div
       class="pointer-events-none max-w-xl mx-auto"
     >
@@ -172,7 +172,7 @@ const goToNextDay = function () {
   </div>
 
   <!-- TAG -->
-  <div v-if="navStack[navStack.length - 1].value?.uid == TAG_UID">
+  <div v-if="navStack[navStack.length - 1].greedPath == 'tags_children'">
     <div
       class="pointer-events-none max-w-xl mx-auto"
     >

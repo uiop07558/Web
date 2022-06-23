@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref, watch, provide } from 'vue'
+import { computed, ref, watch, provide, nextTick } from 'vue'
 import { useStore } from 'vuex'
 import { shouldAddTaskIntoList } from '@/websync/utils'
 
@@ -155,38 +155,45 @@ const lastSelected = (obj) => {
   lastSelectedObj = obj ? { ...obj } : null
 }
 
+function clearInputMessageAndFocus () {
+  inputMessage.value = ''
+  nextTick(() => {
+    input.value.focus({ preventScroll: false })
+  })
+}
+
 function onMessageSelectEmployee (message) {
   if (lastSelectedObj) {
     selectEmployee(lastSelectedObj)
-    inputMessage.value = ''
+    clearInputMessageAndFocus()
   }
 }
 
 function onMessageSelectProject (message) {
   if (lastSelectedObj) {
     selectProject(lastSelectedObj)
-    inputMessage.value = ''
+    clearInputMessageAndFocus()
   }
 }
 
 function onMessageSelectTag (message) {
   if (lastSelectedObj) {
     selectTag(lastSelectedObj)
-    inputMessage.value = ''
+    clearInputMessageAndFocus()
   }
 }
 
 function onMessageSelectColor (message) {
   if (lastSelectedObj) {
     selectColor(lastSelectedObj)
-    inputMessage.value = ''
+    clearInputMessageAndFocus()
   }
 }
 
 function onMessageSelectAccess (message) {
   if (lastSelectedObj) {
     selectAccess(lastSelectedObj)
-    inputMessage.value = ''
+    clearInputMessageAndFocus()
   }
 }
 
@@ -196,21 +203,21 @@ function onMessageSelectTime (message) {
       name: lastSelectedObj.name,
       date: lastSelectedObj.value.toISOString()
     })
-    inputMessage.value = ''
+    clearInputMessageAndFocus()
   }
 }
 
 function onMessageAddParams (message) {
   if (lastSelectedObj) {
     actionConfirmNewParams(lastSelectedObj.value)
-    inputMessage.value = ''
+    clearInputMessageAndFocus()
   }
 }
 
 function onMessageConfirm (message) {
   if (lastSelectedObj) {
     actionConfirmDelegate(lastSelectedObj.value)
-    inputMessage.value = ''
+    clearInputMessageAndFocus()
   }
 }
 
@@ -226,7 +233,7 @@ const addCustomerMessage = () => {
         createDate: new Date().toISOString()
       })
       currentState.value = 'employeeSelection'
-      inputMessage.value = ''
+      clearInputMessageAndFocus()
       return
     } else {
       return
@@ -282,7 +289,7 @@ const addCustomerMessage = () => {
       createDate: new Date().toISOString()
     })
     currentState.value = 'taskComment'
-    inputMessage.value = ''
+    clearInputMessageAndFocus()
     return
   }
 
@@ -297,10 +304,10 @@ const addCustomerMessage = () => {
       createDate: new Date().toISOString()
     })
     currentState.value = 'employeeSelection'
-    inputMessage.value = ''
+    clearInputMessageAndFocus()
     return
   }
-  inputMessage.value = ''
+  clearInputMessageAndFocus()
 }
 
 const selectEmployee = (emp) => {
@@ -319,8 +326,8 @@ const selectEmployee = (emp) => {
       type: 'timeSelection',
       createDate: new Date().toISOString()
     })
-    inputMessage.value = ''
     currentState.value = 'timeSelection'
+    clearInputMessageAndFocus()
   }
 }
 
@@ -358,8 +365,8 @@ const selectTag = (tag) => {
       type: 'colorSelection',
       createDate: new Date().toISOString()
     })
-    inputMessage.value = ''
     currentState.value = 'colorSelection'
+    clearInputMessageAndFocus()
   }
 }
 
@@ -378,8 +385,8 @@ const selectColor = (color) => {
       type: 'accessSelection',
       createDate: new Date().toISOString()
     })
-    inputMessage.value = ''
     currentState.value = 'accessSelection'
+    clearInputMessageAndFocus()
   }
 }
 
@@ -398,8 +405,8 @@ const selectAccess = (emp) => {
       type: 'confirmDelegate',
       createDate: new Date().toISOString()
     })
-    inputMessage.value = ''
     currentState.value = 'confirmDelegate'
+    clearInputMessageAndFocus()
   }
 }
 
@@ -438,8 +445,8 @@ const actionConfirmNewParams = (confirmed) => {
       type: 'tagSelection',
       createDate: new Date().toISOString()
     })
-    inputMessage.value = ''
     currentState.value = 'tagSelection'
+    clearInputMessageAndFocus()
   } else {
     messages.value.push({
       message: 'Нет',
@@ -491,6 +498,12 @@ const actionConfirmDelegate = (confirmed) => {
     cancel()
   }, 3000)
 }
+
+function onSelectItem (item) {
+  const selector = `.inspector-option-item${item}`
+  const option = document.querySelector(selector)
+  if (option) option.click({ preventScroll: false })
+}
 </script>
 
 <template>
@@ -535,6 +548,14 @@ const actionConfirmDelegate = (confirmed) => {
           placeholder="Написать сообщение..."
           @keyup.enter="addCustomerMessage"
           @keyup.esc="cancel"
+          @keydown.meta.1.prevent="onSelectItem(1)"
+          @keydown.ctrl.1.prevent="onSelectItem(1)"
+          @keydown.meta.2.prevent="onSelectItem(2)"
+          @keydown.ctrl.2.prevent="onSelectItem(2)"
+          @keydown.meta.3.prevent="onSelectItem(3)"
+          @keydown.ctrl.3.prevent="onSelectItem(3)"
+          @keydown.meta.4.prevent="onSelectItem(4)"
+          @keydown.ctrl.4.prevent="onSelectItem(4)"
         >
       </div>
     </card-component>

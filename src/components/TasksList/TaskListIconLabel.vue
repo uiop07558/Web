@@ -1,6 +1,6 @@
 <template>
   <div
-    class="bg-gray-100 rounded-[4px] px-2 mr-1 whitespace-nowrap flex items-center"
+    class="bg-gray-100 rounded-[4px] px-2 whitespace-nowrap flex items-center"
   >
     <Icon
       v-if="iconPath"
