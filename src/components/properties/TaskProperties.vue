@@ -1045,8 +1045,7 @@ export default {
       // const minutes = this.pad2(date.getUTCMinutes())
       // const seconds = this.pad2(date.getUTCSeconds())
       // const dateCreate = year + '-' + month + '-' + day + 'T' + hours + ':' + minutes + ':' + seconds
-      let msgtask = msg || this.taskMsg
-      console.log('msgtask', msgtask, msg, this.taskMsg)
+      let msgtask = msg.target.value ?? this.taskMsg
       msgtask = msgtask.trim()
       msgtask = msgtask.replaceAll('&', '&amp;')
       msgtask = msgtask.replaceAll('<', '&lt;')
@@ -2172,7 +2171,6 @@ export default {
     <div
       id="drop-area"
       class="input-group bg-gray-100 rounded-[10px] mt-2"
-      draggable="true"
       @drop="drop($refs.file_attach)"
       @dragover="allowDrop($refs.file_attach)"
       @dragstart="dragStart"
@@ -2211,7 +2209,6 @@ export default {
         class="form-control mt-[6px] mb-[8px] text-group-design task-msg overflow-auto scroll-style dark:bg-gray-800 dark:text-gray-100 focus:ring-0"
         placeholder="Напишите сообщение..."
         rows="58"
-        draggable="true"
         @input="onInputTaskMsg"
         @drop="drop($refs.file_attach)"
         @dragover="allowDrop($refs.file_attach)"
