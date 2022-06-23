@@ -1,8 +1,9 @@
 <script setup>
-import { computed, ref } from 'vue'
+import { computed } from 'vue'
 import { useStore } from 'vuex'
-import Popper from 'vue3-popper'
 import Icon from '@/components/Icon.vue'
+import PopMenu from '@/components/modals/PopMenu.vue'
+import PopMenuItem from '@/components/modals/PopMenuItem.vue'
 
 import * as TASK from '@/store/actions/tasks'
 
@@ -62,17 +63,10 @@ const statuses = [
 ]
 
 const store = useStore()
-const user = computed(() => store.state.user.user)
-const isTaskStatusPopperActive = ref(false)
-const isDark = computed(() => store.state.darkMode)
 const storeNavigator = computed(() => store.state.navigator.navigator)
 const colors = computed(() => store.state.colors.colors)
 const calendarDates = computed(() => store.state.calendar[1].dates)
 const daysWithTasks = computed(() => store.state.tasks.daysWithTasks)
-
-const toggleTaskStatusPopper = (val) => {
-  isTaskStatusPopperActive.value = val
-}
 
 const showStatusOrNot = (type, status) => {
   if (type === 1 && [0, 1, 3, 4, 6, 7].includes(status)) {
@@ -109,47 +103,35 @@ const changeTaskStatus = (uid, status) => {
 </script>
 
 <template>
-  <Popper
-    arrow
-    :class="isDark ? 'dark' : 'light'"
-    placement="left"
+  <PopMenu
     :disabled="props.task.type == 4"
-    @click.stop="toggleTaskStatusPopper(true)"
-    @open:popper="toggleTaskStatusPopper(true)"
-    @close:popper="toggleTaskStatusPopper(false)"
+    placement="left"
   >
-    <template #content="{ close }">
-      <div
-        v-if="!((props.task.uid_customer !== user.current_user_uid) && (props.task.status === 1))"
-        class="flex flex-col"
+    <template #menu>
+      <template
+        v-for="taskStatus in 10"
+        :key="taskStatus"
       >
-        <div
-          v-for="taskStatus in 10"
-          :key="taskStatus"
-          @click="close"
+        <PopMenuItem
+          v-if="showStatusOrNot(props.task.type, taskStatus - 1) && props.task.status !== (taskStatus - 1)"
+          @click="changeTaskStatus(props.task.uid, taskStatus - 1)"
         >
           <div
-            v-if="showStatusOrNot(props.task.type, taskStatus - 1) && props.task.status !== (taskStatus - 1)"
-            class="flex cursor-pointer items-center hover:bg-gray-100 hover:dark:bg-stone-800 py-0.5 px-1.5 rounded-xl"
-            @click="changeTaskStatus(props.task.uid, taskStatus - 1)"
+            class="border-2 border-gray-300 rounded-md flex items-center justify-center"
+            style="min-width:20px; min-height: 20px;"
           >
-            <div
-              class="border-2 border-gray-300 rounded-md flex items-center justify-center"
-              style="min-width:20px; min-height: 20px;"
-            >
-              <Icon
-                v-if="statuses[taskStatus - 1]"
-                :path="statuses[taskStatus - 1].path"
-                :class="statusColor[taskStatus - 1] ? statusColor[taskStatus - 1] : 'text-gray-500 dark:text-gray-100'"
-                :box="statuses[taskStatus - 1].viewBox"
-                :width="statuses[taskStatus - 1].width"
-                :height="statuses[taskStatus - 1].height"
-              />
-            </div>
-            {{ statusesLabels[taskStatus - 1] }}
+            <Icon
+              v-if="statuses[taskStatus - 1]"
+              :path="statuses[taskStatus - 1].path"
+              :class="statusColor[taskStatus - 1] ? statusColor[taskStatus - 1] : 'text-gray-500 dark:text-gray-100'"
+              :box="statuses[taskStatus - 1].viewBox"
+              :width="statuses[taskStatus - 1].width"
+              :height="statuses[taskStatus - 1].height"
+            />
           </div>
-        </div>
-      </div>
+          {{ statusesLabels[taskStatus - 1] }}
+        </PopMenuItem>
+      </template>
     </template>
     <div
       class="border-2 relative border-gray-300 rounded-md bg-white flex items-center justify-center"
@@ -174,5 +156,5 @@ const changeTaskStatus = (uid, status) => {
         :height="repeat.height"
       />
     </div>
-  </Popper>
+  </popmenu>
 </template>
