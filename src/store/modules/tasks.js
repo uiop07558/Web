@@ -1179,6 +1179,7 @@ const actions = {
         method: 'PATCH'
       })
         .then((resp) => {
+          commit(TASK.ADD_TO_LEAVES_TASKS_WITHOUT_CHILDREN)
           resolve(resp)
         })
         .catch((err) => {
@@ -1538,6 +1539,15 @@ const mutations = {
     state.ready = resp.data
     state.ready.title = 'Готово к сдаче'
     state.ready.link = 'd35fe0bc-1747-4eb1-a1b2-3411e07a92a0'
+  },
+  [TASK.ADD_TO_LEAVES_TASKS_WITHOUT_CHILDREN]: (state) => {
+    Object.keys(state.newtasks).forEach(key => {
+      if (state.newtasks[key]?.children?.length === 0) {
+        if (!state.newConfig.leaves.includes(state.newtasks[key]?.id)) {
+          state.newConfig.leaves.push(state.newtasks[key]?.id)
+        }
+      }
+    })
   },
   [TASK.ADD_TASK]: (state, task) => {
     if (!task._justCreated) {
