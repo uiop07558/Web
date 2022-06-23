@@ -1,7 +1,6 @@
 // icons for navigator
 import axios from 'axios'
 import { notify } from 'notiwind'
-import { computed } from 'vue'
 import { AUTH_LOGOUT } from '../actions/auth'
 import { PUSH_BOARD } from '../actions/boards'
 import { PUSH_COLOR, PUSH_MYCOLOR } from '../actions/colors'
@@ -203,9 +202,6 @@ const mutations = {
     state.status = 'success'
     state.hasLoadedOnce = true
 
-    const localization = computed(
-      () => resp.rootState.localization.localization
-    )
     console.log('navigator ', resp)
 
     // Push statickly tasks to menu array from state
@@ -239,7 +235,7 @@ const mutations = {
     ])
     state.menu.push([
       {
-        label: localization.value.Today,
+        label: 'Сегодня',
         uid: resp.data.tasks.items[0].uid,
         bold: resp.data.tasks.items[0].bold,
         icon: 'M8.69787 4.46611C8.69787 3.91238 9.14675 3.4635 9.70047 3.4635C10.2542 3.4635 10.7031 3.91238 10.7031 4.46611V5.18226H19.2969V4.46611C19.2969 3.91238 19.7457 3.4635 20.2995 3.4635C20.8532 3.4635 21.3021 3.91238 21.3021 4.46611V5.18226H23.0208C24.2865 5.18226 25.3125 6.20827 25.3125 7.47393V22.3698C25.3125 23.6355 24.2865 24.6615 23.0208 24.6615H6.97911C5.71346 24.6615 4.68744 23.6355 4.68744 22.3698V7.47393C4.68744 6.20827 5.71346 5.18226 6.97911 5.18226H8.69787V4.46611ZM19.2969 6.75778V7.90362C19.2969 8.45734 19.7457 8.90622 20.2995 8.90622C20.8532 8.90622 21.3021 8.45734 21.3021 7.90362V6.75778H23.0208C23.4163 6.75778 23.737 7.07841 23.737 7.47393V22.3698C23.737 22.7653 23.4163 23.086 23.0208 23.086H6.97911C6.58359 23.086 6.26296 22.7653 6.26296 22.3698V7.47393C6.26296 7.07841 6.58359 6.75778 6.97911 6.75778H8.69787V7.90362C8.69787 8.45734 9.14675 8.90622 9.70047 8.90622C10.2542 8.90622 10.7031 8.45734 10.7031 7.90362V6.75778H19.2969ZM9.61999 10.8333C8.90944 10.8333 8.33344 11.4224 8.33344 12.1491C8.33344 12.8758 8.90944 13.4649 9.61999 13.4649C10.3305 13.4649 10.9065 12.8758 10.9065 12.1491C10.9065 11.4224 10.3305 10.8333 9.61999 10.8333ZM15.4913 12.1491C15.4913 11.4224 16.0673 10.8333 16.7779 10.8333C17.4884 10.8333 18.0644 11.4224 18.0644 12.1491C18.0644 12.8758 17.4884 13.4649 16.7779 13.4649C16.0673 13.4649 15.4913 12.8758 15.4913 12.1491ZM15.4913 15.8333C15.4913 15.1066 16.0673 14.5175 16.7779 14.5175C17.4884 14.5175 18.0644 15.1066 18.0644 15.8333C18.0644 16.56 17.4884 17.1491 16.7779 17.1491C16.0673 17.1491 15.4913 16.56 15.4913 15.8333ZM15.4913 19.5175C15.4913 18.7908 16.0673 18.2017 16.7779 18.2017C17.4884 18.2017 18.0644 18.7908 18.0644 19.5175C18.0644 20.2442 17.4884 20.8333 16.7779 20.8333C16.0673 20.8333 15.4913 20.2442 15.4913 19.5175ZM19.0937 12.1491C19.0937 11.4224 19.6697 10.8333 20.3802 10.8333C21.0908 10.8333 21.6668 11.4224 21.6668 12.1491C21.6668 12.8758 21.0908 13.4649 20.3802 13.4649C19.6697 13.4649 19.0937 12.8758 19.0937 12.1491ZM19.0937 15.8333C19.0937 15.1066 19.6697 14.5175 20.3802 14.5175C21.0908 14.5175 21.6668 15.1066 21.6668 15.8333C21.6668 16.56 21.0908 17.1491 20.3802 17.1491C19.6697 17.1491 19.0937 16.56 19.0937 15.8333ZM19.0937 19.5175C19.0937 18.7908 19.6697 18.2017 20.3802 18.2017C21.0908 18.2017 21.6668 18.7908 21.6668 19.5175C21.6668 20.2442 21.0908 20.8333 20.3802 20.8333C19.6697 20.8333 19.0937 20.2442 19.0937 19.5175ZM8.33344 15.8333C8.33344 15.1066 8.90944 14.5175 9.61999 14.5175C10.3305 14.5175 10.9065 15.1066 10.9065 15.8333C10.9065 16.56 10.3305 17.1491 9.61999 17.1491C8.90944 17.1491 8.33344 16.56 8.33344 15.8333ZM8.33344 19.5175C8.33344 18.7908 8.90944 18.2017 9.61999 18.2017C10.3305 18.2017 10.9065 18.7908 10.9065 19.5175C10.9065 20.2442 10.3305 20.8333 9.61999 20.8333C8.90944 20.8333 8.33344 20.2442 8.33344 19.5175ZM11.9358 12.1491C11.9358 11.4224 12.5118 10.8333 13.2223 10.8333C13.9329 10.8333 14.5089 11.4224 14.5089 12.1491C14.5089 12.8758 13.9329 13.4649 13.2223 13.4649C12.5118 13.4649 11.9358 12.8758 11.9358 12.1491ZM11.9358 15.8333C11.9358 15.1066 12.5118 14.5175 13.2223 14.5175C13.9329 14.5175 14.5089 15.1066 14.5089 15.8333C14.5089 16.56 13.9329 17.1491 13.2223 17.1491C12.5118 17.1491 11.9358 16.56 11.9358 15.8333ZM11.9358 19.5175C11.9358 18.7908 12.5118 18.2017 13.2223 18.2017C13.9329 18.2017 14.5089 18.7908 14.5089 19.5175C14.5089 20.2442 13.9329 20.8333 13.2223 20.8333C12.5118 20.8333 11.9358 20.2442 11.9358 19.5175Z',
@@ -297,7 +293,7 @@ const mutations = {
     // state.menu.push('separator')
     state.menu.push([
       {
-        label: localization.value.Emps,
+        label: 'Сотрудники',
         uid: resp.data.emps.uid,
         bold: false,
         type: 'greed',
@@ -328,11 +324,11 @@ const mutations = {
     ])
     const newAssignments = []
     newAssignments.push({
-      dep: localization.value.Delegate_i,
+      dep: 'Поручено мной',
       items: resp.data.delegate_iam.items
     })
     newAssignments.push({
-      dep: localization.value.Delegate_tome,
+      dep: 'Поручено мне',
       items: resp.data.delegate_to_me.items
     })
     resp.data.new_delegate = newAssignments
@@ -358,12 +354,12 @@ const mutations = {
     // Array of objects where object is { dep: 'Dependency name', items: items }
     const itemsInProjectView = []
     itemsInProjectView.push({
-      dep: localization.value.Projects,
+      dep: 'Мои проекты',
       items: resp.data.private_projects.items,
       type: 'projects'
     })
     itemsInProjectView.push({
-      dep: localization.value.SharedProjects,
+      dep: 'Общие проекты',
       items: resp.data.common_projects.items,
       type: 'projects'
     })
@@ -519,14 +515,11 @@ const mutations = {
     }
   },
   NAVIGATOR_UPDATE_COLOR: (state, colors) => {
-    visitChildren(
-      state.navigator.colors.items,
-      (value, index) => {
-        if (value.uid === colors.uid) {
-          Object.assign(value, colors)
-        }
+    visitChildren(state.navigator.colors.items, (value, index) => {
+      if (value.uid === colors.uid) {
+        Object.assign(value, colors)
       }
-    )
+    })
   },
   NAVIGATOR_UPDATE_TAG: (state, tag) => {
     visitChildren(state.navigator.tags.items, (value) => {

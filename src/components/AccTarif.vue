@@ -3,8 +3,6 @@
 import { computed } from 'vue'
 import { useStore } from 'vuex'
 
-const localization = computed(() => store.state.localization.localization)
-
 const store = useStore()
 const user = computed(() => store.state.user.user)
 
@@ -13,7 +11,7 @@ const user = computed(() => store.state.user.user)
   <form class="px-5 text-lg">
     <div class="mt-[15px]">
       <p class="text-base font-medium">
-        {{ localization.owner_license }}
+        Владелец лицензии
       </p>
       <div class="flex mt-[15px]">
         <span class="relative mr-1.5">
@@ -113,7 +111,7 @@ const user = computed(() => store.state.user.user)
           </svg>
 
         </span>
-        <span class="text-sm">{{ user.total_mb }} {{ localization.megabytes }} ({{ user.percent_mb }}%)</span>
+        <span class="text-sm">{{ user.total_mb }} MB ({{ user.percent_mb }}%)</span>
       </div>
     </div>
     <div class="mt-[36px]">
@@ -122,7 +120,8 @@ const user = computed(() => store.state.user.user)
       </p>
       <div class="flex mt-[17px]">
         <span class="relative mr-1.5">
-          <svg class="hover:animate-spin"
+          <svg
+            class="hover:animate-spin"
             width="20"
             height="20"
             viewBox="0 0 20 20"
