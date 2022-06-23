@@ -308,7 +308,6 @@ const computedTimes = computed(() => {
   const times = {
     today: { uid: 'today', name: 'Сегодня', value: new Date() },
     tomorrow: { uid: 'tomorrow', name: 'Завтра', value: new Date(new Date().setDate(new Date().getDate() + 1)) },
-    oneDayLater: { uid: 'oneDayLater', name: 'Послезавтра', value: new Date(new Date().setDate(new Date().getDate() + 2)) },
     monday: { uid: 'monday', name: 'Понедельник', value: getNearestDay(new Date(), 1) },
     tuesday: { uid: 'tuesday', name: 'Вторник', value: getNearestDay(new Date(), 2) },
     wednesday: { uid: 'wednesday', name: 'Среда', value: getNearestDay(new Date(), 3) },
@@ -400,8 +399,9 @@ const getValidBackColor = function (backColor) {
             class="cursor-pointer"
           >
             <div
-              v-show="key < 4"
+              v-if="key < 4"
               class="flex items-center bg-[#F4F5F7] rounded-[4px]"
+              :class="[`inspector-option-item${key + 1}`]"
               style="padding: 4px 7px 4px 6px;"
               @click="props.selectEmployee(employee)"
             >
@@ -433,8 +433,9 @@ const getValidBackColor = function (backColor) {
             class="cursor-pointer"
           >
             <div
-              v-show="index < 4"
+              v-if="index < 4"
               class="flex items-center bg-[#F4F5F7] rounded-[4px] min-h-[28px]"
+              :class="[`inspector-option-item${index + 1}`]"
               style="padding: 4px 7px 4px 6px;"
               @click="props.selectAccess(employee)"
             >
@@ -469,6 +470,7 @@ const getValidBackColor = function (backColor) {
             <div
               v-if="key < 4"
               class="flex items-center bg-[#F4F5F7] rounded-[4px] min-h-[28px]"
+              :class="[`inspector-option-item${key + 1}`]"
               style="padding: 4px 7px 4px 6px;"
               @click="props.selectProject(project)"
             >
@@ -512,6 +514,7 @@ const getValidBackColor = function (backColor) {
               v-show="key < 4"
               :style="{ 'color': getContrastYIQ(tag.back_color), 'background-color': getValidBackColor(tag.back_color) }"
               class="flex items-center bg-[#F4F5F7] rounded-[4px] min-h-[28px]"
+              :class="[`inspector-option-item${key + 1}`]"
               style="padding: 4px 7px 4px 6px;"
               @click="props.selectTag(tag)"
             >
@@ -554,6 +557,7 @@ const getValidBackColor = function (backColor) {
             <div
               v-show="index < 4"
               class="flex items-center bg-[#F4F5F7] rounded-[4px] min-h-[28px] space-x-[6px]"
+              :class="[`inspector-option-item${index + 1}`]"
               style="padding: 4px 7px 4px 6px;"
               :style="{ 'background-color': getValidBackColor(color.back_color) }"
               @click="props.selectColor(color)"
@@ -597,6 +601,7 @@ const getValidBackColor = function (backColor) {
             <div
               v-if="index < 3"
               class="flex items-center bg-[#F4F5F7] rounded-[4px] space-x-[6px] cursor-pointer"
+              :class="[`inspector-option-item${index + 1}`]"
               style="padding: 4px 7px 4px 6px;"
               @click="props.selectTime({ name: time.name, date: time.value.toISOString() })"
             >
@@ -715,6 +720,7 @@ const getValidBackColor = function (backColor) {
             v-for="(confirm, _, index) in computedСonfirmParams"
             :key="index"
             class="flex items-center bg-[#F4F5F7] rounded-[4px] py-[10px] px-[14px] cursor-pointer"
+            :class="[`inspector-option-item${index + 1}`]"
             @click="props.actionConfirmNewParams(confirm.value)"
           >
             <span class="text-[#4C4C4D] font-[500] text-[13px] leading-[15px]">{{ confirm.name }}</span>
@@ -735,6 +741,7 @@ const getValidBackColor = function (backColor) {
             v-for="(confirm, _, index) in computedСonfirmDelegate"
             :key="index"
             class="flex items-center bg-[#F4F5F7] rounded-[4px] py-[10px] px-[14px] cursor-pointer"
+            :class="[`inspector-option-item${index + 1}`]"
             @click="props.actionConfirmDelegate(confirm.value)"
           >
             <span class="text-[#4C4C4D] font-[500] text-[13px] leading-[15px]"> {{ confirm.name }} </span>
