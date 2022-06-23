@@ -721,19 +721,25 @@ export default {
       })
     }
     const nodeDragEnd = (node) => {
-      console.log(node.dragged.node.id)
       if (storeTasks.value[node.dragged.node.id]) {
         // change order in children
         if (storeTasks.value[node.dragged.node.id].parent) {
-          console.log('Переместил в чилдрен')
           const parent = storeTasks.value[storeTasks.value[node.dragged.node.id].parent]
           if (parent.children.length >= 1) {
             for (let i = 0; i < parent.children.length; i++) {
               if (parent.children[i] === node.dragged.node.id) {
                 if (i === 0) {
-                  storeTasks.value[parent.children[i]].info.order_new = storeTasks.value[parent.children[i + 1]].info.order_new - 0.1
+                  if (storeTasks.value[parent.children[i + 1]]?.info) {
+                    storeTasks.value[parent.children[i]].info.order_new = storeTasks.value[parent.children[i + 1]].info.order_new - 0.1
+                  } else {
+                    storeTasks.value[parent.children[i]].info.order_new = 1
+                  }
                 } else if (i > 0 && i !== parent.children.length - 1) {
-                  storeTasks.value[parent.children[i]].info.order_new = (storeTasks.value[parent.children[i - 1]].info.order_new + storeTasks.value[parent.children[i + 1]].info.order_new) / 2
+                  if (storeTasks.value[parent.children[i + 1]]?.info) {
+                    storeTasks.value[parent.children[i]].info.order_new = (storeTasks.value[parent.children[i - 1]].info.order_new + storeTasks.value[parent.children[i + 1]].info.order_new) / 2
+                  } else {
+                    storeTasks.value[parent.children[i]].info.order_new = 1
+                  }
                 } else {
                   storeTasks.value[parent.children[i]].info.order_new = storeTasks.value[parent.children[i - 1]].info.order_new + 0.1
                 }
