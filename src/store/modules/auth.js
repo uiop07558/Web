@@ -16,8 +16,7 @@ import { PROJECT_TASKS_REQUEST, RESET_STATE_TASKS } from '../actions/tasks'
 const state = {
   token: localStorage.getItem('user-token') || '',
   status: '',
-  hasLoadedOnce: false,
-  navStack: []
+  hasLoadedOnce: false
 }
 
 const getters = {
@@ -137,7 +136,7 @@ const mutations = {
     window.location.href += 'login'
   },
   [AUTH_RESET]: (state, index) => {
-    setLocalStorageItem('navStack', '')
+    localStorage.removeItem('navStack')
   }
 }
 
