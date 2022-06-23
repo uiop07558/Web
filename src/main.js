@@ -9,7 +9,13 @@ import store from './store'
 import './css/main.css'
 
 const token = localStorage.getItem('user-token')
-const navStack = JSON.parse(localStorage.getItem('navStack'))
+let navStack
+try {
+  navStack = JSON.parse(localStorage.getItem('navStack'))
+} catch (error) {
+  console.log(error)
+}
+// const navStack = JSON.parse(localStorage.getItem('navStack'))
 const isGridView = JSON.parse(localStorage.getItem('isGridView'))
 
 function pad2 (n) {
