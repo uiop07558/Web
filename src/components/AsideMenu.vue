@@ -261,7 +261,8 @@ const tarifS = () => {
       >
         <div class="flex items-center">
           <img
-            :src="user.foto_link"
+            v-if="user?.foto_link"
+            :src="user?.foto_link"
             width="32"
             height="32"
             class="rounded-[8px] ml-[5px] mr-[2px] border-2 border-white"
@@ -283,7 +284,7 @@ const tarifS = () => {
           <span
             class="ml-[6px] text-[15px] group-hover:text-[#4c4c4d]/75 text-[#4c4c4d] font-roboto"
           >
-            {{ user.current_user_name }}
+            {{ user?.current_user_name ?? '' }}
           </span>
         </div>
       </div>

@@ -67,6 +67,7 @@ const userPhone = function () {
       <form>
         <div class="form-group">
           <input
+            v-if="user?.current_user_name"
             v-model="user.current_user_name"
             type="text"
             class="w-full border border-orange-400 rounded h-[36px] p-2"
@@ -140,7 +141,8 @@ const userPhone = function () {
           <div class="pr-2">
             <span class="circle-image">
               <img
-                :src="user.foto_link"
+                v-if="user?.foto_link"
+                :src="user?.foto_link"
                 class="rounded-[27px] content-center object-cover"
               >
             </span>
@@ -156,7 +158,9 @@ const userPhone = function () {
             <label
               for="iconfile"
               class="text-[13px] mr-3 justify-center cursor-pointer"
-            >изменить фото</label>
+            >
+              изменить фото
+            </label>
             <br>
           </div>
         </div>
@@ -166,31 +170,34 @@ const userPhone = function () {
           Тип аккаунта
         </div>
         <p
-          v-if="user.license_type === 0"
+          v-if="user?.license_type === 0 || user?.license_type === null"
           class="text-sm font-medium landing-4"
         >
           Пробный тариф
         </p>
         <p
-          v-if="user.license_type === 1"
+          v-if="user?.license_type === 1"
           class="text-sm font-medium landing-4"
         >
           Премиум тариф
         </p>
         <p
-          v-if="user.license_type === 2"
+          v-if="user?.license_type === 2"
           class="text-sm font-medium landing-4"
         >
           Бизнес тариф
         </p>
         <p
-          v-if="user.license_type === 0"
+          v-if="user?.license_type === 0"
           class="text-sm mt-2 "
         >
           Обновите тарифный план ЛидерТаск для неограниченных возможностей
         </p>
-        <p class="mt-1 text-sm font-normal font-[Roboto] landing-5 text-[#606061]">
-          <a>{{ user.date_expired }}({{ user.days_left }})</a>
+        <p
+          v-if="user?.date_expired"
+          class="mt-1 text-sm font-normal font-[Roboto] landing-5 text-[#606061]"
+        >
+          <a>{{ user?.date_expired }}({{ user?.days_left ?? 0 }})</a>
         </p>
         <div class="mt-2">
           <button
@@ -207,7 +214,7 @@ const userPhone = function () {
           </p>
           <form class="mb-2">
             <div class="text-sm landing-4 font-normal">
-              {{ user.current_user_name }}
+              {{ user?.current_user_name ?? '' }}
             </div>
             <button
               type="button"
@@ -242,7 +249,7 @@ const userPhone = function () {
               contenteditable="true"
               class="text-[13px] landing-[13px] text-[#007BE5]"
             >
-              {{ user.current_user_email }}
+              {{ user?.current_user_email }}
             </div>
             <!-- <button type="button" class="mt-2 text-base text-blue-600" @click="showEditemail = true">Изменить email</button> -->
           </div>
