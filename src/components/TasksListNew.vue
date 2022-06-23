@@ -81,6 +81,7 @@
   <!-- vue3-treeview -->
   <tree
     v-if="status == 'success'"
+    class="overflow-y-auto"
     :nodes="storeTasks"
     :config="newConfig"
     @nodeOpened="nodeExpanding"
@@ -124,7 +125,7 @@
         <!-- Tags, Overdue, Customer, Performer -->
         <div
           v-if="props.node.info.uid_customer == '00000000-0000-0000-0000-000000000000' || props.node.info.email_performer || props.node.info.is_overdue || props.node.info.tags || props.node.info.uid_project == '00000000-0000-0000-0000-000000000000' || props.node.info.term_customer || props.node.info.checklist || props.node.info.has_files || props.node.info.has_msgs || props.node.info.comment || props.node.info.focus"
-          class="flex items-center mt-1.5 relative left-0"
+          class="flex flex-wrap gap-[4px] items-center mt-[6px]"
         >
           <!-- Focus -->
           <TaskListIconLabel
