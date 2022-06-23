@@ -2171,7 +2171,6 @@ export default {
     <div
       id="drop-area"
       class="input-group bg-gray-100 rounded-[10px] mt-2"
-      draggable="true"
       @drop="drop($refs.file_attach)"
       @dragover="allowDrop($refs.file_attach)"
       @dragstart="dragStart"
@@ -2210,13 +2209,12 @@ export default {
         class="form-control mt-[6px] mb-[8px] text-group-design task-msg overflow-auto scroll-style dark:bg-gray-800 dark:text-gray-100 focus:ring-0"
         placeholder="Напишите сообщение..."
         rows="58"
-        draggable="true"
         @input="onInputTaskMsg"
         @drop="drop($refs.file_attach)"
         @dragover="allowDrop($refs.file_attach)"
         @dragstart="dragStart"
         @drag="dragging"
-        @keydown.enter.exact.prevent="sendTaskMsg"
+        @keydown.enter.exact.prevent="sendTaskMsg()"
         @keydown.enter.shift.exact.prevent="addNewLineTaskMsg"
       />
       <span class="input-group-addon input-group-btn-send dark:bg-gray-800 dark:text-gray-100">
@@ -2224,7 +2222,7 @@ export default {
           type="button"
           name="btn-send"
           class="btn-send-custom"
-          @click="sendTaskMsg"
+          @click="sendTaskMsg()"
         >
           <!--   <svg
             width="24"
