@@ -1045,7 +1045,7 @@ export default {
       // const minutes = this.pad2(date.getUTCMinutes())
       // const seconds = this.pad2(date.getUTCSeconds())
       // const dateCreate = year + '-' + month + '-' + day + 'T' + hours + ':' + minutes + ':' + seconds
-      let msgtask = msg.target.value ?? this.taskMsg
+      let msgtask = msg || this.taskMsg
       msgtask = msgtask.trim()
       msgtask = msgtask.replaceAll('&', '&amp;')
       msgtask = msgtask.replaceAll('<', '&lt;')
@@ -2214,7 +2214,7 @@ export default {
         @dragover="allowDrop($refs.file_attach)"
         @dragstart="dragStart"
         @drag="dragging"
-        @keydown.enter.exact.prevent="sendTaskMsg"
+        @keydown.enter.exact.prevent="sendTaskMsg()"
         @keydown.enter.shift.exact.prevent="addNewLineTaskMsg"
       />
       <span class="input-group-addon input-group-btn-send dark:bg-gray-800 dark:text-gray-100">
@@ -2222,7 +2222,7 @@ export default {
           type="button"
           name="btn-send"
           class="btn-send-custom"
-          @click="sendTaskMsg"
+          @click="sendTaskMsg()"
         >
           <!--   <svg
             width="24"
