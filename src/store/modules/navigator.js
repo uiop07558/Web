@@ -19,6 +19,7 @@ import {
   NAVIGATOR_REMOVE_COLOR,
   NAVIGATOR_REMOVE_DEPARTAMENT,
   NAVIGATOR_REMOVE_EMPLOYEE,
+  NAVIGATOR_UPDATE_EMPLOYEE,
   NAVIGATOR_REMOVE_PROJECT,
   NAVIGATOR_REMOVE_TAG,
   NAVIGATOR_REQUEST,
@@ -191,6 +192,11 @@ const actions = {
           reject(err)
         })
     })
+  },
+  [NAVIGATOR_UPDATE_EMPLOYEE]: ({ commit, dispatch, employee }) => {
+    commit(NAVIGATOR_UPDATE_EMPLOYEE, employee)
+    commit(PUSH_EMPLOYEE, employee)
+    commit(PUSH_EMPLOYEE_BY_EMAIL, employee)
   }
 }
 
@@ -599,6 +605,15 @@ const mutations = {
           }
         }
       )
+    }
+  },
+  [NAVIGATOR_UPDATE_EMPLOYEE]: (state, employee) => {
+    for (const dep of state.navigator.new_emps) {
+      for (let i = 0; i < dep.items.length; i++) {
+        if (dep.items[i].uid === employee.uid) {
+          dep.items[i] = employee
+        }
+      }
     }
   },
   [NAVIGATOR_REMOVE_EMPLOYEE]: (state, employee) => {

@@ -144,7 +144,7 @@
           :key="user.uid"
         >
           <ListBlocItem
-            :title="user.name"
+            :title="user.name + ' ' + user.uid"
             :sub-title="user.email"
             :right-icon="empIcon(user)"
             :selected="selectedEmployee === user.email"

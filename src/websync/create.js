@@ -2,6 +2,7 @@ import store from '@/store/index.js'
 import { createProject } from '@/websync/project.js'
 import { createTask } from '@/websync/task.js'
 import { createCard } from '@/websync/card.js'
+import { createEmployee } from '@/websync/employee.js'
 import { createMessage } from '@/websync/task_message.js'
 import { createCardMessage } from '@/websync/card_message.js'
 import * as TYPES from '@/websync/types.js'
@@ -98,6 +99,7 @@ export default function processCreate (obj) {
     case TYPES.TYPE_OBJECT_FILE:
       break
     case TYPES.TYPE_OBJECT_EMP:
+      createEmployee(obj)
       break
     case TYPES.TYPE_OBJECT_CONTACT_FILE:
       break
