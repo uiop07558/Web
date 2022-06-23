@@ -542,15 +542,16 @@ export default {
       } else {
         time = this.task.customer_date_end
       }
+      if (time === '0001-01-01T00:00:00') {
+        return false
+      }
       const todayDate = new Date()
       const dateEnd = new Date(time)
       todayDate.setHours(0, 0, 0, 0)
       dateEnd.setHours(0, 0, 0, 0)
       const date = Math.floor((todayDate - dateEnd) / (60 * 60 * 24 * 1000))
       const dayName = date % 10 === 1 && date % 100 !== 11 ? 'день' : (((date >= 2) && (date % 10 <= 4)) && (date % 100 < 10 || date % 100 >= 20) ? 'дня' : 'дней')
-      if (date < 0) {
-        return date
-      } else if (date === 0) {
+      if (date === 0 || date < 0) {
         return false
       } else {
         return date + ' ' + dayName
