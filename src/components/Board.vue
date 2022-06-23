@@ -60,7 +60,7 @@
       @cancel="showMoveCard = false"
       @changePosition="onChangeCardPosition"
     />
-    <div class="flex items-start overflow-x-auto">
+    <div class="flex items-start overflow-x-auto scroll-style">
       <template
         v-for="column in storeCards"
         :key="column.UID"
