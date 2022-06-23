@@ -29,9 +29,9 @@ export function showNotify (notification, notificationSound = true) {
         const link = `${window.location.origin}/task/${notification.obj.obj.uid}`
         window.location = link
       }
-    } else if (notification?.obj?.type === TYPES.TYPE_OBJECT_TASK) {
+    } else if (notification?.obj?.type === TYPES.TYPE_OBJECT_PROJECT) {
       websyncNotification.onclick = () => {
-        const link = `${window.location.origin}/task/${notification.obj.obj.uid}`
+        const link = `${window.location.origin}/project/${notification.obj.obj.uid}`
         window.location = link
       }
     } else if (notification?.task?.uid) {
