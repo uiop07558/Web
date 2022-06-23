@@ -93,7 +93,7 @@ export default {
       return this.$store.state.boards.boards[this.boardUid]
     },
     canDelete () {
-      return this.board?.email_creator === this.$store.state.user.user.current_user_email
+      return this.board?.email_creator === this.$store.state.user.user?.current_user_email
     },
     showArchive () {
       return this.$store.state.boards.showArchive

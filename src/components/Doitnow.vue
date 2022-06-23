@@ -278,7 +278,6 @@ export default {
     },
     nextTask: function () {
       this.readTask()
-      this.$store.dispatch('asidePropertiesToggle', false)
       if (this.unreadTasks.length) {
         this.unreadTasks.shift()
         return
