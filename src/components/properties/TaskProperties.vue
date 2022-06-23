@@ -1046,7 +1046,7 @@ export default {
       // const seconds = this.pad2(date.getUTCSeconds())
       // const dateCreate = year + '-' + month + '-' + day + 'T' + hours + ':' + minutes + ':' + seconds
       let msgtask = msg || this.taskMsg
-      console.log('msgtask', msgtask, msg, this.taskMsg)
+      msgtask = msgtask.trim()
       msgtask = msgtask.replaceAll('&', '&amp;')
       msgtask = msgtask.replaceAll('<', '&lt;')
       msgtask = msgtask.replaceAll('>', '&gt;')
