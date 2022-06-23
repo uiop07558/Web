@@ -567,6 +567,7 @@ export default {
       this.showTimeSelector = false
     },
     onDayClick (day) {
+      this.showTime = true
       // не даём развыделять календарь
       this.showTime = true
       if (this.datePickerDate === null) {
