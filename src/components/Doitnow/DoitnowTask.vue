@@ -227,7 +227,7 @@
         <!-- redo -->
         <button
           class="flex py-0.5 items-center justify-center text-sm bg-gray-100 w-[181px] hover:bg-red-200 hover:border hover:border-red-300 min-h-[40px] hover:bg-opacity-90 font-medium rounded-lg hover:text-red-500 mb-2 hover:animate-fadeIn"
-          @click="reD "
+          @click="reDo "
         >
           <span class="ml-8 w-[70px]">{{ task.uid_customer === user.current_user_uid ? (task.uid_performer === user.current_user_uid ? 'Отменить' : 'На доработку') : 'Отклонить' }}</span>
           <Icon
