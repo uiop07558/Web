@@ -41,7 +41,7 @@
             @dayclick="onDayClick"
           >
             <template #footer>
-              <div>
+              <div v-if="time ? showTime = true : showTime = false">
                 <div class="timestamp-custom">
                   Установить напоминание
                 </div>
@@ -507,7 +507,8 @@ export default {
     date: null,
     time: '',
     canEdit: true,
-    showTimeSelector: false
+    showTimeSelector: false,
+    showTime: false
   }),
   methods: {
     pad2 (n) {
@@ -566,7 +567,9 @@ export default {
       this.showTimeSelector = false
     },
     onDayClick (day) {
+      this.showTime = true
       // не даём развыделять календарь
+      this.showTime = true
       if (this.datePickerDate === null) {
         this.$refs.datePicker.updateValue(day.date)
       }
