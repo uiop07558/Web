@@ -1,7 +1,9 @@
 import axios from 'axios'
 import { notify } from 'notiwind'
 import {
-  USER_CHANGE_PHONE, USER_CHANGE_PHOTO, USER_ERROR,
+  USER_CHANGE_PHONE,
+  USER_CHANGE_PHOTO,
+  USER_ERROR,
   USER_REQUEST,
   USER_SUCCESS
 } from '../actions/user'
@@ -98,7 +100,6 @@ const actions = {
 
 const mutations = {
   [USER_CHANGE_PHOTO]: (state, data) => {
-    console.log(state.user)
     state.user.foto_link = state.user.foto_link + '&Z=' + Date.now()
     console.log(state.user.foto_link)
   },
@@ -114,6 +115,11 @@ const mutations = {
   [USER_ERROR]: (state) => {
     state.status = 'error'
     state.hasLoadedOnce = true
+  },
+  ChangeCurrentUserName: (state, name) => {
+    if (state.user) {
+      state.user.current_user_name = name
+    }
   }
 }
 
