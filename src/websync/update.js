@@ -1,6 +1,5 @@
 import * as TYPES from '@/websync/types.js'
 import { updateTask } from '@/websync/task.js'
-import { getMessage } from '@/websync/task_message.js'
 import { updateCard } from '@/websync/card.js'
 import { updateEmployee } from '@/websync/employee.js'
 import { updateProject } from '@/websync/project.js'
@@ -22,7 +21,7 @@ export default function processUpdate (obj) {
     case TYPES.TYPE_OBJECT_CONTACT:
       break
     case TYPES.TYPE_OBJECT_TASK_MSG:
-      getMessage(obj)
+      // remove task message right here
       break
     case TYPES.TYPE_OBJECT_CONTACT_GROUP:
       break
