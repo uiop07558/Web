@@ -19,6 +19,7 @@ import performerRead from '@/icons/performer-read.js'
 import performerNotRead from '@/icons/performer-not-read.js'
 import { computed, reactive, onBeforeMount } from 'vue'
 import { useStore } from 'vuex'
+import { UID_TO_ACTION } from '@/store/helpers/functions'
 
 const store = useStore()
 
@@ -96,18 +97,6 @@ const icons = {
 
 const iconsKeys = Object.keys(icons)
 
-// link logic
-const UID_TO_ACTION = {
-  '901841d9-0016-491d-ad66-8ee42d2b496b': TASK.TASKS_REQUEST,
-  '46418722-a720-4c9e-b255-16db4e590c34': TASK.OVERDUE_TASKS_REQUEST,
-  '017a3e8c-79ac-452c-abb7-6652deecbd1c': TASK.OPENED_TASKS_REQUEST,
-  '5183b619-3968-4c3a-8d87-3190cfaab014': TASK.UNSORTED_TASKS_REQUEST,
-  'fa042915-a3d2-469c-bd5a-708cf0339b89': TASK.UNREAD_TASKS_REQUEST,
-  '2a5cae4b-e877-4339-8ca1-bd61426864ec': TASK.IN_WORK_TASKS_REQUEST,
-  '6fc44cc6-9d45-4052-917e-25b1189ab141': TASK.IN_FOCUS_TASKS_REQUEST,
-  'd35fe0bc-1747-4eb1-a1b2-3411e07a92a0': TASK.READY_FOR_COMPLITION_TASKS_REQUEST
-}
-
 function visualTaskStatus (task) {
   store.state.tasks.newtasks[task.uid] = task
   store.state.tasks.newtasks[task.uid].info = task
@@ -115,8 +104,13 @@ function visualTaskStatus (task) {
 }
 
 function redirect (title, uid) {
+  const action = UID_TO_ACTION[uid]
+  if (!action) {
+    console.error('UID_TO_ACTION in undefined', uid)
+    return
+  }
   store.commit(TASK.CLEAN_UP_LOADED_TASKS)
-  store.dispatch(UID_TO_ACTION[uid])
+  store.dispatch(action)
   const navElem = {
     name: title,
     key: 'taskListSource',
@@ -130,18 +124,19 @@ function redirect (title, uid) {
 <template>
   <div class="md:grid md:grid-rows-2 md:grid-flow-col md:max-h-[85vh] sm:flex sm:max-w-screen-sm sm:flex-wrap">
     <div
-      class="flex flex-col bg-white dark:bg-slate-900 rounded-xl cursor-default min-h-[400px] max-h-[400px] min-w-[380px] mb-4 max-w-screen-sm scroll-style mr-3 px-2 pt-2 shadow-sm font-SfProTextNormal"
-      :id="key"
       v-for="(elem, key, idx) in testObj"
+      :id="key"
       :key="elem"
+      class="flex flex-col bg-white dark:bg-slate-900 rounded-xl cursor-default min-h-[400px] max-h-[400px] min-w-[380px] mb-4 max-w-screen-sm scroll-style mr-3 px-2 pt-2 shadow-sm font-SfProTextNormal"
     >
       <taskhead>
-        <template v-slot:block-name>
+        <template #block-name>
           <span
             class="hover:cursor-pointer"
-            @click="redirect(store.state.tasks[key].title, store.state.tasks[key].link)">
-              {{ store.state.tasks[key].title }}
-              {{ '(' + testObj[key].length + ')' }}
+            @click="redirect(store.state.tasks[key].title, store.state.tasks[key].link)"
+          >
+            {{ store.state.tasks[key].title }}
+            {{ '(' + testObj[key].length + ')' }}
           </span>
         </template>
         <template #icon>
@@ -163,13 +158,16 @@ function redirect (title, uid) {
         >
           <div class="flex">
             <div class="flex order-first">
-              <TaskStatus :task="task" @click="visualTaskStatus(task)"></TaskStatus>
+              <TaskStatus
+                :task="task"
+                @click="visualTaskStatus(task)"
+              />
             </div>
             <div class="font-normal">
               <span
                 class="max-w-full break-words text-sm"
               >
-                {{ !task ? '' : task.name  }}
+                {{ !task ? '' : task.name }}
               </span>
             </div>
           </div>
@@ -193,14 +191,14 @@ function redirect (title, uid) {
               class="tag-label cursor-default p-1 text-xs flex items-center rounded-lg ml-[4px]"
               :class="task.uid_customer === user.userData.current_user_uid ? 'bg-lime-500' : 'bg-gray-400'"
             >
-                <icon
-                  :path="task.performerreaded ? performerRead.path : performerNotRead.path"
-                  :width="task.performerreaded ? performerRead.width : performerNotRead.width"
-                  :height="task.performerreaded ? performerRead.height : performerNotRead.height"
-                  :viewbox="task.performerreaded ? performerRead.height : performerNotRead.height"
-                  class="mr-[4px]"
-                />
-                {{ !employees[task.uid_performer] ? '' : employees[task.uid_performer].name}}
+              <icon
+                :path="task.performerreaded ? performerRead.path : performerNotRead.path"
+                :width="task.performerreaded ? performerRead.width : performerNotRead.width"
+                :height="task.performerreaded ? performerRead.height : performerNotRead.height"
+                :viewbox="task.performerreaded ? performerRead.height : performerNotRead.height"
+                class="mr-[4px]"
+              />
+              {{ !employees[task.uid_performer] ? '' : employees[task.uid_performer].name }}
             </div>
             <!-- tags -->
             <div

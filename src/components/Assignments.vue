@@ -77,7 +77,7 @@
 <script>
 import Icon from '@/components/Icon.vue'
 import ListBlocItem from '@/components/Common/ListBlocItem.vue'
-import { setLocalStorageItem } from '@/store/helpers/functions'
+import { setLocalStorageItem, UID_TO_ACTION } from '@/store/helpers/functions'
 import * as TASK from '@/store/actions/tasks'
 
 import gridView from '@/icons/grid-view.js'
@@ -114,11 +114,12 @@ export default {
       setLocalStorageItem('isGridView', value)
     },
     gotoChildren (user) {
-      const UID_TO_ACTION = {
-        '169d728b-b88b-462d-bd8e-3ac76806605b': TASK.DELEGATED_TASKS_REQUEST,
-        '511d871c-c5e9-43f0-8b4c-e8c447e1a823': TASK.DELEGATED_TO_USER_TASKS_REQUEST
+      const action = UID_TO_ACTION[user.parentID]
+      if (!action) {
+        console.error('UID_TO_ACTION in undefined', user.parentID)
+        return
       }
-      this.$store.dispatch(UID_TO_ACTION[user.parentID], user.email)
+      this.$store.dispatch(action, user.email)
       const navElem = {
         name: user.name,
         key: 'taskListSource',

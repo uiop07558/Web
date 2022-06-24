@@ -71,7 +71,7 @@
 import Icon from '@/components/Icon.vue'
 import ListBlocItem from '@/components/Common/ListBlocItem.vue'
 import gridView from '@/icons/grid-view.js'
-import { setLocalStorageItem } from '@/store/helpers/functions'
+import { setLocalStorageItem, UID_TO_ACTION } from '@/store/helpers/functions'
 import listView from '@/icons/list-view.js'
 import * as TASK from '@/store/actions/tasks.js'
 
@@ -220,18 +220,6 @@ export default {
           value: this.$store.state.navigator.navigator[value.path].items
         })
         return
-      }
-      const UID_TO_ACTION = {
-        '46418722-a720-4c9e-b255-16db4e590c34': TASK.OVERDUE_TASKS_REQUEST,
-        '017a3e8c-79ac-452c-abb7-6652deecbd1c': TASK.OPENED_TASKS_REQUEST,
-        '5183b619-3968-4c3a-8d87-3190cfaab014': TASK.UNSORTED_TASKS_REQUEST,
-        'fa042915-a3d2-469c-bd5a-708cf0339b89': TASK.UNREAD_TASKS_REQUEST,
-        '2a5cae4b-e877-4339-8ca1-bd61426864ec': TASK.IN_WORK_TASKS_REQUEST,
-        '6fc44cc6-9d45-4052-917e-25b1189ab141': TASK.IN_FOCUS_TASKS_REQUEST,
-        'd35fe0bc-1747-4eb1-a1b2-3411e07a92a0':
-          TASK.READY_FOR_COMPLITION_TASKS_REQUEST,
-        'ed8039ae-f3de-4369-8f32-829d401056e9': TASK.COLOR_TASKS_REQUEST,
-        '00a5b3de-9474-404d-b3ba-83f488ac6d30': TASK.TAG_TASKS_REQUEST
       }
       this.$store.commit(TASK.CLEAN_UP_LOADED_TASKS)
       this.$store.dispatch(UID_TO_ACTION[value.link])
