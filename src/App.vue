@@ -14,6 +14,13 @@ store.dispatch(LOCALIZATION_REQUEST)
 
 const isAsideLgActive = computed(() => store.state.isAsideLgActive)
 
+const fm = document.createElement('script')
+const websync = document.createElement('script')
+fm.setAttribute('src', process.env.VUE_APP_LEADERTASK_API + 'scripts/websync/fm.min.js')
+websync.setAttribute('src', process.env.VUE_APP_LEADERTASK_API + 'scripts/websync/fm.websync.min.js')
+document.head.appendChild(fm)
+document.head.appendChild(websync)
+
 const overlayClick = () => {
   store.dispatch('asideLgToggle', false)
 }
