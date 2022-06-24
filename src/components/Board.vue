@@ -299,7 +299,7 @@ import BoardModalBoxMove from '@/components/Board/BoardModalBoxMove.vue'
 import BoardModalBoxCardMove from '@/components/Board/BoardModalBoxCardMove.vue'
 import * as BOARD from '@/store/actions/boards'
 import * as CARD from '@/store/actions/cards'
-import { FETCH_FILES_AND_MESSAGES } from '@/store/actions/cardfilesandmessages'
+import { FETCH_FILES_AND_MESSAGES, REFRESH_MESSAGES, REFRESH_FILES } from '@/store/actions/cardfilesandmessages'
 
 export default {
   components: {
@@ -554,6 +554,8 @@ export default {
       }
     },
     selectCard (card) {
+      this.$store.commit(REFRESH_MESSAGES)
+      this.$store.commit(REFRESH_FILES)
       this.$store.commit(CARD.SELECT_CARD, card)
       this.$store.dispatch(FETCH_FILES_AND_MESSAGES, card.uid)
       this.$store.commit('basic', { key: 'propertiesState', value: 'card' })

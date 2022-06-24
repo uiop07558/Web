@@ -11,7 +11,6 @@ const getters = {}
 
 const actions = {
   [CARD_FILES_AND_MESSAGES.MESSAGES_REQUEST]: ({ commit, dispatch }, cardUid) => {
-    // commit(CARD_FILES_AND_MESSAGES.REFRESH_MESSAGES)
     return new Promise((resolve, reject) => {
       commit(CARD_FILES_AND_MESSAGES.MESSAGES_REQUEST)
       const url = process.env.VUE_APP_LEADERTASK_API + 'api/v1/cardsmsgs/bycard?uid=' + cardUid
@@ -50,7 +49,6 @@ const actions = {
     })
   },
   [CARD_FILES_AND_MESSAGES.FILES_REQUEST]: ({ commit, dispatch }, cardUid) => {
-    // commit(CARD_FILES_AND_MESSAGES.REFRESH_FILES)
     return new Promise((resolve, reject) => {
       commit(CARD_FILES_AND_MESSAGES.FILES_REQUEST)
       const url = process.env.VUE_APP_LEADERTASK_API + 'api/v1/cardsfiles/bycard?uid=' + cardUid
