@@ -16,3 +16,7 @@ export function removeTaskMessage (obj) {
     store.commit('TASK_CHANGE_MESSAGE', data)
   }
 }
+
+export function removeTaskFileMessage (uid) {
+  store.commit('TASK_REMOVE_MESSAGE_LOCALLY', { uid: uid })
+}

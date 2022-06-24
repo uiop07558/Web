@@ -22,7 +22,6 @@ export default function processUpdate (obj) {
     case TYPES.TYPE_OBJECT_CONTACT:
       break
     case TYPES.TYPE_OBJECT_TASK_FILE:
-      removeTaskMessage(obj)
       break
     case TYPES.TYPE_OBJECT_TASK_MSG:
       removeTaskMessage(obj)
@@ -65,11 +64,8 @@ export default function processUpdate (obj) {
       updateCard(obj)
       break
     case TYPES.TYPE_OBJECT_CARD_FILE:
-      // use remove card message because we update card message with deleted property setted to 1
-      removeCardMessage(obj)
       break
     case TYPES.TYPE_OBJECT_CARD_MSG:
-      // use remove card message because we update card message with deleted property setted to 1
       removeCardMessage(obj)
       break
     case TYPES.TYPE_OBJECT_CLIENT:

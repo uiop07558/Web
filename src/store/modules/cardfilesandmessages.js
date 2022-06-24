@@ -157,11 +157,9 @@ const mutations = {
     })
   },
   [CARD_FILES_AND_MESSAGES.ADD_MESSAGE_LOCALLY]: (state, message) => {
-    console.log('ADDING NEW MESSAGE LOCALLY: ', message)
     state.messages.push(message)
   },
   [CARD_FILES_AND_MESSAGES.REMOVE_MESSAGE_LOCALLY]: (state, message) => {
-    console.log('REMOVING NEW MESSAGE LOCALLY: ', message)
     for (let i = 0; i < state.messages.length; i++) {
       if (message.uid === state.messages[i].uid) {
         state.messages.splice(i, 1)
