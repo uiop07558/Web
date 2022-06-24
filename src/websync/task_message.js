@@ -9,7 +9,6 @@ export function createMessage (obj) {
   }
 }
 export function getMessage (obj) {
-  store.commit('MESSAGES_REQUEST', obj.obj)
   store.commit('FILES_REQUEST', obj.obj)
 }
 export function getFiles (obj) {
