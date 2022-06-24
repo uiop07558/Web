@@ -77,6 +77,7 @@
                 class="flex space-x-[4px] mt-[10px]"
               >
                 <div
+                  v-if="answerType !== 0"
                   class="flex items-center bg-[#F2F3F5] cursor-pointer py-[10px] px-[14px] rounded-[5px]"
                   @click="
                     answerInspectorMessage(message, 1, 'Да')
@@ -85,6 +86,7 @@
                   <span class="text-sm text-gray-600"> Да </span>
                 </div>
                 <div
+                  v-if="answerType !== 1"
                   class="flex items-center bg-[#F2F3F5] cursor-pointer py-[10px] px-[14px] rounded-[5px]"
                   @click="
                     answerInspectorMessage(message, 0, 'Нет')
