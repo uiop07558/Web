@@ -1471,7 +1471,7 @@ const mutations = {
         info: node,
         children: node.has_children ? ['fake-uid'] : [],
         state: {
-          draggable: node.type === 1
+          draggable: [1, 2].includes(node.type)
         }
       }
     }
