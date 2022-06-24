@@ -259,14 +259,15 @@
           </div>
 
           <TaskListActionHoverPanel
-            class="absolute right-[8px] top-[calc(50%-18px)] hidden group-hover:flex"
+            :id="`hover-panel-${props.node.id}`"
+            class="absolute right-[8px] top-[calc(50%-18px)] invisible group-hover:visible"
             :is-my-task="props.node.info.uid_customer == currentUserUid"
             :can-paste="Object.keys(copiedTasks).length"
             @click.stop
             @addSubtask="addSubtask(props.node.info)"
             @changeFocus="changeFocus(props.node.info)"
-            @openMenu="toggleTaskHoverPopper(true)"
-            @closeMenu="toggleTaskHoverPopper(false)"
+            @openMenu="toggleTaskHoverPopper(true, props.node.id)"
+            @closeMenu="toggleTaskHoverPopper(false, props.node.id)"
             @tomorrow="moveTaskTomorrow(props.node.info)"
             @copyName="copyTaskName(props.node.info)"
             @copy="copyTask(props.node.info)"
@@ -361,7 +362,6 @@ export default {
     const lastSelectedTaskUid = ref('')
     const showConfirm = ref(false)
     const showInspector = ref(false)
-    const isTaskHoverPopperActive = ref(false)
     const isTaskStatusPopperActive = ref(false)
     const date = computed(() => {
       return lastVisitedDate.value.getDate() + '-' + lastVisitedDate.value.getMonth() + '-' + lastVisitedDate.value.getFullYear()
@@ -409,8 +409,9 @@ export default {
       '00a5b3de-9474-404d-b3ba-83f488ac6d30': TASK.TAG_TASKS_REQUEST
     }
 
-    const toggleTaskHoverPopper = (val) => {
-      isTaskHoverPopperActive.value = val
+    const toggleTaskHoverPopper = (visible, uid) => {
+      const el = document.getElementById(`hover-panel-${uid}`)
+      if (el) el.style.visibility = visible ? 'visible' : null
     }
 
     const editTaskName = (uid) => {
@@ -813,7 +814,6 @@ export default {
       tags: computed(() => store.state.tasks.tags),
       employees,
       employeesByEmail,
-      isTaskHoverPopperActive,
       isTaskStatusPopperActive,
       projects,
       toggleTaskHoverPopper,
