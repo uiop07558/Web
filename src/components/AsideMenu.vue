@@ -1,5 +1,5 @@
 <script setup>
-import { computed, reactive, ref } from 'vue'
+import { computed, ref } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
 import ModalBox from '@/components/ModalBox.vue'
@@ -47,36 +47,6 @@ const storeNavigator = computed(() => store.state.navigator.navigator)
 const navig = computed(() => store.state.navig)
 const getNavigatorLanguage = () => (navigator.languages && navigator.languages.length) ? navigator.languages[0] : navigator.userLanguage || navigator.language || navigator.browserLanguage || 'en'
 const lastVisitedDate = navStack.value && navStack.value.length && navStack.value[navStack.value.length - 1].value && navStack.value[navStack.value.length - 1].value.uid && navStack.value[navStack.value.length - 1].value.uid === '901841d9-0016-491d-ad66-8ee42d2b496b' && navStack.value[navStack.value.length - 1].value.param ? new Date(navStack.value[navStack.value.length - 1].value.param) : new Date()
-
-const currentDate = computed({
-  get: () => lastVisitedDate.value,
-  set: val => {
-    lastVisitedDate.value = val
-    if (isPropertiesMobileExpanded.value) { store.dispatch('asidePropertiesToggle', false) }
-    store.commit('basic', { key: 'mainSectionState', value: 'tasks' })
-    store.dispatch(TASK.TASKS_REQUEST, val)
-    // hardcoded and messy
-    const navElem = {
-      name: dateToLabelFormat(val),
-      key: 'taskListSource',
-      value: { uid: '901841d9-0016-491d-ad66-8ee42d2b496b', param: val },
-      typeVal: val,
-      type: 'date'
-    }
-    store.commit('updateStackWithInitValue', navElem)
-    store.commit('basic', { key: 'taskListSource', value: { uid: '901841d9-0016-491d-ad66-8ee42d2b496b', param: val } })
-    store.commit(TASK.CLEAN_UP_LOADED_TASKS)
-  }
-})
-
-const navigatorMenu = reactive({
-  foldableNavigator: false,
-  lang: getNavigatorLanguage(),
-  currentDate: currentDate,
-  themeStyles: {
-    dayNotInMonth: 'not-in-month'
-  }
-})
 
 const logout = () => {
   modalOneActive = false
@@ -311,7 +281,7 @@ const tarifS = () => {
         from-page="fromPage"
         to-page="toPage"
         is-expanded
-        :locale="navigatorMenu.lang"
+        :locale="getNavigatorLanguage()"
         :masks="{ weekdays: 'WWW' }"
         :attributes="attrs"
         :is-dark="isDark"
