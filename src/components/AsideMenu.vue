@@ -46,8 +46,8 @@ const user = computed(() => store.state.user.user)
 const storeNavigator = computed(() => store.state.navigator.navigator)
 const navig = computed(() => store.state.navig)
 const getNavigatorLanguage = () => (navigator.languages && navigator.languages.length) ? navigator.languages[0] : navigator.userLanguage || navigator.language || navigator.browserLanguage || 'en'
-
 const lastVisitedDate = navStack.value && navStack.value.length && navStack.value[navStack.value.length - 1].value && navStack.value[navStack.value.length - 1].value.uid && navStack.value[navStack.value.length - 1].value.uid === '901841d9-0016-491d-ad66-8ee42d2b496b' && navStack.value[navStack.value.length - 1].value.param ? new Date(navStack.value[navStack.value.length - 1].value.param) : new Date()
+
 const currentDate = computed({
   get: () => lastVisitedDate.value,
   set: val => {
@@ -68,8 +68,8 @@ const currentDate = computed({
     store.commit(TASK.CLEAN_UP_LOADED_TASKS)
   }
 })
+
 const navigatorMenu = reactive({
-  tasks: false,
   foldableNavigator: false,
   lang: getNavigatorLanguage(),
   currentDate: currentDate,
@@ -77,6 +77,7 @@ const navigatorMenu = reactive({
     dayNotInMonth: 'not-in-month'
   }
 })
+
 const logout = () => {
   modalOneActive = false
   store.dispatch(AUTH_LOGOUT)
@@ -192,7 +193,7 @@ const onDayClick = (day) => {
   }
   store.commit('updateStackWithInitValue', navElem)
   lastVisitedDate.value = new Date() // desktop check
-  store.commit('basic', { key: 'taskListSource', value: { uid: '901841d9-0016-491d-ad66-8ee42d2b496b', param: null } })
+  store.commit('basic', { key: 'taskListSource', value: { uid: '901841d9-0016-491d-ad66-8ee42d2b496b', param: new Date(day.date) } })
   store.commit('basic', { key: 'mainSectionState', value: 'tasks' })
 }
 const TitleName = () => {
