@@ -3,7 +3,8 @@ import { removeTask } from '@/websync/task.js'
 import { removeCard } from '@/websync/card.js'
 import { removeEmployee } from '@/websync/employee.js'
 import { removeProject } from '@/websync/project.js'
-import { removeCardMessage } from '@/websync/card_message'
+import { removeCardFileMessage } from '@/websync/card_message'
+import { removeTaskFileMessage } from '@/websync/task_message'
 import { removeColor } from '@/websync/colors_dop.js'
 import { removeParentTag, removeTag } from '@/websync/tag'
 
@@ -15,6 +16,9 @@ export default function processRemove (obj) {
       break
     case TYPES.TYPE_OBJECT_PROJECT:
       removeProject(obj)
+      break
+    case TYPES.TYPE_OBJECT_TASK_FILE:
+      removeTaskFileMessage(obj.uid)
       break
     case TYPES.TYPE_OBJECT_TASK:
       removeTask(obj.uid)
@@ -59,10 +63,9 @@ export default function processRemove (obj) {
       removeCard(obj.uid)
       break
     case TYPES.TYPE_OBJECT_CARD_FILE:
-      removeCardMessage(obj)
+      removeCardFileMessage(obj.uid)
       break
     case TYPES.TYPE_OBJECT_CARD_MSG:
-      removeCardMessage(obj)
       break
     case TYPES.TYPE_OBJECT_CLIENT:
       break

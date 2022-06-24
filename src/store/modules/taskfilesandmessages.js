@@ -7,7 +7,8 @@ import {
   MESSAGES_SUCCESS,
   INSPECTOR_MESSAGES_SUCCESS,
   REFRESH_MESSAGES,
-  CHANGE_MESSAGE
+  CHANGE_MESSAGE,
+  REMOVE_MESSAGE_LOCALLY
 } from '../actions/taskmessages'
 import {
   FILES_REQUEST,
@@ -286,6 +287,13 @@ const mutations = {
     for (let i = 0; i < state.messages.length; i++) {
       if (state.messages[i].uid === data.uid) {
         state.messages[i][data.key] = data.value
+      }
+    }
+  },
+  [REMOVE_MESSAGE_LOCALLY]: (state, message) => {
+    for (let i = 0; i < state.messages.length; i++) {
+      if (message.uid === state.messages[i].uid) {
+        state.messages.splice(i, 1)
       }
     }
   },

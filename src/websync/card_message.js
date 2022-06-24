@@ -15,3 +15,7 @@ export function removeCardMessage (obj) {
     store.commit('CARD_CHANGE_MESSAGE', data)
   }
 }
+
+export function removeCardFileMessage (uid) {
+  store.commit('CARD_REMOVE_MESSAGE_LOCALLY', { uid: uid })
+}
