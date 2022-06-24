@@ -81,7 +81,7 @@
   <!-- vue3-treeview -->
   <div
     v-if="status == 'success'"
-    class="overflow-y-auto pt-[4px] px-px w-full"
+    class="overflow-y-auto pt-[4px] px-px min-h-[300px] w-full"
   >
     <tree
       :nodes="storeTasks"
