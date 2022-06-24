@@ -1,7 +1,7 @@
 <template>
   <div class="flex items-center gap-[10px]">
     <BoardModalBoxDelete
-      v-show="showDeleteProject"
+      v-if="showDeleteProject"
       title="Удалить проект"
       text="Вы действительно хотите удалить проект?"
       @cancel="showDeleteProject = false"

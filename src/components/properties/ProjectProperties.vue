@@ -1,14 +1,14 @@
 <template>
   <div>
     <ModalBoxDelete
-      v-show="showConfirm"
+      v-if="showConfirm"
       title="Удалить проект"
       :text="`Вы действительно хотите удалить проект ${selectedProjectName}?`"
       @cancel="showConfirm = false"
       @yes="removeProject"
     />
     <ModalBoxDelete
-      v-show="showConfirmQuit"
+      v-if="showConfirmQuit"
       title="Покинуть проект"
       :text="`Вы действительно хотите покинуть проект ${selectedProjectName}? Обратно можно попасть, только если владелец проекта опять вас добавит.`"
       @cancel="showConfirmQuit = false"

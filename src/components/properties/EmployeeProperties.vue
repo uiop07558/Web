@@ -1,7 +1,7 @@
 <template>
   <div>
     <ModalBoxDelete
-      v-show="showConfirm"
+      v-if="showConfirm"
       title="Удалить сотрудника"
       :text="`Вы действительно хотите удалить сотрудника ${selectedEmployeeName}?`"
       @cancel="showConfirm = false"

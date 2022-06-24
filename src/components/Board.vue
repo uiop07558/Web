@@ -1,35 +1,35 @@
 <template>
   <div id="Board">
     <BoardModalBoxDelete
-      v-show="showDeleteCard"
+      v-if="showDeleteCard"
       title="Удалить карточку"
       text="Вы действительно хотите удалить карточку?"
       @cancel="showDeleteCard = false"
       @yes="onDeleteCard"
     />
     <BoardModalBoxDelete
-      v-show="showDeleteColumn"
+      v-if="showDeleteColumn"
       title="Удалить колонку"
       text="Вы действительно хотите удалить колонку?"
       @cancel="showDeleteColumn = false"
       @yes="onDeleteColumn"
     />
     <BoardModalBoxRename
-      v-show="showAddCard"
+      v-if="showAddCard"
       :show="showAddCard"
       title="Добавить карточку"
       @cancel="showAddCard = false"
       @save="onAddNewCard"
     />
     <BoardModalBoxRename
-      v-show="showAddColumn"
+      v-if="showAddColumn"
       :show="showAddColumn"
       title="Добавить колонку"
       @cancel="showAddColumn = false"
       @save="onAddNewColumn"
     />
     <BoardModalBoxRename
-      v-show="showRenameColumn"
+      v-if="showRenameColumn"
       :show="showRenameColumn"
       title="Название колонки"
       :value="selectedColumnName"
@@ -37,13 +37,13 @@
       @save="onRenameColumn"
     />
     <BoardModalBoxColor
-      v-show="showColorColumn"
+      v-if="showColorColumn"
       :color="selectedColumnColor"
       @cancel="showColorColumn = false"
       @changeColor="onChangeColumnColor"
     />
     <BoardModalBoxMove
-      v-show="showMoveColumn"
+      v-if="showMoveColumn"
       :show="showMoveColumn"
       :position="selectedColumnOrder"
       :names="columnsNames"
@@ -52,7 +52,7 @@
       @changePosition="onChangeColumnPosition"
     />
     <BoardModalBoxCardMove
-      v-show="showMoveCard"
+      v-if="showMoveCard"
       :show="showMoveCard"
       :position="currentCardColumnOrder"
       :names="columnsNames"

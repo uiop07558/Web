@@ -174,7 +174,7 @@ export default {
 
 <template>
   <BoardModalBoxRename
-    v-show="showModal"
+    v-if="showModal"
     :show="showModal"
     title="Добавить метку"
     @cancel="showModal = false"

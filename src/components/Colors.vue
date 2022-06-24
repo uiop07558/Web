@@ -2,7 +2,7 @@
   <div class="w-full">
     <div>
       <BoardModalBoxRename
-        v-show="visibleModal"
+        v-if="visibleModal"
         :show="visibleModal"
         title="Добавить цвет"
         @cancel="visibleModal = false"

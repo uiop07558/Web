@@ -3,14 +3,14 @@
     class="w-full"
   >
     <BoardModalBoxRename
-      v-show="showAddDep"
+      v-if="showAddDep"
       :show="showAddDep"
       title="Добавить отдел"
       @cancel="showAddDep = false"
       @save="onAddNewDep"
     />
     <EmployeesModalBoxMove
-      v-show="showMoveDep"
+      v-if="showMoveDep"
       :show="showMoveDep"
       :position="currentDepPosition"
       :names="depNames"
@@ -19,20 +19,20 @@
       @changePosition="onChangeDepPosition"
     />
     <EmployeesModalBoxAdd
-      v-show="showAddEmployee"
+      v-if="showAddEmployee"
       :show="showAddEmployee"
       @cancel="showAddEmployee = false"
       @save="onAddNewEmp"
     />
     <BoardModalBoxDelete
-      v-show="showDeleteDep"
+      v-if="showDeleteDep"
       title="Удалить отдел"
       text="Вы действительно хотите удалить отдел?"
       @cancel="showDeleteDep = false"
       @yes="onDeleteDep"
     />
     <BoardModalBoxRename
-      v-show="showRenameDep"
+      v-if="showRenameDep"
       :show="showRenameDep"
       title="Название отдела"
       :value="currentDepName"

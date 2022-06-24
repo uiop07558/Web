@@ -1,12 +1,13 @@
 <template>
   <div class="w-full">
     <BoardModalBoxRename
-      v-show="showAddBoard"
+      v-if="showAddBoard"
       :show="showAddBoard"
       title="Добавить доску"
       @cancel="showAddBoard = false"
       @save="onAddNewBoard"
-    />    <div
+    />
+    <div
       v-for="(value, index) in boards"
       :key="index"
     >

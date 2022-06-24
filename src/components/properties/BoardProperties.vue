@@ -1,14 +1,14 @@
 <template>
   <div>
     <ModalBoxDelete
-      v-show="showConfirm"
+      v-if="showConfirm"
       title="Удалить доску"
       :text="`Вы действительно хотите удалить доску ${selectedBoardName}?`"
       @cancel="showConfirm = false"
       @yes="removeBoard"
     />
     <ModalBoxDelete
-      v-show="showConfirmQuit"
+      v-if="showConfirmQuit"
       title="Покинуть доску"
       :text="`Вы действительно хотите покинуть доску ${selectedBoardName}? Обратно можно попасть, только если владелец доски опять вас добавит.`"
       @cancel="showConfirmQuit = false"

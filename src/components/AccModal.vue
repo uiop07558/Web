@@ -70,7 +70,7 @@ const userPhone = function () {
 
 <template>
   <BoardModalBoxRename
-    v-show="showEditname"
+    v-if="showEditname"
     :show="showEditname"
     title="Имя"
     :value="userName()"
@@ -78,7 +78,7 @@ const userPhone = function () {
     @save="changeUserName"
   />
   <BoardModalBoxRename
-    v-show="showEditphone"
+    v-if="showEditphone"
     :show="showEditphone"
     title="Телефон"
     :value="userPhone()"

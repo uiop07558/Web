@@ -1,7 +1,7 @@
 <template>
   <div class="flex items-center gap-[10px]">
     <BoardModalBoxDelete
-      v-show="showDeleteColor"
+      v-if="showDeleteColor"
       title="Удалить цвет"
       text="Вы действительно хотите удалить цвет?"
       @cancel="showDeleteColor = false"

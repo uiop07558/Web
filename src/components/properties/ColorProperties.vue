@@ -1,7 +1,7 @@
 <template>
   <div>
     <ModalBoxDelete
-      v-show="showConfirm"
+      v-if="showConfirm"
       title="Удалить цвет"
       :text="`Вы действительно хотите удалить цвет ${selectedColorName}?`"
       @cancel="showConfirm = false"

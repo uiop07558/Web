@@ -1,7 +1,7 @@
 <template>
   <!-- Confirm modal -->
   <ModalBoxDelete
-    v-show="showConfirm"
+    v-if="showConfirm"
     title="Удалить задачу"
     :text="modalBoxDeleteText"
     @cancel="showConfirm = false"
@@ -81,7 +81,7 @@
   <!-- vue3-treeview -->
   <div
     v-if="status == 'success'"
-    class="overflow-y-auto pt-[4px] px-px  min-h-[300px] w-full"
+    class="overflow-y-auto pt-[4px] px-px w-full"
   >
     <tree
       :nodes="storeTasks"

@@ -262,14 +262,14 @@ const removeCard = () => {
 
 <template>
   <BoardModalBoxDelete
-    v-show="showDeleteCard"
+    v-if="showDeleteCard"
     title="Удалить карточку"
     text="Вы действительно хотите удалить карточку?"
     @cancel="showDeleteCard = false"
     @yes="removeCard"
   />
   <CardModalBoxBudget
-    v-show="showChangeCardBudget"
+    v-if="showChangeCardBudget"
     :value="selectedCard.cost / 100"
     :show="showChangeCardBudget"
     title="Бюджет карточки"

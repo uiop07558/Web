@@ -1,7 +1,7 @@
 <template>
   <div class="w-full">
     <BoardModalBoxRename
-      v-show="showAddBoard"
+      v-if="showAddBoard"
       :show="showAddBoard"
       title="Добавить доску"
       @cancel="showAddBoard = false"

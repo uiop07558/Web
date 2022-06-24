@@ -1320,7 +1320,7 @@ export default {
     </p>
   </modal-box-confirm> -->
   <ModalBoxDelete
-    v-show="showConfirm"
+    v-if="showConfirm"
     title="Удалить задачу"
     :text="modalBoxDeleteText"
     @cancel="showConfirm = false"

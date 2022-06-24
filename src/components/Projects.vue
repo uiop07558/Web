@@ -1,7 +1,7 @@
 <template>
   <div class="w-full">
     <BoardModalBoxRename
-      v-show="showAddProject"
+      v-if="showAddProject"
       :show="showAddProject"
       title="Добавить проект"
       @cancel="showAddProject = false"

@@ -1,7 +1,7 @@
 <template>
   <div class="flex items-center gap-[10px]">
     <BoardModalBoxDelete
-      v-show="showDeleteTag"
+      v-if="showDeleteTag"
       title="Удалить метку"
       text="Вы действительно хотите удалить метку?"
       @cancel="showDeleteTag = false"

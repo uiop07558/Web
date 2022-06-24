@@ -1,6 +1,6 @@
 <template>
   <CardModalBoxColor
-    v-show="showColorCard"
+    v-if="showColorCard"
     :color="coverColor"
     @cancel="showColorCard = false"
     @changeColor="onChangeCardColor"

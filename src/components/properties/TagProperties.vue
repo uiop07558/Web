@@ -1,7 +1,7 @@
 <template>
   <div>
     <ModalBoxDelete
-      v-show="showConfirm"
+      v-if="showConfirm"
       title="Удалить метку"
       :text="`Вы действительно хотите удалить метку ${selectedTagName}?`"
       @cancel="showConfirm = false"
@@ -31,7 +31,7 @@
       class="mt-[25px] p-0 font-roboto font-bold text-[18px] leading-[21px] text-[#424242] w-full border-none focus:ring-0 focus:outline-none"
       @blur="changeTagName"
     >
-  <!--  <div
+    <!--  <div
       v-else
       class="mt-[25px] w-full font-roboto font-bold text-[18px] leading-[21px] text-[#424242] overflow-hidden text-ellipsis whitespace-nowrap"
     >
