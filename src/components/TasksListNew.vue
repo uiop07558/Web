@@ -86,6 +86,7 @@
     <tree
       :nodes="storeTasks"
       :config="newConfig"
+      class="w-full"
       @nodeOpened="nodeExpanding"
       @nodeFocus="nodeSelected"
       @nodeDragend="nodeDragEnd"
@@ -99,7 +100,7 @@
         >
           <!-- Name, Status -->
           <div
-            class="flex gap-[6px] items-center"
+            class="flex gap-[6px] items-center w-full"
           >
             <div class="flex-none h-[20px] w-[20px] leading-[20px]">
               <TaskStatus
@@ -112,7 +113,7 @@
             <contenteditable
               v-model="props.node.info.name"
               tag="div"
-              class="taskName p-0 ring-0 outline-none break-words cursor-default"
+              class="taskName p-0 ring-0 outline-none w-full overflow-x-clip break-words cursor-default"
               :contenteditable="props.node.info._isEditable"
               placeholder="Введите название задачи"
               :no-nl="true"
