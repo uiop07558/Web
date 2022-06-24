@@ -18,7 +18,7 @@
   <!-- Add task input -->
   <div
     v-if="taskListSource && !DONT_SHOW_TASK_INPUT_UIDS[taskListSource.uid]"
-    class="fixed-create flex bg-[#f4f5f7] z-1 pl-px"
+    class="fixed-create flex bg-[#f4f5f7] z-[2] px-px pt-px"
   >
     <button
       class="bg-[#FF912380] px-2 rounded-[8px] text-black text-sm mr-1 hover:bg-[#F5DEB3]"
@@ -81,7 +81,7 @@
   <!-- vue3-treeview -->
   <div
     v-if="status == 'success'"
-    class="overflow-y-auto pt-[4px] pl-px"
+    class="overflow-y-auto pt-[4px] px-px  min-h-[200px] w-full"
   >
     <tree
       :nodes="storeTasks"
@@ -94,7 +94,7 @@
       <template #before-input="props">
         <div
           :id="props.node.info.uid"
-          class="group w-full pl-[31px] pr-[6px] py-[11px] mb-[4px] min-h-[42px] font-roboto flex-col bg-white rounded-[8px] relative"
+          class="group shrink-0 w-full pl-[31px] pr-[6px] py-[11px] mb-[4px] min-h-[42px] font-roboto flex flex-col bg-white rounded-[8px] relative"
           :style="{ backgroundColor: getValidBackColor(colors[props.node.info.uid_marker]?.back_color) }"
           :class="{ 'ring-1 ring-orange-400': props.node.id === lastSelectedTaskUid}"
         >
@@ -113,7 +113,7 @@
             <contenteditable
               v-model="props.node.info.name"
               tag="div"
-              class="taskName p-0 ring-0 outline-none w-full overflow-x-clip break-words cursor-default"
+              class="taskName p-0 ring-0 outline-none w-[calc(100%-26px)] overflow-x-clip break-words cursor-default"
               :contenteditable="props.node.info._isEditable"
               placeholder="Введите название задачи"
               :no-nl="true"
@@ -1159,9 +1159,7 @@ window.getSelection().removeAllRanges()
   position: sticky;
   top: 55px;
   z-index: 1;
-  background-color:#f4f5f7 ;
-  margin-bottom: 1px;
-  padding-right: 10px;
+  background-color:#f4f5f7;
 }
 
 [contenteditable=true]:empty:before{
