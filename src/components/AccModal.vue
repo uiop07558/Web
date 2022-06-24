@@ -3,7 +3,7 @@
 import { computed, ref } from 'vue'
 import { useStore } from 'vuex'
 import { USER_CHANGE_PHOTO, USER_CHANGE_PHONE } from '@/store/actions/user.js'
-
+import { CHANGE_EMPLOYEE_NAME } from '@/store/actions/employees.js'
 import ModalBoxConfirm from '@/components/modals/ModalBoxCard.vue'
 import BoardModalBoxRename from '@/components/Board/BoardModalBoxRename.vue'
 const emit = defineEmits(['AccLogout'])
@@ -44,6 +44,20 @@ const changeUserPhone = (phone) => {
   store.dispatch(USER_CHANGE_PHONE, data)
 }
 
+const changeUserName = (name) => {
+  showEditname.value = false
+  const data = {
+    name: name,
+    email: user.value?.current_user_email
+  }
+  store.dispatch(CHANGE_EMPLOYEE_NAME, data)
+}
+
+const userName = function () {
+  const name = user.value?.current_user_name ?? ''
+  return name
+}
+
 const userPhone = function () {
   const phone = user.value?.current_user_phone ?? ''
   const index = phone.lastIndexOf(' ("')
@@ -55,33 +69,14 @@ const userPhone = function () {
 </script>
 
 <template>
-  <modal-box-confirm
-    v-model="showEditname"
-    button="warning"
-    has-button
-    has-close
-    button-label="сохранить"
-  >
-    <span class="font-semibold text-base mb-4 relative bottom-1">Изменить имя</span>
-    <div>
-      <form>
-        <div class="form-group">
-          <input
-            v-if="user?.current_user_name"
-            v-model="user.current_user_name"
-            type="text"
-            class="w-full border border-orange-400 rounded h-[36px] p-2"
-          >
-        </div>
-        <div class="form-group text-right">
-          <button class="bg-orange-400 text-white p-2 rounded-md">
-            Сохранить
-          </button>
-        </div>
-      </form>
-      <div />
-    </div>
-  </modal-box-confirm>
+  <BoardModalBoxRename
+    v-show="showEditname"
+    :show="showEditname"
+    title="Имя"
+    :value="userName()"
+    @cancel="showEditname = false"
+    @save="changeUserName"
+  />
   <BoardModalBoxRename
     v-show="showEditphone"
     :show="showEditphone"
