@@ -152,7 +152,7 @@ input:focus {outline: 0;}
   min-height:40px ;
   display: table-cell;
   max-width: 85%;
-  min-width: 150px;
+  min-width: 300px;
   border-top-right-radius:12px ;
   border-top-left-radius:12px ;
   border-bottom-right-radius:10px ;
@@ -164,7 +164,7 @@ input:focus {outline: 0;}
   min-height:40px ;
   display: table-cell;
   max-width: 85%;
-  min-width: 150px;
+  min-width: 300px;
   border-top-left-radius:12px ;
   border-top-right-radius:12px ;
   border-bottom-left-radius:12px ;
