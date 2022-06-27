@@ -1225,8 +1225,14 @@ export default {
       if (navStack.value.length && navStack.value.length > 0) {
         const navStackUid = navStack.value[0]?.value?.uid
         if (navStackUid === '901841d9-0016-491d-ad66-8ee42d2b496b') {
-          this.$store.commit(TASK.REMOVE_TASK, taskUid)
-          this.$store.dispatch('asidePropertiesToggle', false)
+          let dateStart = new Date(data.str_date_begin)
+          let dateEnd = new Date(data.str_date_end)
+          dateStart = dateStart.getDate() + '-' + dateStart.getMonth() + '-' + dateStart.getFullYear()
+          dateEnd = dateEnd.getDate() + '-' + dateEnd.getMonth() + '-' + dateEnd.getFullYear()
+          if (!dateStart === dateEnd) {
+            this.$store.commit(TASK.REMOVE_TASK, taskUid)
+            this.$store.dispatch('asidePropertiesToggle', false)
+          }
         }
       }
     },
