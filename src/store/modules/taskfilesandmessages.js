@@ -256,6 +256,10 @@ const mutations = {
     state.messages = []
   },
   [CREATE_MESSAGE_REQUEST]: (state, data) => {
+    // check if inspector message is already in chat messages
+    if (data.id && state.messages.find(message => message.id === data.id)) {
+      return
+    }
     state.messages.push(data)
   },
   [DELETE_MESSAGE_REQUEST]: (state, data) => {
