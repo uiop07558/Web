@@ -834,7 +834,7 @@ export default {
         this.$store.dispatch(TASK.CHANGE_TASK_STATUS, { uid: this.task.uid, value: 8 })
       }
       if (this.task.uid_performer !== this.user.current_user_uid && this.task.uid_customer === this.user.current_user_uid) {
-        this.$store.dispatch(TASK.CHANGE_TASK_STATUS, { uid: this.task.uid, value: 8 })
+        this.$store.dispatch(TASK.CHANGE_TASK_STATUS, { uid: this.task.uid, value: 9 })
       }
       this.nextTask()
     },
