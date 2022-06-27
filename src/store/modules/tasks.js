@@ -840,7 +840,7 @@ const actions = {
         method: 'PATCH'
       })
         .then((resp) => {
-          commit(TASK.CHANGE_TASK_STATUS, data)
+          commit(TASK.UPDATE_TASK, resp.data.tasks[0])
           resolve(resp)
         })
         .catch((err) => {
@@ -849,7 +849,7 @@ const actions = {
               group: 'api',
               title: 'REST API Error, please make screenshot',
               action: TASK.CHANGE_TASK_STATUS,
-              text: err.response.data
+              text: err.response?.data
             },
             15000
           )
@@ -1400,6 +1400,8 @@ const mutations = {
   [TASK.UPDATE_TASK]: (state, task) => {
     if (state.newtasks[task.uid]) {
       state.newtasks[task.uid].info = task
+    } else if (state.selectedTask?.uid === task.uid) {
+      state.selectedTask = task
     }
   },
   [TASK.DAYS_WITH_TASKS]: (state, resp) => {
@@ -1530,13 +1532,6 @@ const mutations = {
   [TASK.MARK_TASK_AS_READ]: (state, uid) => {
     if (state.newtasks[uid]) {
       state.newtasks[uid].info.readed = 1
-    }
-  },
-  [TASK.CHANGE_TASK_STATUS]: (state, data) => {
-    try {
-      state.newtasks[data.uid].info.status = data.value
-    } catch (e) {
-      state.selectedTask.status = data.value
     }
   },
   [TASK.READY_FOR_COMPLITION_TASKS_REQUEST]: (state, resp) => {
