@@ -889,13 +889,13 @@ const actions = {
     })
   },
   [TASK.UPDATE_TASK]: ({ commit }, websyncObject) => {
-    commit(TASK.UPDATE_TASK, websyncObject.obj)
     if (websyncObject.anothers_tags.length) {
       commit(TASK.ADD_TASK_TAGS, websyncObject.anothers_tags)
     }
     if (websyncObject.anothers_markers.length) {
       commit(PUSH_COLOR, websyncObject.anothers_markers)
     }
+    commit(TASK.UPDATE_TASK, websyncObject.obj)
   },
   [TASK.CHANGE_TASK_ACCESS]: ({ commit, dispatch }, data) => {
     return new Promise((resolve, reject) => {
