@@ -260,7 +260,15 @@ export default {
     },
     updateChecklist (index) {
       if (!this.canEdit) return
-      this.saveChanges()
+      //
+      const check = this.arrChecklist[index]
+      const text = check.text.trim()
+      if (text) {
+        check.text = text
+        this.saveChanges()
+      } else {
+        this.removeChecklist(index)
+      }
     },
     saveChanges () {
       let checklist = ''
