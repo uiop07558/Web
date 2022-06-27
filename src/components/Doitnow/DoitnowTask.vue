@@ -18,6 +18,7 @@
           <TaskStatus
             class="pl-2"
             :task="task"
+            @changeStatus="changeStatus"
           />
           <contenteditable
             v-model="name"
@@ -827,12 +828,15 @@ export default {
       this.readTask()
       if (this.task.uid_performer === this.user.current_user_uid && this.task.uid_customer === this.user.current_user_uid) {
         this.$store.dispatch(TASK.CHANGE_TASK_STATUS, { uid: this.task.uid, value: 7 })
+        this.$emit('changeValue', { status: 7 })
       }
       if (this.task.uid_performer === this.user.current_user_uid && this.task.uid_customer !== this.user.current_user_uid) {
         this.$store.dispatch(TASK.CHANGE_TASK_STATUS, { uid: this.task.uid, value: 8 })
+        this.$emit('changeValue', { status: 8 })
       }
       if (this.task.uid_performer !== this.user.current_user_uid && this.task.uid_customer === this.user.current_user_uid) {
         this.$store.dispatch(TASK.CHANGE_TASK_STATUS, { uid: this.task.uid, value: 9 })
+        this.$emit('changeValue', { status: 9 })
       }
       this.nextTask()
     },
@@ -841,14 +845,17 @@ export default {
       if ((this.task.uid_performer === this.user.current_user_uid && this.task.uid_customer === this.user.current_user_uid) ||
       (this.task.uid_performer !== this.user.current_user_uid && this.task.uid_customer === this.user.current_user_uid)) {
         this.$store.dispatch(TASK.CHANGE_TASK_STATUS, { uid: this.task.uid, value: 1 })
+        this.$emit('changeValue', { status: 1 })
       } else {
         this.$store.dispatch(TASK.CHANGE_TASK_STATUS, { uid: this.task.uid, value: 5 })
+        this.$emit('changeValue', { status: 5 })
       }
       this.nextTask()
     },
     decline () {
       this.readTask()
       this.$store.dispatch(TASK.CHANGE_TASK_STATUS, { uid: this.task.uid, value: 6 })
+      this.$emit('changeValue', { status: 6 })
       this.nextTask()
     },
     onReAssignToUser: function (userEmail) {
@@ -957,6 +964,11 @@ export default {
             this.$emit('changeValue', data)
             this.readTask()
           })
+    },
+    changeStatus (status) {
+      this.$store.dispatch(TASK.CHANGE_TASK_STATUS, { uid: this.task.uid, value: status }).then(() => {
+        this.$emit('changeValue', { status: status })
+      })
     }
   }
 }

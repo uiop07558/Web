@@ -105,6 +105,7 @@
             <div class="flex-none h-[20px] w-[20px] leading-[20px]">
               <TaskStatus
                 :task="props.node.info"
+                @changeStatus="onChangeStatus($event, props.node.info)"
                 @click.stop
               />
             </div>
@@ -893,6 +894,12 @@ export default {
     },
     isInFocus () {
       return this.props.node.info.focus === 1
+    },
+    calendarDates () {
+      return this.$store.state.calendar[1].dates
+    },
+    daysWithTasks () {
+      return this.$store.state.tasks.daysWithTasks
     }
   },
   created () {
@@ -922,6 +929,25 @@ export default {
       console.log(this.lastSelectedTaskUid)
       this.lastSelectedTaskUid = uid
       this.showConfirm = true
+    },
+    onChangeStatus (status, task) {
+      console.log('onChangeStatus', status, task)
+      this.$store.dispatch(TASK.CHANGE_TASK_STATUS, { uid: task.uid, value: status }).then(() => {
+        if (!this.$store.state.navigator.navigator.settings.show_completed_tasks && [1, 5, 7, 8].includes(status)) {
+          this.$store.commit(TASK.REMOVE_TASK, task.uid)
+          this.$store.dispatch('asidePropertiesToggle', false)
+          this.$store.dispatch(TASK.DAYS_WITH_TASKS)
+            .then(() => {
+              console.log('this.calendarDates.value', this.calendarDates)
+              for (let i = 0; i < this.calendarDates.length; i++) {
+                const date = this.calendarDates[i].getDate() + '-' + (this.calendarDates[i].getMonth() + 1) + '-' + this.calendarDates[i].getFullYear()
+                if (!this.daysWithTasks.includes(date)) {
+                  this.$store.state.calendar[1].dates.splice(this.$store.state.calendar[1].dates.indexOf(this.calendarDates.value[i]), 1)
+                }
+              }
+            })
+        }
+      })
     }
   }
 }

@@ -5,8 +5,6 @@ import Icon from '@/components/Icon.vue'
 import PopMenu from '@/components/modals/PopMenu.vue'
 import PopMenuItem from '@/components/modals/PopMenuItem.vue'
 
-import * as TASK from '@/store/actions/tasks'
-
 // Statuses icons
 import readyStatus from '@/icons/ready-status.js'
 import note from '@/icons/note.js'
@@ -15,6 +13,8 @@ import pause from '@/icons/pause.js'
 import canceled from '@/icons/canceled.js'
 import improve from '@/icons/improve.js'
 import repeat from '@/icons/repeat.js'
+
+const emit = defineEmits(['changeStatus'])
 
 const props = defineProps({
   task: {
@@ -57,10 +57,7 @@ const statuses = [
 ]
 
 const store = useStore()
-const storeNavigator = computed(() => store.state.navigator.navigator)
 const colors = computed(() => store.state.colors.colors)
-const calendarDates = computed(() => store.state.calendar[1].dates)
-const daysWithTasks = computed(() => store.state.tasks.daysWithTasks)
 
 const showStatusOrNot = (type, status) => {
   if (type === 1 && [0, 1, 3, 4, 6, 7].includes(status)) {
@@ -75,21 +72,7 @@ const showStatusOrNot = (type, status) => {
 }
 
 const changeTaskStatus = (uid, status) => {
-  store.dispatch(TASK.CHANGE_TASK_STATUS, { uid: uid, value: status }).then(() => {
-    if (!storeNavigator.value.settings.show_completed_tasks && [1, 5, 7, 8].includes(status)) {
-      store.commit(TASK.REMOVE_TASK, uid)
-      store.dispatch('asidePropertiesToggle', false)
-      store.dispatch(TASK.DAYS_WITH_TASKS)
-        .then(() => {
-          for (let i = 0; i < calendarDates.value.length; i++) {
-            const date = calendarDates.value[i].getDate() + '-' + (calendarDates.value[i].getMonth() + 1) + '-' + calendarDates.value[i].getFullYear()
-            if (!daysWithTasks.value.includes(date)) {
-              store.state.calendar[1].dates.splice(store.state.calendar[1].dates.indexOf(calendarDates.value[i]), 1)
-            }
-          }
-        })
-    }
-  })
+  emit('changeStatus', status)
 }
 </script>
 
@@ -147,5 +130,5 @@ const changeTaskStatus = (uid, status) => {
         :height="repeat.height"
       />
     </div>
-  </popmenu>
+  </PopMenu>
 </template>
