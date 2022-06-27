@@ -154,7 +154,7 @@ export default {
                     uid: this.task.uid,
                     value: 9
                   }
-                  this.$store.commit(TASK.CHANGE_TASK_STATUS, status)
+                  this.$store.dispatch(TASK.CHANGE_TASK_STATUS, status)
                 }
               }
               this.$refs.taskMsgEdit.addEventListener('paste', this.onPasteEvent, { once: true })
@@ -270,7 +270,7 @@ export default {
                 uid: this.task.uid,
                 value: 9
               }
-              this.$store.commit(TASK.CHANGE_TASK_STATUS, data)
+              this.$store.dispatch(TASK.CHANGE_TASK_STATUS, data)
             }
           }
           this.$store.commit(TASK.MSG_EQUAL, this.task, decodeURIComponent(this.taskMsg))
@@ -308,17 +308,19 @@ export default {
           if (this.task.type === 2 || this.task.type === 3) {
             if ([1, 5, 7, 8].includes(this.task.status)) {
               const status = {
+                uid: this.selectedTask.uid,
                 value: 9
               }
-              this.$store.commit(TASK.CHANGE_TASK_STATUS, status)
+              this.$store.dispatch(TASK.CHANGE_TASK_STATUS, status)
             }
           }
           this.$store.state.tasks.selectedTask.has_files = true
           if (this.task.uid_customer === this.user.current_user_uid && (this.task.status === 5 || this.task.status === 7)) {
             const status = {
+              uid: this.selectedTask.uid,
               value: 9
             }
-            this.$store.commit(TASK.CHANGE_TASK_STATUS, status)
+            this.$store.dispatch(TASK.CHANGE_TASK_STATUS, status)
           }
         })
       this.infoComplete = true
