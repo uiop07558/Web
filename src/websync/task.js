@@ -13,7 +13,7 @@ export function removeTask (uid) {
 }
 
 export function updateTask (obj) {
-  store.commit('UPDATE_TASK', obj.obj)
+  store.dispatch('UPDATE_TASK', obj) // updates task and extracts another tags & colors
   if (shouldAddTaskIntoList(obj.obj)) {
     store.commit('ADD_TASK', obj.obj)
   }
