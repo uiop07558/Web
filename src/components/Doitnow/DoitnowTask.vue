@@ -1,4 +1,5 @@
 <template>
+  <pre>{{ $store.state.selectedTask }}</pre>
   <div
     class="bg-white py-6 px-5 rounded-lg flex justify-between"
     :style="{ borderColor: colors[task.uid_marker] ? colors[task.uid_marker].back_color : ''}"
@@ -17,9 +18,7 @@
         <div class="flex items-center -ml-2">
           <TaskStatus
             class="pl-2"
-            :in-doitnow="true"
             :task="task"
-            @nextTask="nextTask"
           />
           <contenteditable
             v-model="name"
@@ -868,18 +867,16 @@ export default {
             })
           }
 
-          this.$store.commit(TASK.HAS_MSGS, this.task.uid, true)
           if (this.task.type === 2 || this.task.type === 3) {
             if ([1, 5, 7, 8].includes(this.task.status)) {
               const status = {
-                uid: this.task.uid,
                 value: 9
               }
               this.$store.commit(TASK.CHANGE_TASK_STATUS, status)
             }
           }
-          this.$store.commit(TASK.MSG_EQUAL, this.task.uid, decodeURIComponent(this.taskMsg))
         })
+      this.$emit('changeValue', { has_msgs: true })
       this.taskMsg = ''
     },
     onAnswerMessage: function (uid) {
@@ -896,6 +893,7 @@ export default {
         .then(
           resp => {
             const data = {
+              is_overdue: resp.is_overdue,
               term_user: resp.term,
               date_begin: resp.str_date_begin,
               date_end: resp.str_date_end

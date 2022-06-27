@@ -170,7 +170,7 @@
             />
             <!-- Performer -->
             <TaskListTagLabel
-              v-if="props.node.info.email_performer && employeesByEmail[props.node.info.email_performer] && currentUserEmail != props.node.info.email_performer && employees[props.node.info.uid_customer].email != props.node.info.email_performer"
+              v-if="props.node.info.email_performer && employeesByEmail[props.node.info.email_performer] && currentUserEmail != props.node.info.email_performer && employees[props.node.info.uid_customer] && employees[props.node.info.uid_customer].email != props.node.info.email_performer"
               :text="employeesByEmail[props.node.info.email_performer].name"
               :icon-width="props.node.info.performerreaded ? performerRead.width : performerNotRead.width"
               :icon-height="props.node.info.performerreaded ? performerRead.height : performerNotRead.height"

@@ -347,6 +347,7 @@ export default {
       store.dispatch(TASK.CHANGE_TASK_DATE, data).then(
         resp => {
           selectedTask.value.term_customer = resp.data.term
+          selectedTask.value.is_overdue = resp.data.is_overdue
           //  const timestart = this.timeStart === '' ? 'T00:00:00' : 'T' + this.timeStart + ':00'
           //  const timeend = this.timeEnd === '' ? 'T23:59:59' : 'T' + this.timeEnd + ':00'
           this.range.start = new Date().getFullYear() + '-' + (pad2(new Date().getMonth() + 1)) + '-' + new Date().getDate() + 'T00:00:00'
@@ -372,6 +373,7 @@ export default {
         resp => {
           console.log(resp.data.term)
           selectedTask.value.term_customer = resp.data.term
+          selectedTask.value.is_overdue = resp.data.is_overdue
           this.timeStart = timestart !== '' ? '' : timestart
           this.timeEnd = timeend !== '' ? '' : timeend
           this.timeStartActive = true
@@ -1205,6 +1207,7 @@ export default {
       this.$store.dispatch(TASK.CHANGE_TASK_DATE, data).then(
         resp => {
           console.log(resp.term)
+          this.selectedTask.is_overdue = resp.is_overdue
           this.selectedTask.term_user = resp.term
           this.selectedTask.date_begin = resp.str_date_begin
           this.selectedTask.date_end = resp.str_date_end
