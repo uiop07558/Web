@@ -601,6 +601,7 @@ export default {
       }
     },
     onDeleteCard () {
+      this.$store.dispatch('asidePropertiesToggle', false)
       this.showDeleteCard = false
       if (this.currentCard) {
         this.$store

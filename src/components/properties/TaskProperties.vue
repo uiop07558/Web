@@ -256,7 +256,6 @@ export default {
         text: taskMsg.value,
         msg: taskMsg.value
       }
-
       store.dispatch(CREATE_MESSAGE_REQUEST, data).then(
         resp => {
           selectedTask.value.has_msgs = true
@@ -1065,16 +1064,16 @@ export default {
         text: msgtask,
         msg: msgtask
       }
-      this.$store.dispatch(CREATE_MESSAGE_REQUEST, data).then(
-        resp => {
+      if (data.text) {
+        this.$store.dispatch(CREATE_MESSAGE_REQUEST, data).then(
+          resp => {
           // Answer last inspector message
-          const lastInspectorMessage = this.taskMessagesAndFiles.slice().reverse().find(message => message.uid_creator === 'inspector')
-          if (lastInspectorMessage && this.selectedTask.uid_performer === this.cusers?.current_user_uid) {
-            this.$store.dispatch(INSPECTOR.ANSWER_INSPECTOR_TASK, { id: lastInspectorMessage.id, answer: 1 }).then(() => {
-              lastInspectorMessage.performer_answer = 1
-            })
-          }
-
+            const lastInspectorMessage = this.taskMessagesAndFiles.slice().reverse().find(message => message.uid_creator === 'inspector')
+            if (lastInspectorMessage && this.selectedTask.uid_performer === this.cusers?.current_user_uid) {
+              this.$store.dispatch(INSPECTOR.ANSWER_INSPECTOR_TASK, { id: lastInspectorMessage.id, answer: 1 }).then(() => {
+                lastInspectorMessage.performer_answer = 1
+              })
+            }
           this.selectedTask.has_msgs = true
           if (this.selectedTask.type === 2 || this.selectedTask.type === 3) {
             if ([1, 5, 7, 8].includes(this.selectedTask.status)) {
@@ -1082,11 +1081,11 @@ export default {
                 this.selectedTask.status = 9
               }
             }
-          }
-          this.selectedTask.msg = decodeURIComponent(this.taskMsg)
-          const wrapperElement = document.getElementById('content').lastElementChild
-          wrapperElement.scrollIntoView({ behavior: 'smooth' })
-        })
+            this.selectedTask.msg = decodeURIComponent(this.taskMsg)
+            const wrapperElement = document.getElementById('content').lastElementChild
+            wrapperElement.scrollIntoView({ behavior: 'smooth' })
+          })
+      }
       this.currentAnswerMessageUid = ''
       this.taskMsg = ''
       this.$nextTick(function () {
