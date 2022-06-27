@@ -254,9 +254,11 @@ const changeCardCover = (event) => {
 
 const showDeleteCard = ref(false)
 const removeCard = () => {
-  store
-    .dispatch(DELETE_CARD, { uid: selectedCard.value.uid })
-    .then(() => closeProperties())
+  store.dispatch(DELETE_CARD, { uid: selectedCard.value.uid })
+    .then(() => {
+      closeProperties()
+      showDeleteCard.value = false
+    })
 }
 </script>
 
