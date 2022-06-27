@@ -1522,7 +1522,7 @@ const mutations = {
         state: {
           checked: false,
           opened: false,
-          draggable: task.type === 1
+          draggable: [1, 2].includes(task.type)
         }
       }
     }
