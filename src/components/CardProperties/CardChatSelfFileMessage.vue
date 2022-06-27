@@ -47,7 +47,7 @@ const fileExtension = computed(() => {
   return splittedValue[splittedValue.length - 1].toLowerCase()
 })
 const FileIsImage = computed(() => ['jpg', 'png', 'jpeg', 'git', 'bmp', 'gif'].includes(fileExtension.value))
-const FileIsMovie = computed(() => ['mov', 'mp4'].includes(fileExtension.value))
+const FileIsMovie = computed(() => ['mov', 'mp4', 'wmv', 'avi', 'avchd', 'mkv', 'webm', 'mpeg-2'].includes(fileExtension.value))
 const FileIsDoc = computed(() => ['doc', 'docx', 'xls', 'xlsx', 'txt', 'pdf'].includes(fileExtension.value))
 const FileIsAudio = computed(() => ['mp3', 'wav', 'm4a'].includes(fileExtension.value))
 </script>
