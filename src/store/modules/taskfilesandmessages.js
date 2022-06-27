@@ -171,14 +171,6 @@ const actions = {
         .then(resp => {
           resolve(resp)
           commit(CREATE_MESSAGE_REQUEST, data)
-        }).catch(err => {
-          notify({
-            group: 'api',
-            title: 'REST API Error, please make screenshot',
-            action: CREATE_MESSAGE_REQUEST,
-            text: err.response.data
-          }, 15000)
-          reject(err)
         })
     })
   },

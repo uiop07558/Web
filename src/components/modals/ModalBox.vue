@@ -1,7 +1,7 @@
 <template>
   <teleport to="body">
     <Overlay
-      z-index="z-40"
+      z-index="z-50"
       @overlay-click="onCancel"
     >
       <div
