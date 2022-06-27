@@ -18,9 +18,7 @@
         <div class="flex items-center -ml-2">
           <TaskStatus
             class="pl-2"
-            :in-doitnow="true"
             :task="task"
-            @nextTask="nextTask"
           />
           <contenteditable
             v-model="name"
@@ -562,7 +560,6 @@ export default {
   },
   watch: {
     task (newval, oldval) {
-      this.$store.commit(TASK.SELECT_TASK, this.task)
       this.showAllMessages = false
       this.isChatVisible = false
       this.name = this.task.name

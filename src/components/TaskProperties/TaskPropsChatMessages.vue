@@ -167,10 +167,6 @@ export default {
     TaskPropsChatMessageFile
   },
   props: {
-    inDoitnow: {
-      type: Boolean,
-      default: false
-    },
     task: {
       type: Object,
       default: () => ({})
@@ -230,9 +226,7 @@ export default {
   },
   methods: {
     readTask () {
-      if (this.inDoitnow) {
-        this.$emit('readTask')
-      }
+      this.$emit('readTask')
     },
     uuidv4 () {
       return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, (c) =>
