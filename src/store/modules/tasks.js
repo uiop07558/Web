@@ -1147,6 +1147,7 @@ const actions = {
       const url = process.env.VUE_APP_LEADERTASK_API + 'api/v1/task/term'
       axios({ url: url, method: 'PATCH', data: dataSend })
         .then((resp) => {
+          dataSend.is_overdue = resp.data.is_overdue
           dataSend.term = resp.data.term
           resolve(dataSend)
         })

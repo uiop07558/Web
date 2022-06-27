@@ -896,6 +896,7 @@ export default {
         .then(
           resp => {
             const data = {
+              is_overdue: resp.is_overdue,
               term_user: resp.term,
               date_begin: resp.str_date_begin,
               date_end: resp.str_date_end
