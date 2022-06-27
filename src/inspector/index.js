@@ -2,6 +2,7 @@ import store from '@/store/index.js'
 import { computed } from 'vue'
 import { getInspectorMessage } from '@/inspector/message.js'
 import { showNotify } from '@/store/helpers/functions'
+import { createTaskMessage } from '@/websync/task_message.js'
 
 const user = computed(() => store.state.user.user)
 const isNotificationSoundOn = computed(() => store.state.inspector.is_notification_sound_on)
@@ -35,6 +36,12 @@ function parseMessage (data) {
   try {
     const parsedData = JSON.parse(data)
     showNotify({ uid: parsedData?.uid_json, group: 'inspector', title: 'Инспектор', text: getInspectorMessage(parsedData.message, parsedData.task.taskJson), task: parsedData.task.taskJson }, isNotificationSoundOn.value)
+
+    // Creating inspector message from notification
+    parsedData.message_obj.uid_creator = 'inspector' // Let chat know it is message from inspector
+    parsedData.message_obj.date_create = parsedData.message_obj.creation_date
+    const message = { uid_task: parsedData.task.taskJson.uid, obj: parsedData.message_obj }
+    createTaskMessage(message)
   } catch (e) {
     console.log(e)
   }
