@@ -47,6 +47,8 @@ const overdueQuantity = computed(() => {
   return quantity
 })
 
+const sortedKarmaListByDate = computed(() => [...karmaList.value].sort((a, b) => new Date(b.creation_date) - new Date(a.creation_date)))
+
 onMounted(() => {
   store.dispatch('KARMA_REQUEST', user.value.current_user_uid).then((resp) => {
     const success = []
@@ -102,14 +104,14 @@ onMounted(() => {
         <p class="text-center text-2xl mt-2 font-bold">
           История кармы
         </p>
-        <div v-if="!karmaList.length">
+        <div v-if="!sortedKarmaListByDate.length">
           <p class="text-center text-md text-gray-400 mt-10">
             У Вас еще нет истории :( <br> Завершите инспектируемые задачи
           </p>
         </div>
         <div class="flex flex-col mt-3">
           <div
-            v-for="karma in karmaList"
+            v-for="karma in sortedKarmaListByDate"
             :key="karma"
             class="mb-3"
           >
