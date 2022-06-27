@@ -2,7 +2,6 @@
 import Popper from 'vue3-popper'
 import { computed, ref, watch } from 'vue'
 import { useStore } from 'vuex'
-import Checklist from '@/components/TaskProperties/Checklist.vue'
 import close from '@/icons/close.js'
 import { CREATE_MESSAGE_REQUEST, DELETE_MESSAGE_REQUEST } from '@/store/actions/taskmessages'
 import { CREATE_FILES_REQUEST, DELETE_FILE_REQUEST } from '@/store/actions/taskfiles'
@@ -22,6 +21,8 @@ import TaskPropsButtonTags from '@/components/TaskProperties/TaskPropsButtonTags
 import TaskPropsButtonPerform from '@/components/TaskProperties/TaskPropsButtonPerform.vue'
 import TaskPropsButtonProject from '@/components/TaskProperties/TaskPropsButtonProject.vue'
 import TaskPropsButtonColor from '@/components/TaskProperties/TaskPropsButtonColor.vue'
+import TaskPropsChecklist from '@/components/TaskProperties/TaskPropsChecklist.vue'
+
 export default {
   components: {
     TaskPropsButtonDots,
@@ -34,9 +35,9 @@ export default {
     TaskPropsButtonProject,
     TaskPropsButtonColor,
     Popper,
-    Checklist,
     ModalBoxDelete,
-    TaskPropsCommentEditor
+    TaskPropsCommentEditor,
+    TaskPropsChecklist
   },
   directives: {
     linkify,
@@ -935,6 +936,12 @@ export default {
       }
       return text
     },
+    canEditChecklist () {
+      return (this.selectedTask.type === 1 || this.selectedTask.type === 2)
+    },
+    canCheckChecklist () {
+      return (this.canEditChecklist || this.selectedTask.type === 3)
+    },
     canEditComment () {
       return (this.selectedTask.type === 1 || this.selectedTask.type === 2)
     },
@@ -1293,32 +1300,28 @@ export default {
       this.$nextTick(function () {
         this.onInputTaskMsg()
       })
+    },
+    onChangeChecklist (checklist) {
+      console.log('onChangeChecklist:', checklist.replaceAll('\r\n\r\n', ' | ').replaceAll('\r\n', ' '))
+      const data = {
+        uid_task: this.selectedTask.uid,
+        checklist: checklist
+      }
+      this.$store.dispatch(TASK.CHANGE_TASK_CHECKLIST, data).then(
+        resp => {
+          this.selectedTask.checklist = checklist
+        }
+      )
+    },
+    onAddChecklistComplete () {
+      console.log('onAddChecklistComplete')
+      this.checklistshow = false
     }
   }
 }
 </script>
 
 <template>
-  <!--  <modal-box-confirm
-    v-model="showConfirm"
-    button="warning"
-    has-cancel
-    has-button
-    button-label="Да"
-    @confirm="delTask"
-  >
-    <p
-      v-if="tasks[selectedTask.uid]"
-      class="text-[#7e7e80] text-[13px] leading-[18px] font-roboto whitespace-pre-line"
-    >
-      Вы действительно хотите удалить выбраную <strong>"{{ selectedTask.name }}"</strong> задачу
-      <span
-        v-if="selectedTask.has_children"
-      >
-        (с подзадачами) в количестве: {{ tasks[selectedTask.uid].children.length }}
-      </span>
-    </p>
-  </modal-box-confirm> -->
   <ModalBoxDelete
     v-if="showConfirm"
     title="Удалить задачу"
@@ -1397,7 +1400,7 @@ export default {
         </strong>
       </div>
       <div
-        class="mt-3 custom-list-tags"
+        class="my-[25px] custom-list-tags"
       >
         <!-- Кнопка Поручить / Взять на исполнение / Перепоручить -->
         <TaskPropsButtonPerform
@@ -1536,18 +1539,6 @@ export default {
                         class="form-group"
                         style="margin-left: 5px"
                       >
-                        <!--  <Select
-                          ref="SeriesWeek"
-                          v-model = "SeriesWeek"
-                          @change="changeSeriesWeek"
-                          class="form-control form-control-select-repeat"
-                          id="selectedDays"
-                          multiple
-                        >
-                          <option v-for="opt in myOptions" :key="opt" v-bind:value="opt.id">
-                            {{opt.text}}
-                          </option>
-                        </Select> -->
                         <div
                           v-for="opt in myOptions"
                           :key="opt"
@@ -1906,91 +1897,6 @@ export default {
             </div>
           </div>
         </Popper>
-        <!-- Всплывающее окно Напоминание -->
-        <!-- <Popper
-           class="popper-reminder"
-           arrow
-           trigger="hover"
-           :class="isDark ? 'dark' : 'light'"
-           placement="bottom"
-         >
-           <template
-             #content="{ close }"
-             class="bottom"
-           >
-             <div class="popper">
-               <div @click="close"></div>
-                <div class="text-white p-3 body-popover-custom">
-                 <DatePicker
-                   v-model="remi"
-                   mode="dateTime"
-                   locale="ru"
-                   is24hr
-                 />
-               </div>
-             </div>
-           </template>
-           <a
-             v-if="selectedTask.date_reminder!==''"
-             ref="btnRefReminder"
-             class="mt-3 tags-custom"
-           >
-             <svg
-               width="24"
-               height="24"
-               viewBox="0 0 81 88"
-               fill="none"
-               xmlns="http://www.w3.org/2000/svg"
-             >
-               <path
-                 d="M67.12 5.72C66.52 5.12 65.8 4.88 65.08 4.88C64.24 4.88 63.52 5.24 63.04 5.72C61.84 6.92 61.84 8.72 63.04 9.92C70.36 17.24 74.32 26.84 74.32 37.16C74.32 38.84 75.64 40.16 77.32 40.16C79 40.16 80.32 38.84 80.32 37.16C80.08 25.16 75.52 14 67.12 5.72Z"
-                 fill="#3FBF64"
-                 fill-opacity="1"
-               />
-               <path
-                 d="M6.28002 37.04C6.28002 26.72 10.24 17.12 17.56 9.8C18.16 9.32 18.4 8.6 18.4 7.76C18.4 6.92 18.04 6.2 17.56 5.72C17.08 5.24 16.24 4.88 15.52 4.88C14.8 4.88 13.96 5.24 13.48 5.72C4.96002 14 0.400024 25.16 0.400024 37.04C0.400024 38.72 1.72002 40.04 3.40002 40.04C5.08002 40.04 6.28002 38.72 6.28002 37.04Z"
-                 fill="#3FBF64"
-                 fill-opacity="1"
-               />
-               <path
-                 d="M74.2 65.36C68.8 60.8 65.68 54.2 65.68 47.12V37.04C65.68 24.08 56.08 13.28 43.24 11.72V3.8C43.24 2.12 41.92 0.800003 40.24 0.800003C38.56 0.800003 37.24 2.12 37.24 3.8V11.84C24.4 13.28 14.8 24.08 14.8 37.04V47.12C14.8 54.2 11.68 60.8 6.28002 65.36C4.84002 66.56 4.00002 68.48 4.00002 70.4C4.00002 74 6.88002 77 10.6 77H26.8C28.12 83.24 33.76 87.8 40.24 87.8C46.72 87.8 52.24 83.24 53.68 77H70C73.6 77 76.48 74.12 76.48 70.4C76.48 68.48 75.64 66.56 74.2 65.36ZM40.24 81.8C37 81.8 34.12 79.88 32.92 76.88H47.44C46.36 79.88 43.48 81.8 40.24 81.8ZM70 71H10.6C10.24 71 10 70.64 10 70.4C10 70.16 10.12 70.04 10.24 69.92C16.96 64.28 20.8 56 20.8 47.12V37.04C20.8 26.24 29.56 17.48 40.36 17.48C51.16 17.48 59.92 26.24 59.92 37.04V47.12C59.92 55.88 63.76 64.16 70.48 69.92C70.6 70.04 70.72 70.16 70.72 70.4C70.6 70.64 70.24 71 70 71Z"
-                 fill="#3FBF64"
-                 fill-opacity="1"
-               />
-             </svg>
-             <span class="rounded">{{ new Date(selectedTask.date_reminder).getDate() }}, {{ new Date(selectedTask.date_reminder).getMonth() }}, {{ new Date(selectedTask.date_reminder).getHours() }}</span>
-           </a>
-           <a
-             v-else
-             ref="btnRefReminder"
-             class="mt-3 tags-custom"
-           >
-             <svg
-               width="24"
-               height="24"
-               viewBox="0 0 81 88"
-               fill="none"
-               xmlns="http://www.w3.org/2000/svg"
-             >
-               <path
-                 d="M67.12 5.72C66.52 5.12 65.8 4.88 65.08 4.88C64.24 4.88 63.52 5.24 63.04 5.72C61.84 6.92 61.84 8.72 63.04 9.92C70.36 17.24 74.32 26.84 74.32 37.16C74.32 38.84 75.64 40.16 77.32 40.16C79 40.16 80.32 38.84 80.32 37.16C80.08 25.16 75.52 14 67.12 5.72Z"
-                 fill="black"
-                 fill-opacity="0.5"
-               />
-               <path
-                 d="M6.28002 37.04C6.28002 26.72 10.24 17.12 17.56 9.8C18.16 9.32 18.4 8.6 18.4 7.76C18.4 6.92 18.04 6.2 17.56 5.72C17.08 5.24 16.24 4.88 15.52 4.88C14.8 4.88 13.96 5.24 13.48 5.72C4.96002 14 0.400024 25.16 0.400024 37.04C0.400024 38.72 1.72002 40.04 3.40002 40.04C5.08002 40.04 6.28002 38.72 6.28002 37.04Z"
-                 fill="black"
-                 fill-opacity="0.5"
-               />
-               <path
-                 d="M74.2 65.36C68.8 60.8 65.68 54.2 65.68 47.12V37.04C65.68 24.08 56.08 13.28 43.24 11.72V3.8C43.24 2.12 41.92 0.800003 40.24 0.800003C38.56 0.800003 37.24 2.12 37.24 3.8V11.84C24.4 13.28 14.8 24.08 14.8 37.04V47.12C14.8 54.2 11.68 60.8 6.28002 65.36C4.84002 66.56 4.00002 68.48 4.00002 70.4C4.00002 74 6.88002 77 10.6 77H26.8C28.12 83.24 33.76 87.8 40.24 87.8C46.72 87.8 52.24 83.24 53.68 77H70C73.6 77 76.48 74.12 76.48 70.4C76.48 68.48 75.64 66.56 74.2 65.36ZM40.24 81.8C37 81.8 34.12 79.88 32.92 76.88H47.44C46.36 79.88 43.48 81.8 40.24 81.8ZM70 71H10.6C10.24 71 10 70.64 10 70.4C10 70.16 10.12 70.04 10.24 69.92C16.96 64.28 20.8 56 20.8 47.12V37.04C20.8 26.24 29.56 17.48 40.36 17.48C51.16 17.48 59.92 26.24 59.92 37.04V47.12C59.92 55.88 63.76 64.16 70.48 69.92C70.6 70.04 70.72 70.16 70.72 70.4C70.6 70.64 70.24 71 70 71Z"
-                 fill="black"
-                 fill-opacity="0.5"
-               />
-             </svg>
-             <span class="rounded"> Напоминание</span>
-           </a>
-         </Popper>-->
         <!-- Кнопка Проект -->
         <TaskPropsButtonProject
           v-if="(selectedTask.type === 1 || selectedTask.type === 2 || (selectedTask.uid_project !== '00000000-0000-0000-0000-000000000000')) && ((selectedTask.uid_customer === user?.current_user_uid) && (selectedTask.status !== 1))"
@@ -2032,40 +1938,6 @@ export default {
               fill-opacity="0.5"
             />
           </svg>
-
-          <!-- <svg
-            width="24"
-            height="24"
-            viewBox="0 0 72 96"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M30.8812 36.8813L21 46.7625L17.1188 42.8813C15.9563 41.7188 14.0437 41.7188 12.8812 42.8813C11.7187 44.0438 11.7187 45.9563 12.8812 47.1188L18.8812 53.1188C19.4625 53.7 20.2313 54 21 54C21.7687 54 22.5375 53.7 23.1188 53.1188L35.1188 41.1188C36.2812 39.9563 36.2812 38.0438 35.1188 36.8813C33.9562 35.7188 32.0438 35.7 30.8812 36.8813Z"
-              fill="black"
-              fill-opacity="0.5"
-            />
-            <path
-              d="M30.8812 60.8813L21 70.7625L17.1188 66.8813C15.9563 65.7188 14.0437 65.7188 12.8812 66.8813C11.7187 68.0438 11.7187 69.9563 12.8812 71.1188L18.8812 77.1188C19.4625 77.7 20.2313 78 21 78C21.7687 78 22.5375 77.7 23.1188 77.1188L35.1188 65.1188C36.2812 63.9563 36.2812 62.0438 35.1188 60.8813C33.9562 59.7188 32.0438 59.7 30.8812 60.8813Z"
-              fill="black"
-              fill-opacity="0.5"
-            />
-            <path
-              d="M42 45C42 46.65 43.35 48 45 48H57C58.65 48 60 46.65 60 45C60 43.35 58.65 42 57 42H45C43.35 42 42 43.35 42 45Z"
-              fill="black"
-              fill-opacity="0.5"
-            />
-            <path
-              d="M57 66H45C43.35 66 42 67.35 42 69C42 70.65 43.35 72 45 72H57C58.65 72 60 70.65 60 69C60 67.35 58.65 66 57 66Z"
-              fill="black"
-              fill-opacity="0.5"
-            />
-            <path
-              d="M51 6H44.4938C43.2563 2.5125 39.9188 0 36 0C32.0812 0 28.7437 2.5125 27.5062 6H21C19.35 6 18 7.35 18 9V12H6C2.7 12 0 14.7 0 18V90C0 93.3 2.7 96 6 96H66C69.3 96 72 93.3 72 90V18C72 14.7 69.3 12 66 12H54V9C54 7.35 52.65 6 51 6ZM24 12H30C31.65 12 33 10.65 33 9C33 7.35 34.35 6 36 6C37.65 6 39 7.35 39 9C39 10.65 40.35 12 42 12H48V18H24V12ZM66 18V90H6V18H18V21C18 22.65 19.35 24 21 24H51C52.65 24 54 22.65 54 21V18H66Z"
-              fill="black"
-              fill-opacity="0.5"
-            />
-          </svg> -->
           <span class="rounded"> Чек-лист</span>
         </div>
         <!-- Фокус -->
@@ -2085,12 +1957,15 @@ export default {
         />
       </div>
       <!-- Checklist -->
-      <Checklist
+      <TaskPropsChecklist
         v-if="selectedTask.checklist || checklistshow"
-        class="mt-4 checklist-custom"
-        :task-uid="selectedTask.uid"
+        class="mb-[20px] checklist-custom"
         :checklist="selectedTask.checklist"
-        @focusout="resetFocusChecklist"
+        :can-edit="canEditChecklist"
+        :can-check="canCheckChecklist"
+        :add-new="checklistshow"
+        @changeChecklist="onChangeChecklist"
+        @endEdit="onAddChecklistComplete"
       />
       <!-- Comment -->
       <TaskPropsCommentEditor
@@ -2225,18 +2100,6 @@ export default {
           class="btn-send-custom"
           @click="sendTaskMsg()"
         >
-          <!--   <svg
-            width="24"
-            height="26"
-            viewBox="0 0 25 24"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M23.8021 10.5763C23.541 10.054 23.1166 9.59697 22.5617 9.33583L3.82473 0.261142C3.43302 0.0979283 3.07395 0 2.64959 0C1.63767 0 0.723669 0.58757 0.26667 1.50157C-0.0597576 2.18707 -0.0924003 2.93785 0.201385 3.65599L3.43302 11.7514L0.201385 19.8142C-0.353542 21.1852 0.331955 22.7194 1.70295 23.2743C1.99674 23.4049 2.32316 23.4701 2.68223 23.4701C3.07395 23.4701 3.46566 23.3722 3.82473 23.209L22.5943 14.1343C23.2472 13.8405 23.7042 13.2856 23.9327 12.6327C24.1612 11.9473 24.1285 11.1965 23.8021 10.5763ZM2.02938 20.5649L5.16308 12.7307H20.8969L2.94338 21.4137C2.84545 21.4463 2.74752 21.4789 2.64959 21.4789C2.38845 21.4789 2.15995 21.3157 2.06202 21.0872C1.96409 20.924 1.96409 20.7282 2.02938 20.5649ZM5.16308 10.7395L2.02938 2.90521C1.93145 2.64406 1.99674 2.35028 2.19259 2.15442C2.32316 2.02385 2.48638 1.95857 2.64959 1.95857C2.74752 1.95857 2.84545 1.99121 2.94338 2.02385L20.8969 10.7068H5.16308V10.7395Z"
-              fill="#666666"
-            />
-          </svg> -->
           <svg
             width="32"
             class="mr-2"
@@ -2256,7 +2119,6 @@ export default {
               fill="#4C4C4D"
             />
           </svg>
-
         </button>
       </span>
     </div>
