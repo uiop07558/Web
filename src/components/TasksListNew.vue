@@ -71,7 +71,7 @@
   </div>
 
   <EmptyTasksListPics
-    v-if="!Object.keys(storeTasks).length && status === 'success'"
+    v-if="!Object.keys(storeTasks).length && status != 'loading'"
   />
 
   <!-- Skeleton -->
@@ -557,15 +557,15 @@ export default {
       store.commit(TASK.RESET_COPY_TASK)
     }
 
-    const createTask = (e, task) => {
-      if (task.name.length === 0) {
-        return false
-      } else {
-        const data = handleTaskSource()
-        e.preventDefault()
-        e.target.value = ''
-        e.target.blur()
-        e.target.focus()
+    const createTask = (e) => {
+      const data = handleTaskSource()
+      e.preventDefault()
+      e.target.value = ''
+      e.target.blur()
+      e.target.focus()
+      const title = data.name.trim()
+      if (title) {
+        data.name = title
         store.dispatch(TASK.CREATE_TASK, data)
           .then((resp) => {
           // выделяем добавленную задачу
@@ -580,10 +580,12 @@ export default {
               gotoNode(data.uid)
             }, 200)
           })
-        createTaskText.value = ''
-        return false
       }
+      createTaskText.value = ''
+
+      return false
     }
+
     const updateTask = (event, task) => {
       task.enterPress = true
       task.name = task.name.replace(/\r?\n|\r/g, '')
@@ -681,7 +683,6 @@ export default {
     const addSubtask = (parent) => {
       const newSubtask = {
         uid: uuidv4(),
-        date_create: new Date(),
         uid_customer: user.value.current_user_uid,
         email_performer: parent.uid_customer === user.value.current_user_uid ? parent.email_performer : '',
         name: '',
