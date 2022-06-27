@@ -1,5 +1,4 @@
 <template>
-  <pre>{{ $store.state.selectedTask }}</pre>
   <div
     class="bg-white py-6 px-5 rounded-lg flex justify-between"
     :style="{ borderColor: colors[task.uid_marker] ? colors[task.uid_marker].back_color : ''}"
@@ -68,6 +67,14 @@
                 @click="copyUrl(task)"
               >
                 Копировать как ссылку
+              </span>
+              <!-- only files -->
+              <span
+                class="h-[30px] flex items-center gap-[10px] px-[10px] py-[6px] cursor-pointer hover:bg-[#f4f5f7] rounded-[6px] text-[#4c4c4d] text-[13px] leading-[15px] font-roboto"
+                :class="showOnlyFiles ? 'bg-slate-200' : ''"
+                @click="showOnlyFiles = !showOnlyFiles"
+              >
+                В чате показывать только файлы
               </span>
             </div>
           </template>
@@ -189,13 +196,16 @@
           id="content"
           class="mt-3"
           :task="task"
-          :in-doitnow="true"
           :task-messages="taskMessages"
           :current-user-uid="user.current_user_uid"
           :show-all-messages="true"
+          :show-only-files="showOnlyFiles"
           @answerMessage="answerMessage"
-          @readTask="readTask"
           @sendTaskMsg="sendTaskMsg"
+          @onPasteEvent="onPasteEvent"
+          @deleteFiles="deleteFiles"
+          @deleteTaskMsg="deleteTaskMsg"
+          @readTask="readTask"
         />
         <!-- input -->
         <TaskPropsInputForm
@@ -294,6 +304,7 @@ import Icon from '@/components/Icon.vue'
 import * as TASK from '@/store/actions/tasks'
 import * as INSPECTOR from '@/store/actions/inspector.js'
 import * as MSG from '@/store/actions/taskmessages'
+import * as FILES from '@/store/actions/taskfiles.js'
 
 /* Icons */
 import taskoptions from '@/icons/taskoptions.js'
@@ -378,10 +389,10 @@ export default {
   emits: ['clickTask', 'nextTask', 'changeValue', 'readTask'],
   data (props) {
     const name = props.task.name
-    const isTaskHoverPopperActive = false
+    let isTaskHoverPopperActive = false
     const checklistshow = true
     const toggleTaskHoverPopper = (val) => {
-      isTaskHoverPopperActive.value = val
+      isTaskHoverPopperActive = val
     }
     const showConfirm = false
     const showAllMessages = false
@@ -421,6 +432,8 @@ export default {
       msgs,
       name,
       pauseD,
+      isloading: false,
+      showOnlyFiles: false,
       check,
       doublecheck,
       taskcomment,
@@ -607,6 +620,49 @@ export default {
       }
       this.$store.dispatch(TASK.REMOVE_TASK, uid)
     },
+    // copypaste
+    onPasteEvent: function (e) {
+      const items = (e.clipboardData || e.originalEvent.clipboardData).items
+      let loadFile = false
+      for (const index in items) {
+        const item = items[index]
+        if (item.kind === 'file') {
+          const blob = item.getAsFile()
+          const formData = new FormData()
+          formData.append('files', blob)
+          const data = {
+            uid_task: this.task.uid,
+            name: formData
+          }
+          loadFile = true
+          this.isloading = true
+          this.$store.dispatch(FILES.CREATE_FILES_REQUEST, data).then(
+            resp => {
+              this.isloading = false
+              // ставим статус "на доработку" когда прикладываем файл
+              if (this.task.type === 2 || this.task.type === 3) {
+                if ([1, 5, 7, 8].includes(this.task.status)) {
+                  if (((this.task.uid_customer === this.cusers.current_user_uid) && ((this.task.status === 1) || (this.task.status === 5)))) {
+                    this.$store.dispatch(TASK.CHANGE_TASK_STATUS, { value: 9 })
+                  } else if (((this.task.uid_customer !== this.cusers.current_user_uid) && (this.task.status === 1))) {
+                    this.$store.dispatch(TASK.CHANGE_TASK_STATUS, { value: 1 })
+                  }
+                }
+              }
+              // загрузка завершена - подписываемся опять
+              this.$refs.taskMsgEdit.addEventListener('paste', this.onPasteEvent, { once: true })
+            })
+          setTimeout(() => {
+            const elmnt = document.getElementById('content').lastElementChild
+            elmnt.scrollIntoView({ behavior: 'smooth' })
+          }, 100)
+        }
+      }
+      if (!loadFile) {
+        // не вставка файла - подписываемся опять
+        this.$refs.taskMsgEdit.addEventListener('paste', this.onPasteEvent, { once: true })
+      }
+    },
     updateTask (event, task) {
       this.$store.dispatch(TASK.CHANGE_TASK_NAME, { uid: task.uid, value: this.name.replace(/\r?\n|\r/g, '') })
       if (task.name.length > 0) {
@@ -631,6 +687,16 @@ export default {
           // removeTask(task.uid)
         }
       }
+    },
+    deleteFiles (uid) {
+      this.$store.dispatch(FILES.DELETE_FILE_REQUEST, { uid: uid })
+    },
+    deleteTaskMsg (uid) {
+      this.$store.dispatch(MSG.DELETE_MESSAGE_REQUEST, { uid: uid })
+        .then((resp) => {
+          this.$store.state.tasks.selectedTask.has_msgs = true
+          this.$store.state.taskfilesandmessages.messages.find(message => message.uid_msg) ? this.$store.state.taskfilesandmessages.messages.find(message => message.uid_msg === uid).deleted = 1 : this.$store.state.taskfilesandmessages.messages.find(message => message.uid === uid).deleted = 1
+        })
     },
     editTaskName (task) {
       const data = {
@@ -819,11 +885,6 @@ export default {
               type: resp.data.type
             }
             this.changeValue(data)
-            // this.selectedTask.email_performer = resp.data.email_performer
-            // this.selectedTask.perform_time = resp.data.perform_time
-            // this.selectedTask.performerreaded = resp.data.performerreaded
-            // this.selectedTask.uid_performer = resp.data.uid_performer
-            // this.selectedTask.type = resp.data.type
           }
         )
       if (user.current_user_email !== userEmail) {
@@ -900,9 +961,6 @@ export default {
             }
             this.$emit('changeValue', data)
             this.readTask()
-            // this.selectedTask.term_user = resp.term
-            // this.selectedTask.date_begin = resp.str_date_begin
-            // this.selectedTask.date_end = resp.str_date_end
           })
     }
   }

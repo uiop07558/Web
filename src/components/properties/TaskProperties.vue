@@ -1,5 +1,4 @@
 <script>
-
 import Popper from 'vue3-popper'
 import { computed, ref, watch } from 'vue'
 import { useStore } from 'vuex'
@@ -1135,10 +1134,8 @@ export default {
               if (this.selectedTask.type === 2 || this.selectedTask.type === 3) {
                 if ([1, 5, 7, 8].includes(this.selectedTask.status)) {
                   if (((this.selectedTask.uid_customer === this.cusers.current_user_uid) && ((this.selectedTask.status === 1) || (this.selectedTask.status === 5)))) {
-                    this.selectedTask.status = 9
                     this.$store.dispatch(TASK.CHANGE_TASK_STATUS, { uid: this.selectedTask.uid, value: 9 })
                   } else if (((this.selectedTask.uid_customer !== this.cusers.current_user_uid) && (this.selectedTask.status === 1))) {
-                    this.selectedTask.status = 1
                     this.$store.dispatch(TASK.CHANGE_TASK_STATUS, { uid: this.selectedTask.uid, value: 1 })
                   }
                 }
