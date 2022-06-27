@@ -73,7 +73,7 @@ export default {
       return this.$store.state.projects.projects[this.projectUid]
     },
     canDelete () {
-      return this.project?.email_creator === this.$store.state.user.user.current_user_email
+      return this.project?.email_creator === this.$store.state.user?.user?.current_user_email
     }
   },
   methods: {
