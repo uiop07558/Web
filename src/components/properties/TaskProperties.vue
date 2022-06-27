@@ -1074,17 +1074,11 @@ export default {
                 lastInspectorMessage.performer_answer = 1
               })
             }
-
-            this.selectedTask.has_msgs = true
-            if (this.selectedTask.type === 2 || this.selectedTask.type === 3) {
-              if ([1, 5, 7, 8].includes(this.selectedTask.status)) {
-                if (((this.selectedTask.uid_customer === this.cusers?.current_user_uid) && ((this.selectedTask.status === 1) || (this.selectedTask.status === 5)))) {
-                  this.selectedTask.status = 9
-                  this.$store.dispatch(TASK.CHANGE_TASK_STATUS, { uid: this.selectedTask.uid, value: 9 })
-                } else if (((this.selectedTask.uid_customer !== this.cusers?.current_user_uid) && (this.selectedTask.status === 1))) {
-                  this.selectedTask.status = 1
-                  this.$store.dispatch(TASK.CHANGE_TASK_STATUS, { uid: this.selectedTask.uid, value: 1 })
-                }
+          this.selectedTask.has_msgs = true
+          if (this.selectedTask.type === 2 || this.selectedTask.type === 3) {
+            if ([1, 5, 7, 8].includes(this.selectedTask.status)) {
+              if (((this.selectedTask.uid_customer === this.cusers?.current_user_uid) && ((this.selectedTask.status === 1) || (this.selectedTask.status === 5)))) {
+                this.selectedTask.status = 9
               }
             }
             this.selectedTask.msg = decodeURIComponent(this.taskMsg)
@@ -1142,9 +1136,7 @@ export default {
               if (this.selectedTask.type === 2 || this.selectedTask.type === 3) {
                 if ([1, 5, 7, 8].includes(this.selectedTask.status)) {
                   if (((this.selectedTask.uid_customer === this.cusers?.current_user_uid) && ((this.selectedTask.status === 1) || (this.selectedTask.status === 5)))) {
-                    this.$store.dispatch(TASK.CHANGE_TASK_STATUS, { uid: this.selectedTask.uid, value: 9 })
-                  } else if (((this.selectedTask.uid_customer !== this.cusers?.current_user_uid) && (this.selectedTask.status === 1))) {
-                    this.$store.dispatch(TASK.CHANGE_TASK_STATUS, { uid: this.selectedTask.uid, value: 1 })
+                    this.selectedTask.status = 9
                   }
                 }
               }
@@ -1209,14 +1201,18 @@ export default {
         str_date_end: end,
         reset: 0
       }
-      this.$store.dispatch(TASK.CHANGE_TASK_DATE, data).then(
-        resp => {
-          console.log(resp.term)
-          this.selectedTask.is_overdue = resp.is_overdue
-          this.selectedTask.term_user = resp.term
-          this.selectedTask.date_begin = resp.str_date_begin
-          this.selectedTask.date_end = resp.str_date_end
-        })
+      this.$store.dispatch(TASK.CHANGE_TASK_DATE, data).then(resp => {
+        this.selectedTask.is_overdue = resp.is_overdue
+        this.selectedTask.term_user = resp.term
+        this.selectedTask.date_begin = resp.str_date_begin
+        this.selectedTask.date_end = resp.str_date_end
+
+        // remove task locally from list if we reset date
+        if (begin === '0001-01-01T00:00:00') {
+          this.$store.commit(TASK.REMOVE_TASK, taskUid)
+          this.$store.dispatch('asidePropertiesToggle', false)
+        }
+      })
 
       if (data.str_date_begin === data.str_date_end) {
         return
