@@ -153,38 +153,23 @@ export default {
     subTasks () {
       return this.$store.state.tasks.subtasks.tasks
     }
-    // header () {
-    //   if (this.unreadTasks.length) {
-    //     return 'Команда ждет ваших действий по задачам. Пожалуйста, ответьте им'
-    //   }
-    //   if (this.readyTasks.length) {
-    //     return 'У вас есть готовые задачи. Примите решение, что с ними делать'
-    //   }
-    //   if (this.overdueTasks.length) {
-    //     return 'У вас есть просроченные задачи. Примите решение, что с ними делать'
-    //   }
-    //   if (this.todayTasks.length) {
-    //     return 'У вас запланированы дела на сегодня. Пора приступить к делу'
-    //   }
-    //   return null
-    // }
   },
   watch: {
     firstTask (newtask, oldtask) {
       if (newtask) {
         this.$store.commit(TASK.SELECT_TASK, newtask)
-        this.$store.dispatch(MSG.MESSAGES_REQUEST, this.firstTask.uid)
+        this.$store.dispatch(MSG.MESSAGES_REQUEST, newtask.uid)
           .then(() => {
-            this.$store.dispatch(FILES.FILES_REQUEST, this.firstTask.uid)
+            this.$store.dispatch(FILES.FILES_REQUEST, newtask.uid)
               .then(() => {
-                this.$store.dispatch(MSG.INSPECTOR_MESSAGES_REQUEST, this.firstTask.uid)
+                this.$store.dispatch(MSG.INSPECTOR_MESSAGES_REQUEST, newtask.uid)
                   .then(() => {
                     this.$store.commit(FILES.MERGE_FILES_WITH_MESSAGES)
                   })
               })
           })
-        this.$store.dispatch(MSG.INSPECTOR_MESSAGES_REQUEST, this.firstTask.uid)
-        this.$store.dispatch(TASK.SUBTASKS_REQUEST, this.firstTask.uid)
+        this.$store.dispatch(MSG.INSPECTOR_MESSAGES_REQUEST, newtask.uid)
+        this.$store.dispatch(TASK.SUBTASKS_REQUEST, newtask.uid)
       }
     }
   },

@@ -308,26 +308,25 @@ export default {
           if (this.task.type === 2 || this.task.type === 3) {
             if ([1, 5, 7, 8].includes(this.task.status)) {
               const status = {
-                uid: this.task.uid,
                 value: 9
               }
               this.$store.commit(TASK.CHANGE_TASK_STATUS, status)
             }
           }
-          this.$store.commit(TASK.HAS_FILES, this.task, true)
+          this.$store.state.tasks.selectedTask.has_files = true
           if (this.task.uid_customer === this.user.current_user_uid && (this.task.status === 5 || this.task.status === 7)) {
             const status = {
-              uid: this.task.uid,
               value: 9
             }
             this.$store.commit(TASK.CHANGE_TASK_STATUS, status)
           }
         })
       this.infoComplete = true
-      // setTimeout(() => {
-      //   const elem = document.getElementById('content').lastElementChild
-      //   elem.scrollIntoView({ behavior: 'smooth' })
-      // }, 100)
+      setTimeout(() => {
+        const elem = document.getElementById('content').lastElementChild
+        elem.scrollIntoView({ behavior: 'smooth' })
+      }, 100)
+      this.$store.commit(FILES.REFRESH_FILES)
     }
   }
 }

@@ -29,6 +29,7 @@ export function shouldAddTaskIntoList (task) {
     checkShouldAddTaskToFocusRequest(lastNavStackElement, task) ||
     checkShouldAddTaskToTagRequest(lastNavStackElement, task) ||
     checkShouldAddTaskToColorRequest(lastNavStackElement, task) ||
+    ifTaskHasParent(lastNavStackElement, task) ||
     addToUnsortedList(lastNavStackElement, task)
   ) {
     return true
@@ -246,6 +247,12 @@ function checkShouldAddTaskToColorRequest (lastNavStackElement, task) {
     ) {
       return true
     }
+  }
+}
+
+function ifTaskHasParent (lastNavStackElement, task) {
+  if (task.uid_parent && task.uid_parent !== '00000000-0000-0000-0000-000000000000') {
+    return true
   }
 }
 

@@ -1377,9 +1377,6 @@ const mutations = {
   [TASK.PUSH_TAG]: (state, resp) => {
     state.tags[resp.data.uid] = resp.data
   },
-  [TASK.HAS_FILES]: (state, task, value) => {
-    state.tasks[task.uid] = value
-  },
   [TASK.UPDATE_TASK]: (state, task) => {
     if (state.newtasks[task.uid]) {
       state.newtasks[task.uid].info = task
@@ -1518,8 +1515,7 @@ const mutations = {
   [TASK.CHANGE_TASK_STATUS]: (state, data) => {
     try {
       state.newtasks[data.uid].info.status = data.value
-    } catch {
-      // смена статуса для очереди
+    } catch (e) {
       state.selectedTask.status = data.value
     }
   },
@@ -1540,16 +1536,45 @@ const mutations = {
   [TASK.ADD_TASK]: (state, task) => {
     if (state.newtasks[task.uid]) return // check if task already exist
 
-    if (!task._justCreated) {
+    if (!task._justCreated && task.uid_parent === '00000000-0000-0000-0000-000000000000') {
       state.newConfig.roots.unshift(task.uid)
     }
+
     task._justCreated = false
-    state.newConfig.leaves.push(task.uid)
     task.type = 1
     task._isEditable = false
+
+    // check if task has parent
+    if (task.uid_parent && task.uid_parent !== '00000000-0000-0000-0000-000000000000') {
+      // add chevron if there are no children
+      if (state.newtasks[task.uid_parent] && state.newtasks[task.uid_parent].children && state.newtasks[task.uid_parent].children.length === 0) {
+        state.newtasks[task.uid_parent].children.push('fake-uid')
+        for (let i = 0; i < state.newConfig.leaves.length; i++) {
+          if (task.uid_parent === state.newConfig.leaves[i]) {
+            state.newConfig.leaves.splice(i, 1)
+          }
+        }
+      } else if (state.newtasks[task.uid_parent] && state.newtasks[task.uid_parent].children && state.newtasks[task.uid_parent].children.length) {
+        // actually add a child if there are some children in it and add to newConfig
+        state.newtasks[task.uid_parent].children.push(task.uid)
+        state.newtasks[task.uid] = {
+          info: task,
+          children: [],
+          state: {
+            draggable: true,
+            disabled: false,
+            checked: false
+          }
+        }
+        state.newConfig.leaves.push(task.uid)
+      }
+      return
+    }
+
+    state.newConfig.leaves.push(task.uid)
+
     state.newtasks[task.uid] = {
       info: task,
-      // even if copy, we would copy without children
       children: [],
       state: {
         draggable: true,
