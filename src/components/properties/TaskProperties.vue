@@ -1202,14 +1202,18 @@ export default {
         str_date_end: end,
         reset: 0
       }
-      this.$store.dispatch(TASK.CHANGE_TASK_DATE, data).then(
-        resp => {
-          console.log(resp.term)
-          this.selectedTask.is_overdue = resp.is_overdue
-          this.selectedTask.term_user = resp.term
-          this.selectedTask.date_begin = resp.str_date_begin
-          this.selectedTask.date_end = resp.str_date_end
-        })
+      this.$store.dispatch(TASK.CHANGE_TASK_DATE, data).then(resp => {
+        this.selectedTask.is_overdue = resp.is_overdue
+        this.selectedTask.term_user = resp.term
+        this.selectedTask.date_begin = resp.str_date_begin
+        this.selectedTask.date_end = resp.str_date_end
+
+        // remove task locally from list if we reset date
+        if (begin === '0001-01-01T00:00:00') {
+          this.$store.commit(TASK.REMOVE_TASK, taskUid)
+          this.$store.dispatch('asidePropertiesToggle', false)
+        }
+      })
 
       if (data.str_date_begin === data.str_date_end) {
         return
