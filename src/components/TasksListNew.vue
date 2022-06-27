@@ -557,30 +557,33 @@ export default {
       store.commit(TASK.RESET_COPY_TASK)
     }
 
-    const createTask = (e) => {
-      const data = handleTaskSource()
-      e.preventDefault()
-      e.target.value = ''
-      e.target.blur()
-      e.target.focus()
-      store.dispatch(TASK.CREATE_TASK, data)
-        .then((resp) => {
+    const createTask = (e, task) => {
+      if (task.name.length === 0) {
+        return false
+      } else {
+        const data = handleTaskSource()
+        e.preventDefault()
+        e.target.value = ''
+        e.target.blur()
+        e.target.focus()
+        store.dispatch(TASK.CREATE_TASK, data)
+          .then((resp) => {
           // выделяем добавленную задачу
           // и отображаем её свойства
-          nodeSelected({ id: data.uid, info: resp.data })
-          if (navStack.value && navStack.value[navStack.value.length - 1].value.uid === '901841d9-0016-491d-ad66-8ee42d2b496b') {
-            store.commit('addDot', new Date(navStack.value[navStack.value.length - 1].value.param))
-          }
-          document.getElementById('task').firstElementChild.focus({ preventScroll: false })
-          setTimeout(() => {
-            document.getElementById(data.uid).parentNode.draggable = false
-            gotoNode(data.uid)
-          }, 200)
-        })
-      createTaskText.value = ''
-      return false
+            nodeSelected({ id: data.uid, info: resp.data })
+            if (navStack.value && navStack.value[navStack.value.length - 1].value.uid === '901841d9-0016-491d-ad66-8ee42d2b496b') {
+              store.commit('addDot', new Date(navStack.value[navStack.value.length - 1].value.param))
+            }
+            document.getElementById('task').firstElementChild.focus({ preventScroll: false })
+            setTimeout(() => {
+              document.getElementById(data.uid).parentNode.draggable = false
+              gotoNode(data.uid)
+            }, 200)
+          })
+        createTaskText.value = ''
+        return false
+      }
     }
-
     const updateTask = (event, task) => {
       task.enterPress = true
       task.name = task.name.replace(/\r?\n|\r/g, '')
@@ -678,6 +681,7 @@ export default {
     const addSubtask = (parent) => {
       const newSubtask = {
         uid: uuidv4(),
+        date_create: new Date(),
         uid_customer: user.value.current_user_uid,
         email_performer: parent.uid_customer === user.value.current_user_uid ? parent.email_performer : '',
         name: '',

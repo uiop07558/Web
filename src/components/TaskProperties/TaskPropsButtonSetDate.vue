@@ -501,7 +501,9 @@ export default {
   },
   emits: ['changeDates'],
   data: () => ({
-    datePickerDate: new Date(),
+    datePickerDate: {
+      date: new Date()
+    },
     date: null,
     time: '',
     canEdit: true,
