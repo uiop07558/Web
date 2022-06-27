@@ -1074,16 +1074,17 @@ export default {
                 lastInspectorMessage.performer_answer = 1
               })
             }
-          this.selectedTask.has_msgs = true
-          if (this.selectedTask.type === 2 || this.selectedTask.type === 3) {
-            if ([1, 5, 7, 8].includes(this.selectedTask.status)) {
-              if (((this.selectedTask.uid_customer === this.cusers?.current_user_uid) && ((this.selectedTask.status === 1) || (this.selectedTask.status === 5)))) {
-                this.selectedTask.status = 9
+            this.selectedTask.has_msgs = true
+            if (this.selectedTask.type === 2 || this.selectedTask.type === 3) {
+              if ([1, 5, 7, 8].includes(this.selectedTask.status)) {
+                if (((this.selectedTask.uid_customer === this.cusers?.current_user_uid) && ((this.selectedTask.status === 1) || (this.selectedTask.status === 5)))) {
+                  this.selectedTask.status = 9
+                }
               }
+              this.selectedTask.msg = decodeURIComponent(this.taskMsg)
+              const wrapperElement = document.getElementById('content').lastElementChild
+              wrapperElement.scrollIntoView({ behavior: 'smooth' })
             }
-            this.selectedTask.msg = decodeURIComponent(this.taskMsg)
-            const wrapperElement = document.getElementById('content').lastElementChild
-            wrapperElement.scrollIntoView({ behavior: 'smooth' })
           })
       }
       this.currentAnswerMessageUid = ''

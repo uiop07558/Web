@@ -71,7 +71,7 @@
   </div>
 
   <EmptyTasksListPics
-    v-if="!Object.keys(storeTasks).length && status != 'loading'"
+    v-if="!Object.keys(storeTasks).length && status === 'success'"
   />
 
   <!-- Skeleton -->
