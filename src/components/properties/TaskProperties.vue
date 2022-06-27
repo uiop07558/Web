@@ -1021,7 +1021,7 @@ export default {
       console.log(item)
     },
     editable: function () {
-      if (this.cusers.current_user_uid === this.selectedTask.uid_customer) {
+      if (this.cusers?.current_user_uid === this.selectedTask.uid_customer) {
         this.isEditableTaskName = true
         this.$nextTick(() => {
           this.$refs.TaskName.focus()
@@ -1050,7 +1050,7 @@ export default {
       msgtask = msgtask.replaceAll('>', '&gt;')
       const data = {
         uid_task: this.selectedTask.uid,
-        uid_creator: this.cusers.current_user_uid,
+        uid_creator: this.cusers?.current_user_uid,
         uid_msg: this.uuidv4(),
         date_create: new Date().toISOString(),
         deleted: 0,
@@ -1062,7 +1062,7 @@ export default {
         resp => {
           // Answer last inspector message
           const lastInspectorMessage = this.taskMessagesAndFiles.slice().reverse().find(message => message.uid_creator === 'inspector')
-          if (lastInspectorMessage && this.selectedTask.uid_performer === this.cusers.current_user_uid) {
+          if (lastInspectorMessage && this.selectedTask.uid_performer === this.cusers?.current_user_uid) {
             this.$store.dispatch(INSPECTOR.ANSWER_INSPECTOR_TASK, { id: lastInspectorMessage.id, answer: 1 }).then(() => {
               lastInspectorMessage.performer_answer = 1
             })
@@ -1071,10 +1071,10 @@ export default {
           this.selectedTask.has_msgs = true
           if (this.selectedTask.type === 2 || this.selectedTask.type === 3) {
             if ([1, 5, 7, 8].includes(this.selectedTask.status)) {
-              if (((this.selectedTask.uid_customer === this.cusers.current_user_uid) && ((this.selectedTask.status === 1) || (this.selectedTask.status === 5)))) {
+              if (((this.selectedTask.uid_customer === this.cusers?.current_user_uid) && ((this.selectedTask.status === 1) || (this.selectedTask.status === 5)))) {
                 this.selectedTask.status = 9
                 this.$store.dispatch(TASK.CHANGE_TASK_STATUS, { uid: this.selectedTask.uid, value: 9 })
-              } else if (((this.selectedTask.uid_customer !== this.cusers.current_user_uid) && (this.selectedTask.status === 1))) {
+              } else if (((this.selectedTask.uid_customer !== this.cusers?.current_user_uid) && (this.selectedTask.status === 1))) {
                 this.selectedTask.status = 1
                 this.$store.dispatch(TASK.CHANGE_TASK_STATUS, { uid: this.selectedTask.uid, value: 1 })
               }
@@ -1133,9 +1133,9 @@ export default {
               // ставим статус "на доработку" когда прикладываем файл
               if (this.selectedTask.type === 2 || this.selectedTask.type === 3) {
                 if ([1, 5, 7, 8].includes(this.selectedTask.status)) {
-                  if (((this.selectedTask.uid_customer === this.cusers.current_user_uid) && ((this.selectedTask.status === 1) || (this.selectedTask.status === 5)))) {
+                  if (((this.selectedTask.uid_customer === this.cusers?.current_user_uid) && ((this.selectedTask.status === 1) || (this.selectedTask.status === 5)))) {
                     this.$store.dispatch(TASK.CHANGE_TASK_STATUS, { uid: this.selectedTask.uid, value: 9 })
-                  } else if (((this.selectedTask.uid_customer !== this.cusers.current_user_uid) && (this.selectedTask.status === 1))) {
+                  } else if (((this.selectedTask.uid_customer !== this.cusers?.current_user_uid) && (this.selectedTask.status === 1))) {
                     this.$store.dispatch(TASK.CHANGE_TASK_STATUS, { uid: this.selectedTask.uid, value: 1 })
                   }
                 }
@@ -1403,7 +1403,7 @@ export default {
         <TaskPropsButtonPerform
           v-if="selectedTask.status !== 3 && selectedTask.type !== 4 && !((selectedTask.uid_customer !== user?.current_user_uid) && (selectedTask.status === 1))"
           :task-type="selectedTask.type"
-          :current-user-uid="cusers.current_user_uid"
+          :current-user-uid="cusers?.current_user_uid"
           :performer-email="selectedTask.email_performer"
           @changePerformer="onChangePerformer"
           @reAssign="onReAssignToUser"
@@ -1411,7 +1411,7 @@ export default {
         <!-- Кнопка Доступ -->
         <TaskPropsButtonAccess
           v-if="isAccessVisible && !((selectedTask.uid_customer !== user?.current_user_uid) && (selectedTask.status === 1))"
-          :current-user-uid="cusers.current_user_uid"
+          :current-user-uid="cusers?.current_user_uid"
           :access-emails="selectedTask.emails ? selectedTask.emails.split('..') : []"
           :can-edit="selectedTask.type === 1 || selectedTask.type === 2"
           :is-customer="selectedTask.uid_customer === user?.current_user_uid"
@@ -2115,7 +2115,7 @@ export default {
         id="content"
         class="mt-3 h-3/6"
         :task-messages="taskMessages"
-        :current-user-uid="cusers.current_user_uid"
+        :current-user-uid="cusers?.current_user_uid"
         :show-all-messages="showAllMessages"
         :show-only-files="showOnlyFiles"
         @answerMessage="onAnswerMessage"
