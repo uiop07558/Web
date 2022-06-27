@@ -65,8 +65,6 @@
 </template>
 
 <script>
-import { REFRESH_FILES } from '@/store/actions/taskfiles'
-import { REFRESH_MESSAGES } from '@/store/actions/taskmessages'
 import * as FILES from '@/store/actions/taskfiles.js'
 import * as MSG from '@/store/actions/taskmessages.js'
 import * as TASK from '@/store/actions/tasks.js'
@@ -174,10 +172,7 @@ export default {
   watch: {
     firstTask (newtask, oldtask) {
       if (newtask) {
-        this.$store.commit(REFRESH_FILES)
-        this.$store.commit(REFRESH_MESSAGES)
-        this.$store.commit(TASK.SELECT_TASK, this.firstTask)
-
+        this.$store.commit(TASK.SELECT_TASK, newtask)
         this.$store.dispatch(MSG.MESSAGES_REQUEST, this.firstTask.uid)
           .then(() => {
             this.$store.dispatch(FILES.FILES_REQUEST, this.firstTask.uid)

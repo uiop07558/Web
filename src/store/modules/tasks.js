@@ -1386,14 +1386,8 @@ const actions = {
 }
 
 const mutations = {
-  [TASK.HAS_MSGS]: (state, uid, value) => {
-    state.tasks[uid].has_msgs = value
-  },
   [TASK.PUSH_TAG]: (state, resp) => {
     state.tags[resp.data.uid] = resp.data
-  },
-  [TASK.MSG_EQUAL]: (state, uid, value) => {
-    state.tasks[uid].msg = value
   },
   [TASK.HAS_FILES]: (state, task, value) => {
     state.tasks[task.uid] = value
@@ -1534,7 +1528,12 @@ const mutations = {
     }
   },
   [TASK.CHANGE_TASK_STATUS]: (state, data) => {
-    state.newtasks[data.uid].info.status = data.value
+    try {
+      state.newtasks[data.uid].info.status = data.value
+    } catch {
+      // смена статуса для очереди
+      state.selectedTask.status = data.value
+    }
   },
   [TASK.READY_FOR_COMPLITION_TASKS_REQUEST]: (state, resp) => {
     state.ready = resp.data
