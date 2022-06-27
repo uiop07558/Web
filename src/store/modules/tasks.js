@@ -733,18 +733,6 @@ const actions = {
           }
           resolve(resp)
         })
-        .catch((err) => {
-          notify(
-            {
-              group: 'api',
-              title: 'REST API Error, please make screenshot',
-              action: TASK.CREATE_TASK,
-              text: err.response.data
-            },
-            15000
-          )
-          reject(err)
-        })
     })
   },
   [TASK.SELECT_TASK]: ({ commit, dispatch }, data) => {
