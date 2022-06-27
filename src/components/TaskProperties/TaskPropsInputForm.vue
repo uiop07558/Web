@@ -150,11 +150,7 @@ export default {
               this.isloading = false
               if (this.task.type === 2 || this.task.uid.type === 3) {
                 if ([1, 5, 7, 8].includes(this.task.status)) {
-                  const status = {
-                    uid: this.task.uid,
-                    value: 9
-                  }
-                  this.$store.dispatch(TASK.CHANGE_TASK_STATUS, status)
+                  this.selectedTask.status = 9
                 }
               }
               this.$refs.taskMsgEdit.addEventListener('paste', this.onPasteEvent, { once: true })
@@ -224,10 +220,6 @@ export default {
             if ([1, 5, 7, 8].includes(this.selectedTask.status)) {
               if (((this.selectedTask.uid_customer === this.cusers.current_user_uid) && ((this.selectedTask.status === 1) || (this.selectedTask.status === 5)))) {
                 this.selectedTask.status = 9
-                this.$store.dispatch(TASK.CHANGE_TASK_STATUS, { uid: this.selectedTask.uid, value: 9 })
-              } else if (((this.selectedTask.uid_customer !== this.cusers.current_user_uid) && (this.selectedTask.status === 1))) {
-                this.selectedTask.status = 1
-                this.$store.dispatch(TASK.CHANGE_TASK_STATUS, { uid: this.selectedTask.uid, value: 1 })
               }
             }
           }
@@ -266,11 +258,7 @@ export default {
           this.$store.commit(TASK.HAS_MSGS, this.task.uid, true)
           if (this.task.type === 2 || this.task.type === 3) {
             if ([1, 5, 7, 8].includes(this.task.status)) {
-              const data = {
-                uid: this.task.uid,
-                value: 9
-              }
-              this.$store.dispatch(TASK.CHANGE_TASK_STATUS, data)
+              this.selectedTask.status = 9
             }
           }
           this.$store.commit(TASK.MSG_EQUAL, this.task, decodeURIComponent(this.taskMsg))
@@ -307,20 +295,12 @@ export default {
         .then((resp) => {
           if (this.task.type === 2 || this.task.type === 3) {
             if ([1, 5, 7, 8].includes(this.task.status)) {
-              const status = {
-                uid: this.selectedTask.uid,
-                value: 9
-              }
-              this.$store.dispatch(TASK.CHANGE_TASK_STATUS, status)
+              this.selectedTask.status = 9
             }
           }
-          this.$store.state.tasks.selectedTask.has_files = true
+          this.selectedTask.has_files = true
           if (this.task.uid_customer === this.user.current_user_uid && (this.task.status === 5 || this.task.status === 7)) {
-            const status = {
-              uid: this.selectedTask.uid,
-              value: 9
-            }
-            this.$store.dispatch(TASK.CHANGE_TASK_STATUS, status)
+            this.selectedTask.status = 9
           }
         })
       this.infoComplete = true

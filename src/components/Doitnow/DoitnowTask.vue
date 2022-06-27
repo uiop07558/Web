@@ -643,9 +643,7 @@ export default {
               if (this.task.type === 2 || this.task.type === 3) {
                 if ([1, 5, 7, 8].includes(this.task.status)) {
                   if (((this.task.uid_customer === this.cusers.current_user_uid) && ((this.task.status === 1) || (this.task.status === 5)))) {
-                    this.$store.dispatch(TASK.CHANGE_TASK_STATUS, { uid: this.task.uid, value: 9 })
-                  } else if (((this.task.uid_customer !== this.cusers.current_user_uid) && (this.task.status === 1))) {
-                    this.$store.dispatch(TASK.CHANGE_TASK_STATUS, { uid: this.task.uid, value: 1 })
+                    this.$emit('changeValue', { status: 9 })
                   }
                 }
               }
@@ -930,11 +928,7 @@ export default {
 
           if (this.task.type === 2 || this.task.type === 3) {
             if ([1, 5, 7, 8].includes(this.task.status)) {
-              const status = {
-                uid: this.task.uid,
-                value: 9
-              }
-              this.$store.dispatch(TASK.CHANGE_TASK_STATUS, status)
+              this.$emit('changeValue', { status: 9 })
             }
           }
         })
