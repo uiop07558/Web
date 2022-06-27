@@ -876,6 +876,15 @@ const actions = {
       resolve()
     })
   },
+  [TASK.UPDATE_TASK]: ({ commit }, websyncObject) => {
+    commit(TASK.UPDATE_TASK, websyncObject.obj)
+    if (websyncObject.anothers_tags.length) {
+      commit(TASK.ADD_TASK_TAGS, websyncObject.anothers_tags)
+    }
+    if (websyncObject.anothers_markers.length) {
+      commit(PUSH_COLOR, websyncObject.anothers_markers)
+    }
+  },
   [TASK.CHANGE_TASK_ACCESS]: ({ commit, dispatch }, data) => {
     return new Promise((resolve, reject) => {
       const url =
@@ -1078,12 +1087,11 @@ const actions = {
         })
     })
   },
-  [TASK.CHANGE_TASK_CHEKCLIST]: ({ commit, dispatch }, data) => {
+  [TASK.CHANGE_TASK_CHECKLIST]: ({ commit, dispatch }, data) => {
     return new Promise((resolve, reject) => {
       const url = process.env.VUE_APP_LEADERTASK_API + 'api/v1/task/checklist'
       axios({ url: url, method: 'PATCH', data: data })
         .then((resp) => {
-          commit(TASK.CHANGE_TASK_CHEKCLIST, data)
           resolve(resp)
         })
         .catch((err) => {
@@ -1091,7 +1099,7 @@ const actions = {
             {
               group: 'api',
               title: 'REST API Error, please make screenshot',
-              action: TASK.CHANGE_TASK_CHEKCLIST,
+              action: TASK.CHANGE_TASK_CHECKLIST,
               text: 'error while uploading checklist'
             },
             15000
@@ -1525,7 +1533,7 @@ const mutations = {
     state.ready.link = 'd35fe0bc-1747-4eb1-a1b2-3411e07a92a0'
   },
   [TASK.ADD_TO_LEAVES_TASKS_WITHOUT_CHILDREN]: (state) => {
-    Object.keys(state.newtasks).forEach(key => {
+    Object.keys(state.newtasks).forEach((key) => {
       if (state.newtasks[key]?.children?.length === 0) {
         if (!state.newConfig.leaves.includes(state.newtasks[key]?.id)) {
           state.newConfig.leaves.push(state.newtasks[key]?.id)
@@ -1536,7 +1544,10 @@ const mutations = {
   [TASK.ADD_TASK]: (state, task) => {
     if (state.newtasks[task.uid]) return // check if task already exist
 
-    if (!task._justCreated && task.uid_parent === '00000000-0000-0000-0000-000000000000') {
+    if (
+      !task._justCreated &&
+      task.uid_parent === '00000000-0000-0000-0000-000000000000'
+    ) {
       state.newConfig.roots.unshift(task.uid)
     }
 
@@ -1545,16 +1556,27 @@ const mutations = {
     task._isEditable = false
 
     // check if task has parent
-    if (task.uid_parent && task.uid_parent !== '00000000-0000-0000-0000-000000000000') {
+    if (
+      task.uid_parent &&
+      task.uid_parent !== '00000000-0000-0000-0000-000000000000'
+    ) {
       // add chevron if there are no children
-      if (state.newtasks[task.uid_parent] && state.newtasks[task.uid_parent].children && state.newtasks[task.uid_parent].children.length === 0) {
+      if (
+        state.newtasks[task.uid_parent] &&
+        state.newtasks[task.uid_parent].children &&
+        state.newtasks[task.uid_parent].children.length === 0
+      ) {
         state.newtasks[task.uid_parent].children.push('fake-uid')
         for (let i = 0; i < state.newConfig.leaves.length; i++) {
           if (task.uid_parent === state.newConfig.leaves[i]) {
             state.newConfig.leaves.splice(i, 1)
           }
         }
-      } else if (state.newtasks[task.uid_parent] && state.newtasks[task.uid_parent].children && state.newtasks[task.uid_parent].children.length) {
+      } else if (
+        state.newtasks[task.uid_parent] &&
+        state.newtasks[task.uid_parent].children &&
+        state.newtasks[task.uid_parent].children.length
+      ) {
         // actually add a child if there are some children in it and add to newConfig
         state.newtasks[task.uid_parent].children.push(task.uid)
         state.newtasks[task.uid] = {
@@ -1706,9 +1728,6 @@ const mutations = {
   },
   [TASK.CHANGE_TASK_PROJECT]: (state, data) => {
     state.project = data.value
-  },
-  [TASK.CHANGE_TASK_CHEKCLIST]: (state, data) => {
-    state.newtasks[data.uid_task].info.checklist = data.checklist
   },
   [TASK.CHANGE_TASK_ACCESS]: (state, data) => {
     state.access.push(data.value)
