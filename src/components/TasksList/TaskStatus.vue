@@ -20,14 +20,8 @@ const props = defineProps({
   task: {
     type: Object,
     default: () => ({})
-  },
-  inDoitnow: {
-    type: Boolean,
-    default: false
   }
 })
-
-const emit = defineEmits(['nextTask'])
 
 const statusesLabels = [
   'Не началось',
@@ -96,9 +90,6 @@ const changeTaskStatus = (uid, status) => {
         })
     }
   })
-  if (props.inDoitnow) {
-    emit('nextTask')
-  }
 }
 </script>
 

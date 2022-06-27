@@ -1,5 +1,5 @@
 <script setup>
-import { reactive, computed } from 'vue'
+import { reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import axios from 'axios'
 import store from '@/store'
@@ -14,15 +14,6 @@ import JbButton from '@/components/JbButton.vue'
 
 import { AUTH_REQUEST, AUTH_REGISTER } from '@/store/actions/auth'
 
-const localization = computed(() => store.state.localization.localization)
-const getLang = () => {
-  if (navigator.language.includes('ru')) {
-    return 'ru'
-  } else {
-    return 'en'
-  }
-}
-
 const form = reactive({
   email: '',
   password: '',
@@ -33,7 +24,7 @@ const form = reactive({
   emailMdi: mdiEmailOutline,
   emailIconClass: '',
   emailControlDisabled: false,
-  startScreenText: localization.value.EnterLeaderTask,
+  startScreenText: 'ЛидерТаск',
   showCheckButton: true,
   showBackButton: false
 })
@@ -85,7 +76,7 @@ const login = () => {
     })
     .catch(() => {
       form.showError = true
-      form.errorMessage = localization.value.InvalidNameOrPassword
+      form.errorMessage = 'Неверный email пользователя или пароль'
     })
 }
 
@@ -116,10 +107,13 @@ const getBack = () => {
   form.email = ''
   form.password = ''
   form.username = ''
+  form.startScreenText = 'ЛидерТаск'
   form.emailMdi = mdiEmailOutline
   form.emailIconClass = ''
   form.showCheckButton = true
   form.showBackButton = false
+  form.showError = false
+  form.errorMessage = ''
 }
 
 const hideLoginInputs = () => {
@@ -155,7 +149,7 @@ const checkEmailExistense = () => {
         .then(() => {
           showLoginInputs()
           form.emailMdi = mdiCheckBold
-          form.startScreenText = localization.value.hithere
+          form.startScreenText = 'Войти в ЛидерТаск'
           form.emailIconClass = 'text-lime-500'
           form.emailControlDisabled = true
           form.showCheckButton = false
@@ -164,7 +158,7 @@ const checkEmailExistense = () => {
         .catch(() => {
           showRegisterInputs()
           form.emailMdi = mdiCheckBold
-          form.startScreenText = localization.value.create_account
+          form.startScreenText = 'Создать аккаунт'
           form.emailIconClass = 'text-lime-500'
           form.emailControlDisabled = true
           form.showCheckButton = false
@@ -173,8 +167,8 @@ const checkEmailExistense = () => {
     }
   }
 }
-
 </script>
+
 <template>
   <full-screen-section
     v-slot="{ cardClass, cardRounded }"
@@ -198,7 +192,7 @@ const checkEmailExistense = () => {
         @click="getBack"
       />
       <p class="pb-4 pt-5 text-center text-2xl font-bold dark:text-white">
-        {{ localization.EnterLeaderTask }}
+        {{ form.startScreenText }}
       </p>
       <field>
         <control
@@ -206,7 +200,7 @@ const checkEmailExistense = () => {
           :icon="form.emailMdi"
           name="email"
           :icon-class="form.emailIconClass"
-          :placeholder="localization.login_lt"
+          placeholder="Email"
           autocomplete="email"
           type="email"
           required
@@ -220,7 +214,7 @@ const checkEmailExistense = () => {
         class="w-full rounded-lg text-sm"
         color="login"
         :icon="mdiArrowRight"
-        :label="localization.EnterSystem"
+        label="Продолжить с Email"
         @click="checkEmailExistense"
       />
 
@@ -233,7 +227,7 @@ const checkEmailExistense = () => {
               type="password"
               name="password"
               autocomplete="current-password"
-              :placeholder="localization.Password"
+              placeholder="Пароль"
               :valid="form.password.length > 7"
             />
           </field>
@@ -248,14 +242,14 @@ const checkEmailExistense = () => {
             class="w-full rounded-lg text-sm"
             color="login"
             :icon="mdiArrowRight"
-            :label="localization.EnterSystem"
+            label="Войти"
           />
           <a
-            :href="getLang() == 'ru' ? 'https://www.leadertask.ru/user?t=passrecovery' : 'https://www.leadertask.com/user?t=passrecovery'"
+            href="https://www.leadertask.ru/user?t=passrecovery"
             class="text-xs mt-5 text-blue-500 underline decoration-1"
             target="_blank"
           >
-            {{ localization.forgot_pass }}
+            Забыли пароль?
           </a>
         </div>
       </transition-group>
@@ -263,7 +257,7 @@ const checkEmailExistense = () => {
       <transition-group name="slide-fade">
         <div v-if="showValues.showRegisterInputsValue">
           <field
-            :help="localization.PasswordMin"
+            help="Пароль (не менее 8 символов)"
             :max-count="8"
             :actual-count="form.password.length"
           >
@@ -272,14 +266,14 @@ const checkEmailExistense = () => {
               :icon="mdiEyeOffOutline"
               type="password"
               name="password"
-              :placeholder="localization.Password"
+              placeholder="Пароль"
               autocomplete="current-password"
               :valid="form.password.length > 7"
             />
           </field>
 
           <field
-            :help="localization.EnterYourName"
+            help="Введите ваше имя"
             :max-count="3"
             :actual-count="form.username.length"
           >
@@ -289,7 +283,7 @@ const checkEmailExistense = () => {
               :icon="mdiAccountOutline"
               name="username"
               autocomplete="username"
-              :placeholder="localization.name_emp"
+              placeholder="Имя пользователя"
               :valid="form.username.length > 2"
             />
           </field>
@@ -299,7 +293,7 @@ const checkEmailExistense = () => {
             color="login"
             class="w-full rounded-lg text-sm"
             :icon="mdiArrowRight"
-            :label="localization.create_account"
+            label="Создать аккаунт"
           />
         </div>
       </transition-group>
