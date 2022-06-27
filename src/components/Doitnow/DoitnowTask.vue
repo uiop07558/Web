@@ -1,4 +1,5 @@
 <template>
+  <pre>{{ $store.state.selectedTask }}</pre>
   <div
     class="bg-white py-6 px-5 rounded-lg flex justify-between"
     :style="{ borderColor: colors[task.uid_marker] ? colors[task.uid_marker].back_color : ''}"
@@ -561,6 +562,7 @@ export default {
   },
   watch: {
     task (newval, oldval) {
+      this.$store.commit(TASK.SELECT_TASK, this.task)
       this.showAllMessages = false
       this.isChatVisible = false
       this.name = this.task.name
@@ -868,18 +870,16 @@ export default {
             })
           }
 
-          this.$store.commit(TASK.HAS_MSGS, this.task.uid, true)
           if (this.task.type === 2 || this.task.type === 3) {
             if ([1, 5, 7, 8].includes(this.task.status)) {
               const status = {
-                uid: this.task.uid,
                 value: 9
               }
               this.$store.commit(TASK.CHANGE_TASK_STATUS, status)
             }
           }
-          this.$store.commit(TASK.MSG_EQUAL, this.task.uid, decodeURIComponent(this.taskMsg))
         })
+      this.$emit('changeValue', { has_msgs: true })
       this.taskMsg = ''
     },
     onAnswerMessage: function (uid) {

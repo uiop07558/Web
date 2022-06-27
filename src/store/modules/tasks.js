@@ -1534,7 +1534,12 @@ const mutations = {
     }
   },
   [TASK.CHANGE_TASK_STATUS]: (state, data) => {
-    state.newtasks[data.uid].info.status = data.value
+    try {
+      state.newtasks[data.uid].info.status = data.value
+    } catch {
+      // смена статуса для очереди
+      state.selectedTask.info.status = data.value
+    }
   },
   [TASK.READY_FOR_COMPLITION_TASKS_REQUEST]: (state, resp) => {
     state.ready = resp.data
