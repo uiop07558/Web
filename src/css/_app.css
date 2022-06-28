@@ -3,7 +3,7 @@
 }
 
 body {
-  @apply pt-14 xl:pl-[292px];
+  @apply pt-14 xl:pl-[292px] h-full;
 }
 html
 {
@@ -12,7 +12,7 @@ html
   font-family: 'Roboto'
 }
 #app {
-  @apply w-screen transition-position lg:w-auto;
+  @apply w-screen h-full transition-position lg:w-auto;
 }
 
 .dropdown {
