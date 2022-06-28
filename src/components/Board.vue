@@ -370,6 +370,9 @@ export default {
     showOnlyMyCards () {
       return this.$store.state.boards.showOnlyMyCards
     },
+    showOnlySearchText () {
+      return this.$store.state.boards.showOnlySearchText
+    },
     isPropertiesMobileExpanded () {
       return this.$store.state.isPropertiesMobileExpanded
     }
@@ -439,6 +442,8 @@ export default {
       if (this.showOnlyMyCards) {
         const currentUserEmail = this.$store.state.user.user.current_user_email.toLowerCase()
         return column.cards.filter(card => card.user.toLowerCase() === currentUserEmail)
+      } else if (this.showOnlySearchText) {
+        return column.cards.filter(card => card.name.toLowerCase().includes(this.showOnlySearchText.toLowerCase()))
       }
       return column.cards
     },
