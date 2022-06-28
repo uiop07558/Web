@@ -1400,7 +1400,8 @@ const mutations = {
   [TASK.UPDATE_TASK]: (state, task) => {
     if (state.newtasks[task.uid]) {
       state.newtasks[task.uid].info = task
-    } else if (state.selectedTask?.uid === task.uid) {
+    }
+    if (state.selectedTask?.uid === task.uid) {
       state.selectedTask = task
     }
   },
