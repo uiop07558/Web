@@ -644,10 +644,11 @@ export default {
           str_date_end: getTodaysDate(tomorrow) + 'T23:59:59',
           reset: 0
         }
-      )
-        .then(() => {
+      ).then((resp) => {
+        if (task.uid_parent && task.uid_parent === '00000000-0000-0000-0000-000000000000') {
           store.commit(TASK.REMOVE_TASK, task.uid)
-        })
+        }
+      })
     }
 
     const copyTaskName = (task) => {
