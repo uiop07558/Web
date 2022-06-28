@@ -139,6 +139,7 @@ const createCardFile = (event) => {
   }
   console.log(data)
   store.dispatch(CREATE_FILES_REQUEST, data).then(() => {
+    selectedCard.value.has_files = true
     scrollDown()
   })
 }

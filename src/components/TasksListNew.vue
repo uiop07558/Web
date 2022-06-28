@@ -123,7 +123,7 @@
               :style="{ color: getValidForeColor(colors[props.node.info.uid_marker]?.fore_color) }"
               @focusout="clearTaskFocus(props.node.info)"
               @dblclick.stop="editTaskName(props.node.id)"
-              @keyup.enter="updateTask($event, props.node.info); props.node.info._isEditable = false;"
+              @keydown.enter="updateTask($event, props.node.info); props.node.info._isEditable = false;"
             />
           </div>
 
@@ -554,6 +554,10 @@ export default {
       for (const uid in copiedTasks.value) {
         const data = handleTaskSource(copiedTasks.value[uid], uidParent)
         store.dispatch(TASK.CREATE_TASK, data)
+        // actually remove task from server if this task was with _deleteAfterPaste flag (cut task)
+        if (copiedTasks.value[uid]._deleteAfterPaste && copiedTasks.value[uid]._originTaskUid) {
+          store.dispatch(TASK.REMOVE_TASK, copiedTasks.value[uid]._originTaskUid)
+        }
       }
       store.commit(TASK.RESET_COPY_TASK)
     }
@@ -588,31 +592,33 @@ export default {
     }
 
     const updateTask = (event, task) => {
-      task.enterPress = true
-      task.name = task.name.replace(/\r?\n|\r/g, '')
-      if (task.name.length > 0) {
-        if (task._justCreated) {
-          store.dispatch(TASK.CREATE_TASK, task)
-        } else {
-          store.dispatch(TASK.CHANGE_TASK_NAME, { uid: task.uid, value: task.name })
-        }
-        task._isEditing = false
-      } else if (task.name.length === 0) {
-        if (task._justCreated) {
-          if (isPropertiesMobileExpanded.value) {
-            store.dispatch('asidePropertiesToggle', false)
+      if (task._isEditable) {
+        task.enterPress = true
+        task.name = task.name.replace(/\r?\n|\r/g, '')
+        if (task.name.length > 0) {
+          if (task._justCreated) {
+            store.dispatch(TASK.CREATE_TASK, task)
+          } else {
+            store.dispatch(TASK.CHANGE_TASK_NAME, { uid: task.uid, value: task.name })
           }
-          store.commit(TASK.REMOVE_TASK, task.uid)
-        } else {
-          showConfirm.value = true
-          // removeTask(task.uid)
+          task._isEditing = false
+        } else if (task.name.length === 0) {
+          if (task._justCreated) {
+            if (isPropertiesMobileExpanded.value) {
+              store.dispatch('asidePropertiesToggle', false)
+            }
+            store.commit(TASK.REMOVE_TASK, task.uid)
+          } else {
+            showConfirm.value = true
+            // removeTask(task.uid)
+          }
         }
+        if (task.uid_customer === user.value.current_user_uid) {
+          document.getElementById(task.uid).parentNode.draggable = true
+        }
+        store.dispatch(TASK.SELECT_TASK, task)
+        nextTick(() => { document.getElementById(task.uid).parentNode.click() })
       }
-      if (task.uid_customer === user.value.current_user_uid) {
-        document.getElementById(task.uid).parentNode.draggable = true
-      }
-      store.dispatch(TASK.SELECT_TASK, task)
-      nextTick(() => { document.getElementById(task.uid).parentNode.click() })
     }
     const clearTaskFocus = (task) => {
       console.log(task.name)
@@ -713,12 +719,17 @@ export default {
         })
     }
     const copyTask = (task) => {
-      store.commit(TASK.COPY_TASK, { ...task })
+      const copiedTask = { ...task }
+      copiedTask._deleteAfterPaste = false
+      store.commit(TASK.COPY_TASK, copiedTask)
     }
 
     const cutTask = (task) => {
-      store.commit(TASK.COPY_TASK, task)
       store.commit(TASK.REMOVE_TASK, task.uid)
+      const copiedTask = { ...task }
+      copiedTask._originTaskUid = task.uid
+      copiedTask._deleteAfterPaste = true
+      store.commit(TASK.COPY_TASK, copiedTask)
     }
 
     const nodeSelected = (arg) => {

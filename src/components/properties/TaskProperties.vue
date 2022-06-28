@@ -907,6 +907,7 @@ export default {
       timeEndRange: false,
       timeStartActive: false,
       checklistshow: false,
+      checklistSavedNow: false,
       TimeActive: false,
       checklistshowbutton: false,
       checklistshowelement: false,
@@ -1312,14 +1313,16 @@ export default {
         uid_task: this.selectedTask.uid,
         checklist: checklist
       }
+      this.checklistSavedNow = true
       this.$store.dispatch(TASK.CHANGE_TASK_CHECKLIST, data).then(
         resp => {
           this.selectedTask.checklist = checklist
         }
-      )
+      ).finally(() => {
+        this.checklistSavedNow = false
+      })
     },
     onAddChecklistComplete () {
-      console.log('onAddChecklistComplete')
       this.checklistshow = false
     }
   }
@@ -1963,7 +1966,7 @@ export default {
       </div>
       <!-- Checklist -->
       <TaskPropsChecklist
-        v-if="selectedTask.checklist || checklistshow"
+        v-if="selectedTask.checklist || checklistshow || checklistSavedNow"
         class="mb-[20px] checklist-custom"
         :checklist="selectedTask.checklist"
         :can-edit="canEditChecklist"
