@@ -1,5 +1,5 @@
 <script setup>
-import { ref, nextTick, defineEmits, onMounted } from 'vue'
+import { ref, nextTick } from 'vue'
 import { useStore } from 'vuex'
 import { GETFILES } from '@/store/actions/taskfiles'
 import ChatLoader from '@/components/CardProperties/ChatLoader.vue'
@@ -12,7 +12,6 @@ const props = defineProps({
     default: () => ({})
   }
 })
-const emit = defineEmits(['setLink'])
 
 const pics = ['jpg', 'png', 'jpeg', 'git', 'bmp', 'gif', 'PNG', 'JPG', 'JPEG', 'BMP', 'GIF']
 const movies = ['mov', 'mp4']
@@ -65,7 +64,6 @@ const getDocUrl = (uid, extension, filename) => {
   console.log('GETMOVEURL')
   store.dispatch(GETFILES, uid).then(resp => {
     const fileURL = window.URL.createObjectURL(new Blob([resp.data], { type: 'text/plain' }))
-    emit('setLink', [fileURL, false])
     document.getElementById('doc_' + uid).setAttribute('href', fileURL)
     document.getElementById('doc_' + uid).setAttribute('download', filename)
     return fileURL
@@ -75,7 +73,6 @@ const getDocUrl = (uid, extension, filename) => {
 const getAudioUrl = (uid, extension, filename) => {
   store.dispatch(GETFILES, uid).then(resp => {
     const fileURL = window.URL.createObjectURL(new Blob([resp.data], { type: 'audio/' + extension }))
-    emit('setLink', [fileURL, true])
     const myAudio = new Audio()
     myAudio.src = fileURL
     document.getElementById('audio_' + uid).appendChild(myAudio)
@@ -89,21 +86,12 @@ const getAnyUrl = (uid, extension, filename) => {
   console.log('GETANYURL')
   store.dispatch(GETFILES, uid).then(resp => {
     const fileURL = window.URL.createObjectURL(new Blob([resp.data]))
-    emit('setLink', [fileURL, false])
     document.getElementById('any_' + uid).setAttribute('href', fileURL)
     document.getElementById('any_' + uid).setAttribute('download', filename)
     // получаем arrayBuffer из Blob
     return fileURL
   })
 }
-
-onMounted(() => {
-  if (docs.includes(props.file.file_name.split('.').pop())) {
-    getDocUrl(props.file.uid, props.file.file_name.split('.').pop(), props.file.file_name)
-  } else if (!pics.includes(props.file.file_name.split('.').pop()) && !movies.includes(props.file.file_name.split('.').pop()) && !audio.includes(props.file.file_name.split('.').pop())) {
-    getAnyUrl(props.file.uid, props.file.file_name.split('.').pop(), props.file.file_name)
-  }
-})
 
 </script>
 
@@ -164,6 +152,7 @@ onMounted(() => {
       :id="'doc_' + props.file.uid"
       target="_blank"
       download
+      @click="getDocUrl(props.file.uid, props.file.file_name.split('.').pop(), props.file.file_name)"
     >
       <svg
         v-if="props.file.file_name.split('.').pop() === 'pdf'"
@@ -223,6 +212,7 @@ onMounted(() => {
       :id="'any_' + props.file.uid"
       target="_blank"
       download
+      @click="getAnyUrl(props.file.uid, props.file.file_name.split('.').pop(), props.file.file_name)"
     >
       <svg
         v-if="!docs.includes(props.file.file_name.split('.').pop()) && !audio.includes(props.file.file_name.split('.').pop()) && !movies.includes(props.file.file_name.split('.').pop()) && !pics.includes(props.file.file_name.split('.').pop())"
