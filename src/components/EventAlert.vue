@@ -1,6 +1,6 @@
 <template>
   <div
-    :class="`${ boxColor } `"
+    :class="boxColor"
     class="p-6 max-w-sm mx-auto rounded-xl shadow-lg flex items-start space-x-4"
   >
     <Icon
@@ -41,9 +41,7 @@ const props = defineProps({
     default: ''
   }
 })
-
-const boxColor = computed(() => colorsBg[props.bgColor])
-
 defineEmits(['close'])
 
+const boxColor = computed(() => colorsBg[props.bgColor])
 </script>
