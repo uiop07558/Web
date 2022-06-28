@@ -1748,6 +1748,7 @@ const mutations = {
     state.focus = data.value
   },
   [TASK.COPY_TASK]: (state, task) => {
+    task.uid = ''
     state.copiedTasks[task.uid] = task
   },
   [TASK.RESET_COPY_TASK]: (state) => {

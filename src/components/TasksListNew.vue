@@ -18,7 +18,7 @@
   <!-- Add task input -->
   <div
     v-if="taskListSource && !DONT_SHOW_TASK_INPUT_UIDS[taskListSource.uid]"
-    class="fixed-create flex bg-[#f4f5f7] z-[2] px-px pt-px"
+    class="fixed-create flex bg-[#f4f5f7] px-px pt-px"
   >
     <button
       class="bg-[#FF912380] px-2 rounded-[8px] text-black text-sm mr-1 hover:bg-[#F5DEB3]"
@@ -506,7 +506,7 @@ export default {
       } else {
         data = {
           uid: uuidv4(),
-          uid_parent: '00000000-0000-0000-0000-000000000000',
+          uid_parent: uidParent,
           uid_customer: user.value.current_user_uid,
           uid_project: '00000000-0000-0000-0000-000000000000',
           status: 0,
@@ -713,7 +713,7 @@ export default {
         })
     }
     const copyTask = (task) => {
-      store.commit(TASK.COPY_TASK, task)
+      store.commit(TASK.COPY_TASK, { ...task })
     }
 
     const cutTask = (task) => {
@@ -1189,7 +1189,6 @@ window.getSelection().removeAllRanges()
 .fixed-create {
   position: sticky;
   top: 55px;
-  z-index: 1;
   background-color:#f4f5f7;
 }
 

@@ -34,7 +34,7 @@ const overlayClick = () => {
   <overlay
     v-if="!isFileRedirect"
     v-show="isAsideLgActive"
-    z-index="z-30"
+    z-index="30"
     @overlay-click="overlayClick"
   />
 </template>
