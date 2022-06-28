@@ -68,6 +68,7 @@ export default {
   },
   methods: {
     gotoChildren (value) {
+      this.$store.dispatch('asidePropertiesToggle', false)
       this.$store.dispatch(TASK.TAG_TASKS_REQUEST, value.uid)
       this.$store.commit('basic', {
         key: 'taskListSource',
@@ -126,50 +127,6 @@ export default {
   }
 }
 
-// const openProperties = (tag, parentTagUid = '') => {
-//   if (!isPropertiesMobileExpanded.value) {
-//     store.dispatch('asidePropertiesToggle', true)
-//   }
-
-//   focusedTag.value = tag.uid
-
-//   // add uid_parent if adding subtag in parent's children
-//   if (props.tags[0].uid_parent && props.tags[0].uid_parent !== '00000000-0000-0000-0000-000000000000' && !parentTagUid) {
-//     parentTagUid = props.tags[0].uid_parent
-//   }
-//   store.commit('basic', { key: 'propertiesState', value: 'tag' })
-//   if (!tag) {
-//     tag = {
-//       uid_parent: parentTagUid,
-//       back_color: '',
-//       comment: '',
-//       collapsed: 0,
-//       order: 0,
-//       group: 0,
-//       show: 0,
-//       children: [],
-//       favorite: 0,
-//       uid: '',
-//       name: '',
-//       bold: 0
-//     }
-//   }
-//   store.commit(TASK.SELECT_TAG, tag)
-// }
-
-// const goToChildren = (value) => {
-//   if (value.children && value.children.length) {
-//     const navElem = {
-//       name: value.name,
-//       key: 'greedSource',
-//       greedPath: 'tags_children',
-//       uid: value.uid,
-//       value: value.children
-//     }
-//     store.commit('pushIntoNavStack', navElem)
-//     store.commit('basic', { key: 'greedSource', value: value.children })
-//   }
-// }
 </script>
 
 <template>

@@ -79,6 +79,8 @@ export default {
       console.log(msg, val)
     },
     gotoChildren (project) {
+      this.$store.dispatch('asidePropertiesToggle', false)
+
       this.$store.dispatch(TASK.PROJECT_TASKS_REQUEST, project.uid)
       this.$store.commit('basic', {
         key: 'taskListSource',
