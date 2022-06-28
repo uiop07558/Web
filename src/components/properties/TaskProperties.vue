@@ -991,6 +991,7 @@ export default {
     selectedTask: {
       immediate: true,
       handler: function (val) {
+        this.showOnlyFiles = false
         this.currentAnswerMessageUid = ''
         this.$nextTick(function () {
           this.onInputTaskMsg()
