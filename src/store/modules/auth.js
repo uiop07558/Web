@@ -7,7 +7,8 @@ import {
   AUTH_REGISTER,
   AUTH_REQUEST,
   AUTH_RESET,
-  AUTH_SUCCESS
+  AUTH_SUCCESS,
+  AUTH_CHANGE_PASSWORD
 } from '../actions/auth'
 import { RESET_STATE_NAVIGATOR } from '../actions/navigator'
 import { RESET_STATE_PROJECT } from '../actions/projects'
@@ -73,6 +74,34 @@ const actions = {
               group: 'api',
               title: 'REST API Error, please make screenshot',
               action: AUTH_REGISTER,
+              text: err.response?.data ?? err
+            },
+            15000
+          )
+          reject(err)
+        })
+    })
+  },
+  [AUTH_CHANGE_PASSWORD]: ({ commit }, password) => {
+    return new Promise((resolve, reject) => {
+      // commit(AUTH_CHANGE_PASSWORD)
+      const url = process.env.VUE_APP_LEADERTASK_API + 'api/v1/users/password'
+      axios({ url: url, data: password, method: 'PATCH' })
+        .then((resp) => {
+          console.log(resp)
+          setLocalStorageItem('user-token', resp.data.access_token)
+          setLocalStorageItem('user-refresh-token', resp.data.refresh_token)
+          axios.defaults.headers.common.Authorization = resp.data.access_token
+          resolve(resp)
+        })
+        .catch((err) => {
+          commit(AUTH_ERROR, err)
+          localStorage.removeItem('user-token')
+          notify(
+            {
+              group: 'api',
+              title: 'REST API Error, please make screenshot',
+              action: AUTH_CHANGE_PASSWORD,
               text: err.response?.data ?? err
             },
             15000

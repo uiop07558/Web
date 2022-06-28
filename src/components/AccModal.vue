@@ -3,13 +3,17 @@
 import { computed, ref } from 'vue'
 import { useStore } from 'vuex'
 import { USER_CHANGE_PHOTO, USER_CHANGE_PHONE } from '@/store/actions/user.js'
+import { AUTH_CHANGE_PASSWORD } from '@/store/actions/auth.js'
 import { CHANGE_EMPLOYEE_NAME } from '@/store/actions/employees.js'
-import ModalBoxConfirm from '@/components/modals/ModalBoxCard.vue'
 import BoardModalBoxRename from '@/components/Board/BoardModalBoxRename.vue'
+import ModalBox from '@/components/modals/ModalBox.vue'
 const emit = defineEmits(['AccLogout'])
 const store = useStore()
 const user = computed(() => store.state.user.user)
 const showEditname = ref(false)
+const oldPassword = ref(false)
+const newPassword = ref(false)
+const confirmNewPassword = ref(false)
 const showEditphone = ref(false)
 //  const showEditemail = ref(false)
 const showEditpassword = ref(false)
@@ -49,6 +53,15 @@ const changeUserPhoto = (event) => {
   store.dispatch(USER_CHANGE_PHOTO, data)
 }
 
+const changeUserPassword = () => {
+  showEditpassword.value = false
+  const password = newPassword.value
+  const data = {
+    password: password
+  }
+  store.dispatch(AUTH_CHANGE_PASSWORD, data)
+}
+
 const changeUserPhone = (phone) => {
   showEditphone.value = false
   const date = new Date()
@@ -66,6 +79,7 @@ const changeUserName = (name) => {
     name: name,
     email: user.value?.current_user_email
   }
+  console.log(user.value)
   store.dispatch(CHANGE_EMPLOYEE_NAME, data)
 }
 
@@ -82,13 +96,14 @@ const userPhone = function () {
   }
   return phone
 }
+
 </script>
 
 <template>
   <BoardModalBoxRename
     v-if="showEditname"
     :show="showEditname"
-    title="Имя"
+    title="Введите новое имя пользователя"
     :value="userName()"
     @cancel="showEditname = false"
     @save="changeUserName"
@@ -96,55 +111,52 @@ const userPhone = function () {
   <BoardModalBoxRename
     v-if="showEditphone"
     :show="showEditphone"
-    title="Телефон"
+    title="Введите новый номер телефона"
     :value="userPhone()"
     @cancel="showEditphone = false"
     @save="changeUserPhone"
   />
-  <modal-box-confirm
-    v-model="showEditpassword"
-    button="warning"
-    has-button
-    has-close
-    button-label="сохранить"
+  <ModalBox
+    v-if="showEditpassword"
+    :show="showEditpassword"
+    title="Изменение пароля"
+    ok="Сохранить"
+    @ok="changeUserPassword"
+    @cancel="showEditpassword = false"
   >
-    <span class="font-semibold text-base mb-4 relative bottom-1">Изменить пароль</span>
-    <div>
-      <form
-        class="mt-2"
-      >
-        <div class="form-group">
-          <p>Введите старый пароль</p>
-          <input
-            class="w-full border border-orange-400 rounded h-[36px] p-2"
-            type="password"
-          >
-        </div>
-        <div class="form-group">
-          <p>Новый пароль</p>
-          <input
-            class="w-full border border-orange-400 rounded h-[36px] p-2"
-            type="password"
-          >
-        </div>
-        <div class="form-group">
-          <p>Подтвердите пароль</p>
-          <input
-            class="w-full border border-orange-400 rounded h-[36px] p-2"
-            type="password"
-          >
-        </div>
-      </form>
-      <form class="mt-4 ml-5">
-        <div class="form-group text-right">
-          <button class="bg-orange-400 text-white p-2 rounded-md">
-            Сохранить
-          </button>
-        </div>
-      </form>
-      <div />
+    <div class="flex flex-col w-full">
+      <div>
+        <p class="mb-[10px] mt-[10px]">
+          Введите старый пароль
+        </p>
+        <input
+          v-model="oldPassword"
+          type="password"
+          class="bg-[#f4f5f7]/50 rounded-[6px] border border-[#4c4c4d] focus:border-[#ff9123] w-full px-[14px] py-[11px] text-[14px] leading-[16px] text-[#4c4c4d] font-roboto"
+        >
+      </div>
+      <div>
+        <p class="mb-[10px] mt-[10px]">
+          Введите новый пароль
+        </p>
+        <input
+          v-model="newPassword"
+          type="password"
+          class="bg-[#f4f5f7]/50 rounded-[6px] border border-[#4c4c4d] focus:border-[#ff9123] w-full px-[14px] py-[11px] text-[14px] leading-[16px] text-[#4c4c4d] font-roboto"
+        >
+      </div>
+      <div>
+        <p class="mb-[10px] mt-[10px]">
+          Подтвердите новый пароль
+        </p>
+        <input
+          v-model="confirmNewPassword"
+          type="password"
+          class="bg-[#f4f5f7]/50 rounded-[6px] border border-[#4c4c4d] focus:border-[#ff9123] w-full px-[14px] py-[11px] text-[14px] leading-[16px] text-[#4c4c4d] font-roboto"
+        >
+      </div>
     </div>
-  </modal-box-confirm>
+  </ModalBox>
   <form class=" mx-6 overscroll-auto">
     <div class="flex pb-3">
       <form class="text-left w-40">
