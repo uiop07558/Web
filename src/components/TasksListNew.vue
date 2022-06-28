@@ -685,6 +685,7 @@ export default {
 
     const addSubtask = (parent) => {
       const newSubtask = {
+        date_create: new Date(),
         uid: uuidv4(),
         uid_customer: user.value.current_user_uid,
         email_performer: parent.uid_customer === user.value.current_user_uid ? parent.email_performer : '',
