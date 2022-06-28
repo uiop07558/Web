@@ -554,6 +554,10 @@ export default {
       for (const uid in copiedTasks.value) {
         const data = handleTaskSource(copiedTasks.value[uid], uidParent)
         store.dispatch(TASK.CREATE_TASK, data)
+        // actually remove task from server if this task was with _deleteAfterPaste flag (cut task)
+        if (copiedTasks.value[uid]._deleteAfterPaste && copiedTasks.value[uid]._originTaskUid) {
+          store.dispatch(TASK.REMOVE_TASK, copiedTasks.value[uid]._originTaskUid)
+        }
       }
       store.commit(TASK.RESET_COPY_TASK)
     }
@@ -715,12 +719,17 @@ export default {
         })
     }
     const copyTask = (task) => {
-      store.commit(TASK.COPY_TASK, { ...task })
+      const copiedTask = { ...task }
+      copiedTask._deleteAfterPaste = false
+      store.commit(TASK.COPY_TASK, copiedTask)
     }
 
     const cutTask = (task) => {
-      store.commit(TASK.COPY_TASK, task)
       store.commit(TASK.REMOVE_TASK, task.uid)
+      const copiedTask = { ...task }
+      copiedTask._originTaskUid = task.uid
+      copiedTask._deleteAfterPaste = true
+      store.commit(TASK.COPY_TASK, copiedTask)
     }
 
     const nodeSelected = (arg) => {
