@@ -506,7 +506,7 @@ export default {
       } else {
         data = {
           uid: uuidv4(),
-          uid_parent: '00000000-0000-0000-0000-000000000000',
+          uid_parent: uidParent,
           uid_customer: user.value.current_user_uid,
           uid_project: '00000000-0000-0000-0000-000000000000',
           status: 0,
@@ -713,7 +713,7 @@ export default {
         })
     }
     const copyTask = (task) => {
-      store.commit(TASK.COPY_TASK, task)
+      store.commit(TASK.COPY_TASK, { ...task })
     }
 
     const cutTask = (task) => {
