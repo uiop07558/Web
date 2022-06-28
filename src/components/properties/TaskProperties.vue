@@ -1208,18 +1208,14 @@ export default {
       this.$store.dispatch(TASK.CHANGE_TASK_DATE, data).then(resp => {
         this.selectedTask.is_overdue = resp.is_overdue
         this.selectedTask.term_user = resp.term
-        this.selectedTask.date_begin = resp.str_date_begin
-        this.selectedTask.date_end = resp.str_date_end
+        this.selectedTask.date_begin = begin
+        this.selectedTask.date_end = end
+
+        if (!shouldAddTaskIntoList(this.selectedTask)) {
+          this.$store.commit(TASK.REMOVE_TASK, taskUid)
+          this.$store.dispatch('asidePropertiesToggle', false)
+        }
       })
-
-      if (data.str_date_begin === data.str_date_end) {
-        return
-      }
-
-      if (!shouldAddTaskIntoList(this.selectedTask)) {
-        this.$store.commit(TASK.REMOVE_TASK, taskUid)
-        this.$store.dispatch('asidePropertiesToggle', false)
-      }
     },
     onChangeAccess: function (checkEmails) {
       const emails = checkEmails.join('..')
