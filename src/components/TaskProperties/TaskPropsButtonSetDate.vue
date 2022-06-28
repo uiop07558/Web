@@ -41,7 +41,7 @@
             @dayclick="onDayClick"
           >
             <template #footer>
-              <div>
+              <div v-if="canChangeTime">
                 <div class="timestamp-custom">
                   Установить напоминание
                 </div>
@@ -461,8 +461,8 @@
               fill-opacity="0.5"
             />
           </svg>
-
-        </button><span><span>{{ name.length ? name : 'Выбрать дату' }}</span></span>
+        </button>
+        <span>Выбрать дату</span>
       </span>
     </a>
   </Popper>
@@ -482,10 +482,6 @@ export default {
     maska
   },
   props: {
-    name: {
-      type: String,
-      default: ''
-    },
     dateBegin: {
       type: String,
       default: ''
@@ -501,13 +497,18 @@ export default {
   },
   emits: ['changeDates'],
   data: () => ({
-    datePickerDate: new Date(),
+    datePickerDate: { date: new Date() },
     date: null,
     time: '',
     canEdit: true,
-    showTimeSelector: false,
-    showTime: false
+    showTimeSelector: false
   }),
+  computed: {
+    canChangeTime () {
+      console.log('canChangeTime', this.datePickerDate)
+      return this.datePickerDate !== null
+    }
+  },
   methods: {
     pad2 (n) {
       return (n < 10 ? '0' : '') + n.toString()
@@ -559,15 +560,13 @@ export default {
       this.date = this.getDateValue()
       const moveDate = this.date ? new Date(this.date) : new Date()
       this.$refs.datePicker.move(moveDate)
-      this.$refs.datePicker.updateValue(new Date(this.date))
+      this.$refs.datePicker.updateValue(this.date)
       // устанавливаем время
       this.time = this.getTimeValue()
       this.showTimeSelector = false
     },
     onDayClick (day) {
-      this.showTime = true
       // не даём развыделять календарь
-      this.showTime = true
       if (this.datePickerDate === null) {
         this.$refs.datePicker.updateValue(day.date)
       }
