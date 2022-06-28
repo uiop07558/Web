@@ -28,9 +28,6 @@ const setCurrentQuote = () => {
 
 const getMessageTimeString = (dateCreate) => {
   if (!dateCreate) return ''
-  if (dateCreate[dateCreate.length - 1] !== 'Z') {
-    dateCreate += 'Z'
-  }
   const date = new Date(dateCreate)
   return date.toLocaleString('default', {
     hour: 'numeric',
