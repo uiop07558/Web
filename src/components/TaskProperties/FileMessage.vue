@@ -97,8 +97,9 @@ const getAnyUrl = (uid, extension, filename) => {
 
 <template>
   <!-- Pic -->
-  <span class="inline-block w-full"
+  <span
     v-if="pics.includes(props.file.file_name.split('.').pop())"
+    class="inline-block w-full"
   >
     <a
       :id="'img_' + props.file.uid"
@@ -143,8 +144,9 @@ const getAnyUrl = (uid, extension, filename) => {
   </span>
 
   <!-- Docs -->
-  <span class="flex mr-1"
+  <span
     v-if="docs.includes(props.file.file_name.split('.').pop())"
+    class="flex mr-1"
   >
     <a
       :id="'doc_' + props.file.uid"
@@ -202,8 +204,9 @@ const getAnyUrl = (uid, extension, filename) => {
   </span>
 
   <!-- Anything else -->
-  <span  class="flex mr-1"
+  <span
     v-else
+    class="flex mr-1"
   >
     <a
       :id="'any_' + props.file.uid"
