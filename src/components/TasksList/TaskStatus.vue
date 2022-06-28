@@ -1,6 +1,4 @@
 <script setup>
-import { computed } from 'vue'
-import { useStore } from 'vuex'
 import Icon from '@/components/Icon.vue'
 import PopMenu from '@/components/modals/PopMenu.vue'
 import PopMenuItem from '@/components/modals/PopMenuItem.vue'
@@ -55,9 +53,6 @@ const statuses = [
   canceled,
   improve
 ]
-
-const store = useStore()
-const colors = computed(() => store.state.colors.colors)
 
 const showStatusOrNot = (type, status) => {
   if (type === 1 && [0, 1, 3, 4, 6, 7].includes(status)) {
@@ -116,7 +111,6 @@ const changeTaskStatus = (uid, status) => {
         v-if="statuses[props.task.status]"
         :path="statuses[props.task.status].path"
         :class="statusColor[props.task.status] ? statusColor[props.task.status] : 'text-gray-500 dark:text-gray-100'"
-        :style="{ color: colors[props.task.uid_marker] ? colors[props.task.uid_marker].fore_color : '' }"
         :box="statuses[props.task.status].viewBox"
         :width="statuses[props.task.status].width"
         :height="statuses[props.task.status].height"
