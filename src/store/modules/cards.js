@@ -472,7 +472,7 @@ const mutations = {
         })
       }
     }
-    if (state.selectedCard.uid === card.uid) {
+    if (state.selectedCard?.uid === card.uid) {
       state.selectedCard = card
     }
   },

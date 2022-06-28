@@ -11,6 +11,6 @@ const props = defineProps({
     class="text-[18px] font-[700] my-[25px] text-[#424242]"
     :contenteditable="props.canEdit"
     @blur="$emit('changeName', $event)"
-    v-html="props.cardName.replaceAll('\n','<br/>')"
+    v-html="props.cardName?.replaceAll('\n','<br/>')"
   />
 </template>

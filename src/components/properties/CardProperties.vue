@@ -55,7 +55,7 @@ const onPasteEvent = (e) => {
       const formData = new FormData()
       formData.append('files', blob)
       const data = {
-        uid_card: selectedCard.value.uid,
+        uid_card: selectedCard.value?.uid,
         name: formData
       }
       store.dispatch(CREATE_FILES_REQUEST, data).then(() => {
@@ -82,23 +82,23 @@ const focusMessageInput = () => {
 const changeResponsible = (userEmail) => {
   store
     .dispatch(CHANGE_CARD_RESPONSIBLE_USER, {
-      cardUid: selectedCard.value.uid,
+      cardUid: selectedCard.value?.uid,
       email: userEmail
     })
     .then(() => {
-      selectedCard.value.user = userEmail
+      if (selectedCard.value) selectedCard.value.user = userEmail
     })
 }
 
 const changeName = (arg) => {
-  const data = { cardUid: selectedCard.value.uid, name: arg.target.innerText }
+  const data = { cardUid: selectedCard.value?.uid, name: arg.target.innerText }
   store.dispatch(CHANGE_CARD_NAME, data)
 }
 
 const changeCardBudget = (budget) => {
-  const data = { cardUid: selectedCard.value.uid, budget: budget * 100 }
+  const data = { cardUid: selectedCard.value?.uid, budget: budget * 100 }
   store.dispatch(CHANGE_CARD_BUDGET, data).then((resp) => {
-    selectedCard.value.cost = resp.data.cost
+    if (selectedCard.value) selectedCard.value.cost = resp.data.cost
     showChangeCardBudget.value = false
   })
 }
@@ -119,10 +119,10 @@ function uuidv4 () {
 const cardMessageInputValue = ref('')
 
 const canEdit = computed(
-  () => boards.value[selectedCard.value.uid_board].type_access !== 0
+  () => boards.value[selectedCard.value?.uid_board]?.type_access !== 0
 )
 const endChangeComment = (text) => {
-  const data = { cardUid: selectedCard.value.uid, comment: text }
+  const data = { cardUid: selectedCard.value?.uid, comment: text }
   store.dispatch(CHANGE_CARD_COMMENT, data)
 }
 
@@ -134,12 +134,12 @@ const createCardFile = (event) => {
     formData.append('files[' + i + ']', file)
   }
   const data = {
-    uid_card: selectedCard.value.uid,
+    uid_card: selectedCard.value?.uid,
     name: formData
   }
   console.log(data)
   store.dispatch(CREATE_FILES_REQUEST, data).then(() => {
-    selectedCard.value.has_files = true
+    if (selectedCard.value) selectedCard.value.has_files = true
     scrollDown()
   })
 }
@@ -161,7 +161,7 @@ const deleteCardFileMessage = (uid) => {
 const createCardMessage = () => {
   const uid = uuidv4()
   const data = {
-    uid_card: selectedCard.value.uid,
+    uid_card: selectedCard.value?.uid,
     uid_msg: uid,
     uid: uid,
     date_create: new Date().toISOString(),
@@ -173,7 +173,7 @@ const createCardMessage = () => {
     deleted: 0
   }
   store.dispatch(CREATE_MESSAGE_REQUEST, data).then(() => {
-    selectedCard.value.has_msgs = true
+    if (selectedCard.value) selectedCard.value.has_msgs = true
     cardMessageInputValue.value = ''
     currentQuote.value = false
     scrollDown()
@@ -182,10 +182,12 @@ const createCardMessage = () => {
 
 const changeCardClearCover = () => {
   store
-    .dispatch(CHANGE_CARD_CLEAR_COVER, { cardUid: selectedCard.value.uid })
+    .dispatch(CHANGE_CARD_CLEAR_COVER, { cardUid: selectedCard.value?.uid })
     .then((resp) => {
-      selectedCard.value.cover_color = '#A998B6'
-      selectedCard.value.cover_link = ''
+      if (selectedCard.value) {
+        selectedCard.value.cover_color = '#A998B6'
+        selectedCard.value.cover_link = ''
+      }
       // Replacing old cover file with new cover file
       for (const message of resp.data.deletefiles) {
         store.commit(REMOVE_MESSAGE_LOCALLY, message)
@@ -203,12 +205,14 @@ const changeCardColor = (color) => {
   if (color) {
     store
       .dispatch(CHANGE_CARD_COLOR, {
-        cardUid: selectedCard.value.uid,
+        cardUid: selectedCard.value?.uid,
         color: color
       })
       .then((resp) => {
-        selectedCard.value.cover_color = color
-        selectedCard.value.cover_link = ''
+        if (selectedCard.value) {
+          selectedCard.value.cover_color = color
+          selectedCard.value.cover_link = ''
+        }
         // Replacing old cover file with new cover file
         for (const message of resp.data.deletefiles) {
           store.commit(REMOVE_MESSAGE_LOCALLY, message)
@@ -233,13 +237,15 @@ const changeCardCover = (event) => {
     formData.append('files[' + i + ']', file)
   }
   const data = {
-    cardUid: selectedCard.value.uid,
+    cardUid: selectedCard.value?.uid,
     file: formData
   }
   console.log(data)
   store.dispatch(CHANGE_CARD_COVER, data).then((resp) => {
-    selectedCard.value.cover_color = resp.data.card.cover_color
-    selectedCard.value.cover_link = resp.data.card.cover_link
+    if (selectedCard.value) {
+      selectedCard.value.cover_color = resp.data.card.cover_color
+      selectedCard.value.cover_link = resp.data.card.cover_link
+    }
     // Replacing old cover file with new cover file
     for (const message of resp.data.deletefiles) {
       store.commit(REMOVE_MESSAGE_LOCALLY, message)
@@ -255,7 +261,7 @@ const changeCardCover = (event) => {
 
 const showDeleteCard = ref(false)
 const removeCard = () => {
-  store.dispatch(DELETE_CARD, { uid: selectedCard.value.uid })
+  store.dispatch(DELETE_CARD, { uid: selectedCard.value?.uid })
     .then(() => {
       closeProperties()
       showDeleteCard.value = false
@@ -273,7 +279,7 @@ const removeCard = () => {
   />
   <CardModalBoxBudget
     v-if="showChangeCardBudget"
-    :value="selectedCard.cost / 100"
+    :value="selectedCard?.cost / 100"
     :show="showChangeCardBudget"
     title="Бюджет карточки"
     @cancel="showChangeCardBudget = false"
@@ -283,9 +289,9 @@ const removeCard = () => {
     <!-- Close icon -->
     <div class="flex items-center justify-between mb-[10px]">
       <card-options
-        :date-create="selectedCard.date_create"
+        :date-create="selectedCard?.date_create"
         :can-edit="canEdit"
-        :creator="selectedCard.uid_creator"
+        :creator="selectedCard?.uid_creator"
         :show-files-only="showFilesOnly"
         @clickRemoveButton="showDeleteCard = true"
         @toggleShowOnlyFiles="showFilesOnly = !showFilesOnly"
@@ -302,9 +308,9 @@ const removeCard = () => {
 
     <card-cover
       :cover-color="
-        selectedCard.cover_color === '#A998B6' ? '' : selectedCard.cover_color
+        selectedCard?.cover_color === '#A998B6' ? '' : selectedCard?.cover_color
       "
-      :cover-link="selectedCard.cover_link"
+      :cover-link="selectedCard?.cover_link"
       :can-edit="canEdit"
       @onChangeCardColor="changeCardColor"
       @onChangeCardCover="changeCardCover"
@@ -312,20 +318,20 @@ const removeCard = () => {
     />
 
     <card-name
-      :card-name="selectedCard.name"
+      :card-name="selectedCard?.name"
       :can-edit="canEdit"
       @changeName="changeName"
     />
 
     <div class="flex justify-start mb-[25px] space-x-[4px]">
       <card-responsible-user
-        :responsible="selectedCard.user"
+        :responsible="selectedCard?.user"
         :employees-by-email="employeesByEmail"
         :can-edit="canEdit"
         @changeResponsible="changeResponsible"
       />
       <card-budget
-        :budget="selectedCard.cost"
+        :budget="selectedCard?.cost"
         :can-edit="canEdit"
         @click="showChangeCardBudget = true"
         @onWipeBudget="changeCardBudget"
@@ -334,7 +340,7 @@ const removeCard = () => {
 
     <TaskPropsCommentEditor
       class="mt-3 h-32 break-words"
-      :comment="selectedCard.comment"
+      :comment="selectedCard?.comment"
       :can-edit="canEdit"
       @endChangeComment="endChangeComment"
       @blur="endChangeComment"
