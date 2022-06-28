@@ -18,6 +18,7 @@
       >
         <div
           v-if="!pics.includes(fileName.split('.').pop())"
+          :class="{'flex-col': isAudio}"
           class="mt-2 text-right font-medium mb-2 flex relative"
         >
           <div class="float-left">
@@ -26,7 +27,10 @@
               @setLink="setLink"
             />
           </div>
-          <div class="float-right ml-[11.67px]">
+          <div
+            :class="{'ml-[11.67px]': !isAudio, 'mt-[11.67px]': isAudio}"
+            class="float-right"
+          >
             <a
               :href="!isAudio ? fileUrl : null"
               :src="isAudio ? fileUrl : null"

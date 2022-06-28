@@ -1,5 +1,5 @@
 <script setup>
-import { ref, nextTick } from 'vue'
+import { ref, nextTick, defineEmits } from 'vue'
 import { useStore } from 'vuex'
 import { GETFILES } from '@/store/actions/taskfiles'
 import ChatLoader from '@/components/CardProperties/ChatLoader.vue'
@@ -12,6 +12,7 @@ const props = defineProps({
     default: () => ({})
   }
 })
+const emit = defineEmits(['setLink'])
 
 const pics = ['jpg', 'png', 'jpeg', 'git', 'bmp', 'gif', 'PNG', 'JPG', 'JPEG', 'BMP', 'GIF']
 const movies = ['mov', 'mp4']
@@ -64,6 +65,7 @@ const getDocUrl = (uid, extension, filename) => {
   console.log('GETMOVEURL')
   store.dispatch(GETFILES, uid).then(resp => {
     const fileURL = window.URL.createObjectURL(new Blob([resp.data], { type: 'text/plain' }))
+    emit('setLink', [fileURL, false])
     document.getElementById('doc_' + uid).setAttribute('href', fileURL)
     document.getElementById('doc_' + uid).setAttribute('download', filename)
     return fileURL
@@ -73,6 +75,7 @@ const getDocUrl = (uid, extension, filename) => {
 const getAudioUrl = (uid, extension, filename) => {
   store.dispatch(GETFILES, uid).then(resp => {
     const fileURL = window.URL.createObjectURL(new Blob([resp.data], { type: 'audio/' + extension }))
+    emit('setLink', [fileURL, true])
     const myAudio = new Audio()
     myAudio.src = fileURL
     document.getElementById('audio_' + uid).appendChild(myAudio)
@@ -86,6 +89,7 @@ const getAnyUrl = (uid, extension, filename) => {
   console.log('GETANYURL')
   store.dispatch(GETFILES, uid).then(resp => {
     const fileURL = window.URL.createObjectURL(new Blob([resp.data]))
+    emit('setLink', [fileURL, false])
     document.getElementById('any_' + uid).setAttribute('href', fileURL)
     document.getElementById('any_' + uid).setAttribute('download', filename)
     // получаем arrayBuffer из Blob
