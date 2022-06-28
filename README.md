@@ -77,3 +77,5 @@
 
 1. В консоль можно написать `document.getElementById('app').__vue_app__.config.globalProperties.$store._state.data`
 чтобы посмотреть что сейчас в сторе
+
+2. Для того чтобы посмотреть изменения одного файла можно использловать `gitk [filename]`
