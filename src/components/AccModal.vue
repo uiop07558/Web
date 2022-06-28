@@ -11,9 +11,9 @@ const emit = defineEmits(['AccLogout'])
 const store = useStore()
 const user = computed(() => store.state.user.user)
 const showEditname = ref(false)
-const oldPassword = ref(false)
 const newPassword = ref(false)
 const confirmNewPassword = ref(false)
+const showError = ref(false)
 const showEditphone = ref(false)
 //  const showEditemail = ref(false)
 const showEditpassword = ref(false)
@@ -54,12 +54,17 @@ const changeUserPhoto = (event) => {
 }
 
 const changeUserPassword = () => {
-  showEditpassword.value = false
   const password = newPassword.value
   const data = {
     password: password
   }
-  store.dispatch(AUTH_CHANGE_PASSWORD, data)
+  if (newPassword.value === confirmNewPassword.value) {
+    store.dispatch(AUTH_CHANGE_PASSWORD, data)
+    showEditpassword.value = false
+    showError.value = false
+  } else {
+    showError.value = true
+  }
 }
 
 const changeUserPhone = (phone) => {
@@ -79,7 +84,6 @@ const changeUserName = (name) => {
     name: name,
     email: user.value?.current_user_email
   }
-  console.log(user.value)
   store.dispatch(CHANGE_EMPLOYEE_NAME, data)
 }
 
@@ -127,16 +131,6 @@ const userPhone = function () {
     <div class="flex flex-col w-full">
       <div>
         <p class="mb-[10px] mt-[10px]">
-          Введите старый пароль
-        </p>
-        <input
-          v-model="oldPassword"
-          type="password"
-          class="bg-[#f4f5f7]/50 rounded-[6px] border border-[#4c4c4d] focus:border-[#ff9123] w-full px-[14px] py-[11px] text-[14px] leading-[16px] text-[#4c4c4d] font-roboto"
-        >
-      </div>
-      <div>
-        <p class="mb-[10px] mt-[10px]">
           Введите новый пароль
         </p>
         <input
@@ -155,6 +149,12 @@ const userPhone = function () {
           class="bg-[#f4f5f7]/50 rounded-[6px] border border-[#4c4c4d] focus:border-[#ff9123] w-full px-[14px] py-[11px] text-[14px] leading-[16px] text-[#4c4c4d] font-roboto"
         >
       </div>
+      <p
+        v-if="showError"
+        class="text-red-500 text-xs pb-3"
+      >
+        Пароли не совпадают
+      </p>
     </div>
   </ModalBox>
   <form class=" mx-6 overscroll-auto">
