@@ -72,6 +72,8 @@
         />
       </div>
     </div>
+
+    <EmptyTasksListPics v-if="isEmpty" />
   </div>
 </template>
 
@@ -81,6 +83,7 @@ import BoardModalBoxRename from '@/components/Board/BoardModalBoxRename.vue'
 import { setLocalStorageItem } from '@/store/helpers/functions'
 import ProjectBlocItem from '@/components/Projects/ProjectBlocItem.vue'
 import ListBlocAdd from '@/components/Common/ListBlocAdd.vue'
+import EmptyTasksListPics from '@/components/TasksList/EmptyTasksListPics'
 
 import * as TASK from '@/store/actions/tasks'
 import * as PROJECT from '@/store/actions/projects'
@@ -93,7 +96,8 @@ export default {
     Icon,
     BoardModalBoxRename,
     ProjectBlocItem,
-    ListBlocAdd
+    ListBlocAdd,
+    EmptyTasksListPics
   },
   props: {
     items: {
@@ -115,6 +119,9 @@ export default {
     },
     isPropertiesMobileExpanded () {
       return this.$store.state.isPropertiesMobileExpanded
+    },
+    isEmpty () {
+      return !this.items[0].items.length && !this.items[1].items.length
     }
   },
   created () {
