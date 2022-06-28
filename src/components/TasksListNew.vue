@@ -18,7 +18,7 @@
   <!-- Add task input -->
   <div
     v-if="taskListSource && !DONT_SHOW_TASK_INPUT_UIDS[taskListSource.uid]"
-    class="fixed-create flex bg-[#f4f5f7] px-px pt-px"
+    class="fixed-create z-[2] flex bg-[#f4f5f7] px-px pt-px"
   >
     <button
       class="bg-[#FF912380] px-2 rounded-[8px] text-black text-sm mr-1 hover:bg-[#F5DEB3]"
@@ -644,10 +644,11 @@ export default {
           str_date_end: getTodaysDate(tomorrow) + 'T23:59:59',
           reset: 0
         }
-      )
-        .then(() => {
+      ).then((resp) => {
+        if (task.uid_parent && task.uid_parent === '00000000-0000-0000-0000-000000000000') {
           store.commit(TASK.REMOVE_TASK, task.uid)
-        })
+        }
+      })
     }
 
     const copyTaskName = (task) => {
