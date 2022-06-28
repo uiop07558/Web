@@ -9,6 +9,7 @@ import PropertiesRight from '@/components/PropertiesRight.vue'
 import ErrorNotification from '@/components/Notifications/ErrorNotification.vue'
 import Notification from '@/components/Notifications/Notification.vue'
 import InspectorNotification from '@/components/Notifications/InspectorNotification.vue'
+import Overlay from '@/components/modals/Overlay.vue'
 
 import TasksListNew from '@/components/TasksListNew.vue'
 import MainSection from '@/components/MainSection.vue'
@@ -38,6 +39,7 @@ const mainSectionState = computed(() => store.state.mainSectionState)
 const greedPath = computed(() => store.state.greedPath)
 const greedSource = computed(() => store.state.greedSource)
 
+const isAsideLgActive = computed(() => store.state.isAsideLgActive)
 const isFileRedirect = computed(() => (router.currentRoute.value.name === 'taskfile' || router.currentRoute.value.name === 'cardfile') && router.currentRoute.value.params.id)
 const menu = computed(() => store.state.navigator.menu)
 const storeTasks = computed(() => store.state.tasks.newtasks)
@@ -77,6 +79,10 @@ const requestNotificationPermissionOrShowModalBox = () => {
   if (parseInt(localStorage.getItem('shouldShowModal')) === 1) {
     shouldShowModalBox.value = true
   }
+}
+
+const overlayClick = () => {
+  store.dispatch('asideLgToggle', false)
 }
 
 const getTask = (uid) => {
@@ -379,7 +385,14 @@ if (router.currentRoute.value.name === 'task' && router.currentRoute.value.param
   <main-section>
     <aside-menu
       v-if="!isFileRedirect"
+      class="z-20"
       :menu="menu"
+    />
+    <overlay
+      v-if="!isFileRedirect"
+      v-show="isAsideLgActive"
+      :z-index="'z-10'"
+      @overlay-click="overlayClick"
     />
     <nav-bar v-if="!isFileRedirect" />
     <properties-right v-if="!isFileRedirect" />

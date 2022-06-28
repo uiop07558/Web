@@ -216,7 +216,7 @@ const tarifS = () => {
   <aside
     v-show="!isFullScreen"
     id="aside"
-    class="w-[292px] fixed top-0 z-[3] h-screen transition-position lg:left-0 bg-[#f4f5f7] font-SfProDisplayNormal text-sm"
+    class="w-[292px] fixed top-0 z-20 h-screen transition-position lg:left-0 bg-[#f4f5f7] font-SfProDisplayNormal text-sm"
     :class="[ isAsideMobileExpanded ? 'left-0' : '-left-[292px]', isAsideLgActive ? 'block' : 'lg:hidden xl:block' ]"
   >
     <div class="flex flex-row w-full text-dark px-[16px] mt-[22px] h-[32px] items-center">
