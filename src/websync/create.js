@@ -1,14 +1,14 @@
-import store from '@/store/index.js'
-import { createProject } from '@/websync/project.js'
-import { createTask } from '@/websync/task.js'
-import { createCard } from '@/websync/card.js'
-import { createEmployee } from '@/websync/employee.js'
-import { createTaskMessage } from '@/websync/task_message.js'
-import { createCardMessage } from '@/websync/card_message.js'
-import * as TYPES from '@/websync/types.js'
 import { showNotify } from '@/store/helpers/functions'
+import store from '@/store/index.js'
+import { createCard } from '@/websync/card.js'
+import { createCardMessage } from '@/websync/card_message.js'
 import { createColor } from '@/websync/colors_dop.js'
+import { createEmployee } from '@/websync/employee.js'
+import { createProject } from '@/websync/project.js'
 import { createTag } from '@/websync/tag.js'
+import { createTask } from '@/websync/task.js'
+import { createTaskMessage } from '@/websync/task_message.js'
+import * as TYPES from '@/websync/types.js'
 
 function currentUserUid () {
   return store?.state?.user?.user?.current_user_uid
@@ -23,20 +23,22 @@ function currentUserEmail () {
 }
 
 export default function processCreate (obj) {
-  console.log(obj.type)
   switch (obj.type) {
     case TYPES.TYPE_OBJECT_TAG:
       createTag(obj)
       break
     case TYPES.TYPE_OBJECT_PROJECT:
       if (obj.obj.email_creator !== currentUserEmail()) {
-        showNotify({
-          uid: obj.uid_json,
-          group: 'top',
-          title: 'Новый проект',
-          obj: obj,
-          text: obj.obj.name
-        }, isNotificationSoundOn.value)
+        showNotify(
+          {
+            uid: obj.uid_json,
+            group: 'top',
+            title: 'Новый проект',
+            obj: obj,
+            text: obj.obj.name
+          },
+          isNotificationSoundOn.value
+        )
       }
       createProject(obj)
       break
@@ -45,13 +47,16 @@ export default function processCreate (obj) {
         obj.obj.uid_customer !== currentUserUid() &&
         obj.obj.email_performer === currentUserEmail()
       ) {
-        showNotify({
-          uid: obj.uid_json,
-          group: 'top',
-          title: 'Новое поручение',
-          obj: obj,
-          text: obj.obj.name
-        }, isNotificationSoundOn.value)
+        showNotify(
+          {
+            uid: obj.uid_json,
+            group: 'top',
+            title: 'Новое поручение',
+            obj: obj,
+            text: obj.obj.name
+          },
+          isNotificationSoundOn.value
+        )
       }
       createTask(obj)
       break

@@ -213,7 +213,7 @@
                 :card="element"
                 :show-date="board?.show_date !== 0 ?? false"
                 :read-only="!board || board.type_access === 0"
-                :selected="selectedCard?.uid === element.uid"
+                :selected="selectedCardUid === element.uid"
                 class="mt-2"
                 @select="selectCard(element)"
                 @delete="deleteCard(element)"
@@ -335,7 +335,8 @@ export default {
       showDeleteCard: false,
       currentCard: null,
       dragCardParam: null,
-      showMoveCard: false
+      showMoveCard: false,
+      selectedCardUid: ''
     }
   },
   computed: {
@@ -354,9 +355,6 @@ export default {
     usersColumnsCount () {
       return this.usersColumns.length
     },
-    selectedCard () {
-      return this.$store.state.cards.selectedCard
-    },
     columnsNames () {
       return this.usersColumns.map((column) => column.Name)
     },
@@ -371,13 +369,25 @@ export default {
     },
     showOnlyMyCards () {
       return this.$store.state.boards.showOnlyMyCards
+    },
+    isPropertiesMobileExpanded () {
+      return this.$store.state.isPropertiesMobileExpanded
     }
   },
   watch: {
     board: {
       immediate: true,
       handler: function (val) {
+        this.selectedCardUid = ''
         this.$store.commit(BOARD.BOARD_CLEAR_FILTER)
+      }
+    },
+    isPropertiesMobileExpanded: {
+      immediate: true,
+      handler: function (val) {
+        if (!val) {
+          this.selectedCardUid = ''
+        }
       }
     }
   },
@@ -554,6 +564,7 @@ export default {
       }
     },
     selectCard (card) {
+      this.selectedCardUid = card.uid
       this.$store.commit(REFRESH_MESSAGES)
       this.$store.commit(REFRESH_FILES)
       this.$store.commit(CARD.SELECT_CARD, card)
@@ -561,11 +572,17 @@ export default {
       this.$store.commit('basic', { key: 'propertiesState', value: 'card' })
       this.$store.dispatch('asidePropertiesToggle', true)
     },
+    closeProperties () {
+      this.selectedCardUid = ''
+      this.$store.dispatch('asidePropertiesToggle', false)
+      this.$store.commit(CARD.SELECT_CARD, false)
+    },
     deleteCard (card) {
       this.showDeleteCard = true
       this.currentCard = card
     },
     moveCard (cardUid, stageUid, newOrder) {
+      this.closeProperties()
       this.$store
         .dispatch(CARD.MOVE_CARD, { uid: cardUid, stageUid, newOrder })
         .then((resp) => {

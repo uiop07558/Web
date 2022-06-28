@@ -1,10 +1,10 @@
 <template>
   <div
     class="description-content"
-    @click="editComment"
+    @click.stop="editComment"
   >
     <div
-      ref="commentEditor"
+      id="taskPropsCommentEditor"
       v-linkify:options="{ className: 'text-blue-600' }"
       class="font-[400] text-[14px] leading-[21px] text-[#4C4C4D]"
       :contenteditable="isEditable"
@@ -78,9 +78,17 @@ export default {
     },
     editComment () {
       if (!this.canEdit) return
+      if (this.isEditable) return
       this.isEditable = true
       this.$nextTick(function () {
-        this.$refs.commentEditor.focus({ preventScroll: false })
+        const commentEditor = document.getElementById('taskPropsCommentEditor')
+        commentEditor.focus({ preventScroll: false })
+        const range = document.createRange()
+        range.setStart(commentEditor, 1)
+        range.setEnd(commentEditor, 1)
+        const sel = document.getSelection()
+        sel.removeAllRanges()
+        sel.addRange(range)
       })
     },
     /**
