@@ -645,6 +645,8 @@ export default {
           reset: 0
         }
       ).then((resp) => {
+        task.term_user = resp.term
+        task.is_overdue = resp.is_overdue
         if (task.uid_parent && task.uid_parent === '00000000-0000-0000-0000-000000000000') {
           store.commit(TASK.REMOVE_TASK, task.uid)
         }
