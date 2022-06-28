@@ -24,7 +24,7 @@ const logout = () => {
 }
 
 const tarifText = computed(() => {
-  switch (user.value.tarif) {
+  switch (user?.value?.tarif) {
     case 'trial':
       return 'Пробная версия'
     case 'free':
@@ -34,7 +34,7 @@ const tarifText = computed(() => {
     case 'business':
       return 'Действительная лицензия с несколькими рабочими местами'
     default:
-      return user.value.tarif
+      return user?.value?.tarif
   }
 })
 
