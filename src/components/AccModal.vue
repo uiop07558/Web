@@ -22,6 +22,22 @@ const tarif = () => {
 const logout = () => {
   emit('AccLogout')
 }
+
+const tarifText = computed(() => {
+  switch (user.value.tarif) {
+    case 'trial':
+      return 'Пробная версия'
+    case 'free':
+      return 'Закончилась лицензия, Истек триал, Превышен лимит рабочих мест'
+    case 'expert':
+      return 'Действительная лицензия с одним рабочим местом'
+    case 'business':
+      return 'Действительная лицензия с несколькими рабочими местами'
+    default:
+      return user.value.tarif
+  }
+})
+
 const changeUserPhoto = (event) => {
   const files = event.target.files
   const formData = new FormData()
@@ -165,28 +181,9 @@ const userPhone = function () {
           Тип аккаунта
         </div>
         <p
-          v-if="user?.license_type === 0 || user?.license_type === null"
           class="text-sm font-medium landing-4"
         >
-          Пробный тариф
-        </p>
-        <p
-          v-if="user?.license_type === 1"
-          class="text-sm font-medium landing-4"
-        >
-          Премиум тариф
-        </p>
-        <p
-          v-if="user?.license_type === 2"
-          class="text-sm font-medium landing-4"
-        >
-          Бизнес тариф
-        </p>
-        <p
-          v-if="user?.license_type === 0"
-          class="text-sm mt-2 "
-        >
-          Обновите тарифный план ЛидерТаск для неограниченных возможностей
+          {{ tarifText }}
         </p>
         <p
           v-if="user?.date_expired"
