@@ -160,6 +160,11 @@ export default {
         this.searchText = ''
         this.showSearchBar = false
       }
+    },
+    searchText () {
+      if (this.lastGreedPath === 'boards_children') {
+        this.$store.commit(BOARD.SHOW_SEARCH_CARDS, this.searchText)
+      }
     }
   },
   methods: {
@@ -295,10 +300,8 @@ export default {
       this.$emit('popNavBar')
     },
     sendSearchRequest () {
-      if (this.searchText.length > 3) {
-        if (this.lastGreedPath === 'boards_children') {
-          this.$store.commit(BOARD.SHOW_SEARCH_CARDS, this.searchText)
-        } else {
+      if (this.lastGreedPath !== 'boards_children') {
+        if (this.searchText.length > 3) {
           const navElem = {
             name: 'Поиск: ' + this.searchText,
             key: 'taskListSource',
@@ -310,17 +313,17 @@ export default {
           this.$store.dispatch(TASK.SEARCH_TASK, this.searchText).then((resp) => {
             console.log('Search Taks', resp)
           })
+        } else {
+          notify(
+            {
+              group: 'api',
+              title: 'Длина запроса должна быть более 3 символов',
+              action: '',
+              text: ''
+            },
+            15000
+          )
         }
-      } else {
-        notify(
-          {
-            group: 'api',
-            title: 'Длина запроса должна быть более 3 символов',
-            action: '',
-            text: ''
-          },
-          15000
-        )
       }
     },
     onBlurSearchInput () {
