@@ -1,5 +1,8 @@
 <template>
-  <div id="Board">
+  <div
+    id="Board"
+    class="h-full"
+  >
     <BoardModalBoxDelete
       v-if="showDeleteCard"
       title="Удалить карточку"
@@ -60,14 +63,14 @@
       @cancel="showMoveCard = false"
       @changePosition="onChangeCardPosition"
     />
-    <div class="flex items-start overflow-x-auto scroll-style">
+    <div class="max-h-full h-full flex items-start overflow-y-hidden overflow-x-auto scroll-style">
       <template
         v-for="column in storeCards"
         :key="column.UID"
       >
         <div
           v-if="isColumnVisible(column)"
-          class="flex-none bg-white rounded-xl px-3 py-4 w-[280px] mr-[10px] stage-column"
+          class="max-h-full flex flex-col flex-none bg-white rounded-xl px-3 py-4 w-[280px] mr-[10px] stage-column"
           :style="{ background: column.Color }"
         >
           <!--заголовок -->
@@ -194,38 +197,40 @@
             </div>
           </div>
           <!--карточки -->
-          <draggable
-            :data-column-id="column.UID"
-            :list="getColumnCards(column)"
-            ghost-class="ghost-card"
-            item-key="uid"
-            group="cards"
-            :animation="100"
-            :disabled="!board || board.type_access === 0"
-            :move="checkMoveDragCard"
-            @start="startDragCard"
-            @end="endDragCard"
-            @change="changeDragCard"
-          >
-            <template #item="{ element }">
-              <BoardCard
-                :data-card-id="element.uid"
-                :card="element"
-                :show-date="board?.show_date !== 0 ?? false"
-                :read-only="!board || board.type_access === 0"
-                :selected="selectedCardUid === element.uid"
-                class="mt-2"
-                @select="selectCard(element)"
-                @delete="deleteCard(element)"
-                @moveSuccess="moveSuccessCard(element)"
-                @moveReject="moveRejectCard(element)"
-                @moveColumn="moveColumnCard(element)"
-              />
-            </template>
-          </draggable>
+          <div class="min-h-0 overflow-y-auto scroll-style">
+            <draggable
+              :data-column-id="column.UID"
+              :list="getColumnCards(column)"
+              ghost-class="ghost-card"
+              item-key="uid"
+              group="cards"
+              :animation="100"
+              :disabled="!board || board.type_access === 0"
+              :move="checkMoveDragCard"
+              @start="startDragCard"
+              @end="endDragCard"
+              @change="changeDragCard"
+            >
+              <template #item="{ element }">
+                <BoardCard
+                  :data-card-id="element.uid"
+                  :card="element"
+                  :show-date="board?.show_date !== 0 ?? false"
+                  :read-only="!board || board.type_access === 0"
+                  :selected="selectedCardUid === element.uid"
+                  class="mt-2"
+                  @select="selectCard(element)"
+                  @delete="deleteCard(element)"
+                  @moveSuccess="moveSuccessCard(element)"
+                  @moveReject="moveRejectCard(element)"
+                  @moveColumn="moveColumnCard(element)"
+                />
+              </template>
+            </draggable>
+          </div>
           <!--кнопка добавить карточку -->
           <div
-            v-if="column.AddCard && !showOnlyMyCards"
+            v-if="column.AddCard && !showOnlyMyCards && !showOnlySearchText"
             class="mt-2 h-[40px]"
           >
             <button
@@ -313,6 +318,9 @@ export default {
     BoardCard,
     draggable
   },
+  unmounted () {
+    this.$store.commit(BOARD.SHOW_SEARCH_CARDS, undefined)
+  },
   props: {
     storeCards: {
       type: Array,
@@ -369,6 +377,9 @@ export default {
     },
     showOnlyMyCards () {
       return this.$store.state.boards.showOnlyMyCards
+    },
+    showOnlySearchText () {
+      return this.$store.state.boards.showOnlySearchText
     },
     isPropertiesMobileExpanded () {
       return this.$store.state.isPropertiesMobileExpanded
@@ -439,6 +450,8 @@ export default {
       if (this.showOnlyMyCards) {
         const currentUserEmail = this.$store.state.user.user.current_user_email.toLowerCase()
         return column.cards.filter(card => card.user.toLowerCase() === currentUserEmail)
+      } else if (this.showOnlySearchText) {
+        return column.cards.filter(card => card.name.toLowerCase().includes(this.showOnlySearchText.toLowerCase()))
       }
       return column.cards
     },

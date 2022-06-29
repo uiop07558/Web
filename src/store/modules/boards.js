@@ -15,7 +15,8 @@ const state = {
   boards: {},
   selectedBoard: undefined,
   showArchive: false,
-  showOnlyMyCards: false
+  showOnlyMyCards: false,
+  showOnlySearchText: undefined
 }
 
 const getters = {}
@@ -327,6 +328,9 @@ const mutations = {
   },
   [BOARD.SHOW_BOARD_MY_CARDS]: (state, showMyCards) => {
     state.showOnlyMyCards = showMyCards
+  },
+  [BOARD.SHOW_SEARCH_CARDS]: (state, searchText) => {
+    state.showOnlySearchText = searchText
   },
   [BOARD.BOARD_CLEAR_FILTER]: (state) => {
     state.showArchive = false

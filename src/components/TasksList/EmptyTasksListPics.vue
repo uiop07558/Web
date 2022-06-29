@@ -7,12 +7,18 @@ import * as TASK from '@/store/actions/tasks.js'
 
 const store = useStore()
 const navStack = computed(() => store.state.navbar.navStack)
+const navStackLastPath = computed(() => navStack.value[navStack.value.length - 1].greedPath)
 const shouldShowEmptyPics = computed(() => {
   const lastNavStackElement = navStack.value[navStack.value.length - 1]
   if (lastNavStackElement.value.uid === DATE_UID && new Date(lastNavStackElement.value.param).toDateString() === new Date().toDateString()) {
     return true
   } else { return false }
 })
+
+const isTags = computed(() => navStackLastPath.value === 'tags' || navStackLastPath.value === 'tags_children')
+const isProjects = computed(() => navStackLastPath.value === 'new_private_projects' || navStackLastPath.value === 'projects_children')
+const isColors = computed(() => navStackLastPath.value === 'colors' || navStack.value[navStack.value.length - 1].value?.uid === COLOR_UID)
+
 const DATE_UID = '901841d9-0016-491d-ad66-8ee42d2b496b'
 // const TAG_UID = '00a5b3de-9474-404d-b3ba-83f488ac6d30'
 const COLOR_UID = 'ed8039ae-f3de-4369-8f32-829d401056e9'
@@ -94,7 +100,7 @@ const goToNextDay = function () {
   </div>
 
   <!-- PROJECT -->
-  <div v-if="navStack[navStack.length - 1].greedPath == 'projects_children'">
+  <div v-if="isProjects">
     <div
       class="pointer-events-none max-w-xl mx-auto"
     >
@@ -172,7 +178,7 @@ const goToNextDay = function () {
   </div>
 
   <!-- TAG -->
-  <div v-if="navStack[navStack.length - 1].greedPath == 'tags_children'">
+  <div v-if="isTags">
     <div
       class="pointer-events-none max-w-xl mx-auto"
     >
@@ -238,7 +244,7 @@ const goToNextDay = function () {
   </div>
 
   <!-- COLOR  -->
-  <div v-if="navStack[navStack.length - 1].value?.uid == COLOR_UID">
+  <div v-if="isColors">
     <div
       class="pointer-events-none max-w-xl mx-auto"
     >

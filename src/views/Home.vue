@@ -382,7 +382,7 @@ if (router.currentRoute.value.name === 'task' && router.currentRoute.value.param
       class="text-blue-400"
     >Firefox</a>
   </modal-box-notification-instruction>
-  <main-section>
+  <main-section class="h-full">
     <aside-menu
       v-if="!isFileRedirect"
       class="z-20"
@@ -405,7 +405,10 @@ if (router.currentRoute.value.name === 'task' && router.currentRoute.value.param
       :new-config="newConfig"
     />
     <!-- Greed section -->
-    <div v-if="mainSectionState === 'greed'">
+    <div
+      v-if="mainSectionState === 'greed'"
+      class="h-full"
+    >
       <projects
         v-if="greedPath === 'new_private_projects'"
         :items="greedSource"
