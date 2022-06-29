@@ -50,7 +50,11 @@ const getImgUrl = (uid, extension, filename) => {
       document.getElementById('img_' + uid).setAttribute('href', fileURL)
       document.getElementById('img_' + uid).style.maxHeight = '100px'
       return myImage
-    })
+    }).catch(
+      setTimeout(() => { // bug fix: https://beta.leadertask.ru/task/0fe60f4b-496c-4587-a6a4-6de2f66951d3
+        getImgUrl(uid, extension, filename)
+      }, 500)
+    )
   }
 }
 
