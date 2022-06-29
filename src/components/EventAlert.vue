@@ -1,7 +1,7 @@
 <template>
   <div
     :class="boxColor"
-    class="p-6 max-w-sm mx-auto rounded-xl shadow-lg flex items-start space-x-4"
+    class="p-4 max-w-sm mx-auto rounded-xl shadow-lg flex items-start space-x-4 mx-3.5 my-5"
   >
     <Icon
       :path="DefaultIcon.path"
@@ -10,7 +10,7 @@
       :width="DefaultIcon.width"
       :height="DefaultIcon.height"
     />
-    <p class="w-full">
+    <p class="w-full mx-3.5">
       {{ messageText }}
     </p>
     <Icon
