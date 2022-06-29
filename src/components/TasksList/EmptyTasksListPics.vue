@@ -86,7 +86,7 @@ const goToNextDay = function () {
         alt="Empty task image"
       >
       <p class="text-xl text-center font-bold mt-10">
-        Отличная работа! Все задачи выполнены.<br> Запланируем дела на завтра?
+        Задач пока нет.<br> Запланируем дела на завтра?
       </p>
       <div class="grid grid-cols-1">
         <button
