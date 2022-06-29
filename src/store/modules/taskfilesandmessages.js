@@ -75,15 +75,6 @@ const actions = {
         })
         .catch((err) => {
           commit(FILES_ERROR)
-          notify(
-            {
-              group: 'api',
-              title: 'REST API Error, please make screenshot',
-              action: GETFILES,
-              text: err.response.data
-            },
-            15000
-          )
           reject(err)
         })
     })
