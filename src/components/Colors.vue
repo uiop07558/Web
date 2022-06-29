@@ -76,6 +76,8 @@
           </ListBlocItem>
         </template>
       </div>
+
+      <EmptyTasksListPics v-if="isEmpty" />
     </div>
   </div>
 </template>
@@ -85,6 +87,7 @@ import BoardModalBoxRename from '@/components/Board/BoardModalBoxRename.vue'
 import Icon from '@/components/Icon.vue'
 import ListBlocAdd from '@/components/Common/ListBlocAdd.vue'
 import ListBlocItem from '@/components/Common/ListBlocItem.vue'
+import EmptyTasksListPics from '@/components/TasksList/EmptyTasksListPics'
 
 import * as TASK from '@/store/actions/tasks'
 import { setLocalStorageItem } from '@/store/helpers/functions'
@@ -97,7 +100,8 @@ export default {
     Icon,
     ListBlocAdd,
     ListBlocItem,
-    BoardModalBoxRename
+    BoardModalBoxRename,
+    EmptyTasksListPics
   },
   props: {
     colors: {
@@ -133,6 +137,9 @@ export default {
     },
     greed () {
       return this.$store.state.greedSource
+    },
+    isEmpty () {
+      return !this.colors.length
     }
   },
   methods: {
