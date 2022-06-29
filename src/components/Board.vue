@@ -230,7 +230,7 @@
           </div>
           <!--кнопка добавить карточку -->
           <div
-            v-if="column.AddCard && !showOnlyMyCards"
+            v-if="column.AddCard && !showOnlyMyCards && !showOnlySearchText"
             class="mt-2 h-[40px]"
           >
             <button
@@ -318,6 +318,9 @@ export default {
     BoardCard,
     draggable
   },
+  unmounted () {
+    this.$store.commit(BOARD.SHOW_SEARCH_CARDS, undefined)
+  },
   props: {
     storeCards: {
       type: Array,
@@ -374,6 +377,9 @@ export default {
     },
     showOnlyMyCards () {
       return this.$store.state.boards.showOnlyMyCards
+    },
+    showOnlySearchText () {
+      return this.$store.state.boards.showOnlySearchText
     },
     isPropertiesMobileExpanded () {
       return this.$store.state.isPropertiesMobileExpanded
@@ -444,6 +450,8 @@ export default {
       if (this.showOnlyMyCards) {
         const currentUserEmail = this.$store.state.user.user.current_user_email.toLowerCase()
         return column.cards.filter(card => card.user.toLowerCase() === currentUserEmail)
+      } else if (this.showOnlySearchText) {
+        return column.cards.filter(card => card.name.toLowerCase().includes(this.showOnlySearchText.toLowerCase()))
       }
       return column.cards
     },
