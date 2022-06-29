@@ -1054,10 +1054,12 @@ export default {
       msgtask = msgtask.replaceAll('&', '&amp;')
       msgtask = msgtask.replaceAll('<', '&lt;')
       msgtask = msgtask.replaceAll('>', '&gt;')
+      const uid = this.uuidv4()
       const data = {
         uid_task: this.selectedTask.uid,
+        uid: uid,
         uid_creator: this.cusers?.current_user_uid,
-        uid_msg: this.uuidv4(),
+        uid_msg: uid,
         date_create: new Date().toISOString(),
         deleted: 0,
         uid_quote: this.currentAnswerMessageUid,
@@ -1280,6 +1282,7 @@ export default {
       document.getElementById(uid).parentNode.click({ preventScroll: false })
     },
     onAnswerMessage: function (uid) {
+      console.log(this.taskMessages)
       this.currentAnswerMessageUid = uid
       this.$nextTick(function () {
         this.onInputTaskMsg()
