@@ -468,7 +468,6 @@ const getValidBackColor = function (backColor) {
             class="cursor-pointer"
           >
             <div
-              v-if="key < 4"
               class="flex items-center bg-[#F4F5F7] rounded-[4px] min-h-[28px]"
               :class="[`inspector-option-item${key + 1}`]"
               style="padding: 4px 7px 4px 6px;"
