@@ -899,7 +899,7 @@ export default {
         { id: 'thu', text: 'Чт' },
         { id: 'fri', text: 'Пт' },
         { id: 'sat', text: 'Сб' },
-        { id: 'sun', text: 'Вск' }
+        { id: 'sun', text: 'Вс' }
       ],
       showOnlyFiles: false,
       checklisteditable: false,
@@ -1849,7 +1849,7 @@ export default {
                 <span v-if="selectedTask.SeriesWeekThu===1">Чт. </span>
                 <span v-if="selectedTask.SeriesWeekFri===1">Пт. </span>
                 <span v-if="selectedTask.SeriesWeekSat===1">Сб. </span>
-                <span v-if="selectedTask.SeriesWeekSun===1">Вск. </span>
+                <span v-if="selectedTask.SeriesWeekSun===1">Вс. </span>
               </span>
               <span v-if="selectedTask.SeriesType===3">
                 <span v-if="selectedTask.SeriesMonthType===1">Ежемесячно: Каждый {{ selectedTask.SeriesMonthCount }} месяц {{ selectedTask.SeriesMonthDay }} числа</span>
