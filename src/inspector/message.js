@@ -29,6 +29,7 @@ function dateToTimeFormat (date) {
 }
 
 export function getInspectorMessage (type, task) {
+  console.log(task)
   const performerName = (store?.state?.employees?.employees[task.uid_performer]?.name) ?? '[Удаленный сотрудник]'
   const performerPhone = (store?.state?.employees?.employees[task.uid_performer]?.phone.split(' ')[0]) ?? '[Неизвестный номер телефона]'
   if (!task) {
@@ -37,7 +38,7 @@ export function getInspectorMessage (type, task) {
   switch (type) {
     case INFO_MESSAGE_TYPE: return 'Задача поручена: ' + performerName + ' ' + new Date(task.date_create).toLocaleString()
     case ORIGIN_MESSAGE_TYPE: return performerName + ', вы согласны со сроком? Все будет готово до ' + dateToLabelFormat(new Date(task.customer_date_end)) + '? И до ' + dateToTimeFormat(new Date(task.customer_date_end)) + ' завершите задачу?'
-    case IGNORE_MESSAGE_TYPE: return performerName + ', вы не ответили после того как получили задачу от ' + performerName + '. Пожалуйста напишите вопросы если есть, или нажмите:'
+    case IGNORE_MESSAGE_TYPE: return performerName + ', вы не ответили после того как получили задачу от ' + performerName + '. Пожалуйста напишите вопросы если есть' + ((task.type === 1 || task.type === 3) ? '' : ', или нажмите: ')
     case OVERDUE_MESSAGE_TYPE: return performerName + ', вы просрочили задачу - напишите причину почему задача еще не выполнена и когда ожидать выполнения? А лучше свяжитесь с заказачиком и обсудите эту ситуацию'
     case BETWEEN_MESSAGE_TYPE: return performerName + ', как идут дела? Пожалуйста, приложите промежуточные результаты.'
     case CALL_MESSAGE_TYPE: return 'Я позвонил исполнителю на номер ' + performerPhone + '.'
