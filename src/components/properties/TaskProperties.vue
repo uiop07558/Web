@@ -1462,7 +1462,7 @@ export default {
                 >
                   <div class="top-panel-repeat">
                     <label>Каждый </label>
-                    <div class="every-content ">
+                    <div class="every-content">
                       <div class="form-group">
                         <input
                           ref="SeriesAfterCount"
@@ -1648,7 +1648,7 @@ export default {
                       <div class="form-group">
                         <div class="form-everymonth-container">
                           <div
-                            v-for="day in 31"
+                            v-for="day in 28"
                             :key="day"
                             class="form_radio_btn-custom"
                           >
@@ -1757,7 +1757,7 @@ export default {
                       <div class="form-group">
                         <div class="form-everyyear-container">
                           <div
-                            v-for="day in 31"
+                            v-for="day in (SeriesYearMonth === 2 ? 28 : 31)"
                             :key="day"
                             class="form_radio_btn-custom"
                           >
