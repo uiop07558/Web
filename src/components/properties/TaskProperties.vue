@@ -523,7 +523,6 @@ export default {
       this.checklistshow = false
     }
     const SaveRepeat = () => {
-      console.log(selectedTask.value.Tasks)
       if (this.$refs.SeriesType.value === '0') {
         const data = {
           uid: selectedTask.value.uid
@@ -563,7 +562,6 @@ export default {
         store.dispatch(TASK.EVERY_DAY_CHANGE, data).then(
           resp => {
             selectedTask.value.SeriesType = 1
-            console.log(resp.data.SeriesAfterCount + '-' + resp.data.SeriesAfterType)
             selectedTask.value.SeriesAfterType = resp.data.SeriesAfterType
             selectedTask.value.SeriesAfterCount = resp.data.SeriesAfterCount
           })
@@ -576,7 +574,6 @@ export default {
         }
         store.dispatch(TASK.EVERY_WEEK_CHANGE, data).then(
           resp => {
-            console.log(resp.data)
             selectedTask.value.SeriesType = 2
             selectedTask.value.SeriesWeekFri = resp.data.SeriesWeekFri
             selectedTask.value.SeriesWeekMon = resp.data.SeriesWeekMon
