@@ -193,7 +193,7 @@ const actions = {
         })
     })
   },
-  [NAVIGATOR_UPDATE_EMPLOYEE]: ({ commit, dispatch, employee }) => {
+  [NAVIGATOR_UPDATE_EMPLOYEE]: ({ commit, dispatch }, employee) => {
     commit(NAVIGATOR_UPDATE_EMPLOYEE, employee)
     commit(PUSH_EMPLOYEE, employee)
     commit(PUSH_EMPLOYEE_BY_EMAIL, employee)
