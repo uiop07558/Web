@@ -91,6 +91,7 @@
 import { PATCH_SETTINGS } from '@/store/actions/navigator'
 import { visitChildren, UID_TO_ACTION } from '@/store/helpers/functions'
 import * as TASK from '@/store/actions/tasks'
+import * as BOARD from '@/store/actions/boards'
 import { notify } from 'notiwind'
 
 import NavBarButtonsBoard from '@/components/Navbar/NavBarButtonsBoard.vue'
@@ -158,6 +159,11 @@ export default {
       handler: function (val) {
         this.searchText = ''
         this.showSearchBar = false
+      }
+    },
+    searchText () {
+      if (this.lastGreedPath === 'boards_children') {
+        this.$store.commit(BOARD.SHOW_SEARCH_CARDS, this.searchText)
       }
     }
   },
@@ -294,28 +300,30 @@ export default {
       this.$emit('popNavBar')
     },
     sendSearchRequest () {
-      if (this.searchText.length > 3) {
-        const navElem = {
-          name: 'Поиск: ' + this.searchText,
-          key: 'taskListSource',
-          value: { uid: '11212e94-cedf-11ec-9d64-0242ac120002', param: this.searchText }
+      if (this.lastGreedPath !== 'boards_children') {
+        if (this.searchText.length > 3) {
+          const navElem = {
+            name: 'Поиск: ' + this.searchText,
+            key: 'taskListSource',
+            value: { uid: '11212e94-cedf-11ec-9d64-0242ac120002', param: this.searchText }
+          }
+          this.$store.commit('updateStackWithInitValue', navElem)
+          this.$store.commit('basic', { key: 'mainSectionState', value: 'tasks' })
+          this.$store.commit('basic', { key: 'taskListSource', value: navElem.value })
+          this.$store.dispatch(TASK.SEARCH_TASK, this.searchText).then((resp) => {
+            console.log('Search Taks', resp)
+          })
+        } else {
+          notify(
+            {
+              group: 'api',
+              title: 'Длина запроса должна быть более 3 символов',
+              action: '',
+              text: ''
+            },
+            15000
+          )
         }
-        this.$store.commit('updateStackWithInitValue', navElem)
-        this.$store.commit('basic', { key: 'mainSectionState', value: 'tasks' })
-        this.$store.commit('basic', { key: 'taskListSource', value: navElem.value })
-        this.$store.dispatch(TASK.SEARCH_TASK, this.searchText).then((resp) => {
-          console.log('Search Taks', resp)
-        })
-      } else {
-        notify(
-          {
-            group: 'api',
-            title: 'Длина запроса должна быть более 3 символов',
-            action: '',
-            text: ''
-          },
-          15000
-        )
       }
     },
     onBlurSearchInput () {

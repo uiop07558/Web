@@ -5,6 +5,8 @@ import TagIcon from '@/components/Tags/Icons/TagIcon.vue'
 import Icon from '@/components/Icon.vue'
 import BoardModalBoxRename from '@/components/Board/BoardModalBoxRename.vue'
 import AddTag from '@/components/Tags/AddTag.vue'
+import EmptyTasksListPics from '@/components/TasksList/EmptyTasksListPics'
+
 import { setLocalStorageItem } from '@/store/helpers/functions'
 // import properties from '@/icons/properties.js'
 // import subArrow from '@/icons/arrow-sub.js'
@@ -19,7 +21,8 @@ export default {
     TagIcon,
     AddTag,
     Icon,
-    BoardModalBoxRename
+    BoardModalBoxRename,
+    EmptyTasksListPics
   },
   props: {
     tags: {
@@ -62,6 +65,9 @@ export default {
     },
     navStack () {
       return this.$store.state.navbar.navStack
+    },
+    isEmpty () {
+      return this.tags.length < 1
     }
   },
   methods: {
@@ -225,4 +231,6 @@ export default {
       </ListBlocItem>
     </template>
   </div>
+
+  <EmptyTasksListPics v-if="isEmpty" />
 </template>

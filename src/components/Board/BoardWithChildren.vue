@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full">
+  <div class="w-full h-full flex flex-col">
     <BoardModalBoxRename
       v-if="showAddBoard"
       :show="showAddBoard"
@@ -22,7 +22,7 @@
         @click="showAddBoard = true"
       />
     </div>
-    <div class="mt-5">
+    <div class="mt-5 h-full min-h-0">
       <Board
         :store-cards="storeCards"
         :board="currentBoard"
