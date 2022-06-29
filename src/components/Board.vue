@@ -225,7 +225,7 @@
           </draggable>
           <!--кнопка добавить карточку -->
           <div
-            v-if="column.AddCard && !showOnlyMyCards"
+            v-if="column.AddCard && !showOnlyMyCards && !showOnlySearchText"
             class="mt-2 h-[40px]"
           >
             <button
@@ -312,6 +312,9 @@ export default {
     BoardModalBoxCardMove,
     BoardCard,
     draggable
+  },
+  unmounted () {
+    this.$store.commit(BOARD.SHOW_SEARCH_CARDS, undefined)
   },
   props: {
     storeCards: {
