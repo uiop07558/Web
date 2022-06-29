@@ -5,6 +5,9 @@ const selectedTask = computed(() => store.state.tasks.selectedTask)
 
 export function createTaskMessage (obj) {
   if ('uid_task' in obj && selectedTask.value && obj.uid_task === selectedTask.value.uid) {
+    if (obj.obj.file_name) {
+      obj.obj.msg = obj.obj.file_name
+    }
     store.commit('CREATE_MESSAGE_REQUEST', obj.obj)
   }
 }
