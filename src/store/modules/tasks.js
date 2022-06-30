@@ -1426,10 +1426,12 @@ const mutations = {
   [TASK.DAYS_WITH_TASKS]: (state, resp) => {
     state.daysWithTasks = resp.data.calendar.dates_with_tasks
   },
-  [TASK.REMOVE_TASK_FROM_LEAVES]: (state, taskUid) => {
+  [TASK.REMOVE_TASK_FROM_LEAVES]: (state) => {
     for (let i = 0; i < state.newConfig.leaves.length; i++) {
-      if (taskUid === state.newConfig.leaves[i]) {
-        state.newConfig.leaves.splice(i, 1)
+      for (let j = 0; j < state.newConfig.leaves.length; j++) {
+        if (state.newConfig.leaves[i] === state.newConfig.leaves[j]) {
+          state.newConfig.leaves.splice(j, 1)
+        }
       }
     }
   },

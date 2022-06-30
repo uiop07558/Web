@@ -98,6 +98,7 @@
           :style="{ backgroundColor: getValidBackColor(colors[props.node.info.uid_marker]?.back_color) }"
           :class="{ 'ring-1 ring-orange-400': props.node.id === lastSelectedTaskUid}"
         >
+          <pre>{{ props.node.info.uid }}</pre>
           <!-- Name, Status -->
           <div
             class="flex gap-[6px] items-center w-full"
@@ -795,7 +796,6 @@ export default {
       for (const elem in storeTasks.value) {
         if (storeTasks.value[elem].children.includes(node.dragged.node.id)) {
           parentUid = elem
-          store.commit(TASK.REMOVE_TASK_FROM_LEAVES, elem)
         }
       }
       store.dispatch(
@@ -805,7 +805,9 @@ export default {
           parent: parentUid ?? '00000000-0000-0000-0000-000000000000',
           order: node.dragged.node.info.order_new ?? 0
         }
-      )
+      ).then(() => {
+        store.commit(TASK.REMOVE_TASK_FROM_LEAVES)
+      })
     }
     const changeFocus = (task) => {
       const newFocus = task.focus === 1 ? 0 : 1
