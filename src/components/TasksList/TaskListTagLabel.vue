@@ -1,6 +1,6 @@
 <template>
   <div
-    class="tag-label cursor-default p-1 px-2 text-xs whitespace-nowrap rounded-[4px] flex items-center"
+    class="tag-label cursor-default p-1 px-2 text-xs whitespace-nowrap rounded-[4px] flex items-center max-w-full"
     :class="[colorTextClass, colorBgClass]"
     :style="colorBgStyle"
   >
@@ -18,7 +18,7 @@
       :src="image"
       class="rounded-[3px] text-base cursor-pointer w-[16px] h-[16px] mr-1"
     >
-    {{ text }}
+    <span class="truncate ...">{{ text }}</span>
   </div>
 </template>
 
