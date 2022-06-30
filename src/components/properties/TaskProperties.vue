@@ -1760,7 +1760,7 @@ export default {
                       <div class="form-group">
                         <div class="form-everyyear-container">
                           <div
-                            v-for="day in (SeriesYearMonth === 2 ? 28 : 30)"
+                            v-for="day in (SeriesYearMonth === 2 ? 28 : 31)"
                             :key="day"
                             class="form_radio_btn-custom"
                           >

@@ -11,8 +11,8 @@ const emit = defineEmits(['AccLogout'])
 const store = useStore()
 const user = computed(() => store.state.user.user)
 const showEditname = ref(false)
-const newPassword = ref(false)
-const confirmNewPassword = ref(false)
+const newPassword = ref('')
+const confirmNewPassword = ref('')
 const showError = ref(false)
 const showEditphone = ref(false)
 //  const showEditemail = ref(false)
@@ -52,7 +52,6 @@ const changeUserPhoto = (event) => {
   }
   store.dispatch(USER_CHANGE_PHOTO, data)
 }
-
 const changeUserPassword = () => {
   const password = newPassword.value
   const data = {
@@ -151,7 +150,7 @@ const userPhone = function () {
       </div>
       <p
         v-if="showError"
-        class="text-red-500 text-xs pb-3"
+        class="text-red-500 text-xs mt-1 ml-1"
       >
         Пароли не совпадают
       </p>
