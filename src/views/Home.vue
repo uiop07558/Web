@@ -385,13 +385,12 @@ if (router.currentRoute.value.name === 'task' && router.currentRoute.value.param
   <main-section class="h-full">
     <aside-menu
       v-if="!isFileRedirect"
-      class="z-20"
       :menu="menu"
     />
     <overlay
       v-if="!isFileRedirect"
       v-show="isAsideLgActive"
-      :z-index="'z-10'"
+      :z-index="'z-20'"
       @overlay-click="overlayClick"
     />
     <nav-bar v-if="!isFileRedirect" />
