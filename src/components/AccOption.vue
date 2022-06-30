@@ -57,7 +57,7 @@ const updateSettings = () => {
                 <a class="ml-2" v-if="settings.add_task_to_begin === false">Выкл.</a> -->
       </div>
     </div>
-    <div class="my-2 mt-[15px]">
+    <!-- <div class="my-2 mt-[15px]">
       <div class="flex mt-2">
         <div class="checkbox">
           <input
@@ -72,11 +72,11 @@ const updateSettings = () => {
             for="opt_2"
           >Первая неделя с 1 января</label>
         </div>
-        <!--   <a class="ml-2" v-if="settings.cal_number_of_first_week === true">Вкл.</a>
-                <a class="ml-2" v-if="settings.cal_number_of_first_week === false">Выкл.</a> -->
+         <a class="ml-2" v-if="settings.cal_number_of_first_week === true">Вкл.</a>
+                <a class="ml-2" v-if="settings.cal_number_of_first_week === false">Выкл.</a>
       </div>
-    </div>
-    <div class="my-2 mt-[15px]">
+    </div> -->
+    <!-- <div class="my-2 mt-[15px]">
       <div class="flex mt-2">
         <div class="checkbox">
           <input
@@ -91,10 +91,10 @@ const updateSettings = () => {
             for="opt_3"
           >Показывать номера недель в календаре</label>
         </div>
-        <!--    <a class="ml-2" v-if="settings.cal_show_week_number === true">Вкл.</a>
-                <a class="ml-2" v-if="settings.cal_show_week_number === false">Выкл.</a> -->
+        <    <a class="ml-2" v-if="settings.cal_show_week_number === true">Вкл.</a>
+                <a class="ml-2" v-if="settings.cal_show_week_number === false">Выкл.</a>
       </div>
-    </div>
+    </div> -->
     <div class="my-2 mt-[15px]">
       <div class="flex mt-2">
         <div class="checkbox">
