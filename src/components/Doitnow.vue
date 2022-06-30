@@ -43,24 +43,21 @@
       />
     </button>
   </div>
-  <transition :name="taskTransition">
-    <DoitnowTask
-      v-if="tasksCount"
-      :key="firstTask.uid"
-      :task="firstTask"
-      :sub-tasks="subTasks"
-      :colors="colors"
-      :tags="tags"
-      :user="user"
-      :task-messages="taskMessages"
-      :employees="employees"
-      :projects="projects"
-      @clickTask="onClickTask"
-      @nextTask="nextTask"
-      @changeValue="changeValue"
-      @readTask="readTask"
-    />
-  </transition>
+  <DoitnowTask
+    v-if="tasksCount"
+    :task="firstTask"
+    :sub-tasks="subTasks"
+    :colors="colors"
+    :tags="tags"
+    :user="user"
+    :task-messages="taskMessages"
+    :employees="employees"
+    :projects="projects"
+    @clickTask="onClickTask"
+    @nextTask="nextTask"
+    @changeValue="changeValue"
+    @readTask="readTask"
+  />
   <DoitnowEmpty
     v-if="tasksCount === 0 && !isLoading"
     @clickPlanning="goToNextDay"
@@ -103,8 +100,7 @@ export default {
     projectTasks: [],
     unsortedTasks: [],
     overdueReaded: [],
-    showInspector: false,
-    tasksLoaded: false
+    showInspector: false
   }),
   computed: {
     tasksCount () {
@@ -156,9 +152,6 @@ export default {
     },
     subTasks () {
       return this.$store.state.tasks.subtasks.tasks
-    },
-    taskTransition () {
-      return this.tasksLoaded ? 'slide-in-fade-out' : ''
     }
   },
   watch: {
@@ -246,9 +239,6 @@ export default {
           this.todayTasks = this.todayTasks.filter(task => (task.status !== 1) && (task.status !== 8))
           this.openedTasks = this.openedTasks.filter(task => (task.status !== 1) && (task.status !== 8))
         })
-        .then(() => {
-          this.tasksLoaded = true
-        })
     },
     readTask: function () {
       this.$store.dispatch(TASK.CHANGE_TASK_READ, this.firstTask.uid)
@@ -316,28 +306,4 @@ export default {
 }
 </script>
 
-<style scoped>
-.slide-in-fade-out-enter-from {
-  transform: translateX(45px);
-}
-
-.slide-in-fade-out-enter-active {
-  transition-delay: .4s;
-  transition-property: opacity, transform;
-  transition-duration: .4s;
-}
-
-.slide-in-fade-out-enter-from, .slide-in-fade-out-leave-to {
-  opacity: 0;
-}
-
-.slide-in-fade-out-leave-active {
-  transition-property: opacity, transform;
-  transition-duration: .8s;
-}
-
-.slide-in-fade-out-leave-to {
-  position: absolute;
-  width: 100%;
-}
-</style>
+<style scoped></style>
