@@ -93,6 +93,7 @@ const actions = {
       axios({ url: url, method: 'GET' })
         .then((resp) => {
           commit(TASK.TASKS_SUCCESS, resp)
+          commit(TASK.CLEAN_UP_LOADED_TASKS)
 
           state.today = resp.data
           state.today.title = 'Сегодня'
@@ -153,6 +154,7 @@ const actions = {
       axios({ url: url, method: 'GET' })
         .then((resp) => {
           commit(TASK.TASKS_SUCCESS, resp)
+          commit(TASK.CLEAN_UP_LOADED_TASKS)
           if (resp.data.anothers_tags.length) {
             commit(TASK.ADD_TASK_TAGS, resp.data.anothers_tags)
           }
@@ -187,6 +189,7 @@ const actions = {
         axios({ url: url, method: 'GET' })
           .then((resp) => {
             commit(TASK.TASKS_SUCCESS, resp)
+            commit(TASK.CLEAN_UP_LOADED_TASKS)
             if (resp.data.anothers_tags.length) {
               commit(TASK.ADD_TASK_TAGS, resp.data.anothers_tags)
             }
@@ -220,6 +223,7 @@ const actions = {
         taskUid
       axios({ url: url, method: 'GET' })
         .then((resp) => {
+          commit(TASK.CLEAN_UP_LOADED_TASKS)
           commit(TASK.SUBTASKS_SUCCESS, resp)
           if (resp.data.anothers_tags.length) {
             commit(TASK.ADD_TASK_TAGS, resp.data.anothers_tags)
@@ -251,6 +255,7 @@ const actions = {
       axios({ url: url, method: 'GET' })
         .then((resp) => {
           commit(TASK.TASKS_SUCCESS, resp)
+          commit(TASK.CLEAN_UP_LOADED_TASKS)
           commit(TASK.OPENED_TASKS_REQUEST, resp)
           if (resp.data.anothers_tags.length) {
             commit(TASK.ADD_TASK_TAGS, resp.data.anothers_tags)
@@ -282,6 +287,7 @@ const actions = {
       axios({ url: url, method: 'GET' })
         .then((resp) => {
           commit(TASK.TASKS_SUCCESS, resp)
+          commit(TASK.CLEAN_UP_LOADED_TASKS)
           commit(TASK.UNSORTED_TASKS_REQUEST, resp)
           if (resp.data.anothers_tags.length) {
             commit(TASK.ADD_TASK_TAGS, resp.data.anothers_tags)
@@ -310,6 +316,7 @@ const actions = {
       axios({ url: url, method: 'GET' })
         .then((resp) => {
           commit(TASK.TASKS_SUCCESS, resp)
+          commit(TASK.CLEAN_UP_LOADED_TASKS)
           commit(TASK.OVERDUE_TASKS_REQUEST, resp)
           if (resp.data.anothers_tags.length) {
             commit(TASK.ADD_TASK_TAGS, resp.data.anothers_tags)
@@ -366,6 +373,7 @@ const actions = {
           )
           const tasks = [...unreadTasks, ...overdueTasks, ...todayTasks]
           commit(TASK.TASKS_SUCCESS, { data: { tasks } })
+          commit(TASK.CLEAN_UP_LOADED_TASKS)
           const anothersTags = [
             ...respAll[0].data.anothers_tags,
             ...respAll[1].data.anothers_tags,
@@ -406,6 +414,7 @@ const actions = {
       axios({ url: url, method: 'GET' })
         .then((resp) => {
           commit(TASK.TASKS_SUCCESS, resp)
+          commit(TASK.CLEAN_UP_LOADED_TASKS)
           commit(TASK.UNREAD_TASKS_REQUEST, resp)
           if (resp.data.anothers_tags.length) {
             commit(TASK.ADD_TASK_TAGS, resp.data.anothers_tags)
@@ -437,6 +446,7 @@ const actions = {
       axios({ url: url, method: 'GET' })
         .then((resp) => {
           commit(TASK.TASKS_SUCCESS, resp)
+          commit(TASK.CLEAN_UP_LOADED_TASKS)
           commit(TASK.IN_WORK_TASKS_REQUEST, resp)
           if (resp.data.anothers_tags.length) {
             commit(TASK.ADD_TASK_TAGS, resp.data.anothers_tags)
@@ -468,6 +478,7 @@ const actions = {
       axios({ url: url, method: 'GET' })
         .then((resp) => {
           commit(TASK.TASKS_SUCCESS, resp)
+          commit(TASK.CLEAN_UP_LOADED_TASKS)
           commit(TASK.IN_FOCUS_TASKS_REQUEST, resp)
           if (resp.data.anothers_tags.length) {
             commit(TASK.ADD_TASK_TAGS, resp.data.anothers_tags)
@@ -499,6 +510,7 @@ const actions = {
       axios({ url: url, method: 'GET' })
         .then((resp) => {
           commit(TASK.TASKS_SUCCESS, resp)
+          commit(TASK.CLEAN_UP_LOADED_TASKS)
           commit(TASK.READY_FOR_COMPLITION_TASKS_REQUEST, resp)
           if (resp.data.anothers_tags.length) {
             commit(TASK.ADD_TASK_TAGS, resp.data.anothers_tags)
@@ -530,6 +542,7 @@ const actions = {
       axios({ url: url, method: 'GET' })
         .then((resp) => {
           commit(TASK.TASKS_SUCCESS, resp)
+          commit(TASK.CLEAN_UP_LOADED_TASKS)
           if (resp.data.anothers_tags.length) {
             commit(TASK.ADD_TASK_TAGS, resp.data.anothers_tags)
           }
@@ -563,6 +576,7 @@ const actions = {
       axios({ url: url, method: 'GET' })
         .then((resp) => {
           commit(TASK.TASKS_SUCCESS, resp)
+          commit(TASK.CLEAN_UP_LOADED_TASKS)
           if (resp.data.anothers_tags.length) {
             commit(TASK.ADD_TASK_TAGS, resp.data.anothers_tags)
           }
@@ -594,6 +608,7 @@ const actions = {
       axios({ url: url, method: 'GET' })
         .then((resp) => {
           commit(TASK.TASKS_SUCCESS, resp)
+          commit(TASK.CLEAN_UP_LOADED_TASKS)
           if (resp.data.anothers_tags.length) {
             commit(TASK.ADD_TASK_TAGS, resp.data.anothers_tags)
           }
@@ -625,6 +640,7 @@ const actions = {
       axios({ url: url, method: 'GET' })
         .then((resp) => {
           commit(TASK.TASKS_SUCCESS, resp)
+          commit(TASK.CLEAN_UP_LOADED_TASKS)
           if (resp.data.anothers_markers.length) {
             commit(PUSH_COLOR, resp.data.anothers_markers)
           }
@@ -656,6 +672,7 @@ const actions = {
       axios({ url: url, method: 'GET' })
         .then((resp) => {
           commit(TASK.TASKS_SUCCESS, resp)
+          commit(TASK.CLEAN_UP_LOADED_TASKS)
           if (resp.data.anothers_tags.length) {
             commit(TASK.ADD_TASK_TAGS, resp.data.anothers_tags)
           }
@@ -687,6 +704,7 @@ const actions = {
       axios({ url: url, method: 'GET' })
         .then((resp) => {
           commit(TASK.TASKS_SUCCESS, resp)
+          commit(TASK.CLEAN_UP_LOADED_TASKS)
           if (resp.data.anothers_tags.length) {
             commit(TASK.ADD_TASK_TAGS, resp.data.anothers_tags)
           }

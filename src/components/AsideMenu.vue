@@ -68,7 +68,6 @@ const asideLgClose = () => {
 
 // TODO: clean up messy logic
 const menuClick = (event, item) => {
-  store.commit(TASK.CLEAN_UP_LOADED_TASKS)
   if (isPropertiesMobileExpanded.value) {
     store.dispatch('asidePropertiesToggle', false)
   }
@@ -154,7 +153,6 @@ const menuClick = (event, item) => {
   }
 }
 const onDayClick = (day) => {
-  store.commit(TASK.CLEAN_UP_LOADED_TASKS)
   store.dispatch(TASK.TASKS_REQUEST, new Date(day.date))
   const navElem = {
     name: dateToLabelFormat(day.date),
