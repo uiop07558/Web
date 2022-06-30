@@ -82,11 +82,14 @@
           class="check-custom-empployee custom-checkbox"
           @click="onCheckProject(project.uid)"
         >
+
         <label
           class="break-words"
           :for="`project-check-button-${project.uid}`"
         >
-          {{ project.name }}
+          <span class="max-w-[250px] truncate ... mr-[20px]">
+            {{ project.name }}
+          </span>
         </label>
       </div>
       <template
