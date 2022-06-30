@@ -1634,6 +1634,8 @@ const mutations = {
     }
   },
   [TASK.REMOVE_TASK]: (state, uid) => {
+    if (!state.newtasks[uid]) return
+
     const uidParent =
       state.newtasks[uid].info.uid_parent ===
       '00000000-0000-0000-0000-000000000000'
