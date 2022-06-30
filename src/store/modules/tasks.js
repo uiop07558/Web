@@ -223,6 +223,7 @@ const actions = {
         taskUid
       axios({ url: url, method: 'GET' })
         .then((resp) => {
+          commit(TASK.CLEAN_UP_LOADED_TASKS)
           commit(TASK.SUBTASKS_SUCCESS, resp)
           if (resp.data.anothers_tags.length) {
             commit(TASK.ADD_TASK_TAGS, resp.data.anothers_tags)
