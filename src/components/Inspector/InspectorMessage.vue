@@ -181,7 +181,7 @@ const computedEmployees = computed(() => {
   const newEmployees = {}
   for (const empUid in employees.value) {
     if (
-      // empUid !== currentUserUid.value &&
+      empUid !== currentUserUid.value &&
       includesWord(employees.value[empUid].name, inputLowerCase)
     ) {
       newEmployees[empUid] = employees.value[empUid]
