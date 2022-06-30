@@ -98,7 +98,6 @@
           :style="{ backgroundColor: getValidBackColor(colors[props.node.info.uid_marker]?.back_color) }"
           :class="{ 'ring-1 ring-orange-400': props.node.id === lastSelectedTaskUid}"
         >
-          <pre>{{ props.node.info.uid }}</pre>
           <!-- Name, Status -->
           <div
             class="flex gap-[6px] items-center w-full"
