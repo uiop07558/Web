@@ -223,6 +223,7 @@ export default {
       :key="pindex"
     >
       <ListBlocItem
+        :count="tag.children?.length ?? 0"
         :color="tag.back_color"
         :title="tag.name"
         @click="gotoChildren(tag)"
