@@ -1580,7 +1580,6 @@ const mutations = {
     }
 
     task._justCreated = false
-    task.type = 1
     task._isEditable = false
 
     // check if task has parent
