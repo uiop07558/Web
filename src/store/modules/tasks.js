@@ -892,7 +892,7 @@ const actions = {
               group: 'api',
               title: 'REST API Error, please make screenshot',
               action: TASK.REMOVE_TASK,
-              text: err.response.data
+              text: err.response?.data
             },
             15000
           )
@@ -1639,8 +1639,8 @@ const mutations = {
       '00000000-0000-0000-0000-000000000000'
         ? uid
         : state.newtasks[uid].info.uid_parent
-
     if (
+      state.newtasks[uidParent] &&
       state.newtasks[uidParent].children &&
       state.newtasks[uidParent].children.length > 1
     ) {
@@ -1656,6 +1656,7 @@ const mutations = {
         state.newtasks[uidParent].children = []
       }
     } else if (
+      state.newtasks[uidParent] &&
       state.newtasks[uidParent].children &&
       state.newtasks[uidParent].children.length === 1 &&
       state.newtasks[uidParent].children[0] !== 'fake-uid'
@@ -1664,6 +1665,7 @@ const mutations = {
       state.newtasks[uidParent].info.has_children = false
       state.newtasks[uidParent].children = []
     }
+
     state.newConfig.roots = arrayRemove(state.newConfig.roots, uid)
     delete state.newtasks[uid]
   },
