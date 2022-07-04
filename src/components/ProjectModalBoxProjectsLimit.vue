@@ -1,11 +1,11 @@
 <template>
   <ModalBox
-    title="Добавить метку"
+    title="Добавить проект"
     @cancel="onCancel"
   >
     <div class="flex flex-col">
       <div class="text-[#7e7e80] text-[13px] leading-[18px] font-roboto whitespace-pre-line">
-        Чтобы добавить метку, необходимо купить платную подписку
+        Чтобы добавить проект, необходимо купить платную подписку
       </div>
       <div class="gap-[4px] flex justify-end mt-4">
         <a

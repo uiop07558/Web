@@ -7,6 +7,11 @@
       @cancel="showAdd = false"
       @save="onAddNewProject"
     />
+    <ProjectModalBoxProjectsLimit
+      v-if="showProjectsLimit"
+      @cancel="showProjectsLimit = false"
+      @ok="showProjectsLimit = false"
+    />
     <div class="grid gap-2 mt-3 md:grid-cols-2 lg:grid-cols-4">
       <template
         v-for="project in projects"
@@ -19,7 +24,7 @@
       </template>
       <ListBlocAdd
         v-if="canAddChild"
-        @click.stop="showAdd = true"
+        @click.stop="clickAddProject"
       />
     </div>
     <div class="mt-5">
@@ -34,6 +39,7 @@
 <script>
 import BoardModalBoxRename from '@/components/Board/BoardModalBoxRename.vue'
 import ProjectBlocItem from '@/components/Projects/ProjectBlocItem.vue'
+import ProjectModalBoxProjectsLimit from '@/components/ProjectModalBoxProjectsLimit.vue'
 import ListBlocAdd from '@/components/Common/ListBlocAdd.vue'
 import TasksListNew from '@/components/TasksListNew.vue'
 import * as TASK from '@/store/actions/tasks'
@@ -44,6 +50,7 @@ export default {
   components: {
     BoardModalBoxRename,
     ProjectBlocItem,
+    ProjectModalBoxProjectsLimit,
     ListBlocAdd,
     TasksListNew
   },
@@ -55,7 +62,9 @@ export default {
   },
   data () {
     return {
-      showAdd: false
+      showAdd: false,
+      showProjectsLimit: false
+
     }
   },
   computed: {
@@ -109,6 +118,16 @@ export default {
           (crypto.getRandomValues(new Uint8Array(1))[0] & (15 >> (c / 4)))
         ).toString(16)
       )
+    },
+    clickAddProject () {
+      // console.log((Object.keys(this.$store.state.projects.projects).length))
+      const user = this.$store.state.user.user
+      // если лицензия истекла
+      if (Object.keys(this.$store.state.projects.projects).length === 10 && user.days_left <= 0) {
+        this.showProjectsLimit = true
+        return
+      }
+      this.showAdd = true
     },
     onAddNewProject (name) {
       this.showAdd = false
