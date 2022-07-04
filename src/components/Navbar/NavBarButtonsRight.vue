@@ -1,4 +1,25 @@
 <template>
+  <ModalBox
+    v-if="showFreeModal"
+    :show="showFreeModal"
+    title="Обновите тариф"
+    @cancel="showFreeModal = false"
+  >
+    <div class="flex flex-col">
+      <div class="text-[#7e7e80] text-[13px] leading-[18px] font-roboto whitespace-pre-line">
+        <p>Функция поиска не доступна в Вашем текущем тарифном плане.</p>
+      </div>
+      <div class="gap-[4px] flex justify-end mt-4">
+        <a
+          href="https://www.leadertask.ru/alpha"
+          target="_blank"
+          class="focus:ring min-w-[90px] focus:outline-none inline-flex cursor-pointer whitespace-nowrap justify-center items-center duration-150 px-[12px] py-[10px] rounded-md bg-[#ff9123] text-white text-[13px] leading-[15px] font-medium font-roboto"
+        >
+          Обновить тариф
+        </a>
+      </div>
+    </div>
+  </ModalBox>
   <div class="flex gap-[10px] items-center px-3">
     <div
       v-if="!showSearchBar"
@@ -96,6 +117,7 @@ import { notify } from 'notiwind'
 
 import NavBarButtonsBoard from '@/components/Navbar/NavBarButtonsBoard.vue'
 import NavBarButtonsProject from '@/components/Navbar/NavBarButtonsProject.vue'
+import ModalBox from '@/components/modals/ModalBox.vue'
 import NavBarButtonsColor from '@/components/Navbar/NavBarButtonsColor.vue'
 import NavBarButtonsTag from '@/components/Navbar/NavBarButtonsTag.vue'
 import NavBarButtonsTasks from '@/components/Navbar/NavBarButtonsTasks.vue'
@@ -103,6 +125,7 @@ import NavBarButtonsTasks from '@/components/Navbar/NavBarButtonsTasks.vue'
 export default {
   components: {
     NavBarButtonsBoard,
+    ModalBox,
     NavBarButtonsProject,
     NavBarButtonsColor,
     NavBarButtonsTag,
@@ -111,11 +134,15 @@ export default {
   emits: ['popNavBar'],
   data: () => ({
     showSearchBar: false,
-    searchText: ''
+    searchText: '',
+    showFreeModal: false
   }),
   computed: {
     settings () {
       return this.$store.state.navigator.navigator.settings
+    },
+    user () {
+      return this.$store.state.user.user
     },
     navStack () {
       return this.$store.state.navbar.navStack
@@ -332,6 +359,10 @@ export default {
       }
     },
     onShowSearchBar () {
+      if (this.user.tarif === 'free') {
+        this.showFreeModal = true
+        return
+      }
       this.showSearchBar = true
       this.$nextTick(function () {
         this.$refs.searchInput.focus({ preventScroll: false })
