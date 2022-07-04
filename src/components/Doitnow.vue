@@ -6,28 +6,10 @@
     has-cancel
     button-label="Delete"
   />
-  <ModalBox
+  <DoitnowLimit
     v-if="showFreeModal"
-    :show="showFreeModal"
-    title="Обновите тариф"
     @cancel="showFreeModal = false"
-  >
-    <div class="flex flex-col">
-      <div class="text-[#7e7e80] text-[13px] leading-[18px] font-roboto whitespace-pre-line">
-        <p class="font-semibold">Очередь - функция тарифа "Альфа"</p>
-        <p>С помощью данного раздела вы сможете не отвлекаться на посторонние дела и сфокусироваться на одной задаче!</p>
-      </div>
-      <div class="gap-[4px] flex justify-end mt-4">
-        <a
-          href="https://www.leadertask.ru/alpha"
-          target="_blank"
-          class="focus:ring min-w-[90px] focus:outline-none inline-flex cursor-pointer whitespace-nowrap justify-center items-center duration-150 px-[12px] py-[10px] rounded-md bg-[#ff9123] text-white text-[13px] leading-[15px] font-medium font-roboto"
-        >
-          Купить
-        </a>
-      </div>
-    </div>
-  </ModalBox>
+  />
   <div
     v-if="tasksCount"
     class="flex items-center mb-5 justify-between"
@@ -95,7 +77,7 @@ import * as MSG from '@/store/actions/taskmessages.js'
 import * as TASK from '@/store/actions/tasks.js'
 
 import InspectorModalBox from '@/components/Inspector/InspectorModalBox.vue'
-import ModalBox from '@/components/modals/ModalBox.vue'
+import DoitnowLimit from '@/components/Doitnow/DoitnowLimit.vue'
 import DoitnowEmpty from '@/components/Doitnow/DoitnowEmpty.vue'
 import DoitnowTask from '@/components/Doitnow/DoitnowTask.vue'
 import Icon from '@/components/Icon.vue'
@@ -106,9 +88,9 @@ import { PUSH_COLOR } from '@/store/actions/colors'
 export default {
   components: {
     DoitnowEmpty,
+    DoitnowLimit,
     DoitnowTask,
     InspectorModalBox,
-    ModalBox,
     Icon
   },
   setup () {
