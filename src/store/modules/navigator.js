@@ -578,6 +578,7 @@ const mutations = {
     }
   },
   [NAVIGATOR_REMOVE_BOARD]: (state, board) => {
+    console.log(board)
     if (
       !board.uid_parent ||
       board.uid_parent === '00000000-0000-0000-0000-000000000000'

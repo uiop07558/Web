@@ -79,6 +79,7 @@ const actions = {
         process.env.VUE_APP_LEADERTASK_API + '/api/v1/board?uid=' + uid
       axios({ url: url, method: 'DELETE' })
         .then((resp) => {
+          // commit(BOARD.REMOVE_BOARD_REQUEST, uid)
           resolve(resp)
         })
         .catch((err) => {
@@ -315,6 +316,9 @@ const actions = {
 }
 
 const mutations = {
+  [BOARD.REMOVE_BOARD_REQUEST]: (state, uid) => {
+    delete state.boards[uid]
+  },
   [BOARD.PUSH_BOARD]: (state, boards) => {
     for (const board of boards) {
       state.boards[board.uid] = board
