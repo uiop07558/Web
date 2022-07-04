@@ -153,6 +153,9 @@ const actions = {
 }
 
 const mutations = {
+  [PROJECT.REMOVE_PROJECT_REQUEST]: (state, uid) => {
+    delete state.projects[uid]
+  },
   [PROJECT.PUSH_PROJECT]: (state, projects) => {
     for (const project of projects) {
       state.projects[project.uid] = project

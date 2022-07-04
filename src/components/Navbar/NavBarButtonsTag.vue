@@ -110,6 +110,8 @@ export default {
         this.$store.commit(SELECT_TAG, undefined)
         //
         this.$store.commit(NAVIGATOR_REMOVE_TAG, this.tag)
+        // для актуального значения количества цветов
+        this.$store.commit(REMOVE_TAG_REQUEST, this.tagUid)
         //
         this.$emit('popNavBar')
       })

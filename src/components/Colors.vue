@@ -8,6 +8,11 @@
         @cancel="visibleModal = false"
         @save="createColor"
       />
+      <ColorModalBoxColorsLimit
+        v-if="showColorsLimit"
+        @cancel="showColorsLimit = false"
+        @ok="showColorsLimit = false"
+      />
       <div class="flex items-center justify-between w-full">
         <p
           class="font-['Roboto'] text-[#424242] text-[19px] leading-[22px] font-bold"
@@ -50,7 +55,7 @@
           'lg:grid-cols-2': isPropertiesMobileExpanded && isGridView
         }"
       >
-        <ListBlocAdd @click.stop="visibleModal = true" />
+        <ListBlocAdd @click.stop="clickAddColor" />
         <template
           v-for="color in colors"
           :key="color.uid"
@@ -84,6 +89,7 @@
 
 <script>
 import BoardModalBoxRename from '@/components/Board/BoardModalBoxRename.vue'
+import ColorModalBoxColorsLimit from '@/components/ColorModalBoxColorsLimit.vue'
 import Icon from '@/components/Icon.vue'
 import ListBlocAdd from '@/components/Common/ListBlocAdd.vue'
 import ListBlocItem from '@/components/Common/ListBlocItem.vue'
@@ -101,6 +107,7 @@ export default {
     ListBlocAdd,
     ListBlocItem,
     BoardModalBoxRename,
+    ColorModalBoxColorsLimit,
     EmptyTasksListPics
   },
   props: {
@@ -111,6 +118,7 @@ export default {
   },
   data () {
     return {
+      showColorsLimit: false,
       gridView,
       listView,
       visibleModal: false,
@@ -150,6 +158,15 @@ export default {
           (crypto.getRandomValues(new Uint8Array(1))[0] & (15 >> (c / 4)))
         ).toString(16)
       )
+    },
+    clickAddColor () {
+      const user = this.$store.state.user.user
+      // если лицензия истекла
+      if (Object.keys(this.$store.state.colors.mycolors).length === 3 && user.days_left <= 0) {
+        this.showColorsLimit = true
+        return
+      }
+      this.visibleModal = true
     },
     createColor (name) {
       const randomColors = [

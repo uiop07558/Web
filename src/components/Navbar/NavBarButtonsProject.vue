@@ -96,6 +96,8 @@ export default {
           this.$store.commit(SELECT_PROJECT, undefined)
           //
           this.$store.commit(NAVIGATOR_REMOVE_PROJECT, this.project)
+          // для актуального значения количества проектов
+          this.$store.commit(REMOVE_PROJECT_REQUEST, this.projectUid)
           //
           this.$emit('popNavBar')
         })
