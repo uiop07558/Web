@@ -23,6 +23,8 @@ import TaskPropsButtonPerform from '@/components/TaskProperties/TaskPropsButtonP
 import TaskPropsButtonProject from '@/components/TaskProperties/TaskPropsButtonProject.vue'
 import TaskPropsButtonColor from '@/components/TaskProperties/TaskPropsButtonColor.vue'
 import TaskPropsChecklist from '@/components/TaskProperties/TaskPropsChecklist.vue'
+
+import RepeatLimit from '@/components/properties/RepeatLimit'
 import ChecklistLimit from '@/components/properties/ChecklistLimit'
 
 export default {
@@ -32,6 +34,7 @@ export default {
     TaskPropsChatMessages,
     TaskPropsButtonAccess,
     ChecklistLimit,
+    RepeatLimit,
     TaskPropsButtonSetDate,
     TaskPropsButtonTags,
     TaskPropsButtonPerform,
@@ -71,7 +74,8 @@ export default {
     const closeProperties = () => {
       store.dispatch('asidePropertiesToggle', false)
     }
-    const showFreeModal = ref(false)
+    const showFreeModalCheck = ref(false)
+    const showFreeModalRepeat = ref(false)
     const taskMsg = ref('')
     const pad2 = (n) => {
       return (n < 10 ? '0' : '') + n
@@ -521,7 +525,7 @@ export default {
     }
     const createChecklist = () => {
       if (this.user.tarif === 'free') {
-        this.showFreeModal = true
+        this.showFreeModalCheck = true
         return
       }
       this.checklistshow = true
@@ -742,7 +746,8 @@ export default {
     return {
       //  ресет Повтор
       deleteFiles,
-      showFreeModal,
+      showFreeModalCheck,
+      showFreeModalRepeat,
       moveCursorToEnd,
       gotoNode,
       selectedFalse,
@@ -1224,6 +1229,11 @@ export default {
         }
       })
     },
+    shouldShowModal () {
+      if (this.user.tarif === 'free') {
+        this.showFreeModalRepeat = true
+      }
+    },
     onChangeAccess: function (checkEmails) {
       const emails = checkEmails.join('..')
       console.log('onChangeAccess', emails)
@@ -1327,8 +1337,12 @@ export default {
     @yes="delTask(selectedTask)"
   />
   <ChecklistLimit
-    v-if="showFreeModal"
-    @cancel="showFreeModal = false"
+    v-if="showFreeModalCheck"
+    @cancel="showFreeModalCheck = false"
+  />
+  <RepeatLimit
+    v-if="showFreeModalRepeat"
+    @cancel="showFreeModalRepeat = false"
   />
   <div
     class="break-words relative z-1"
@@ -1438,6 +1452,7 @@ export default {
           :class="isDark ? 'dark' : 'light'"
           placement="bottom"
           :disabled="selectedTask.type !== 1 && selectedTask.type !== 2"
+          @click="shouldShowModal"
         >
           <template
             #content="{ close }"
