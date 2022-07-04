@@ -1,6 +1,7 @@
 <script>
 import { ref } from 'vue'
 import BoardModalBoxRename from '@/components/Board/BoardModalBoxRename.vue'
+import TagModalBoxTagsLimit from '@/components/Tags/TagModalBoxTagsLimit.vue'
 import TasksListNew from '@/components/TasksListNew.vue'
 import ListBlocItem from '@/components/Common/ListBlocItem.vue'
 import TagIcon from '@/components/Tags/Icons/TagIcon.vue'
@@ -21,6 +22,7 @@ export default {
     BoardModalBoxRename,
     TagIcon,
     Icon,
+    TagModalBoxTagsLimit,
     AddTag
   },
   props: {
@@ -31,6 +33,7 @@ export default {
   },
   data () {
     const focusedTag = ref('')
+    const showTagsLimit = ref(false)
     const showModal = ref(false)
     const randomColors = [
       '#F5F5DC',
@@ -47,6 +50,7 @@ export default {
     return {
       focusedTag,
       showModal,
+      showTagsLimit,
       randomColors,
       gridView,
       listView
@@ -102,6 +106,15 @@ export default {
       this.$store.commit('basic', { key: 'isGridView', value: value })
       setLocalStorageItem('isGridView', value)
     },
+    clickAddTag () {
+      const user = this.$store.state.user.user
+      // если лицензия истекла
+      if (Object.keys(this.$store.state.tasks.tags).length === 2 && user.days_left <= 0) {
+        this.showTagsLimit = true
+        return
+      }
+      this.showModal = true
+    },
     createTag (name) {
       this.showModal = false
       const title = name.trim()
@@ -137,6 +150,11 @@ export default {
     @cancel="showModal = false"
     @save="createTag"
   />
+  <TagModalBoxTagsLimit
+    v-if="showTagsLimit"
+    @cancel="showTagsLimit = false"
+    @ok="showTagsLimit = false"
+  />
   <div class="w-full flex items-center justify-end mt-3 order-1">
     <Icon
       :path="listView.path"
@@ -161,7 +179,7 @@ export default {
     class="grid gap-4 mt-3 order-2"
     :class="{ 'md:grid-cols-2 lg:grid-cols-4': isGridView, 'grid-cols-1': !isGridView, 'grid-cols-1': isPropertiesMobileExpanded && !isGridView, 'lg:grid-cols-2': isPropertiesMobileExpanded && isGridView }"
   >
-    <AddTag @click="showModal = true" />
+    <AddTag @click="clickAddTag" />
     <template
       v-for="(tag, pindex) in tags"
       :key="pindex"

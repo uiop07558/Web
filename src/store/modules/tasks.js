@@ -1412,6 +1412,9 @@ const actions = {
 }
 
 const mutations = {
+  [TASK.REMOVE_TAG_REQUEST]: (state, uid) => {
+    delete state.tags[uid]
+  },
   [TASK.PUSH_TAG]: (state, resp) => {
     state.tags[resp.data.uid] = resp.data
   },

@@ -1,6 +1,7 @@
 <script>
 import { ref } from 'vue'
 import ListBlocItem from '@/components/Common/ListBlocItem.vue'
+import TagModalBoxTagsLimit from '@/components/Tags/TagModalBoxTagsLimit.vue'
 import TagIcon from '@/components/Tags/Icons/TagIcon.vue'
 import Icon from '@/components/Icon.vue'
 import BoardModalBoxRename from '@/components/Board/BoardModalBoxRename.vue'
@@ -22,6 +23,7 @@ export default {
     AddTag,
     Icon,
     BoardModalBoxRename,
+    TagModalBoxTagsLimit,
     EmptyTasksListPics
   },
   props: {
@@ -31,6 +33,7 @@ export default {
     }
   },
   data () {
+    const showTagsLimit = ref(false)
     const focusedTag = ref('')
     const showModal = ref(false)
     const randomColors = [
@@ -49,6 +52,7 @@ export default {
       gridView,
       listView,
       focusedTag,
+      showTagsLimit,
       showModal,
       randomColors
     }
@@ -104,6 +108,15 @@ export default {
           (crypto.getRandomValues(new Uint8Array(1))[0] & (15 >> (c / 4)))
         ).toString(16)
       )
+    },
+    clickAddTag () {
+      const user = this.$store.state.user.user
+      // если лицензия истекла
+      if (Object.keys(this.$store.state.tasks.tags).length === 2 && user.days_left <= 0) {
+        this.showTagsLimit = true
+        return
+      }
+      this.showModal = true
     },
     createTag (name) {
       this.showModal = false
@@ -184,6 +197,11 @@ export default {
     @cancel="showModal = false"
     @save="createTag"
   />
+  <TagModalBoxTagsLimit
+    v-if="showTagsLimit"
+    @cancel="showTagsLimit = false"
+    @ok="showTagsLimit = false"
+  />
   <div
     class="w-full flex items-center justify-between mt-3 order-1"
   >
@@ -217,7 +235,7 @@ export default {
     class="grid gap-4 mt-3 order-2"
     :class="{ 'md:grid-cols-2 lg:grid-cols-4': isGridView, 'grid-cols-1': !isGridView, 'grid-cols-1': isPropertiesMobileExpanded && !isGridView, 'lg:grid-cols-2': isPropertiesMobileExpanded && isGridView }"
   >
-    <AddTag @click="showModal = true" />
+    <AddTag @click="clickAddTag" />
     <template
       v-for="(tag, pindex) in tags"
       :key="pindex"
