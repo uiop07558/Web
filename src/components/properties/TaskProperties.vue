@@ -12,6 +12,7 @@ import linkify from 'vue-linkify'
 import { maska } from 'maska'
 import { shouldAddTaskIntoList } from '@/websync/utils'
 import ModalBoxDelete from '@/components/Common/ModalBoxDelete.vue'
+import ModalBox from '@/components/modals/ModalBox.vue'
 import TaskPropsButtonDots from '@/components/TaskProperties/TaskPropsButtonDots.vue'
 import TaskPropsButtonFocus from '@/components/TaskProperties/TaskPropsButtonFocus.vue'
 import TaskPropsChatMessages from '@/components/TaskProperties/TaskPropsChatMessages.vue'
@@ -31,6 +32,7 @@ export default {
     TaskPropsChatMessages,
     TaskPropsButtonAccess,
     TaskPropsButtonSetDate,
+    ModalBox,
     TaskPropsButtonTags,
     TaskPropsButtonPerform,
     TaskPropsButtonProject,
@@ -69,6 +71,8 @@ export default {
     const closeProperties = () => {
       store.dispatch('asidePropertiesToggle', false)
     }
+    const modalText = ref('')
+    const showFreeModal = ref(false)
     const taskMsg = ref('')
     const pad2 = (n) => {
       return (n < 10 ? '0' : '') + n
@@ -517,6 +521,11 @@ export default {
       }, 200)
     }
     const createChecklist = () => {
+      if (this.user.tarif === 'free') {
+        this.showFreeModal = true
+        this.modalText = 'Вы не можете создать чек-лист в Вашем текущем тарифе.'
+        return
+      }
       this.checklistshow = true
     }
     const resetFocusChecklist = () => {
@@ -735,6 +744,8 @@ export default {
     return {
       //  ресет Повтор
       deleteFiles,
+      showFreeModal,
+      modalText,
       moveCursorToEnd,
       gotoNode,
       selectedFalse,
@@ -935,10 +946,10 @@ export default {
       return text
     },
     canEditChecklist () {
-      return (this.selectedTask.type === 1 || this.selectedTask.type === 2)
+      return (this.selectedTask.type === 1 || this.selectedTask.type === 2) && this.user.tarif !== 'free'
     },
     canCheckChecklist () {
-      return (this.canEditChecklist || this.selectedTask.type === 3)
+      return (this.canEditChecklist || this.selectedTask.type === 3) && this.user.tarif !== 'free'
     },
     canEditComment () {
       return (this.selectedTask.type === 1 || this.selectedTask.type === 2)
@@ -1318,6 +1329,27 @@ export default {
     @cancel="showConfirm = false"
     @yes="delTask(selectedTask)"
   />
+  <ModalBox
+    v-if="showFreeModal"
+    :show="showFreeModal"
+    title="Обновите тариф"
+    @cancel="showFreeModal = false"
+  >
+    <div class="flex flex-col">
+      <div class="text-[#7e7e80] text-[13px] leading-[18px] font-roboto whitespace-pre-line">
+        <p>{{ modalText }}</p>
+      </div>
+      <div class="gap-[4px] flex justify-end mt-4">
+        <a
+          href="https://www.leadertask.ru/alpha"
+          target="_blank"
+          class="focus:ring min-w-[90px] focus:outline-none inline-flex cursor-pointer whitespace-nowrap justify-center items-center duration-150 px-[12px] py-[10px] rounded-md bg-[#ff9123] text-white text-[13px] leading-[15px] font-medium font-roboto"
+        >
+          Обновить тариф
+        </a>
+      </div>
+    </div>
+  </ModalBox>
   <div
     class="break-words relative z-1"
     @mousedown="selectedFalse"
