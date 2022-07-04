@@ -2,6 +2,7 @@
 import { computed, ref } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
+import EventAlert from '@/components/EventAlert.vue'
 import ModalBox from '@/components/ModalBox.vue'
 import { DatePicker } from 'v-calendar'
 import { mdiMenu } from '@mdi/js'
@@ -294,6 +295,11 @@ const tarifS = () => {
         @dayclick="onDayClick"
       />
     </div>
+    <EventAlert
+      v-if="user.tarif === 'free'"
+      :bg-color="'#FFCA86'"
+      :message-text="'У Вас истекла лицензия, пожалуйста, обновите тариф.'"
+    />
     <div class="my-[10px]">
       <template v-for="(menuGroup, index) in menu">
         <div
