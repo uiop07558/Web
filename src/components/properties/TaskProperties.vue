@@ -26,6 +26,7 @@ import TaskPropsChecklist from '@/components/TaskProperties/TaskPropsChecklist.v
 
 import RepeatLimit from '@/components/properties/RepeatLimit'
 import ChecklistLimit from '@/components/properties/ChecklistLimit'
+import ChatLimit from '@/components/properties/ChatLimit'
 
 export default {
   components: {
@@ -35,6 +36,7 @@ export default {
     TaskPropsButtonAccess,
     ChecklistLimit,
     RepeatLimit,
+    ChatLimit,
     TaskPropsButtonSetDate,
     TaskPropsButtonTags,
     TaskPropsButtonPerform,
@@ -76,6 +78,7 @@ export default {
     }
     const showFreeModalCheck = ref(false)
     const showFreeModalRepeat = ref(false)
+    const showFreeModalChat = ref(false)
     const taskMsg = ref('')
     const pad2 = (n) => {
       return (n < 10 ? '0' : '') + n
@@ -748,6 +751,7 @@ export default {
       deleteFiles,
       showFreeModalCheck,
       showFreeModalRepeat,
+      showFreeModalChat,
       moveCursorToEnd,
       gotoNode,
       selectedFalse,
@@ -1229,11 +1233,6 @@ export default {
         }
       })
     },
-    shouldShowModal () {
-      if (this.user.tarif === 'free') {
-        this.showFreeModalRepeat = true
-      }
-    },
     onChangeAccess: function (checkEmails) {
       const emails = checkEmails.join('..')
       console.log('onChangeAccess', emails)
@@ -1335,6 +1334,10 @@ export default {
     :text="modalBoxDeleteText"
     @cancel="showConfirm = false"
     @yes="delTask(selectedTask)"
+  />
+  <ChatLimit
+    v-if="showFreeModalChat"
+    @cancel="showFreeModalChat = false"
   />
   <ChecklistLimit
     v-if="showFreeModalCheck"
@@ -1452,7 +1455,7 @@ export default {
           :class="isDark ? 'dark' : 'light'"
           placement="bottom"
           :disabled="selectedTask.type !== 1 && selectedTask.type !== 2"
-          @click="shouldShowModal"
+          @click="showFreeModalRepeat = (user.tarif === 'free')"
         >
           <template
             #content="{ close }"
