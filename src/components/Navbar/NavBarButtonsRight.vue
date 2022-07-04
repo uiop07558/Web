@@ -1,4 +1,8 @@
 <template>
+  <NavbarSearchLimit
+    v-if="showFreeModal"
+    @cancel="showFreeModal = false"
+  />
   <div class="flex gap-[10px] items-center px-3">
     <div
       v-if="!showSearchBar"
@@ -97,6 +101,7 @@ import { notify } from 'notiwind'
 import NavBarButtonsBoard from '@/components/Navbar/NavBarButtonsBoard.vue'
 import NavBarButtonsProject from '@/components/Navbar/NavBarButtonsProject.vue'
 import NavBarButtonsColor from '@/components/Navbar/NavBarButtonsColor.vue'
+import NavbarSearchLimit from '@/components/Navbar/NavbarSearchLimit'
 import NavBarButtonsTag from '@/components/Navbar/NavBarButtonsTag.vue'
 import NavBarButtonsTasks from '@/components/Navbar/NavBarButtonsTasks.vue'
 
@@ -106,16 +111,21 @@ export default {
     NavBarButtonsProject,
     NavBarButtonsColor,
     NavBarButtonsTag,
+    NavbarSearchLimit,
     NavBarButtonsTasks
   },
   emits: ['popNavBar'],
   data: () => ({
     showSearchBar: false,
-    searchText: ''
+    searchText: '',
+    showFreeModal: false
   }),
   computed: {
     settings () {
       return this.$store.state.navigator.navigator.settings
+    },
+    user () {
+      return this.$store.state.user.user
     },
     navStack () {
       return this.$store.state.navbar.navStack
@@ -332,6 +342,10 @@ export default {
       }
     },
     onShowSearchBar () {
+      if (this.user.tarif === 'free') {
+        this.showFreeModal = true
+        return
+      }
       this.showSearchBar = true
       this.$nextTick(function () {
         this.$refs.searchInput.focus({ preventScroll: false })

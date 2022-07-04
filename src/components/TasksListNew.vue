@@ -14,28 +14,10 @@
     has-cancel
     button-label="Delete"
   />
-  <ModalBox
+  <InspectorLimit
     v-if="showFreeModal"
-    :show="showFreeModal"
-    title="Обновите тариф"
     @cancel="showFreeModal = false"
-  >
-    <div class="flex flex-col">
-      <div class="text-[#7e7e80] text-[13px] leading-[18px] font-roboto whitespace-pre-line">
-        <p class="font-semibold">Инспектор - функция тарифа "Альфа"</p>
-        <p>Поручайте задачи коллегам, получайте уведомления об их готовности при помощи новой функции "Инспектор"!</p>
-      </div>
-      <div class="gap-[4px] flex justify-end mt-4">
-        <a
-          href="https://www.leadertask.ru/alpha"
-          target="_blank"
-          class="focus:ring min-w-[90px] focus:outline-none inline-flex cursor-pointer whitespace-nowrap justify-center items-center duration-150 px-[12px] py-[10px] rounded-md bg-[#ff9123] text-white text-[13px] leading-[15px] font-medium font-roboto"
-        >
-          Купить
-        </a>
-      </div>
-    </div>
-  </ModalBox>
+  />
 
   <!-- Add task input -->
   <div
@@ -308,7 +290,7 @@
 import { computed, ref, nextTick } from 'vue'
 import treeview from 'vue3-treeview'
 import { useStore } from 'vuex'
-import ModalBox from '@/components/modals/ModalBox.vue'
+import InspectorLimit from '@/components/TasksList/InspectorLimit.vue'
 import TaskStatus from '@/components/TasksList/TaskStatus.vue'
 import EmptyTasksListPics from '@/components/TasksList/EmptyTasksListPics.vue'
 import ModalBoxDelete from './Common/ModalBoxDelete.vue'
@@ -352,12 +334,12 @@ export default {
     TaskListEdit,
     TasksSkeleton,
     ModalBoxDelete,
+    InspectorLimit,
     InspectorModalBox,
     EmptyTasksListPics,
     TaskStatus,
     contenteditable,
-    TaskListActionHoverPanel,
-    ModalBox
+    TaskListActionHoverPanel
   },
   setup (props) {
     const store = useStore()
