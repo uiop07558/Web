@@ -24,12 +24,17 @@ import TaskPropsButtonProject from '@/components/TaskProperties/TaskPropsButtonP
 import TaskPropsButtonColor from '@/components/TaskProperties/TaskPropsButtonColor.vue'
 import TaskPropsChecklist from '@/components/TaskProperties/TaskPropsChecklist.vue'
 
+import RepeatLimit from '@/components/properties/RepeatLimit'
+import ChecklistLimit from '@/components/properties/ChecklistLimit'
+
 export default {
   components: {
     TaskPropsButtonDots,
     TaskPropsButtonFocus,
     TaskPropsChatMessages,
     TaskPropsButtonAccess,
+    ChecklistLimit,
+    RepeatLimit,
     TaskPropsButtonSetDate,
     TaskPropsButtonTags,
     TaskPropsButtonPerform,
@@ -69,6 +74,8 @@ export default {
     const closeProperties = () => {
       store.dispatch('asidePropertiesToggle', false)
     }
+    const showFreeModalCheck = ref(false)
+    const showFreeModalRepeat = ref(false)
     const taskMsg = ref('')
     const pad2 = (n) => {
       return (n < 10 ? '0' : '') + n
@@ -517,6 +524,10 @@ export default {
       }, 200)
     }
     const createChecklist = () => {
+      if (this.user.tarif === 'free') {
+        this.showFreeModalCheck = true
+        return
+      }
       this.checklistshow = true
     }
     const resetFocusChecklist = () => {
@@ -735,6 +746,8 @@ export default {
     return {
       //  ресет Повтор
       deleteFiles,
+      showFreeModalCheck,
+      showFreeModalRepeat,
       moveCursorToEnd,
       gotoNode,
       selectedFalse,
@@ -935,10 +948,10 @@ export default {
       return text
     },
     canEditChecklist () {
-      return (this.selectedTask.type === 1 || this.selectedTask.type === 2)
+      return (this.selectedTask.type === 1 || this.selectedTask.type === 2) && this.user.tarif !== 'free'
     },
     canCheckChecklist () {
-      return (this.canEditChecklist || this.selectedTask.type === 3)
+      return (this.canEditChecklist || this.selectedTask.type === 3) && this.user.tarif !== 'free'
     },
     canEditComment () {
       return (this.selectedTask.type === 1 || this.selectedTask.type === 2)
@@ -1216,6 +1229,11 @@ export default {
         }
       })
     },
+    shouldShowModal () {
+      if (this.user.tarif === 'free') {
+        this.showFreeModalRepeat = true
+      }
+    },
     onChangeAccess: function (checkEmails) {
       const emails = checkEmails.join('..')
       console.log('onChangeAccess', emails)
@@ -1317,6 +1335,14 @@ export default {
     :text="modalBoxDeleteText"
     @cancel="showConfirm = false"
     @yes="delTask(selectedTask)"
+  />
+  <ChecklistLimit
+    v-if="showFreeModalCheck"
+    @cancel="showFreeModalCheck = false"
+  />
+  <RepeatLimit
+    v-if="showFreeModalRepeat"
+    @cancel="showFreeModalRepeat = false"
   />
   <div
     class="break-words relative z-1"
@@ -1426,6 +1452,7 @@ export default {
           :class="isDark ? 'dark' : 'light'"
           placement="bottom"
           :disabled="selectedTask.type !== 1 && selectedTask.type !== 2"
+          @click="shouldShowModal"
         >
           <template
             #content="{ close }"
