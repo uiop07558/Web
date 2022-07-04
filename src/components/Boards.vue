@@ -166,7 +166,6 @@ export default {
     },
     clickAddBoard () {
       const user = this.$store.state.user.user
-      console.log(Object.keys(this.$store.state.boards.boards).length)
       // если лицензия истекла
       if (Object.keys(this.$store.state.boards.boards).length === 3 && user.days_left <= 0) {
         this.showBoardsLimit = true
@@ -175,7 +174,6 @@ export default {
       this.showAddBoard = true
     },
     onAddNewBoard (name) {
-      console.log(Object.keys(this.$store.state.boards.boards).length)
       this.showAddBoard = false
       const title = name.trim()
       if (title) {

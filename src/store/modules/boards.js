@@ -79,7 +79,6 @@ const actions = {
         process.env.VUE_APP_LEADERTASK_API + '/api/v1/board?uid=' + uid
       axios({ url: url, method: 'DELETE' })
         .then((resp) => {
-          // commit(BOARD.REMOVE_BOARD_REQUEST, uid)
           resolve(resp)
         })
         .catch((err) => {
