@@ -7,6 +7,11 @@
       @cancel="showAddBoard = false"
       @save="onAddNewBoard"
     />
+    <BoardModalBoxBoardsLimit
+      v-if="showBoardsLimit"
+      @cancel="showBoardsLimit = false"
+      @ok="showBoardsLimit = false"
+    />
     <div
       v-for="(value, index) in boards"
       :key="index"
@@ -68,7 +73,7 @@
         </template>
         <ListBlocAdd
           v-if="index == 0"
-          @click.stop="showAddBoard = true"
+          @click.stop="clickAddBoard"
         />
       </div>
     </div>
@@ -79,6 +84,7 @@
 import Icon from '@/components/Icon.vue'
 import { setLocalStorageItem } from '@/store/helpers/functions'
 import BoardModalBoxRename from '@/components/Board/BoardModalBoxRename.vue'
+import BoardModalBoxBoardsLimit from '@/components/Board/BoardModalBoxBoardsLimit.vue'
 import BoardBlocItem from '@/components/Board/BoardBlocItem.vue'
 import ListBlocAdd from '@/components/Common/ListBlocAdd.vue'
 import * as CARD from '@/store/actions/cards.js'
@@ -92,6 +98,7 @@ export default {
   components: {
     Icon,
     BoardModalBoxRename,
+    BoardModalBoxBoardsLimit,
     BoardBlocItem,
     ListBlocAdd
   },
@@ -104,6 +111,7 @@ export default {
   data () {
     return {
       showAddBoard: false,
+      showBoardsLimit: false,
       gridView,
       listView
     }
@@ -155,6 +163,15 @@ export default {
           (crypto.getRandomValues(new Uint8Array(1))[0] & (15 >> (c / 4)))
         ).toString(16)
       )
+    },
+    clickAddBoard () {
+      const user = this.$store.state.user.user
+      // если лицензия истекла
+      if (Object.keys(this.$store.state.boards.boards).length === 3 && user.days_left <= 0) {
+        this.showBoardsLimit = true
+        return
+      }
+      this.showAddBoard = true
     },
     onAddNewBoard (name) {
       this.showAddBoard = false

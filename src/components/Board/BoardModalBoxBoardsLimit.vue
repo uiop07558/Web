@@ -1,11 +1,11 @@
 <template>
   <ModalBox
-    title="Добавить сотрудника"
+    title="Добавить доску"
     @cancel="onCancel"
   >
     <div class="flex flex-col">
       <div class="text-[#7e7e80] text-[13px] leading-[18px] font-roboto whitespace-pre-line">
-        Чтобы добавить сотрудника, необходимо докупить рабочее место
+        Чтобы добавить доску, необходимо купить платную подписку
       </div>
       <div class="gap-[4px] flex justify-end mt-4">
         <a
