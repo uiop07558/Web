@@ -14,6 +14,28 @@
     has-cancel
     button-label="Delete"
   />
+  <ModalBox
+    v-if="showFreeModal"
+    :show="showFreeModal"
+    title="Обновите тариф"
+    @cancel="showFreeModal = false"
+  >
+    <div class="flex flex-col">
+      <div class="text-[#7e7e80] text-[13px] leading-[18px] font-roboto whitespace-pre-line">
+        <p class="font-semibold">Инспектор - функция тарифа "Альфа"</p>
+        <p>Поручайте задачи коллегам, получайте уведомления об их готовности при помощи новой функции "Инспектор"!</p>
+      </div>
+      <div class="gap-[4px] flex justify-end mt-4">
+        <a
+          href="https://www.leadertask.ru/alpha"
+          target="_blank"
+          class="focus:ring min-w-[90px] focus:outline-none inline-flex cursor-pointer whitespace-nowrap justify-center items-center duration-150 px-[12px] py-[10px] rounded-md bg-[#ff9123] text-white text-[13px] leading-[15px] font-medium font-roboto"
+        >
+          Купить
+        </a>
+      </div>
+    </div>
+  </ModalBox>
 
   <!-- Add task input -->
   <div
@@ -22,7 +44,7 @@
   >
     <button
       class="bg-[#FF912380] px-2 rounded-[8px] text-black text-sm mr-1 hover:bg-[#F5DEB3]"
-      @click="showInspector = true"
+      @click="shouldShowInspector"
     >
       Поручить
     </button>
@@ -286,6 +308,7 @@
 import { computed, ref, nextTick } from 'vue'
 import treeview from 'vue3-treeview'
 import { useStore } from 'vuex'
+import ModalBox from '@/components/modals/ModalBox.vue'
 import TaskStatus from '@/components/TasksList/TaskStatus.vue'
 import EmptyTasksListPics from '@/components/TasksList/EmptyTasksListPics.vue'
 import ModalBoxDelete from './Common/ModalBoxDelete.vue'
@@ -333,7 +356,8 @@ export default {
     EmptyTasksListPics,
     TaskStatus,
     contenteditable,
-    TaskListActionHoverPanel
+    TaskListActionHoverPanel,
+    ModalBox
   },
   setup (props) {
     const store = useStore()
@@ -362,6 +386,7 @@ export default {
     const copiedTasks = computed(() => store.state.tasks.copiedTasks)
     const lastSelectedTaskUid = ref('')
     const showConfirm = ref(false)
+    const showFreeModal = ref(false)
     const showInspector = ref(false)
     const isTaskStatusPopperActive = ref(false)
     const date = computed(() => {
@@ -809,6 +834,13 @@ export default {
         store.commit(TASK.REMOVE_TASK_FROM_LEAVES)
       })
     }
+    const shouldShowInspector = () => {
+      if (user.value.tarif === 'free') {
+        showFreeModal.value = true
+        return
+      }
+      showInspector.value = true
+    }
     const changeFocus = (task) => {
       const newFocus = task.focus === 1 ? 0 : 1
       store.dispatch(TASK.CHANGE_TASK_FOCUS, { uid: task.uid, value: newFocus }).then(
@@ -819,6 +851,7 @@ export default {
     const isActive = true
     return {
       isActive,
+      shouldShowInspector,
       changeFocus,
       clearTaskFocus,
       editTaskName,
@@ -830,6 +863,7 @@ export default {
       storeTasks,
       newConfig,
       showConfirm,
+      showFreeModal,
       showInspector,
       nodeDragEnd,
       isDark,
