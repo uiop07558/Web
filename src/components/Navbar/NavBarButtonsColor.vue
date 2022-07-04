@@ -70,7 +70,7 @@ export default {
   },
   computed: {
     color () {
-      return this.$store.state.colors.colors[this.colorUid]
+      return this.$store.state.colors.mycolors[this.colorUid]
     },
     canDelete () {
       return this.$store.state.colors.mycolors[this.colorUid] !== undefined
@@ -96,6 +96,8 @@ export default {
           this.$store.commit(SELECT_COLOR, undefined)
           //
           this.$store.commit(NAVIGATOR_REMOVE_COLOR, this.color)
+          // для актуального значения количества цветов
+          this.$store.commit(REMOVE_COLOR_REQUEST, this.colorUid)
           //
           this.$emit('popNavBar')
         })

@@ -23,6 +23,7 @@ const actions = {
       const url = process.env.VUE_APP_LEADERTASK_API + 'api/v1/marker'
       axios({ url: url, method: 'POST', data: data })
         .then((resp) => {
+          commit(PUSH_MYCOLOR, [resp.data])
           resolve(resp)
         })
         .catch((err) => {
@@ -85,6 +86,9 @@ const actions = {
 }
 
 const mutations = {
+  [REMOVE_COLOR_REQUEST]: (state, uid) => {
+    delete state.mycolors[uid]
+  },
   [PUSH_COLOR]: (state, colors) => {
     for (const color of colors) {
       state.colors[color.uid] = color
