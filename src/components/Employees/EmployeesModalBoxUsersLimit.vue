@@ -33,7 +33,6 @@ export default {
     },
     onOk () {
       this.$emit('ok')
-      this.$router.push('/home')
     }
   }
 }
