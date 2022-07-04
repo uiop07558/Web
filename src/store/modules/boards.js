@@ -315,6 +315,9 @@ const actions = {
 }
 
 const mutations = {
+  [BOARD.REMOVE_BOARD_REQUEST]: (state, uid) => {
+    delete state.boards[uid]
+  },
   [BOARD.PUSH_BOARD]: (state, boards) => {
     for (const board of boards) {
       state.boards[board.uid] = board
