@@ -1,5 +1,10 @@
 <template>
   <div>
+    <TaskPropsAccessLimitModalBox
+      v-if="showAccessLimit"
+      @cancel="showAccessLimit = false"
+      @ok="showAccessLimit = false"
+    />
     <ModalBoxDelete
       v-if="showConfirm"
       title="Удалить проект"
@@ -141,6 +146,7 @@ import PopMenu from '@/components/modals/PopMenu.vue'
 import PopMenuItem from '@/components/modals/PopMenuItem.vue'
 import PropsButtonClose from '@/components/Common/PropsButtonClose.vue'
 import PropsButtonMenu from '@/components/Common/PropsButtonMenu.vue'
+import TaskPropsAccessLimitModalBox from '@/components/properties/TaskPropsAccessLimitModalBox.vue'
 
 import * as PROJECT from '@/store/actions/projects'
 import { NAVIGATOR_REMOVE_PROJECT } from '@/store/actions/navigator'
@@ -149,6 +155,7 @@ import { copyText } from 'vue3-clipboard'
 export default {
   components: {
     ModalBoxDelete,
+    TaskPropsAccessLimitModalBox,
     ProjectPropsUserButton,
     ProjectPropsMenuItemUser,
     PropsColorBoxItem,
@@ -160,6 +167,7 @@ export default {
   data () {
     return {
       showConfirm: false,
+      showAccessLimit: false,
       showConfirmQuit: false,
       currName: ''
     }
@@ -332,6 +340,12 @@ export default {
       }
     },
     addProjectMember (userEmail) {
+      const user = this.$store.state.user.user
+      // если лицензия истекла
+      if (user.days_left >= 0) {
+        this.showAccessLimit = true
+        return
+      }
       if (
         this.isCanEdit &&
         this.selectedProjectMembers[userEmail.toLowerCase()] === undefined
