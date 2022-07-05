@@ -752,15 +752,17 @@ const actions = {
           resolve(resp)
         })
         .catch((err) => {
-          notify(
-            {
-              group: 'api',
-              title: 'REST API Error, please make screenshot',
-              action: TASK.CREATE_TASK,
-              text: err.response?.data
-            },
-            15000
-          )
+          if (err.response?.data?.error !== 'limit. invalid license.') {
+            notify(
+              {
+                group: 'api',
+                title: 'REST API Error, please make screenshot',
+                action: TASK.CREATE_TASK,
+                text: err.response?.data
+              },
+              15000
+            )
+          }
           reject(err)
         })
     })
