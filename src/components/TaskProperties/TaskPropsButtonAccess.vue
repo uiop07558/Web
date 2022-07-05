@@ -1,4 +1,8 @@
 <template>
+  <AccessLimit
+    v-if="showFreeModal"
+    @cancel="showFreeModal = false"
+  />
   <Popper
     class="popper-access light"
     arrow
@@ -186,10 +190,12 @@
 
 <script>
 import Popper from 'vue3-popper'
+import AccessLimit from '@/components/TaskProperties/AccessLimit'
 
 export default {
   components: {
-    Popper
+    Popper,
+    AccessLimit
   },
   props: {
     currentUserUid: {
@@ -209,6 +215,7 @@ export default {
   emits: ['changeAccess'],
   data: () => ({
     showSaveButtons: false,
+    showFreeModal: false,
     checkEmails: []
   }),
   computed: {
@@ -217,6 +224,9 @@ export default {
     },
     employeesByEmail () {
       return this.$store.state.employees.employeesByEmail
+    },
+    user () {
+      return this.$store.state.user.user
     },
     currentUserEmail () {
       return this.employees[this.currentUserUid]?.email
@@ -258,6 +268,10 @@ export default {
         (email) => email.toLowerCase() === userEmail.toLowerCase()
       )
       if (index === -1) {
+        if (this.user.tarif === 'free') {
+          this.showFreeModal = true
+          return
+        }
         this.checkEmails.push(userEmail)
       } else {
         this.checkEmails.splice(index, 1)
