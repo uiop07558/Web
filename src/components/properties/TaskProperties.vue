@@ -1234,6 +1234,7 @@ export default {
       })
     },
     onChangeAccess: function (checkEmails) {
+      console.log(this.selectedTask)
       const emails = checkEmails.join('..')
       console.log('onChangeAccess', emails)
       const data = {
