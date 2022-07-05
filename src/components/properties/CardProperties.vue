@@ -33,6 +33,7 @@ import TaskPropsCommentEditor from '@/components/TaskProperties/TaskPropsComment
 import BoardModalBoxDelete from '@/components/Board/BoardModalBoxDelete.vue'
 import CardModalBoxBudget from '@/components/CardProperties/CardModalBoxBudget.vue'
 import CardMessageQuoteUnderInput from '@/components/CardProperties/CardMessageQuoteUnderInput.vue'
+import CardMessagesModalBoxLimit from '../CardProperties/CardMessagesModalBoxLimit.vue'
 
 const store = useStore()
 const selectedCard = computed(() => store.state.cards.selectedCard)
@@ -42,6 +43,7 @@ const employees = computed(() => store.state.employees.employees)
 const employeesByEmail = computed(() => store.state.employees.employeesByEmail)
 const cardMessages = computed(() => store.state.cardfilesandmessages.messages)
 
+const showMessagesLimit = ref(false)
 const showChangeCardBudget = ref(false)
 const showFilesOnly = ref(false)
 const currentQuote = ref(false)
@@ -127,6 +129,12 @@ const endChangeComment = (text) => {
 }
 
 const createCardFile = (event) => {
+  const user = store.state.user.user
+  // если лицензия истекла
+  if (user.days_left <= 0) {
+    showMessagesLimit.value = true
+    return
+  }
   const files = event.target.files
   const formData = new FormData()
   for (let i = 0; i < files.length; i++) {
@@ -159,6 +167,11 @@ const deleteCardFileMessage = (uid) => {
 }
 
 const createCardMessage = () => {
+  // если лицензия истекла
+  if (user.value.days_left <= 0) {
+    showMessagesLimit.value = true
+    return
+  }
   const uid = uuidv4()
   const data = {
     uid_card: selectedCard.value?.uid,
@@ -276,6 +289,11 @@ const removeCard = () => {
     text="Вы действительно хотите удалить карточку?"
     @cancel="showDeleteCard = false"
     @yes="removeCard"
+  />
+  <CardMessagesModalBoxLimit
+    v-if="showMessagesLimit"
+    @cancel="showMessagesLimit = false"
+    @ok="showMessagesLimit = false"
   />
   <CardModalBoxBudget
     v-if="showChangeCardBudget"
