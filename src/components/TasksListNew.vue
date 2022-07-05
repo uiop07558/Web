@@ -186,7 +186,7 @@
               :icon-height="props.node.info.performerreaded ? performerRead.height : performerNotRead.height"
               :icon-box="props.node.info.performerreaded ? performerRead.viewBox : performerNotRead.viewBox"
               :icon-path="props.node.info.performerreaded ? performerRead.path : performerNotRead.path"
-              :image="employees[props.node.info.uid_performer] ? employees[props.node.info.uid_performer].fotolink : ''"
+              :image="employeesByEmail[props.node.info.email_performer] ? employeesByEmail[props.node.info.email_performer].fotolink : ''"
               :color-bg-class="{ 'bg-gray-400': currentUserEmail != props.node.info.email_performer, 'bg-green-500': currentUserUid == props.node.info.uid_customer, 'bg-opacity-50': props.node.info.status == 1 || props.node.info.status == 7 }"
               class="h-[22px]"
             />
