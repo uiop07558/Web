@@ -152,7 +152,7 @@
             />
             <!-- Data -->
             <TaskListIconLabel
-              v-if="props.node.info.term_user"
+              v-if="props.node.info.type === 1 || props.node.info.type === 2"
               :icon-path="clock.path"
               :icon-box="clock.viewBox"
               :text="props.node.info.term_user"
@@ -161,7 +161,7 @@
               icon-height="16"
             />
             <TaskListIconLabel
-              v-if="props.node.info.type !== 1 && props.node.info.type !== 2 && props.node.info.term_customer"
+              v-if="props.node.info.type !== 1 && props.node.info.type !== 2"
               :icon-path="clock.path"
               :icon-box="clock.viewBox"
               :text="props.node.info.term_customer"
