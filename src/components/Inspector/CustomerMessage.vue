@@ -30,7 +30,7 @@ const getMessageTimeString = (dateCreate) => {
         class="bg-[#EAF2FC] max-w-sm py-[12px] px-[15px]"
         style="border-radius: 11px 0px 11px 11px;"
       >
-        <p class="text-[#4C4C4D] font-[500] text-[14px] leading-[19px]">
+        <p class="text-[#4C4C4D] font-[500] text-[14px] leading-[19px] max-w-full break-all">
           {{ props.message }}
         </p>
         <span
