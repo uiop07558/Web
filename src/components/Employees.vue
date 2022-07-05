@@ -44,6 +44,11 @@
       @cancel="showUsersLimit = false"
       @ok="showUsersLimit = false"
     />
+    <EmployeesModalBoxOtherOrg
+      v-if="showOtherOrg"
+      @cancel="showOtherOrg = false"
+      @ok="showOtherOrg = false"
+    />
     <div
       v-for="(value, index) in items"
       :key="index"
@@ -197,6 +202,7 @@ import ListBlocAdd from '@/components/Common/ListBlocAdd.vue'
 import BoardModalBoxRename from '@/components/Board/BoardModalBoxRename.vue'
 import BoardModalBoxDelete from '@/components/Board/BoardModalBoxDelete.vue'
 import EmployeesModalBoxUsersLimit from '@/components/Employees/EmployeesModalBoxUsersLimit.vue'
+import EmployeesModalBoxOtherOrg from '@/components/Employees/EmployeesModalBoxOtherOrg.vue'
 import { setLocalStorageItem } from '@/store/helpers/functions'
 import EmployeesModalBoxAdd from '@/components/Employees/EmployeesModalBoxAdd.vue'
 import EmployeesModalBoxMove from '@/components/Employees/EmployeesModalBoxMove.vue'
@@ -219,6 +225,7 @@ export default {
     EmployeesModalBoxAdd,
     EmployeesModalBoxMove,
     EmployeesModalBoxUsersLimit,
+    EmployeesModalBoxOtherOrg,
     PopMenu,
     PopMenuItem
   },
@@ -239,7 +246,8 @@ export default {
       currentDepUid: '',
       showRenameDep: false,
       showMoveDep: false,
-      showUsersLimit: false
+      showUsersLimit: false,
+      showOtherOrg: false
     }
   },
   computed: {
@@ -389,6 +397,11 @@ export default {
           name: empName,
           email: empEmail
         })
+          .catch((e) => {
+            if (e.response?.data?.error === "in user's org present employees") {
+              this.showOtherOrg = true
+            }
+          })
           .then((resp) => {
             console.log('onAddNewEmp', resp)
           })
