@@ -1,6 +1,6 @@
 <template>
   <div
-    class="flex items-center justify-center rounded-[8px] border border-black/12 cursor-pointer h-[48px] max-w-screen-xl"
+    class="flex items-center justify-center rounded-[8px] border border-black/12 cursor-pointer h-[48px]"
   >
     <svg
       width="30"

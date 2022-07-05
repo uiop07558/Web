@@ -1,6 +1,6 @@
 <template>
   <div
-    class="flex items-center bg-white rounded-[8px] shadow hover:shadow-md px-[15px] relative h-[48px] cursor-pointer max-w-screen-xl"
+    class="flex items-center bg-white rounded-[8px] shadow hover:shadow-md px-[15px] relative h-[48px] cursor-pointer"
     :class="{ 'border border-[#ff9123] -mx-px': selected }"
   >
     <div
@@ -25,7 +25,7 @@
         </div>
         <div class="flex-initial ml-[10px] overflow-hidden w-full">
           <p
-            class="font-roboto text-[13px] leading-[15px] font-medium truncate"
+            class="font-roboto text-[13px] leading-[15px] font-medium truncate max-w-[1536px]"
           >
             {{ title }}
           </p>
