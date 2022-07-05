@@ -1,6 +1,6 @@
 <template>
   <div
-    class="flex items-center bg-white rounded-[8px] shadow hover:shadow-md px-[15px] relative h-[48px] cursor-pointer"
+    class="flex items-center bg-white rounded-[8px] shadow hover:shadow-md px-[15px] relative h-[48px] cursor-pointer max-w-screen-xl"
     :class="{ 'border border-[#ff9123] -mx-px': selected }"
   >
     <div
