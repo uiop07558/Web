@@ -87,6 +87,10 @@
   <TasksSkeleton
     v-if="status == 'loading'"
   />
+  <pre>roots</pre>
+  <pre>{{ newConfig.roots }}</pre>
+  <pre>leaves</pre>
+  <pre>{{ newConfig.leaves }}</pre>
   <!-- vue3-treeview -->
   <div
     v-if="status == 'success'"
@@ -108,6 +112,7 @@
           :class="{ 'ring-1 ring-orange-400': props.node.id === lastSelectedTaskUid}"
         >
           <!-- Name, Status -->
+          <pre>{{ props.node.info.uid }}</pre>
           <div
             class="flex gap-[6px] items-center w-full"
           >
@@ -822,18 +827,18 @@ export default {
       for (const elem in storeTasks.value) {
         if (storeTasks.value[elem].children.includes(node.dragged.node.id)) {
           parentUid = elem
+          store.dispatch(
+            TASK.CHANGE_TASK_PARENT_AND_ORDER,
+            {
+              uid: node.dragged.node.id,
+              parent: parentUid ?? '00000000-0000-0000-0000-000000000000',
+              order: node.dragged.node.info.order_new ?? 0
+            }
+          ).then(() => {
+            store.commit(TASK.REMOVE_TASK_FROM_LEAVES, parentUid)
+          })
         }
       }
-      store.dispatch(
-        TASK.CHANGE_TASK_PARENT_AND_ORDER,
-        {
-          uid: node.dragged.node.id,
-          parent: parentUid ?? '00000000-0000-0000-0000-000000000000',
-          order: node.dragged.node.info.order_new ?? 0
-        }
-      ).then(() => {
-        store.commit(TASK.REMOVE_TASK_FROM_LEAVES)
-      })
     }
     const shouldShowInspector = () => {
       if (user.value.tarif === 'free') {
