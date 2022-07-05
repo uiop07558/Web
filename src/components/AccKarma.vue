@@ -52,7 +52,7 @@ const overdueQuantity = computed(() => {
 const sortedKarmaListByDate = computed(() => [...karmaList.value].sort((a, b) => new Date(b.creation_date) - new Date(a.creation_date)))
 
 onMounted(() => {
-  if (user.value.tarif !== 'alfa') {
+  if (user.value.tarif !== 'alpha') {
     showFreeModal.value = true
   }
   store.dispatch('KARMA_REQUEST', user.value.current_user_uid).then((resp) => {
@@ -74,7 +74,7 @@ onMounted(() => {
     @cancel="showFreeModal = false"
   />
   <div
-    v-if="user.tarif === 'alfa'"
+    v-if="user.tarif === 'alpha'"
     class="px-5"
   >
     <p class="text-center">
