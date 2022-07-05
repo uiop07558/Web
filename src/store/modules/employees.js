@@ -29,15 +29,17 @@ const actions = {
           resolve(resp)
         })
         .catch((err) => {
-          notify(
-            {
-              group: 'api',
-              title: 'REST API Error, please make screenshot',
-              action: EMPLOYEE.CREATE_EMPLOYEE_REQUEST,
-              text: err.response?.data ?? err
-            },
-            15000
-          )
+          if (err.response?.data?.error !== "in user's org present employees") {
+            notify(
+              {
+                group: 'api',
+                title: 'REST API Error, please make screenshot',
+                action: EMPLOYEE.CREATE_EMPLOYEE_REQUEST,
+                text: err.response?.data ?? err
+              },
+              15000
+            )
+          }
           reject(err)
         })
     })
