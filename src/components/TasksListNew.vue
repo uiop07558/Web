@@ -7,6 +7,11 @@
     @cancel="showConfirm = false"
     @yes="removeTask(lastSelectedTaskUid)"
   />
+  <TaskListModalBoxLicenseLimit
+    v-if="showTasksLimit"
+    @cancel="showTasksLimit = false"
+    @ok="showTasksLimit = false"
+  />
   <inspector-modal-box
     v-model="showInspector"
     button="warning"
@@ -299,6 +304,7 @@ import contenteditable from 'vue-contenteditable'
 import TaskListIconLabel from '@/components/TasksList/TaskListIconLabel.vue'
 import TaskListTagLabel from '@/components/TasksList/TaskListTagLabel.vue'
 import TaskListActionHoverPanel from '@/components/TasksList/TaskListActionHoverPanel.vue'
+import TaskListModalBoxLicenseLimit from '@/components/TasksList/TaskListModalBoxLicenseLimit.vue'
 import TaskListEdit from '@/components/TasksList/TaskListEdit.vue'
 import TasksSkeleton from '@/components/TasksList/TasksSkeleton.vue'
 
@@ -339,7 +345,8 @@ export default {
     EmptyTasksListPics,
     TaskStatus,
     contenteditable,
-    TaskListActionHoverPanel
+    TaskListActionHoverPanel,
+    TaskListModalBoxLicenseLimit
   },
   setup (props) {
     const store = useStore()
@@ -368,6 +375,7 @@ export default {
     const copiedTasks = computed(() => store.state.tasks.copiedTasks)
     const lastSelectedTaskUid = ref('')
     const showConfirm = ref(false)
+    const showTasksLimit = ref(false)
     const showFreeModal = ref(false)
     const showInspector = ref(false)
     const isTaskStatusPopperActive = ref(false)
@@ -592,6 +600,11 @@ export default {
               gotoNode(data.uid)
             }, 200)
           })
+          .catch((e) => {
+            if (e.response?.data?.error === 'limit. invalid license.') {
+              showTasksLimit.value = true
+            }
+          })
       }
       createTaskText.value = ''
 
@@ -606,6 +619,12 @@ export default {
           if (task._justCreated) {
             task._justCreated = false
             store.dispatch(TASK.CREATE_TASK, task)
+              .catch((e) => {
+                if (e.response?.data?.error === 'limit. invalid license.') {
+                  showTasksLimit.value = true
+                  store.commit(TASK.REMOVE_TASK, task.uid)
+                }
+              })
           } else {
             store.dispatch(TASK.CHANGE_TASK_NAME, { uid: task.uid, value: task.name })
           }
@@ -847,6 +866,7 @@ export default {
       showConfirm,
       showFreeModal,
       showInspector,
+      showTasksLimit,
       nodeDragEnd,
       isDark,
       status,
