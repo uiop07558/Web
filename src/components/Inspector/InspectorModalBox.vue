@@ -532,7 +532,7 @@ function onSelectItem (item) {
           :action-confirm-new-params="actionConfirmNewParams"
           :action-confirm-delegate="actionConfirmDelegate"
           :last-selected="lastSelected"
-          class="max-h-[40vh] h-[40vh] overflow-auto"
+          class="max-h-[40vh] h-[40vh] overflow-auto scroll-style pr-1"
         />
         <slot />
       </div>
