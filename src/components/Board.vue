@@ -197,7 +197,7 @@
             </div>
           </div>
           <!--карточки -->
-          <div class="min-h-0 overflow-y-auto scroll-style">
+          <div class="min-h-0 overflow-y-auto scroll-style pr-2">
             <draggable
               :data-column-id="column.UID"
               :list="getColumnCards(column)"
