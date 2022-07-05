@@ -108,7 +108,6 @@
           :class="{ 'ring-1 ring-orange-400': props.node.id === lastSelectedTaskUid}"
         >
           <!-- Name, Status -->
-          <pre>{{ props.node.info.uid }}</pre>
           <div
             class="flex gap-[6px] items-center w-full"
           >
