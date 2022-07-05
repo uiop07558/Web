@@ -87,10 +87,6 @@
   <TasksSkeleton
     v-if="status == 'loading'"
   />
-  <pre>roots</pre>
-  <pre>{{ newConfig.roots }}</pre>
-  <pre>leaves</pre>
-  <pre>{{ newConfig.leaves }}</pre>
   <!-- vue3-treeview -->
   <div
     v-if="status == 'success'"
