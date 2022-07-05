@@ -66,7 +66,7 @@
     />
   </transition>
   <DoitnowEmpty
-    v-if="(tasksCount === 0 && !isLoading) && !(user.tarif === 'free')"
+    v-if="(tasksCount === 0 && !isLoading) && (user.tarif === 'alfa')"
     @clickPlanning="goToNextDay"
   />
 </template>
@@ -190,7 +190,7 @@ export default {
     }
   },
   mounted: function () {
-    if (this.user.tarif === 'free') {
+    if (this.user.tarif !== 'alfa') {
       this.showFreeModal = true
       return
     }

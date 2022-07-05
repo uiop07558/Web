@@ -836,7 +836,7 @@ export default {
       }
     }
     const shouldShowInspector = () => {
-      if (user.value.tarif === 'free') {
+      if (user.value.tarif !== 'alfa') {
         showFreeModal.value = true
         return
       }
