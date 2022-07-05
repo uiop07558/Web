@@ -152,7 +152,7 @@
             />
             <!-- Data -->
             <TaskListIconLabel
-              v-if="props.node.info.term_user"
+              v-if="props.node.info.type === 1 || props.node.info.type === 2"
               :icon-path="clock.path"
               :icon-box="clock.viewBox"
               :text="props.node.info.term_user"
@@ -161,7 +161,7 @@
               icon-height="16"
             />
             <TaskListIconLabel
-              v-if="props.node.info.type !== 1 && props.node.info.type !== 2 && props.node.info.term_customer"
+              v-if="props.node.info.type !== 1 && props.node.info.type !== 2"
               :icon-path="clock.path"
               :icon-box="clock.viewBox"
               :text="props.node.info.term_customer"
@@ -186,7 +186,7 @@
               :icon-height="props.node.info.performerreaded ? performerRead.height : performerNotRead.height"
               :icon-box="props.node.info.performerreaded ? performerRead.viewBox : performerNotRead.viewBox"
               :icon-path="props.node.info.performerreaded ? performerRead.path : performerNotRead.path"
-              :image="employees[props.node.info.uid_performer] ? employees[props.node.info.uid_performer].fotolink : ''"
+              :image="employeesByEmail[props.node.info.email_performer] ? employeesByEmail[props.node.info.email_performer].fotolink : ''"
               :color-bg-class="{ 'bg-gray-400': currentUserEmail != props.node.info.email_performer, 'bg-green-500': currentUserUid == props.node.info.uid_customer, 'bg-opacity-50': props.node.info.status == 1 || props.node.info.status == 7 }"
               class="h-[22px]"
             />

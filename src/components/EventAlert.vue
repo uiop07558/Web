@@ -12,11 +12,21 @@
       :height="DefaultIcon.height"
     />
     <p
+      v-if="!link.length"
       class="w-full mx-3.5"
       :style="{ color: textColor }"
     >
       {{ messageText }}
     </p>
+    <a
+      v-if="link.length"
+      class="w-full mx-3.5"
+      :href="link"
+      :style="{ color: textColor }"
+      target="_blank"
+    >
+      {{ messageText }}
+    </a>
   </div>
 </template>
 
@@ -43,6 +53,10 @@ export default {
       default: 'white'
     },
     messageText: {
+      type: String,
+      default: ''
+    },
+    link: {
       type: String,
       default: ''
     }
