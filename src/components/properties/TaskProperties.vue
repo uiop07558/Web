@@ -1463,7 +1463,7 @@ export default {
         />
         <!-- Повтор -->
         <Popper
-          v-if="selectedTask.term_user && !((selectedTask.uid_customer !== user?.current_user_uid) && (selectedTask.status === 1))"
+          v-if="selectedTask.uid_customer === user.current_user_uid"
           class="popper-repeat"
           arrow
           trigger="hover"

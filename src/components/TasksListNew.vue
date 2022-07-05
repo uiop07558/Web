@@ -155,7 +155,7 @@
               v-if="props.node.info.type === 1 || props.node.info.type === 2"
               :icon-path="clock.path"
               :icon-box="clock.viewBox"
-              :text="props.node.info.term_user"
+              :text="props.node.info.term_user ? props.node.info.term_user : props.node.info.term_customer"
               icon-width="16"
               class="h-[22px]"
               icon-height="16"
