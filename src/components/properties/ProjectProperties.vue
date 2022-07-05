@@ -342,7 +342,7 @@ export default {
     addProjectMember (userEmail) {
       const user = this.$store.state.user.user
       // если лицензия истекла
-      if (user.days_left >= 0) {
+      if (user.days_left <= 0) {
         this.showAccessLimit = true
         return
       }
