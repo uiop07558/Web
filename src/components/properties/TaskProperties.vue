@@ -27,12 +27,14 @@ import TaskPropsChecklist from '@/components/TaskProperties/TaskPropsChecklist.v
 import RepeatLimit from '@/components/properties/RepeatLimit'
 import ChecklistLimit from '@/components/properties/ChecklistLimit'
 import ChatLimit from '@/components/properties/ChatLimit'
+import PerformerLimit from '@/components/TaskProperties/PerformerLimit'
 
 export default {
   components: {
     TaskPropsButtonDots,
     TaskPropsButtonFocus,
     TaskPropsChatMessages,
+    PerformerLimit,
     TaskPropsButtonAccess,
     ChecklistLimit,
     RepeatLimit,
@@ -79,6 +81,7 @@ export default {
     const showFreeModalCheck = ref(false)
     const showFreeModalRepeat = ref(false)
     const showFreeModalChat = ref(false)
+    const showFreeModalPerform = ref(false)
     const taskMsg = ref('')
     const pad2 = (n) => {
       return (n < 10 ? '0' : '') + n
@@ -751,6 +754,7 @@ export default {
       deleteFiles,
       showFreeModalCheck,
       showFreeModalRepeat,
+      showFreeModalPerform,
       showFreeModalChat,
       moveCursorToEnd,
       gotoNode,
@@ -1188,6 +1192,11 @@ export default {
         }
       )
     },
+    shouldShowFreePerformer () {
+      if (this.user.tarif === 'free') {
+        this.showFreeModalPerform = true
+      }
+    },
     onChangePerformer: function (userEmail) {
       console.log('onChangePerformer', userEmail)
       const taskUid = this.selectedTask.uid
@@ -1348,6 +1357,10 @@ export default {
     v-if="showFreeModalRepeat"
     @cancel="showFreeModalRepeat = false"
   />
+  <PerformerLimit
+    v-if="showFreeModalPerform"
+    @cancel="showFreeModalPerform = false"
+  />
   <div
     class="break-words relative z-1"
     @mousedown="selectedFalse"
@@ -1429,6 +1442,7 @@ export default {
           :performer-email="selectedTask.email_performer"
           @changePerformer="onChangePerformer"
           @reAssign="onReAssignToUser"
+          @click="shouldShowFreePerformer"
         />
         <!-- Кнопка Доступ -->
         <TaskPropsButtonAccess
