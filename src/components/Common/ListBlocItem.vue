@@ -25,7 +25,7 @@
         </div>
         <div class="flex-initial ml-[10px] overflow-hidden w-full">
           <p
-            class="font-roboto text-[13px] leading-[15px] font-medium truncate"
+            class="font-roboto text-[13px] leading-[15px] font-medium truncate max-w-[1536px]"
           >
             {{ title }}
           </p>

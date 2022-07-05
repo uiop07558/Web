@@ -7,6 +7,11 @@
       @cancel="showAddBoard = false"
       @save="onAddNewBoard"
     />
+    <BoardModalBoxBoardsLimit
+      v-if="showBoardsLimit"
+      @cancel="showBoardsLimit = false"
+      @ok="showBoardsLimit = false"
+    />
     <div class="grid gap-2 mt-3 md:grid-cols-2 lg:grid-cols-4">
       <template
         v-for="(board, pindex) in boards"
@@ -19,7 +24,7 @@
       </template>
       <ListBlocAdd
         v-if="canAddChild"
-        @click="showAddBoard = true"
+        @click.stop="clickAddBoard"
       />
     </div>
     <div class="mt-5 h-full min-h-0">
@@ -33,6 +38,7 @@
 
 <script>
 import BoardModalBoxRename from '@/components/Board/BoardModalBoxRename.vue'
+import BoardModalBoxBoardsLimit from '@/components/Board/BoardModalBoxBoardsLimit.vue'
 import BoardBlocItem from '@/components/Board/BoardBlocItem.vue'
 import ListBlocAdd from '@/components/Common/ListBlocAdd.vue'
 import Board from '@/components/Board.vue'
@@ -43,6 +49,7 @@ import * as NAVIGATOR from '@/store/actions/navigator'
 export default {
   components: {
     BoardModalBoxRename,
+    BoardModalBoxBoardsLimit,
     BoardBlocItem,
     ListBlocAdd,
     Board
@@ -55,7 +62,8 @@ export default {
   },
   data () {
     return {
-      showAddBoard: false
+      showAddBoard: false,
+      showBoardsLimit: false
     }
   },
   computed: {
@@ -109,6 +117,15 @@ export default {
           (crypto.getRandomValues(new Uint8Array(1))[0] & (15 >> (c / 4)))
         ).toString(16)
       )
+    },
+    clickAddBoard () {
+      const user = this.$store.state.user.user
+      // если лицензия истекла
+      if (Object.keys(this.$store.state.boards.boards).length === 3 && user.days_left <= 0) {
+        this.showBoardsLimit = true
+        return
+      }
+      this.showAddBoard = true
     },
     onAddNewBoard (name) {
       this.showAddBoard = false
