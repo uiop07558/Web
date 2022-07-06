@@ -7,9 +7,10 @@ export default {
     }
   },
   emits: ['overlay-click'],
-
-  overlayClick (event) {
-    this.$emit('overlay-click', event)
+  methods: {
+    overlayClick (event) {
+      this.$emit('overlay-click', event)
+    }
   }
 }
 </script>
