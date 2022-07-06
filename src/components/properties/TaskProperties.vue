@@ -1,1349 +1,10 @@
-<script>
-import Popper from 'vue3-popper'
-import { computed, ref, watch } from 'vue'
-import { useStore } from 'vuex'
-import close from '@/icons/close.js'
-import { CREATE_MESSAGE_REQUEST, DELETE_MESSAGE_REQUEST } from '@/store/actions/taskmessages'
-import { CREATE_FILES_REQUEST, DELETE_FILE_REQUEST } from '@/store/actions/taskfiles'
-import * as TASK from '@/store/actions/tasks'
-import * as INSPECTOR from '@/store/actions/inspector'
-import { copyText } from 'vue3-clipboard'
-import linkify from 'vue-linkify'
-import { maska } from 'maska'
-import { shouldAddTaskIntoList } from '@/websync/utils'
-import ModalBoxDelete from '@/components/Common/ModalBoxDelete.vue'
-import TaskPropsButtonDots from '@/components/TaskProperties/TaskPropsButtonDots.vue'
-import TaskPropsButtonFocus from '@/components/TaskProperties/TaskPropsButtonFocus.vue'
-import TaskPropsChatMessages from '@/components/TaskProperties/TaskPropsChatMessages.vue'
-import TaskPropsCommentEditor from '@/components/TaskProperties/TaskPropsCommentEditor.vue'
-import TaskPropsButtonAccess from '@/components/TaskProperties/TaskPropsButtonAccess.vue'
-import TaskPropsButtonSetDate from '@/components/TaskProperties/TaskPropsButtonSetDate.vue'
-import TaskPropsButtonTags from '@/components/TaskProperties/TaskPropsButtonTags.vue'
-import TaskPropsButtonPerform from '@/components/TaskProperties/TaskPropsButtonPerform.vue'
-import TaskPropsButtonProject from '@/components/TaskProperties/TaskPropsButtonProject.vue'
-import TaskPropsButtonColor from '@/components/TaskProperties/TaskPropsButtonColor.vue'
-import TaskPropsChecklist from '@/components/TaskProperties/TaskPropsChecklist.vue'
-
-import RepeatLimit from '@/components/properties/RepeatLimit'
-import ChecklistLimit from '@/components/properties/ChecklistLimit'
-import ChatLimit from '@/components/properties/ChatLimit'
-import PerformerLimit from '@/components/TaskProperties/PerformerLimit'
-
-export default {
-  components: {
-    TaskPropsButtonDots,
-    TaskPropsButtonFocus,
-    TaskPropsChatMessages,
-    PerformerLimit,
-    TaskPropsButtonAccess,
-    ChecklistLimit,
-    RepeatLimit,
-    ChatLimit,
-    TaskPropsButtonSetDate,
-    TaskPropsButtonTags,
-    TaskPropsButtonPerform,
-    TaskPropsButtonProject,
-    TaskPropsButtonColor,
-    Popper,
-    ModalBoxDelete,
-    TaskPropsCommentEditor,
-    TaskPropsChecklist
-  },
-  directives: {
-    linkify,
-    maska
-  },
-  data () {
-    const showAllMessages = false
-    const store = useStore()
-    const taskMessages = computed(() => store.state.taskfilesandmessages.messages)
-    const uploadStarted = computed(() => store.state.taskfilesandmessages.uploadStarted)
-    const taskFiles = computed(() => store.state.taskfilesandmessages.files)
-    const myFiles = computed(() => store.state.taskfilesandmessages.files.myFiles)
-    const selectedTask = computed(() => store.state.tasks.selectedTask)
-    const isPropertiesMobileExpanded = computed(() => store.state.isPropertiesMobileExpanded)
-    const lastSelectedTaskUid = ref('')
-    watch(selectedTask, (currentValue, oldValue) => {
-      this.showAllMessages = false
-      this.checklistshow = false
-    })
-
-    const user = computed(() => store.state.user.user)
-    const navigator = computed(() => store.state.navigator.navigator)
-    const tasks = computed(() => store.state.tasks.newtasks)
-    const employeesByEmail = computed(() => store.state.employees.employeesByEmail)
-    const isDark = computed(() => store.state.darkMode)
-    const getfiles = computed(() => store.state.taskfilesandmessages.file)
-    const cusers = computed(() => store.state.user.user)
-    const closeProperties = () => {
-      store.dispatch('asidePropertiesToggle', false)
-    }
-    const showFreeModalCheck = ref(false)
-    const showFreeModalRepeat = ref(false)
-    const showFreeModalChat = ref(false)
-    const showFreeModalPerform = ref(false)
-    const taskMsg = ref('')
-    const pad2 = (n) => {
-      return (n < 10 ? '0' : '') + n
-    }
-
-    function uuidv4 () {
-      return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, c =>
-        (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
-      )
-    }
-    const changeEmployee = (email) => {
-      console.log(email)
-      if (email !== '') {
-        const data = {
-          uid: selectedTask.value.uid,
-          value: email.toLowerCase()
-        }
-        store.dispatch(TASK.CHANGE_TASK_PERFORMER, data).then(
-          resp => {
-            console.log(resp.data.email_performer)
-            selectedTask.value.email_performer = resp.data.email_performer
-            selectedTask.value.type = 2
-          }
-        )
-      }
-    }
-    const ispolnit = () => {
-      const data = {
-        uid: selectedTask.value.uid,
-        value: cusers.value.current_user_email.toLowerCase()
-      }
-      store.dispatch(TASK.CHANGE_TASK_PERFORMER, data).then(
-        resp => {
-          console.log(resp.data.email_performer)
-          selectedTask.value.email_performer = resp.data.email_performer
-          selectedTask.value.type = 3
-        }
-      )
-    }
-    const resetEmployes = () => {
-      store.dispatch(TASK.CHANGE_TASK_PERFORMER, { uid: selectedTask.value.uid, value: '' }).then(
-        resp => {
-          console.log(resp.data)
-          selectedTask.value.email_performer = ''
-          selectedTask.value.type = 1
-        }
-      )
-    }
-    const ClickAccessEmail = () => {
-      this.datas.push(this.checkEmail)
-      if (this.checkEmail !== '') {
-        const emails = this.checkEmail.join('..')
-        console.log(emails)
-        store.dispatch(TASK.CHANGE_TASK_ACCESS, { uid: selectedTask.value.uid, value: emails }).then(
-          resp => {
-            selectedTask.value.emails = emails
-          }
-        )
-      }
-    }
-    const resetAccess = () => {
-      store.dispatch(TASK.CHANGE_TASK_ACCESS, { uid: selectedTask.value.uid, value: '' }).then(
-        resp => {
-          selectedTask.value.emails = resp.data
-          this.checkEmail = []
-          console.log(resp.data)
-        }
-      )
-    }
-    const changeColors = (uid, marker) => {
-      store.dispatch(TASK.CHANGE_TASK_COLOR, { uid: uid, value: marker }).then(
-        resp => {
-          selectedTask.value.uid_marker = marker
-        }
-      )
-    }
-    const changeFocus = (uid, value) => {
-      store.dispatch(TASK.CHANGE_TASK_FOCUS, { uid: uid, value: value }).then(
-        resp => {
-          selectedTask.value.focus = value
-        })
-    }
-    const ClickTagsChange = () => {
-      const data = {
-        uid: selectedTask.value.uid,
-        tags: selectedTask.value.tags
-      }
-      store.dispatch(TASK.CHANGE_TASK_TAGS, data)
-
-      setTimeout(() => {
-        store.dispatch(TASK.CHANGE_TASK_TAGS, data)
-      }, 100)
-    }
-    const resetTags = (key) => {
-      selectedTask.value.tags.splice(selectedTask.value.tags.indexOf(key), 1)
-      const data = {
-        uid: selectedTask.value.uid,
-        tags: selectedTask.value.tags
-      }
-      store.dispatch(TASK.CHANGE_TASK_TAGS, data)
-    }
-    const createTaskFile = (event) => {
-      this.files = event.target.files
-      const formData = new FormData()
-      for (let i = 0; i < this.files.length; i++) {
-        const file = this.files[i]
-        formData.append('files[' + i + ']', file)
-      }
-      const data = {
-        uid_task: selectedTask.value.uid,
-        name: formData
-      }
-
-      for (const formItem of formData) {
-        store.commit(
-          'createLoadingFile',
-          {
-            msg: formItem[1].name,
-            uid_creator: user.value.current_user_uid,
-            date_create: new Date().toISOString(),
-            file_size: formItem[1].size
-          }
-        )
-      }
-
-      store.dispatch(CREATE_FILES_REQUEST, data).then(
-        resp => {
-          if (selectedTask.value.type === 2 || selectedTask.value.type === 3) {
-            if ([1, 5, 7, 8].includes(selectedTask.value.status)) {
-              selectedTask.value.status = 9
-            }
-          }
-          selectedTask.value.has_files = true
-          if (selectedTask.value.uid_customer === user.value.current_user_uid && (selectedTask.value.status === 5 || selectedTask.value.status === 7)) {
-            // to refine
-            selectedTask.value.status = 9
-          }
-        })
-      this.infoComplete = true
-      setTimeout(() => {
-        const elmnt = document.getElementById('content').lastElementChild
-        elmnt.scrollIntoView({ behavior: 'smooth' })
-      }, 100)
-    }
-    const unchecked = () => {
-
-    }
-    const delTask = () => {
-      this.showConfirm = false
-      if (isPropertiesMobileExpanded.value) {
-        store.dispatch('asidePropertiesToggle', false)
-      }
-      const data = {
-        uid: selectedTask.value.uid
-      }
-      store.dispatch(TASK.REMOVE_TASK, data.uid)
-        .then(() => {
-          store.dispatch(TASK.DAYS_WITH_TASKS)
-            .then(() => {
-              const calendarDates = computed(() => store.state.calendar[1].dates)
-              const daysWithTasks = computed(() => store.state.tasks.daysWithTasks)
-              for (let i = 0; i < calendarDates.value.length; i++) {
-                const date = calendarDates.value[i].getDate() + '-' + (calendarDates.value[i].getMonth() + 1) + '-' + calendarDates.value[i].getFullYear()
-                if (!daysWithTasks.value.includes(date)) {
-                  store.state.calendar[1].dates.splice(store.state.calendar[1].dates.indexOf(calendarDates.value[i]), 1)
-                }
-              }
-            })
-        })
-    }
-
-    const createTaskMsg = () => {
-      const date = new Date()
-      const month = pad2(date.getUTCMonth() + 1)
-      const day = pad2(date.getUTCDate())
-      const year = pad2(date.getUTCFullYear())
-      const hours = pad2(date.getUTCHours())
-      const minutes = pad2(date.getUTCMinutes())
-      const seconds = pad2(date.getUTCSeconds())
-      const dateCreate = year + '-' + month + '-' + day + 'T' + hours + ':' + minutes + ':' + seconds
-      const data = {
-        uid_task: selectedTask.value.uid,
-        uid_creator: user.value.current_user_uid,
-        uid_msg: uuidv4(),
-        date_create: dateCreate,
-        text: taskMsg.value,
-        msg: taskMsg.value
-      }
-      store.dispatch(CREATE_MESSAGE_REQUEST, data).then(
-        resp => {
-          selectedTask.value.has_msgs = true
-          if (selectedTask.value.type === 2 || selectedTask.value.type === 3) {
-            if ([1, 5, 7, 8].includes(selectedTask.value.status)) {
-              selectedTask.value.status = 9
-            }
-          }
-          selectedTask.value.msg = decodeURIComponent(taskMsg.value)
-          this.infoComplete = true
-          const wrapperElement = document.getElementById('content').lastElementChild
-          wrapperElement.scrollIntoView({ behavior: 'smooth' })
-        })
-      taskMsg.value = ''
-    }
-    const cursorPosition = () => {
-      this.taskMsg += '\n'
-      const textarea = document.querySelector('textarea')
-      textarea.addEventListener('keyup', function () {
-        if (this.scrollTop > 0) {
-          //  this.style.height = this.scrollHeight + 'px'
-        }
-        console.log(this.scrollTop)
-        if (this.value.length === 0) {
-          this.style.height = '40px'
-        }
-      })
-    }
-    const moveCursorToEnd = (obj) => {
-      if (!(obj.updating)) {
-        obj.updating = true
-        const oldValue = obj.value
-        obj.value = ''
-        setTimeout(function () { obj.value = oldValue; obj.updating = false }, 100)
-      }
-      const textarea = document.querySelector('textarea')
-      textarea.addEventListener('keyup', function () {
-        if (this.scrollTop > 0) {
-          this.style.height = this.scrollHeight + 'px'
-        }
-      })
-    }
-    const deleteTaskMsg = (uid) => {
-      console.log(uid)
-      store.dispatch(DELETE_MESSAGE_REQUEST, { uid: uid }).then(
-        resp => {
-          selectedTask.value.has_msgs = true
-          this.taskMessages.find(message => message.uid_msg) ? this.taskMessages.find(message => message.uid_msg === uid).deleted = 1 : this.taskMessages.find(message => message.uid === uid).deleted = 1
-        })
-    }
-    const deleteFiles = (uid) => {
-      store.dispatch(DELETE_FILE_REQUEST, { uid: uid }).then(
-        resp => {
-          console.log(selectedTask.value)
-        })
-    }
-    const changeName = (event) => {
-      const data = {
-        uid: selectedTask.value.uid,
-        value: event.target.innerText
-      }
-      store.dispatch(TASK.CHANGE_TASK_NAME, data).then(
-        resp => {
-          //  selectedTask.value.name = event.target.innerText
-        })
-    }
-    const resetProject = () => {
-      store.dispatch(TASK.CHANGE_TASK_PROJECT, { uid: selectedTask.value.uid, value: '00000000-0000-0000-0000-000000000000' }).then(
-        resp => {
-          selectedTask.value.uid_project = '00000000-0000-0000-0000-000000000000'
-        }
-      )
-    }
-    const resetColor = () => {
-      store.dispatch(TASK.CHANGE_TASK_COLOR, { uid: selectedTask.value.uid, value: '00000000-0000-0000-0000-000000000000' }).then(
-        resp => {
-          selectedTask.value.uid_marker = '00000000-0000-0000-0000-000000000000'
-        }
-      )
-    }
-    const resetCalendar = () => {
-      const data = {
-        uid_task: selectedTask.value.uid,
-        str_date_begin: '0001-01-01T00:00:00',
-        str_date_end: '0001-01-01T23:59:59',
-        reset: 1
-      }
-      store.dispatch(TASK.CHANGE_TASK_DATE, data).then(
-        resp => {
-          selectedTask.value.term_customer = resp.data.term
-          selectedTask.value.is_overdue = resp.data.is_overdue
-          //  const timestart = this.timeStart === '' ? 'T00:00:00' : 'T' + this.timeStart + ':00'
-          //  const timeend = this.timeEnd === '' ? 'T23:59:59' : 'T' + this.timeEnd + ':00'
-          this.range.start = new Date().getFullYear() + '-' + (pad2(new Date().getMonth() + 1)) + '-' + new Date().getDate() + 'T00:00:00'
-          this.range.end = new Date().getFullYear() + '-' + (pad2(new Date().getMonth() + 1)) + '-' + new Date().getDate() + 'T00:00:00'
-          this.timeEnd = ''
-          this.timeStart = ''
-          this.timeStartActive = false
-        })
-    }
-    const handleInput = () => {
-      const timestart = this.timeStart === '' ? 'T00:00:00' : 'T' + this.timeStart
-      console.log(timestart)
-      const timeend = this.timeEnd === '' ? '' : 'T' + this.timeEnd + ':00'
-      const starttime = new Date(this.range.start).getFullYear() + '-' + (pad2(new Date(this.range.start).getMonth() + 1)) + '-' + pad2(new Date(this.range.start).getDate()) + timestart
-      const startend = new Date(this.range.end).getFullYear() + '-' + (pad2(new Date(this.range.start).getMonth() + 1)) + '-' + pad2(new Date(this.range.end).getDate()) + timeend
-      const data = {
-        uid_task: selectedTask.value.uid,
-        str_date_begin: starttime,
-        str_date_end: startend,
-        reset: 0
-      }
-      store.dispatch(TASK.CHANGE_TASK_DATE, data).then(
-        resp => {
-          console.log(resp.data.term)
-          selectedTask.value.term_customer = resp.data.term
-          selectedTask.value.is_overdue = resp.data.is_overdue
-          this.timeStart = timestart !== '' ? '' : timestart
-          this.timeEnd = timeend !== '' ? '' : timeend
-          this.timeStartActive = true
-        })
-    }
-    const TimeSelectStart = () => {
-      this.timeEditStart = !this.timeEditStart
-    }
-    const TimeSelectEnd = () => {
-      this.timeEditEnd = !this.timeEditEnd
-    }
-    const TimeActiveStart = (event) => {
-      if (event.target.value.length > 1) {
-        this.timeEndRange = true
-      } else {
-        this.timeEndRange = false
-      }
-    }
-    const calendarTimeStartChange = (event) => {
-      const timeStartValue = event.target.value
-      this.$refs.inputTimeStart.value = timeStartValue
-    }
-    const calendarTimeEndChange = (event) => {
-      const timeEndValue = event.target.value
-      this.$refs.inputTimeEnd.value = timeEndValue
-    }
-    const onDayClick = () => {
-      this.timeStartActive = true
-    }
-    const resetRepeat = () => {
-      const data = {
-        uid: selectedTask.value.uid
-      }
-      store.dispatch(TASK.RESET_REPEAT_CHANGE, data).then(
-        resp => {
-          selectedTask.value.SeriesType = 0
-          selectedTask.value.SeriesAfterType = 0
-          selectedTask.value.SeriesAfterCount = 0
-          selectedTask.value.SeriesWeekCount = 0
-          selectedTask.value.SeriesWeekMon = 0
-          selectedTask.value.SeriesWeekTue = 0
-          selectedTask.value.SeriesWeekWed = 0
-          selectedTask.value.SeriesWeekThu = 0
-          selectedTask.value.SeriesWeekFri = 0
-          selectedTask.value.SeriesWeekSat = 0
-          selectedTask.value.SeriesWeekSun = 0
-          selectedTask.value.SeriesMonthType = 0
-          selectedTask.value.SeriesMonthCount = 0
-          selectedTask.value.SeriesMonthDay = 0
-          selectedTask.value.SeriesMonthWeekType = 0
-          selectedTask.value.SeriesMonthDayOfWeek = 0
-          selectedTask.value.SeriesYearType = 0
-          selectedTask.value.SeriesYearMonth = 0
-          selectedTask.value.SeriesYearMonthDay = 0
-          selectedTask.value.SeriesYearWeekType = 0
-          selectedTask.value.SeriesYearDayOfWeek = 0
-          this.noRepeat = true
-          this.everyDayRepeat = false
-          this.everyWeekRepeat = false
-          this.everyMonthRepeat = false
-          this.everyYearRepeat = false
-        })
-    }
-    const copyurl = (e) => {
-      copyText(`${window.location.origin}/task/${selectedTask.value.uid}`, undefined, (error, event) => {
-      // copyText('lt://planning?{' + selectedTask.value.uid.toUpperCase() + '}', undefined, (error, event) => {
-        if (error) {
-          console.log(error)
-        } else {
-          console.log(event)
-        }
-      })
-    }
-    const changeEveryMonthType = (value) => {
-      this.ActiveSelect = value
-      this.SeriesMonthDay = 0
-    }
-    const changeEveryYearType = (value) => {
-      this.ActiveYartype = value
-      this.SeriesYearMonth = 0
-      this.SeriesYearMonthDay = 0
-    }
-    const addsubmit = () => {
-      this.applybutton = true
-    }
-    const setCursorPosition = (oInput, oStart, oEnd) => {
-      if (oInput.setSelectionRange) {
-        oInput.setSelectionRange(oStart, oEnd)
-      } else if (oInput.createTextRange) {
-        const range = oInput.createTextRange()
-        range.collapse(true)
-        range.moveEnd('character', oEnd)
-        range.moveStart('character', oStart)
-        range.select()
-      }
-    }
-    const editcomment = () => {
-      if (!this.canEditComment) return
-      this.isEditable = true
-    }
-    const removeeditcomment = (event) => {
-      if (!this.canEditComment) return
-      this.isEditable = false
-      // чтобы у нас в интерфейсе поменялось
-      // потому что на changeComment он только
-      // на сервер отправляет и всё
-      const message = event.target.innerText.trim()
-      selectedTask.value.comment = message
-    }
-    const changeComment = (event) => {
-      if (!this.canEditComment) return
-      const message = event.target.innerText.trim()
-      console.log('changeComment', event.target.innerText, message)
-      setCursorPosition(event.target.id, 0, 100)
-      const data = {
-        uid: selectedTask.value.uid,
-        value: message
-      }
-      store.dispatch(TASK.CHANGE_TASK_COMMENT, data)
-    }
-    const editTaskName = () => {
-      this.isEditableTaskName = true
-    }
-    const removeEditTaskName = (event) => {
-      this.isEditableTaskName = false
-      const taskName = event.target.innerText
-      selectedTask.value.name = taskName
-    }
-    const resetFocusCalendar = () => {
-      this.range = {
-        start: '',
-        end: ''
-      }
-    }
-    const scrollDown = () => {
-      this.showAllMessages = true
-      this.infoComplete = true
-      setTimeout(() => {
-        const elmnt = document.getElementById('content').lastElementChild
-        elmnt.scrollIntoView()
-      }, 200)
-    }
-    const createChecklist = () => {
-      if (this.user.tarif === 'free') {
-        this.showFreeModalCheck = true
-        return
-      }
-      this.checklistshow = true
-    }
-    const resetFocusChecklist = () => {
-      this.checklistshow = false
-    }
-    const SaveRepeat = () => {
-      if (this.$refs.SeriesType.value === '0') {
-        const data = {
-          uid: selectedTask.value.uid
-        }
-        store.dispatch(TASK.RESET_REPEAT_CHANGE, data).then(
-          resp => {
-            selectedTask.value.SeriesType = 0
-            selectedTask.value.SeriesType = 0
-            selectedTask.value.SeriesAfterType = 0
-            selectedTask.value.SeriesAfterCount = 0
-            selectedTask.value.SeriesWeekCount = 0
-            selectedTask.value.SeriesWeekMon = 0
-            selectedTask.value.SeriesWeekTue = 0
-            selectedTask.value.SeriesWeekWed = 0
-            selectedTask.value.SeriesWeekThu = 0
-            selectedTask.value.SeriesWeekFri = 0
-            selectedTask.value.SeriesWeekSat = 0
-            selectedTask.value.SeriesWeekSun = 0
-            selectedTask.value.SeriesMonthType = 0
-            selectedTask.value.SeriesMonthCount = 0
-            selectedTask.value.SeriesMonthDay = 0
-            selectedTask.value.SeriesMonthWeekType = 0
-            selectedTask.value.SeriesMonthDayOfWeek = 0
-            selectedTask.value.SeriesYearType = 0
-            selectedTask.value.SeriesYearMonth = 0
-            selectedTask.value.SeriesYearMonthDay = 0
-            selectedTask.value.SeriesYearWeekType = 0
-            selectedTask.value.SeriesYearDayOfWeek = 0
-          })
-      }
-      if (this.$refs.SeriesType.value === '1') {
-        const data = {
-          uid: selectedTask.value.uid,
-          type: this.$refs.SeriesAfterType.value,
-          every_value: this.$refs.SeriesAfterCount.value
-        }
-        store.dispatch(TASK.EVERY_DAY_CHANGE, data).then(
-          resp => {
-            selectedTask.value.SeriesType = 1
-            selectedTask.value.SeriesAfterType = resp.data.SeriesAfterType
-            selectedTask.value.SeriesAfterCount = resp.data.SeriesAfterCount
-          })
-      }
-      if (this.$refs.SeriesType.value === '2') {
-        const data = {
-          uid: selectedTask.value.uid,
-          days: this.SeriesWeek,
-          every_value: this.$refs.SeriesWeekCount.value
-        }
-        store.dispatch(TASK.EVERY_WEEK_CHANGE, data).then(
-          resp => {
-            selectedTask.value.SeriesType = 2
-            selectedTask.value.SeriesWeekFri = resp.data.SeriesWeekFri
-            selectedTask.value.SeriesWeekMon = resp.data.SeriesWeekMon
-            selectedTask.value.SeriesWeekSat = resp.data.SeriesWeekSat
-            selectedTask.value.SeriesWeekSun = resp.data.SeriesWeekSun
-            selectedTask.value.SeriesWeekThu = resp.data.SeriesWeekThu
-            selectedTask.value.SeriesWeekTue = resp.data.SeriesWeekTue
-            selectedTask.value.SeriesWeekWed = resp.data.SeriesWeekWed
-            selectedTask.value.SeriesWeekCount = resp.data.SeriesWeekCount
-          })
-      }
-      if (this.$refs.SeriesType.value === '3') {
-        console.log(selectedTask.value.uid)
-        console.log(this.SeriesMonthType + ' or ' + this.SeriesMonthWeekType)
-        if (this.SeriesMonthDay > 0) {
-          const data = {
-            uid: selectedTask.value.uid,
-            num_day: this.SeriesMonthDay,
-            every_value: this.SeriesMonthCount
-          }
-
-          store.dispatch(TASK.EVERY_MONTH_CHANGE, data).then(
-            resp => {
-              selectedTask.value.SeriesType = 3
-              selectedTask.value.SeriesMonthCount = resp.data.SeriesMonthCount
-              selectedTask.value.SeriesMonthDay = resp.data.SeriesMonthDay
-              selectedTask.value.SeriesMonthDayOfWeek = resp.data.SeriesMonthDayOfWeek
-              selectedTask.value.SeriesMonthType = resp.data.SeriesMonthType
-              selectedTask.value.SeriesMonthDay = resp.data.SeriesMonthDay
-              selectedTask.value.SeriesMonthWeekType = resp.data.SeriesMonthWeekType
-            })
-        }
-        console.log(this.SeriesMonthDay)
-        if (this.SeriesMonthDay === 0) {
-          const data = {
-            uid: selectedTask.value.uid,
-            every_value: this.SeriesMonthCount,
-            num_day: this.SeriesMonthDay,
-            mwt: this.SeriesMonthType - 1,
-            mdw: this.SeriesMonthDayOfWeek
-          }
-          store.dispatch(TASK.EVERY_MONTH_CHANGE, data).then(
-            resp => {
-              selectedTask.value.SeriesType = 3
-              selectedTask.value.SeriesMonthCount = resp.data.SeriesMonthCount
-              selectedTask.value.SeriesMonthDay = resp.data.SeriesMonthDay
-              selectedTask.value.SeriesMonthDayOfWeek = resp.data.SeriesMonthDayOfWeek
-              selectedTask.value.SeriesMonthType = resp.data.SeriesMonthType
-              selectedTask.value.SeriesMonthDay = resp.data.SeriesMonthDay
-              selectedTask.value.SeriesMonthWeekType = resp.data.SeriesMonthWeekType
-            })
-        }
-      }
-      if (this.$refs.SeriesType.value === '4') {
-        console.log(selectedTask.value.uid)
-        console.log(this.SeriesYearType + ' or ' + this.SeriesMonthWeekType)
-        console.log(this.SeriesYearMonthDay)
-        if (this.SeriesYearMonthDay > 0) {
-          const data = {
-            uid: selectedTask.value.uid,
-            num_day: this.SeriesYearMonthDay,
-            every_value: this.SeriesYearMonth
-          }
-          store.dispatch(TASK.EVERY_YEAR_CHANGE, data).then(
-            resp => {
-              console.log(resp.data)
-              selectedTask.value.SeriesType = 4
-              selectedTask.value.SeriesYearDayOfWeek = resp.data.SeriesYearDayOfWeek
-              selectedTask.value.SeriesYearMonth = resp.data.SeriesYearMonth
-              selectedTask.value.SeriesYearType = resp.data.SeriesYearType
-              selectedTask.value.SeriesYearMonthDay = resp.data.SeriesYearMonthDay
-              selectedTask.value.SeriesMonthWeekType = resp.data.SeriesYearWeekType
-              selectedTask.value.SeriesMonthDayOfWeek = resp.data.SeriesYearDayOfWeek
-            })
-        }
-        if (this.SeriesYearMonthDay === 0) {
-          const data = {
-            uid: selectedTask.value.uid,
-            every_value: this.SeriesYearMonth,
-            num_day: this.SeriesYearMonthDay,
-            mwt: this.SeriesYearType - 1,
-            mdw: this.SeriesYearDayOfWeek
-          }
-          store.dispatch(TASK.EVERY_YEAR_CHANGE, data).then(
-            resp => {
-              console.log(resp.data)
-              selectedTask.value.SeriesType = 4
-              selectedTask.value.SeriesYearDayOfWeek = resp.data.SeriesYearDayOfWeek
-              selectedTask.value.SeriesYearMonth = resp.data.SeriesYearMonth
-              selectedTask.value.SeriesYearMonthDay = resp.data.SeriesYearMonthDay
-              selectedTask.value.SeriesYearWeekType = resp.data.SeriesYearWeekType
-              selectedTask.value.SeriesMonthDayOfWeek = resp.data.SeriesYearDayOfWeek
-            })
-        }
-      }
-    }
-    const tabChanged = (event) => {
-      console.log(event.target.value)
-      if (event.target.value === '0') {
-        this.noRepeat = true
-        this.everyDayRepeat = false
-        this.everyWeekRepeat = false
-        this.everyMonthRepeat = false
-        this.everyYearRepeat = false
-        selectedTask.value.SeriesType = 0
-      }
-      if (event.target.value === '1') {
-        this.noRepeat = false
-        this.everyDayRepeat = true
-        this.everyWeekRepeat = false
-        this.everyMonthRepeat = false
-        this.everyYearRepeat = false
-        selectedTask.value.SeriesType = 1
-      }
-      if (event.target.value === '2') {
-        this.noRepeat = false
-        this.everyDayRepeat = false
-        this.everyWeekRepeat = true
-        this.everyMonthRepeat = false
-        this.everyYearRepeat = false
-        selectedTask.value.SeriesType = 2
-        selectedTask.value.SeriesWeekMon = 0
-        selectedTask.value.SeriesWeekCount = 1
-      }
-      if (event.target.value === '3') {
-        this.noRepeat = false
-        this.everyDayRepeat = false
-        this.everyWeekRepeat = false
-        this.everyMonthRepeat = true
-        this.everyYearRepeat = false
-        selectedTask.value.SeriesType = 3
-      }
-      if (event.target.value === '4') {
-        this.noRepeat = false
-        this.everyDayRepeat = false
-        this.everyWeekRepeat = false
-        this.everyMonthRepeat = false
-        this.everyYearRepeat = true
-        selectedTask.value.SeriesType = 4
-      }
-    }
-    const gotoNode = () => {
-      const uid = this.selectedTask.uid
-      document.getElementById(uid).parentElement.focus({ preventScroll: true })
-      const taskName = document.getElementById(uid).querySelector('.taskName')
-      const range = document.createRange()
-      const sel = document.getSelection()
-      taskName.focus({ preventScroll: false })
-      range.setStart(taskName, 1)
-      range.collapse(true)
-      sel.removeAllRanges()
-      sel.addRange(range)
-      lastSelectedTaskUid.value = uid
-      return false
-    }
-    const selectedFalse = () => {
-      return false
-    }
-    return {
-      //  ресет Повтор
-      deleteFiles,
-      showFreeModalCheck,
-      showFreeModalRepeat,
-      showFreeModalPerform,
-      showFreeModalChat,
-      moveCursorToEnd,
-      gotoNode,
-      selectedFalse,
-      ispolnit,
-      user,
-      dayWeekMassive: [],
-      SaveRepeat,
-      tabChanged,
-      resetRepeat,
-      onDayClick,
-      pad2,
-      TimeSelectStart,
-      TimeSelectEnd,
-      TimeActiveStart,
-      calendarTimeStartChange,
-      calendarTimeEndChange,
-      createChecklist,
-      scrollDown,
-      editTaskName,
-      removeEditTaskName,
-      editcomment,
-      removeeditcomment,
-      addsubmit,
-      setCursorPosition,
-      showAllMessages,
-      isloading: false,
-      copyurl,
-      changeEveryYearType,
-      changeEveryMonthType,
-      delTask,
-      isDark,
-      unchecked,
-      changeName,
-      createTaskMsg,
-      cursorPosition,
-      deleteTaskMsg,
-      createTaskFile,
-      closeProperties,
-      ClickAccessEmail,
-      ClickTagsChange,
-      changeColors,
-      changeEmployee,
-      changeFocus,
-      changeComment,
-      handleInput,
-      resetFocusCalendar,
-      resetProject,
-      resetColor,
-      resetTags,
-      resetAccess,
-      resetEmployes,
-      resetCalendar,
-      resetFocusChecklist,
-      massel: '',
-      viewMenu: false,
-      top: '0px',
-      left: '0px',
-      datas: [],
-      getfiles: getfiles,
-      checkEmail: (selectedTask.value.emails && selectedTask.value.emails !== '') ? selectedTask.value.emails.split('..') : [],
-      close,
-      file: '',
-      taskMsg,
-      applybutton: false,
-      anymenuShow: false,
-      isFullScreen: computed(() => store.state.isFullScreen),
-      isPropertiesMobileExpanded: computed(() => store.state.isPropertiesMobileExpanded),
-      isAsideLgActive: computed(() => store.state.isAsideLgActive),
-      selectedTask,
-      taskMessages,
-      uploadStarted,
-      selectedTaskFiles: selectedTask.value.uid,
-      taskFiles: taskFiles,
-      myFiles: myFiles,
-      tasks: tasks,
-      Files: [],
-      navigator: navigator,
-      employeesByEmail: employeesByEmail,
-      tags: computed(() => store.state.tasks.tags),
-      employees: computed(() => store.state.employees.employees),
-      projects: computed(() => store.state.projects.projects),
-      colors: computed(() => store.state.colors.colors),
-      mycolors: computed(() => store.state.colors.mycolors),
-      cusers: cusers,
-      newArray: taskMessages.value.concat(taskFiles.value),
-      months: ['Января', 'Февраля', 'Марта', 'Апреля', 'Мая', 'Июня', 'Июля', 'Августа', 'Сентября', 'Октября', 'Ноября', 'Декабря'],
-      days: ['', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота', 'Воскресенье'],
-      day: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'],
-      firstcount: ['последний', 'первый', 'второй', 'третий', 'четвертый', 'последний'],
-      myday: ['вчера', 'cегодня', 'завтра'],
-      statuses: [
-        'status_not_begin',
-        'status_ready',
-        'task_by_link',
-        'status_note',
-        'status_in_work',
-        'status_task_ready',
-        'status_paused',
-        'status_cancelled',
-        'status_reject',
-        'status_refine'
-      ],
-      isEditable: false,
-      isEditableTaskName: false,
-      remi: {
-        date: new Date(),
-        timezone: 'Europe/Moscow'
-      },
-      replay: {
-        date: new Date(),
-        timezone: 'Europe/Moscow'
-      },
-      range: {
-        start: selectedTask.value.term_customer === '' ? new Date() : new Date(selectedTask.value.customer_date_begin),
-        end: selectedTask.value.term_customer === '' ? new Date() : new Date(selectedTask.value.customer_date_end)
-      },
-      masks: {
-        weekdays: 'WW'
-      },
-      timeStart: selectedTask.value.term_customer === '' ? '' : new Date(selectedTask.value.customer_date_begin).toLocaleTimeString(),
-      timeEnd: selectedTask.value.term_customer === '' ? '' : new Date(selectedTask.value.customer_date_end).toLocaleTimeString(),
-      showConfirm: false,
-      firstDayOfWeek: 2,
-      selected: {},
-      isOpen: false,
-      activeTab: '',
-      tabs: [],
-      defaultDate: selectedTask.value.term_customer,
-      isActive: false,
-      SeriesType: selectedTask.value.SeriesType,
-      SeriesAfterCount: selectedTask.value.SeriesAfterCount,
-      SeriesAfterType: selectedTask.value.SeriesAfterType,
-      SeriesWeekCount: selectedTask.value.SeriesWeekCount,
-      SeriesMonthType: selectedTask.value.SeriesMonthType === 1 ? selectedTask.value.SeriesMonthType : selectedTask.value.SeriesMonthWeekType,
-      SeriesMonthCount: selectedTask.value.SeriesMonthCount,
-      SeriesMonthDay: selectedTask.value.SeriesMonthDay,
-      SeriesMonthWeekType: selectedTask.value.SeriesMonthWeekType,
-      SeriesMonthDayOfWeek: selectedTask.value.SeriesMonthDayOfWeek,
-      SeriesYearType: selectedTask.value.SeriesYearType === 1 ? selectedTask.value.SeriesYearType : selectedTask.value.SeriesYearWeekType,
-      SeriesYearMonth: selectedTask.value.SeriesYearMonth === 0 ? '1' : selectedTask.value.SeriesYearMonth,
-      SeriesYearMonthDay: selectedTask.value.SeriesYearMonthDay,
-      SeriesYearWeekType: selectedTask.value.SeriesYearWeekType,
-      SeriesYearDayOfWeek: selectedTask.value.SeriesYearDayOfWeek,
-      selectedTaskcomment: selectedTask.value.comment,
-      ActiveSelect: selectedTask.value.SeriesMonthType,
-      ActiveYartype: selectedTask.value.SeriesYearType,
-      SeriesWeekMon: selectedTask.value.SeriesWeekMon === 1 ? 'mon' : ' ',
-      SeriesWeekTue: selectedTask.value.SeriesWeekTue === 1 ? 'tue' : ' ',
-      SeriesWeekWed: selectedTask.value.SeriesWeekWed === 1 ? 'wed' : ' ',
-      SeriesWeekThu: selectedTask.value.SeriesWeekThu === 1 ? 'thu' : ' ',
-      SeriesWeekFri: selectedTask.value.SeriesWeekFri === 1 ? 'fri' : ' ',
-      SeriesWeekSat: selectedTask.value.SeriesWeekSat === 1 ? 'sat' : ' ',
-      SeriesWeekSun: selectedTask.value.SeriesWeekSun === 1 ? 'sun' : ' ',
-      SeriesWeek: [selectedTask.value.SeriesWeekMon === 1 ? 'mon' : ' ', selectedTask.value.SeriesWeekTue === 1 ? 'tue' : ' ', selectedTask.value.SeriesWeekWed === 1 ? 'wed' : ' ', selectedTask.value.SeriesWeekThu === 1 ? 'thu' : ' ', selectedTask.value.SeriesWeekFri === 1 ? 'fri' : ' ', selectedTask.value.SeriesWeekSat === 1 ? 'sat' : ' ', selectedTask.value.SeriesWeekSun === 1 ? 'sun' : ' '],
-      myOptions: [
-        { id: 'mon', text: 'Пн' },
-        { id: 'tue', text: 'Вт' },
-        { id: 'wed', text: 'Ср' },
-        { id: 'thu', text: 'Чт' },
-        { id: 'fri', text: 'Пт' },
-        { id: 'sat', text: 'Сб' },
-        { id: 'sun', text: 'Вс' }
-      ],
-      showOnlyFiles: false,
-      checklisteditable: false,
-      timeEditStart: false,
-      timeEditEnd: false,
-      timeEndRange: false,
-      timeStartActive: false,
-      checklistshow: false,
-      checklistSavedNow: false,
-      TimeActive: false,
-      checklistshowbutton: false,
-      checklistshowelement: false,
-      // Повтор модель
-      // Чеки
-      noRepeat: false,
-      everyDayRepeat: false,
-      everyWeekRepeat: false,
-      everyMonthRepeat: false,
-      everyYearRepeat: false,
-      showpastefile: false,
-      // Модели selectedTask.value.SeriesWeekMon selectedTask.value.SeriesWeekTue selectedTask.value.SeriesWeekWed selectedTask.value.SeriesWeekThu selectedTask.value.SeriesWeekFri selectedTask.value.SeriesWeekSat selectedTask.value.SeriesWeekSun
-      currentAnswerMessageUid: '',
-      dragAndDropCapable: false,
-      files: []
-    }
-  },
-  computed: {
-    storeTasks () {
-      return this.$store.state.tasks.newtasks
-    },
-    modalBoxDeleteText () {
-      let text = 'Вы действительно хотите удалить задачу?'
-      if (this.storeTasks[this.selectedTask.uid]?.children?.length > 0) {
-        text = 'Вы действительно хотите удалить задачу с подзадачами в количестве: ' + this.storeTasks[this.selectedTask.uid]?.children?.length + '?'
-      }
-      return text
-    },
-    canEditChecklist () {
-      return (this.selectedTask.type === 1 || this.selectedTask.type === 2) && this.user.tarif !== 'free'
-    },
-    canCheckChecklist () {
-      return (this.canEditChecklist || this.selectedTask.type === 3) && this.user.tarif !== 'free'
-    },
-    canEditComment () {
-      return (this.selectedTask.type === 1 || this.selectedTask.type === 2)
-    },
-    placeholderComment () {
-      if (this.canEditComment) return 'Добавить заметку...'
-      return ''
-    },
-    isInFocus () {
-      return this.selectedTask.focus === 1
-    },
-    isAccessVisible () {
-      if (this.selectedTask.emails) return true
-      if (this.selectedTask.type === 1 || this.selectedTask.type === 2) return true
-      return false
-    },
-    taskMessagesAndFiles () {
-      return this.$store.state.taskfilesandmessages.messages
-    },
-    messageQuoteString () {
-      if (!this.currentAnswerMessageUid) return ''
-      const quotedMessage = this.taskMessages.find(message => message.uid === this.currentAnswerMessageUid)
-      if (!quotedMessage) return ''
-      let msg = quotedMessage.msg.trim()
-      msg = msg.replaceAll('&amp;', '&')
-      msg = msg.replaceAll('&lt;', '<')
-      msg = msg.replaceAll('&gt;', '>')
-      return msg
-    },
-    fileQuoteString () {
-      if (!this.currentAnswerMessageUid) return ''
-      const quotedFile = this.taskMessages.find(message => message.uid === this.currentAnswerMessageUid)
-      console.log(quotedFile)
-      if (!quotedFile) return ''
-      let msg = quotedFile.msg.trim()
-      msg = msg.replaceAll('&amp;', '&')
-      msg = msg.replaceAll('&lt;', '<')
-      msg = msg.replaceAll('&gt;', '>')
-      return msg
-    },
-    messageQuoteUser () {
-      if (!this.currentAnswerMessageUid) return ''
-      const quotedMessage = this.taskMessages.find(message => message.uid === this.currentAnswerMessageUid)
-      if (!quotedMessage) return ''
-      return this.employees[quotedMessage.uid_creator]?.name ?? '???'
-    }
-  },
-  watch: {
-    selectedTask: {
-      immediate: true,
-      handler: function (val) {
-        this.showOnlyFiles = false
-        this.currentAnswerMessageUid = ''
-        this.$nextTick(function () {
-          this.onInputTaskMsg()
-        })
-        console.log('selectedTask', val)
-      }
-    }
-  },
-  mounted: function () {
-    this.$nextTick(function () {
-      // Код, который будет запущен только после
-      // отображения всех представлений
-      this.$refs.taskMsgEdit.addEventListener('paste', this.onPasteEvent, { once: true })
-    })
-  },
-  methods: {
-    getFixedCommentName () {
-      return this.selectedTask.name.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('\n', '<br/>')
-    },
-    print: function (value) {
-      console.log(value)
-    },
-    dragStart: function (event) {
-      event.dataTransfer.setData('Text', event.target.id)
-    },
-    dragging: function (event) {
-      document.getElementById('demo').innerHTML =
-        'The p element is being dragged'
-    },
-    allowDrop: function (event) {
-    },
-    drop: function (e) {
-      const item = e.files.clipboardData.items
-      console.log(item)
-    },
-    editable: function () {
-      if (this.cusers?.current_user_uid === this.selectedTask.uid_customer) {
-        this.isEditableTaskName = true
-        this.$nextTick(() => {
-          this.$refs.TaskName.focus()
-        })
-      }
-    },
-    uuidv4: function () {
-      return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, c =>
-        (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
-      )
-    },
-    sendTaskMsg: function (msg) {
-      // this.showAllMessages = true
-      // const date = new Date()
-      // const month = this.pad2(date.getUTCMonth() + 1)
-      // const day = this.pad2(date.getUTCDate())
-      // const year = this.pad2(date.getUTCFullYear())
-      // const hours = this.pad2(date.getUTCHours())
-      // const minutes = this.pad2(date.getUTCMinutes())
-      // const seconds = this.pad2(date.getUTCSeconds())
-      // const dateCreate = year + '-' + month + '-' + day + 'T' + hours + ':' + minutes + ':' + seconds
-      let msgtask = msg || this.taskMsg
-      msgtask = msgtask.trim()
-      msgtask = msgtask.replaceAll('&', '&amp;')
-      msgtask = msgtask.replaceAll('<', '&lt;')
-      msgtask = msgtask.replaceAll('>', '&gt;')
-      const uid = this.uuidv4()
-      const data = {
-        uid_task: this.selectedTask.uid,
-        uid: uid,
-        uid_creator: this.cusers?.current_user_uid,
-        uid_msg: uid,
-        date_create: new Date().toISOString(),
-        deleted: 0,
-        uid_quote: this.currentAnswerMessageUid,
-        text: msgtask,
-        msg: msgtask
-      }
-      if (data.text) {
-        this.$store.dispatch(CREATE_MESSAGE_REQUEST, data).then(
-          resp => {
-          // Answer last inspector message
-            const lastInspectorMessage = this.taskMessagesAndFiles.slice().reverse().find(message => message.uid_creator === 'inspector')
-            if (lastInspectorMessage && this.selectedTask.uid_performer === this.cusers?.current_user_uid) {
-              this.$store.dispatch(INSPECTOR.ANSWER_INSPECTOR_TASK, { id: lastInspectorMessage.id, answer: 1 }).then(() => {
-                lastInspectorMessage.performer_answer = 1
-              })
-            }
-            this.selectedTask.has_msgs = true
-            if (this.selectedTask.type === 2 || this.selectedTask.type === 3) {
-              if ([1, 5, 7, 8].includes(this.selectedTask.status)) {
-                if (((this.selectedTask.uid_customer === this.cusers?.current_user_uid) && ((this.selectedTask.status === 1) || (this.selectedTask.status === 5)))) {
-                  this.selectedTask.status = 9
-                }
-              }
-              this.selectedTask.msg = decodeURIComponent(this.taskMsg)
-              const wrapperElement = document.getElementById('content').lastElementChild
-              wrapperElement.scrollIntoView({ behavior: 'smooth' })
-            }
-          })
-      }
-      this.currentAnswerMessageUid = ''
-      this.taskMsg = ''
-      this.$nextTick(function () {
-        this.onInputTaskMsg()
-      })
-    },
-    onInputTaskMsg: function () {
-      // после этого рассчитает новый scrollHeight
-      this.$refs.taskMsgEdit.style.height = '40px'
-      //
-      const defAnswerHeight = this.currentAnswerMessageUid ? 36 + 8 : 0
-      const defSendHeight = 96
-      const defEditHeight = 40
-      const defEditHeightMax = 100
-      const scrollHeight = this.$refs.taskMsgEdit.scrollHeight
-      const scrollHeightFix = scrollHeight < defEditHeight ? defEditHeight : scrollHeight > defEditHeightMax ? defEditHeightMax : scrollHeight
-      const sendHeight = defSendHeight + scrollHeightFix + defAnswerHeight - defEditHeight
-      //
-      this.$refs.taskMsgEdit.style.height = scrollHeight + 'px'
-      document.documentElement.style.setProperty('--hex-parent-height', sendHeight + 'px')
-    },
-    addNewLineTaskMsg: function () {
-      this.taskMsg += '\n'
-      this.$nextTick(function () {
-        this.onInputTaskMsg()
-        this.$refs.taskMsgEdit.scrollTo(0, this.$refs.taskMsgEdit.scrollHeight)
-      })
-    },
-    onPasteEvent: function (e) {
-      const items = (e.clipboardData || e.originalEvent.clipboardData).items
-      let loadFile = false
-      for (const index in items) {
-        const item = items[index]
-        if (item.kind === 'file') {
-          const blob = item.getAsFile()
-          const formData = new FormData()
-          formData.append('files', blob)
-          const data = {
-            uid_task: this.selectedTask.uid,
-            name: formData
-          }
-          loadFile = true
-          this.isloading = true
-          this.$store.dispatch(CREATE_FILES_REQUEST, data).then(
-            resp => {
-              this.isloading = false
-              // ставим статус "на доработку" когда прикладываем файл
-              if (this.selectedTask.type === 2 || this.selectedTask.type === 3) {
-                if ([1, 5, 7, 8].includes(this.selectedTask.status)) {
-                  if (((this.selectedTask.uid_customer === this.cusers?.current_user_uid) && ((this.selectedTask.status === 1) || (this.selectedTask.status === 5)))) {
-                    this.selectedTask.status = 9
-                  }
-                }
-              }
-              // загрузка завершена - подписываемся опять
-              this.$refs.taskMsgEdit.addEventListener('paste', this.onPasteEvent, { once: true })
-            })
-          setTimeout(() => {
-            const elmnt = document.getElementById('content').lastElementChild
-            elmnt.scrollIntoView({ behavior: 'smooth' })
-          }, 100)
-        }
-      }
-      if (!loadFile) {
-        // не вставка файла - подписываемся опять
-        this.$refs.taskMsgEdit.addEventListener('paste', this.onPasteEvent, { once: true })
-      }
-    },
-    onReAssignToUser: function (userEmail) {
-      console.log('onReAssignToUser', userEmail)
-      console.log('onReAssignToUser is not resolved')
-      const data = {
-        uid: this.selectedTask.uid,
-        value: userEmail
-      }
-      this.$store.dispatch(TASK.CHANGE_TASK_REDELEGATE, data).then(
-        resp => {
-          console.log(resp.data)
-          this.$store.commit(TASK.SUBTASKS_REQUEST, resp.data)
-        }
-      )
-    },
-    shouldShowFreePerformer () {
-      if (this.user.tarif === 'free') {
-        this.showFreeModalPerform = true
-      }
-    },
-    onChangePerformer: function (userEmail) {
-      console.log('onChangePerformer', userEmail)
-      const taskUid = this.selectedTask.uid
-      const data = {
-        uid: this.selectedTask.uid,
-        value: userEmail
-      }
-      this.$store.dispatch(TASK.CHANGE_TASK_PERFORMER, data).then(
-        resp => {
-          this.selectedTask.email_performer = resp.data.email_performer
-          this.selectedTask.perform_time = resp.data.perform_time
-          this.selectedTask.performerreaded = resp.data.performerreaded
-          this.selectedTask.uid_performer = resp.data.uid_performer
-          this.selectedTask.type = resp.data.type
-        }
-      )
-      const navStack = computed(() => this.$store.state.navbar.navStack)
-      if (navStack.value.length && navStack.value.length > 0) {
-        const navStackUid = navStack.value[0]?.value?.uid
-        if (navStackUid === '901841d9-0016-491d-ad66-8ee42d2b496b') {
-          this.$store.commit(TASK.REMOVE_TASK, taskUid)
-          this.$store.dispatch('asidePropertiesToggle', false)
-        }
-      }
-    },
-    onChangeDates: function (begin, end) {
-      const taskUid = this.selectedTask.uid
-      const data = {
-        uid_task: this.selectedTask.uid,
-        str_date_begin: begin,
-        str_date_end: end,
-        reset: 0
-      }
-      this.$store.dispatch(TASK.CHANGE_TASK_DATE, data).then(resp => {
-        this.selectedTask.is_overdue = resp.is_overdue
-        this.selectedTask.term_user = resp.term
-        this.selectedTask.date_begin = begin
-        this.selectedTask.date_end = end
-
-        if (!shouldAddTaskIntoList(this.selectedTask)) {
-          this.$store.commit(TASK.REMOVE_TASK, taskUid)
-          this.$store.dispatch('asidePropertiesToggle', false)
-        }
-      })
-    },
-    onChangeAccess: function (checkEmails) {
-      console.log(this.selectedTask)
-      const emails = checkEmails.join('..')
-      console.log('onChangeAccess', emails)
-      const data = {
-        uid: this.selectedTask.uid,
-        value: emails
-      }
-      this.$store.dispatch(TASK.CHANGE_TASK_ACCESS, data).then(
-        resp => {
-          this.selectedTask.emails = emails
-        }
-      )
-    },
-    onChangeProject: function (projectUid) {
-      console.log('onChangeProject', projectUid)
-      const data = {
-        uid: this.selectedTask.uid,
-        value: projectUid
-      }
-      this.$store.dispatch(TASK.CHANGE_TASK_PROJECT, data).then(
-        resp => {
-          this.selectedTask.uid_project = projectUid
-        }
-      )
-    },
-    onChangeTags: function (tags) {
-      console.log('onChangeTags', tags)
-      const data = {
-        uid: this.selectedTask.uid,
-        tags: tags
-      }
-      this.$store.dispatch(TASK.CHANGE_TASK_TAGS, data).then(
-        resp => {
-          this.selectedTask.tags = [...tags]
-        }
-      )
-    },
-    onChangeColor: function (colorUid) {
-      console.log('onChangeColor', colorUid)
-      const data = {
-        uid: this.selectedTask.uid,
-        value: colorUid
-      }
-      this.$store.dispatch(TASK.CHANGE_TASK_COLOR, data).then(
-        resp => {
-          this.selectedTask.uid_marker = colorUid
-        }
-      )
-    },
-    onChangeComment: function (text) {
-      const data = {
-        uid: this.selectedTask.uid,
-        value: text
-      }
-      this.$store.dispatch(TASK.CHANGE_TASK_COMMENT, data)
-    },
-    endChangeComment: function (text) {
-      // чтобы у нас в интерфейсе поменялось
-      // потому что на changeComment он только
-      // на сервер отправляет и всё
-      this.selectedTask.comment = text
-    },
-    gotoParentNode (uid) {
-      document.getElementById(uid).parentNode.click({ preventScroll: false })
-    },
-    onAnswerMessage: function (uid) {
-      console.log(this.taskMessages)
-      this.currentAnswerMessageUid = uid
-      this.$nextTick(function () {
-        this.onInputTaskMsg()
-      })
-    },
-    onChangeChecklist (checklist) {
-      console.log('onChangeChecklist:', checklist.replaceAll('\r\n\r\n', ' | ').replaceAll('\r\n', ' '))
-      const data = {
-        uid_task: this.selectedTask.uid,
-        checklist: checklist
-      }
-      this.checklistSavedNow = true
-      this.$store.dispatch(TASK.CHANGE_TASK_CHECKLIST, data).then(
-        resp => {
-          this.selectedTask.checklist = checklist
-        }
-      ).finally(() => {
-        this.checklistSavedNow = false
-      })
-    },
-    onAddChecklistComplete () {
-      this.checklistshow = false
-    }
-  }
-}
-</script>
-
 <template>
   <ModalBoxDelete
     v-if="showConfirm"
     title="Удалить задачу"
     :text="modalBoxDeleteText"
     @cancel="showConfirm = false"
-    @yes="delTask(selectedTask)"
+    @yes="deleteTask(selectedTask)"
   />
   <ChatLimit
     v-if="showFreeModalChat"
@@ -1385,7 +46,7 @@ export default {
     </div>
     <div
       id="generalscroll"
-      class="column-resize relative"
+      class="column-resize relative overflow-hidden"
     >
       <div />
       <div
@@ -1438,7 +99,7 @@ export default {
         <TaskPropsButtonPerform
           v-if="selectedTask.status !== 3 && selectedTask.type !== 4 && !((selectedTask.uid_customer !== user?.current_user_uid) && (selectedTask.status === 1))"
           :task-type="selectedTask.type"
-          :current-user-uid="cusers?.current_user_uid"
+          :current-user-uid="user?.current_user_uid"
           :performer-email="selectedTask.email_performer"
           @changePerformer="onChangePerformer"
           @reAssign="onReAssignToUser"
@@ -1447,7 +108,7 @@ export default {
         <!-- Кнопка Доступ -->
         <TaskPropsButtonAccess
           v-if="isAccessVisible && !((selectedTask.uid_customer !== user?.current_user_uid) && (selectedTask.status === 1))"
-          :current-user-uid="cusers?.current_user_uid"
+          :current-user-uid="user?.current_user_uid"
           :access-emails="selectedTask.emails ? selectedTask.emails.split('..') : []"
           :can-edit="selectedTask.type === 1 || selectedTask.type === 2"
           :is-customer="selectedTask.uid_customer === user?.current_user_uid"
@@ -1805,7 +466,7 @@ export default {
                       <div class="form-group">
                         <div class="form-everyyear-container">
                           <div
-                            v-for="day in (SeriesYearMonth === 2 ? 28 : 31)"
+                            v-for="day in 28"
                             :key="day"
                             class="form_radio_btn-custom"
                           >
@@ -1953,7 +614,7 @@ export default {
         />
         <!-- Чек лист -->
         <div
-          v-if="!selectedTask.checklist && selectedTask.type!==4 && selectedTask.type!==3 && ((selectedTask.uid_customer === user?.current_user_uid) && (selectedTask.status !== 1))"
+          v-if="!selectedTask.checklist && selectedTask.type!== 4 && selectedTask.type !== 3 && ((selectedTask.uid_customer === user?.current_user_uid) && (selectedTask.status !== 1))"
           class="mt-3 tags-custom dark:bg-gray-800 dark:text-gray-100"
           @click="createChecklist"
         >
@@ -2024,7 +685,7 @@ export default {
         id="content"
         class="mt-3 h-3/6"
         :task-messages="taskMessages"
-        :current-user-uid="cusers?.current_user_uid"
+        :current-user-uid="user?.current_user_uid"
         :show-all-messages="showAllMessages"
         :show-only-files="showOnlyFiles"
         @answerMessage="onAnswerMessage"
@@ -2081,10 +742,6 @@ export default {
     <div
       id="drop-area"
       class="input-group bg-gray-100 rounded-[10px] mt-2"
-      @drop="drop($refs.file_attach)"
-      @dragover="allowDrop($refs.file_attach)"
-      @dragstart="dragStart"
-      @drag="dragging"
     >
       <span class="input-group-addon input-group-attach dark:bg-gray-800 dark:text-gray-100">
         <div class="example-1">
@@ -2120,10 +777,6 @@ export default {
         placeholder="Напишите сообщение..."
         rows="58"
         @input="onInputTaskMsg"
-        @drop="drop($refs.file_attach)"
-        @dragover="allowDrop($refs.file_attach)"
-        @dragstart="dragStart"
-        @drag="dragging"
         @keydown.enter.exact.prevent="sendTaskMsg()"
         @keydown.enter.shift.exact.prevent="addNewLineTaskMsg"
       />
@@ -2159,6 +812,839 @@ export default {
   </div>
 </template>
 
+<script>
+import Popper from 'vue3-popper'
+import close from '@/icons/close.js'
+import { CREATE_MESSAGE_REQUEST, DELETE_MESSAGE_REQUEST } from '@/store/actions/taskmessages'
+import { CREATE_FILES_REQUEST, DELETE_FILE_REQUEST } from '@/store/actions/taskfiles'
+import * as TASK from '@/store/actions/tasks'
+import * as INSPECTOR from '@/store/actions/inspector'
+import { copyText } from 'vue3-clipboard'
+
+import linkify from 'vue-linkify'
+import { maska } from 'maska'
+
+import { shouldAddTaskIntoList } from '@/websync/utils'
+import ModalBoxDelete from '@/components/Common/ModalBoxDelete.vue'
+import TaskPropsButtonDots from '@/components/TaskProperties/TaskPropsButtonDots.vue'
+import TaskPropsButtonFocus from '@/components/TaskProperties/TaskPropsButtonFocus.vue'
+import TaskPropsChatMessages from '@/components/TaskProperties/TaskPropsChatMessages.vue'
+import TaskPropsCommentEditor from '@/components/TaskProperties/TaskPropsCommentEditor.vue'
+import TaskPropsButtonAccess from '@/components/TaskProperties/TaskPropsButtonAccess.vue'
+import TaskPropsButtonSetDate from '@/components/TaskProperties/TaskPropsButtonSetDate.vue'
+import TaskPropsButtonTags from '@/components/TaskProperties/TaskPropsButtonTags.vue'
+import TaskPropsButtonPerform from '@/components/TaskProperties/TaskPropsButtonPerform.vue'
+import TaskPropsButtonProject from '@/components/TaskProperties/TaskPropsButtonProject.vue'
+import TaskPropsButtonColor from '@/components/TaskProperties/TaskPropsButtonColor.vue'
+import TaskPropsChecklist from '@/components/TaskProperties/TaskPropsChecklist.vue'
+
+import RepeatLimit from '@/components/properties/RepeatLimit'
+import ChecklistLimit from '@/components/properties/ChecklistLimit'
+import ChatLimit from '@/components/properties/ChatLimit'
+import PerformerLimit from '@/components/TaskProperties/PerformerLimit'
+
+export default {
+  components: {
+    TaskPropsButtonDots,
+    TaskPropsButtonFocus,
+    TaskPropsChatMessages,
+    PerformerLimit,
+    TaskPropsButtonAccess,
+    ChecklistLimit,
+    RepeatLimit,
+    ChatLimit,
+    TaskPropsButtonSetDate,
+    TaskPropsButtonTags,
+    TaskPropsButtonPerform,
+    TaskPropsButtonProject,
+    TaskPropsButtonColor,
+    Popper,
+    ModalBoxDelete,
+    TaskPropsCommentEditor,
+    TaskPropsChecklist
+  },
+  directives: {
+    linkify,
+    maska
+  },
+  data () {
+    return {
+      close,
+      showAllMessages: false,
+      showFreeModalCheck: false,
+      showFreeModalRepeat: false,
+      showFreeModalChat: false,
+      showFreeModalPerform: false,
+      timeStartActive: false,
+      checklistshow: false,
+      checklistSavedNow: false,
+      noRepeat: false,
+      everyDayRepeat: false,
+      everyWeekRepeat: false,
+      everyMonthRepeat: false,
+      everyYearRepeat: false,
+      isEditable: false,
+      isEditableTaskName: false,
+      showOnlyFiles: false,
+      showConfirm: false,
+
+      currentAnswerMessageUid: '',
+      taskMsg: '',
+      files: [], // replace this with const in function createTaskFiles
+
+      months: ['Января', 'Февраля', 'Марта', 'Апреля', 'Мая', 'Июня', 'Июля', 'Августа', 'Сентября', 'Октября', 'Ноября', 'Декабря'],
+      days: ['', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота', 'Воскресенье'],
+      day: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'],
+      firstcount: ['последний', 'первый', 'второй', 'третий', 'четвертый', 'последний'],
+      myOptions: [
+        { id: 'mon', text: 'Пн' },
+        { id: 'tue', text: 'Вт' },
+        { id: 'wed', text: 'Ср' },
+        { id: 'thu', text: 'Чт' },
+        { id: 'fri', text: 'Пт' },
+        { id: 'sat', text: 'Сб' },
+        { id: 'sun', text: 'Вс' }
+      ],
+
+      range: {
+        start: this.selectedTask?.term_customer === '' ? new Date() : new Date(this.selectedTask?.customer_date_begin),
+        end: this.selectedTask?.term_customer === '' ? new Date() : new Date(this.selectedTask?.customer_date_end)
+      },
+      timeStart: this.selectedTask?.term_customer === '' ? '' : new Date(this.selectedTask?.customer_date_begin).toLocaleTimeString(),
+      timeEnd: this.selectedTask?.term_customer === '' ? '' : new Date(this.selectedTask?.customer_date_end).toLocaleTimeString(),
+      SeriesType: this.selectedTask?.SeriesType,
+      SeriesAfterCount: this.selectedTask?.SeriesAfterCount,
+      SeriesAfterType: this.selectedTask?.SeriesAfterType,
+      SeriesWeekCount: this.selectedTask?.SeriesWeekCount,
+      SeriesMonthType: this.selectedTask?.SeriesMonthType === 1 ? this.selectedTask?.SeriesMonthType : this.selectedTask?.SeriesMonthWeekType,
+      SeriesMonthCount: this.selectedTask?.SeriesMonthCount,
+      SeriesMonthDay: this.selectedTask?.SeriesMonthDay,
+      SeriesMonthWeekType: this.selectedTask?.SeriesMonthWeekType,
+      SeriesMonthDayOfWeek: this.selectedTask?.SeriesMonthDayOfWeek,
+      SeriesYearType: this.selectedTask?.SeriesYearType === 1 ? this.selectedTask?.SeriesYearType : this.selectedTask?.SeriesYearWeekType,
+      SeriesYearMonth: this.selectedTask?.SeriesYearMonth === 0 ? '1' : this.selectedTask?.SeriesYearMonth,
+      SeriesYearMonthDay: this.selectedTask?.SeriesYearMonthDay,
+      SeriesYearWeekType: this.selectedTask?.SeriesYearWeekType,
+      SeriesYearDayOfWeek: this.selectedTask?.SeriesYearDayOfWeek,
+      ActiveSelect: this.selectedTask?.SeriesMonthType,
+      ActiveYartype: this.selectedTask?.SeriesYearType,
+      SeriesWeekMon: this.selectedTask?.SeriesWeekMon === 1 ? 'mon' : ' ',
+      SeriesWeekTue: this.selectedTask?.SeriesWeekTue === 1 ? 'tue' : ' ',
+      SeriesWeekWed: this.selectedTask?.SeriesWeekWed === 1 ? 'wed' : ' ',
+      SeriesWeekThu: this.selectedTask?.SeriesWeekThu === 1 ? 'thu' : ' ',
+      SeriesWeekFri: this.selectedTask?.SeriesWeekFri === 1 ? 'fri' : ' ',
+      SeriesWeekSat: this.selectedTask?.SeriesWeekSat === 1 ? 'sat' : ' ',
+      SeriesWeekSun: this.selectedTask?.SeriesWeekSun === 1 ? 'sun' : ' ',
+      SeriesWeek: [
+        this.selectedTask?.SeriesWeekMon === 1 ? 'mon' : ' ',
+        this.selectedTask?.SeriesWeekTue === 1 ? 'tue' : ' ',
+        this.selectedTask?.SeriesWeekWed === 1 ? 'wed' : ' ',
+        this.selectedTask?.SeriesWeekThu === 1 ? 'thu' : ' ',
+        this.selectedTask?.SeriesWeekFri === 1 ? 'fri' : ' ',
+        this.selectedTask?.SeriesWeekSat === 1 ? 'sat' : ' ',
+        this.selectedTask?.SeriesWeekSun === 1 ? 'sun' : ' '
+      ]
+    }
+  },
+  computed: {
+    taskMessages () { return this.$store.state.taskfilesandmessages.messages },
+    uploadStarted () { return this.$store.state.taskfilesandmessages.uploadStarted },
+    selectedTask () { return this.$store.state.tasks.selectedTask },
+    isPropertiesMobileExpanded () { return this.$store.state.isPropertiesMobileExpanded },
+    taskMessagesAndFiles () { return this.$store.state.taskfilesandmessages.messages },
+    user () { return this.$store.state.user.user },
+    tasks () { return this.$store.state.tasks.newtasks },
+    isDark () { return this.$store.state.darkMode },
+    calendarDates () { return this.$store.state.calendar[1].dates },
+    daysWithTasks () { return this.$store.state.tasks.daysWithTasks },
+    navStack () { return this.$store.state.navbar.navStack },
+    isInFocus () { return this.selectedTask?.focus === 1 },
+    canEditChecklist () { return (this.selectedTask.type === 1 || this.selectedTask.type === 2) && this.user.tarif !== 'free' },
+    canCheckChecklist () { return (this.canEditChecklist || this.selectedTask.type === 3) && this.user.tarif !== 'free' },
+    canEditComment () { return (this.selectedTask.type === 1 || this.selectedTask.type === 2) }
+  },
+  watch: {
+    selectedTask: {
+      immediate: true,
+      handler: function (val) {
+        this.showOnlyFiles = false
+        this.currentAnswerMessageUid = ''
+        this.$nextTick(function () {
+          this.onInputTaskMsg()
+        })
+      }
+    }
+  },
+  mounted: function () {
+    this.$nextTick(function () {
+      // Код, который будет запущен только после
+      // отображения всех представлений
+      this.$refs.taskMsgEdit.addEventListener('paste', this.onPasteEvent, { once: true })
+    })
+  },
+  methods: {
+    closeProperties () {
+      this.$store.dispatch('asidePropertiesToggle', false)
+    },
+    pad2 (n) {
+      return (n < 10 ? '0' : '') + n
+    },
+    uuidv4 () {
+      return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, c =>
+        (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
+      )
+    },
+    changeFocus (uid, value) {
+      this.$store.dispatch(TASK.CHANGE_TASK_FOCUS, { uid: uid, value: value }).then(
+        resp => {
+          this.selectedTask.focus = value
+        })
+    },
+    createTaskFile (event) {
+      if (this.user.tarif === 'free') {
+        this.showFreeModalChat = true
+        return
+      }
+      this.files = event.target.files
+      const formData = new FormData()
+      for (let i = 0; i < this.files.length; i++) {
+        const file = this.files[i]
+        formData.append('files[' + i + ']', file)
+      }
+      const data = {
+        uid_task: this.selectedTask.uid,
+        name: formData
+      }
+
+      for (const formItem of formData) {
+        this.$store.commit(
+          'createLoadingFile',
+          {
+            msg: formItem[1].name,
+            uid_creator: this.user.current_user_uid,
+            date_create: new Date().toISOString(),
+            file_size: formItem[1].size
+          }
+        )
+      }
+
+      this.$store.dispatch(CREATE_FILES_REQUEST, data).then(
+        resp => {
+          if (this.selectedTask.type === 2 || this.selectedTask.type === 3) {
+            if ([1, 5, 7, 8].includes(this.selectedTask.status)) {
+              this.selectedTask.status = 9
+            }
+          }
+          this.selectedTask.has_files = true
+          if (this.selectedTask.uid_customer === this.user.current_user_uid && (this.selectedTask.status === 5 || this.selectedTask.status === 7)) {
+            // to refine
+            this.selectedTask.status = 9
+          }
+        })
+      this.infoComplete = true
+      setTimeout(() => {
+        const element = document.getElementById('content').lastElementChild
+        element.scrollIntoView({ behavior: 'smooth' })
+      }, 100)
+    },
+    deleteTask () {
+      this.showConfirm = false
+      if (this.isPropertiesMobileExpanded) {
+        this.$store.dispatch('asidePropertiesToggle', false)
+      }
+      const data = {
+        uid: this.selectedTask.uid
+      }
+      this.$store.dispatch(TASK.REMOVE_TASK, data.uid)
+        .then(() => {
+          this.$store.dispatch(TASK.DAYS_WITH_TASKS)
+            .then(() => {
+              // TODO: need to be refactored
+              for (let i = 0; i < this.calendarDates.length; i++) {
+                const date = this.calendarDates[i].getDate() + '-' + (this.calendarDates[i].getMonth() + 1) + '-' + this.calendarDates[i].getFullYear()
+                if (!this.daysWithTasks.includes(date)) {
+                  this.$store.state.calendar[1].dates.splice(this.$store.state.calendar[1].dates.indexOf(this.$calendarDates.value[i]), 1)
+                }
+              }
+            })
+        })
+    },
+    deleteTaskMsg (uid) {
+      this.$store.dispatch(DELETE_MESSAGE_REQUEST, { uid: uid }).then(
+        resp => {
+          this.selectedTask.has_msgs = true
+          this.taskMessages.find(message => message.uid_msg) ? this.taskMessages.find(message => message.uid_msg === uid).deleted = 1 : this.taskMessages.find(message => message.uid === uid).deleted = 1
+        })
+    },
+    deleteFiles (uid) {
+      this.$store.dispatch(DELETE_FILE_REQUEST, { uid: uid })
+    },
+    changeName (event) {
+      const data = {
+        uid: this.selectedTask.uid,
+        value: event.target.innerText
+      }
+      this.$store.dispatch(TASK.CHANGE_TASK_NAME, data)
+    },
+    handleInput () {
+      const timestart = this.timeStart === '' ? 'T00:00:00' : 'T' + this.timeStart
+      const timeend = this.timeEnd === '' ? '' : 'T' + this.timeEnd + ':00'
+      const starttime = new Date(this.range.start).getFullYear() + '-' + (this.pad2(new Date(this.range.start).getMonth() + 1)) + '-' + this.pad2(new Date(this.range.start).getDate()) + timestart
+      const startend = new Date(this.range.end).getFullYear() + '-' + (this.pad2(new Date(this.range.start).getMonth() + 1)) + '-' + this.pad2(new Date(this.range.end).getDate()) + timeend
+      const data = {
+        uid_task: this.selectedTask.uid,
+        str_date_begin: starttime,
+        str_date_end: startend,
+        reset: 0
+      }
+      this.$store.dispatch(TASK.CHANGE_TASK_DATE, data).then(
+        resp => {
+          this.selectedTask.term_customer = resp.data.term
+          this.selectedTask.is_overdue = resp.data.is_overdue
+          this.timeStart = timestart !== '' ? '' : timestart
+          this.timeEnd = timeend !== '' ? '' : timeend
+          this.timeStartActive = true
+        })
+    },
+    resetRepeat () {
+      const data = {
+        uid: this.selectedTask.uid
+      }
+      this.$store.dispatch(TASK.RESET_REPEAT_CHANGE, data).then(
+        resp => {
+          this.selectedTask.SeriesType = 0
+          this.selectedTask.SeriesAfterType = 0
+          this.selectedTask.SeriesAfterCount = 0
+          this.selectedTask.SeriesWeekCount = 0
+          this.selectedTask.SeriesWeekMon = 0
+          this.selectedTask.SeriesWeekTue = 0
+          this.selectedTask.SeriesWeekWed = 0
+          this.selectedTask.SeriesWeekThu = 0
+          this.selectedTask.SeriesWeekFri = 0
+          this.selectedTask.SeriesWeekSat = 0
+          this.selectedTask.SeriesWeekSun = 0
+          this.selectedTask.SeriesMonthType = 0
+          this.selectedTask.SeriesMonthCount = 0
+          this.selectedTask.SeriesMonthDay = 0
+          this.selectedTask.SeriesMonthWeekType = 0
+          this.selectedTask.SeriesMonthDayOfWeek = 0
+          this.selectedTask.SeriesYearType = 0
+          this.selectedTask.SeriesYearMonth = 0
+          this.selectedTask.SeriesYearMonthDay = 0
+          this.selectedTask.SeriesYearWeekType = 0
+          this.selectedTask.SeriesYearDayOfWeek = 0
+          this.noRepeat = true
+          this.everyDayRepeat = false
+          this.everyWeekRepeat = false
+          this.everyMonthRepeat = false
+          this.everyYearRepeat = false
+        })
+    },
+    copyurl (e) {
+      copyText(`${window.location.origin}/task/${this.selectedTask.uid}`, undefined, (error, event) => {
+        console.log(error, event)
+      })
+    },
+    changeEveryMonthType (value) {
+      this.ActiveSelect = value
+      this.SeriesMonthDay = 0
+    },
+    changeEveryYearType (value) {
+      this.ActiveYartype = value
+      this.SeriesYearMonth = 0
+      this.SeriesYearMonthDay = 0
+    },
+    setCursorPosition (oInput, oStart, oEnd) {
+      if (oInput.setSelectionRange) {
+        oInput.setSelectionRange(oStart, oEnd)
+      } else if (oInput.createTextRange) {
+        const range = oInput.createTextRange()
+        range.collapse(true)
+        range.moveEnd('character', oEnd)
+        range.moveStart('character', oStart)
+        range.select()
+      }
+    },
+    changeComment (event) {
+      if (!this.canEditComment) return
+      const message = event.target.innerText.trim()
+      this.setCursorPosition(event.target.id, 0, 100)
+      const data = {
+        uid: this.selectedTask.uid,
+        value: message
+      }
+      this.$store.dispatch(TASK.CHANGE_TASK_COMMENT, data)
+    },
+    removeEditTaskName (event) {
+      this.isEditableTaskName = false
+      const taskName = event.target.innerText
+      this.selectedTask.name = taskName
+    },
+    scrollDown () {
+      this.showAllMessages = true
+      this.infoComplete = true
+      setTimeout(() => {
+        const elmnt = document.getElementById('content').lastElementChild
+        elmnt.scrollIntoView()
+      }, 200)
+    },
+    createChecklist () {
+      if (this.user.tarif === 'free') {
+        this.showFreeModalCheck = true
+        return
+      }
+      this.checklistshow = true
+    },
+    SaveRepeat () {
+      if (this.$refs.SeriesType.value === '0') {
+        const data = {
+          uid: this.selectedTask.uid
+        }
+        this.$store.dispatch(TASK.RESET_REPEAT_CHANGE, data).then(
+          resp => {
+            this.selectedTask.SeriesType = 0
+            this.selectedTask.SeriesType = 0
+            this.selectedTask.SeriesAfterType = 0
+            this.selectedTask.SeriesAfterCount = 0
+            this.selectedTask.SeriesWeekCount = 0
+            this.selectedTask.SeriesWeekMon = 0
+            this.selectedTask.SeriesWeekTue = 0
+            this.selectedTask.SeriesWeekWed = 0
+            this.selectedTask.SeriesWeekThu = 0
+            this.selectedTask.SeriesWeekFri = 0
+            this.selectedTask.SeriesWeekSat = 0
+            this.selectedTask.SeriesWeekSun = 0
+            this.selectedTask.SeriesMonthType = 0
+            this.selectedTask.SeriesMonthCount = 0
+            this.selectedTask.SeriesMonthDay = 0
+            this.selectedTask.SeriesMonthWeekType = 0
+            this.selectedTask.SeriesMonthDayOfWeek = 0
+            this.selectedTask.SeriesYearType = 0
+            this.selectedTask.SeriesYearMonth = 0
+            this.selectedTask.SeriesYearMonthDay = 0
+            this.selectedTask.SeriesYearWeekType = 0
+            this.selectedTask.SeriesYearDayOfWeek = 0
+          })
+      }
+      if (this.$refs.SeriesType.value === '1') {
+        const data = {
+          uid: this.selectedTask.uid,
+          type: this.$refs.SeriesAfterType.value,
+          every_value: this.$refs.SeriesAfterCount.value
+        }
+        this.$store.dispatch(TASK.EVERY_DAY_CHANGE, data).then(
+          resp => {
+            this.selectedTask.SeriesType = 1
+            this.selectedTask.SeriesAfterType = resp.data.SeriesAfterType
+            this.selectedTask.SeriesAfterCount = resp.data.SeriesAfterCount
+          })
+      }
+      if (this.$refs.SeriesType.value === '2') {
+        const data = {
+          uid: this.selectedTask.uid,
+          days: this.SeriesWeek,
+          every_value: this.$refs.SeriesWeekCount.value
+        }
+        this.$store.dispatch(TASK.EVERY_WEEK_CHANGE, data).then(
+          resp => {
+            this.selectedTask.SeriesType = 2
+            this.selectedTask.SeriesWeekFri = resp.data.SeriesWeekFri
+            this.selectedTask.SeriesWeekMon = resp.data.SeriesWeekMon
+            this.selectedTask.SeriesWeekSat = resp.data.SeriesWeekSat
+            this.selectedTask.SeriesWeekSun = resp.data.SeriesWeekSun
+            this.selectedTask.SeriesWeekThu = resp.data.SeriesWeekThu
+            this.selectedTask.SeriesWeekTue = resp.data.SeriesWeekTue
+            this.selectedTask.SeriesWeekWed = resp.data.SeriesWeekWed
+            this.selectedTask.SeriesWeekCount = resp.data.SeriesWeekCount
+          })
+      }
+      if (this.$refs.SeriesType.value === '3') {
+        if (this.SeriesMonthDay > 0) {
+          const data = {
+            uid: this.selectedTask.uid,
+            num_day: this.SeriesMonthDay,
+            every_value: this.SeriesMonthCount
+          }
+
+          this.$store.dispatch(TASK.EVERY_MONTH_CHANGE, data).then(
+            resp => {
+              this.selectedTask.SeriesType = 3
+              this.selectedTask.SeriesMonthCount = resp.data.SeriesMonthCount
+              this.selectedTask.SeriesMonthDay = resp.data.SeriesMonthDay
+              this.selectedTask.SeriesMonthDayOfWeek = resp.data.SeriesMonthDayOfWeek
+              this.selectedTask.SeriesMonthType = resp.data.SeriesMonthType
+              this.selectedTask.SeriesMonthDay = resp.data.SeriesMonthDay
+              this.selectedTask.SeriesMonthWeekType = resp.data.SeriesMonthWeekType
+            })
+        }
+        if (this.SeriesMonthDay === 0) {
+          const data = {
+            uid: this.selectedTask.uid,
+            every_value: this.SeriesMonthCount,
+            num_day: this.SeriesMonthDay,
+            mwt: this.SeriesMonthType - 1,
+            mdw: this.SeriesMonthDayOfWeek
+          }
+          this.$store.dispatch(TASK.EVERY_MONTH_CHANGE, data).then(
+            resp => {
+              this.selectedTask.SeriesType = 3
+              this.selectedTask.SeriesMonthCount = resp.data.SeriesMonthCount
+              this.selectedTask.SeriesMonthDay = resp.data.SeriesMonthDay
+              this.selectedTask.SeriesMonthDayOfWeek = resp.data.SeriesMonthDayOfWeek
+              this.selectedTask.SeriesMonthType = resp.data.SeriesMonthType
+              this.selectedTask.SeriesMonthDay = resp.data.SeriesMonthDay
+              this.selectedTask.SeriesMonthWeekType = resp.data.SeriesMonthWeekType
+            })
+        }
+      }
+      if (this.$refs.SeriesType.value === '4') {
+        if (this.SeriesYearMonthDay > 0) {
+          const data = {
+            uid: this.selectedTask.uid,
+            num_day: this.SeriesYearMonthDay,
+            every_value: this.SeriesYearMonth
+          }
+          this.$store.dispatch(TASK.EVERY_YEAR_CHANGE, data).then(
+            resp => {
+              this.selectedTask.SeriesType = 4
+              this.selectedTask.SeriesYearDayOfWeek = resp.data.SeriesYearDayOfWeek
+              this.selectedTask.SeriesYearMonth = resp.data.SeriesYearMonth
+              this.selectedTask.SeriesYearType = resp.data.SeriesYearType
+              this.selectedTask.SeriesYearMonthDay = resp.data.SeriesYearMonthDay
+              this.selectedTask.SeriesMonthWeekType = resp.data.SeriesYearWeekType
+              this.selectedTask.SeriesMonthDayOfWeek = resp.data.SeriesYearDayOfWeek
+            })
+        }
+        if (this.SeriesYearMonthDay === 0) {
+          const data = {
+            uid: this.selectedTask.uid,
+            every_value: this.SeriesYearMonth,
+            num_day: this.SeriesYearMonthDay,
+            mwt: this.SeriesYearType - 1,
+            mdw: this.SeriesYearDayOfWeek
+          }
+          this.$store.dispatch(TASK.EVERY_YEAR_CHANGE, data).then(
+            resp => {
+              this.selectedTask.SeriesType = 4
+              this.selectedTask.SeriesYearDayOfWeek = resp.data.SeriesYearDayOfWeek
+              this.selectedTask.SeriesYearMonth = resp.data.SeriesYearMonth
+              this.selectedTask.SeriesYearMonthDay = resp.data.SeriesYearMonthDay
+              this.selectedTask.SeriesYearWeekType = resp.data.SeriesYearWeekType
+              this.selectedTask.SeriesMonthDayOfWeek = resp.data.SeriesYearDayOfWeek
+            })
+        }
+      }
+    },
+    tabChanged (event) {
+      if (event.target.value === '0') {
+        this.noRepeat = true
+        this.everyDayRepeat = false
+        this.everyWeekRepeat = false
+        this.everyMonthRepeat = false
+        this.everyYearRepeat = false
+        this.selectedTask.SeriesType = 0
+      }
+      if (event.target.value === '1') {
+        this.noRepeat = false
+        this.everyDayRepeat = true
+        this.everyWeekRepeat = false
+        this.everyMonthRepeat = false
+        this.everyYearRepeat = false
+        this.selectedTask.SeriesType = 1
+      }
+      if (event.target.value === '2') {
+        this.noRepeat = false
+        this.everyDayRepeat = false
+        this.everyWeekRepeat = true
+        this.everyMonthRepeat = false
+        this.everyYearRepeat = false
+        this.selectedTask.SeriesType = 2
+        this.selectedTask.SeriesWeekMon = 0
+        this.selectedTask.SeriesWeekCount = 1
+      }
+      if (event.target.value === '3') {
+        this.noRepeat = false
+        this.everyDayRepeat = false
+        this.everyWeekRepeat = false
+        this.everyMonthRepeat = true
+        this.everyYearRepeat = false
+        this.selectedTask.SeriesType = 3
+      }
+      if (event.target.value === '4') {
+        this.noRepeat = false
+        this.everyDayRepeat = false
+        this.everyWeekRepeat = false
+        this.everyMonthRepeat = false
+        this.everyYearRepeat = true
+        this.selectedTask.SeriesType = 4
+      }
+    },
+    getFixedCommentName () {
+      return this.selectedTask.name.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('\n', '<br/>')
+    },
+    print (value) {
+      console.log(value)
+    },
+    sendTaskMsg: function (msg) {
+      if (this.user.tarif === 'free') {
+        this.showFreeModalChat = true
+        return
+      }
+      let msgtask = msg || this.taskMsg
+      msgtask = msgtask.trim()
+      msgtask = msgtask.replaceAll('&', '&amp;')
+      msgtask = msgtask.replaceAll('<', '&lt;')
+      msgtask = msgtask.replaceAll('>', '&gt;')
+      const uid = this.uuidv4()
+      const data = {
+        uid_task: this.selectedTask.uid,
+        uid: uid,
+        uid_creator: this.user?.current_user_uid,
+        uid_msg: uid,
+        date_create: new Date().toISOString(),
+        deleted: 0,
+        uid_quote: this.currentAnswerMessageUid,
+        text: msgtask,
+        msg: msgtask
+      }
+      if (data.text) {
+        this.$store.dispatch(CREATE_MESSAGE_REQUEST, data).then(
+          resp => {
+          // Answer last inspector message
+            const lastInspectorMessage = this.taskMessagesAndFiles.slice().reverse().find(message => message.uid_creator === 'inspector')
+            if (lastInspectorMessage && this.selectedTask.uid_performer === this.user?.current_user_uid) {
+              this.$store.dispatch(INSPECTOR.ANSWER_INSPECTOR_TASK, { id: lastInspectorMessage.id, answer: 1 }).then(() => {
+                lastInspectorMessage.performer_answer = 1
+              })
+            }
+            this.selectedTask.has_msgs = true
+            if (this.selectedTask.type === 2 || this.selectedTask.type === 3) {
+              if ([1, 5, 7, 8].includes(this.selectedTask.status)) {
+                if (((this.selectedTask.uid_customer === this.user?.current_user_uid) && ((this.selectedTask.status === 1) || (this.selectedTask.status === 5)))) {
+                  this.selectedTask.status = 9
+                }
+              }
+              this.selectedTask.msg = decodeURIComponent(this.taskMsg)
+              const wrapperElement = document.getElementById('content').lastElementChild
+              wrapperElement.scrollIntoView({ behavior: 'smooth' })
+            }
+          })
+      }
+      this.currentAnswerMessageUid = ''
+      this.taskMsg = ''
+      this.$nextTick(function () {
+        this.onInputTaskMsg()
+      })
+    },
+    onInputTaskMsg: function () {
+      // после этого рассчитает новый scrollHeight
+      this.$refs.taskMsgEdit.style.height = '40px'
+      //
+      const defAnswerHeight = this.currentAnswerMessageUid ? 36 + 8 : 0
+      const defSendHeight = 96
+      const defEditHeight = 40
+      const defEditHeightMax = 100
+      const scrollHeight = this.$refs.taskMsgEdit.scrollHeight
+      const scrollHeightFix = scrollHeight < defEditHeight ? defEditHeight : scrollHeight > defEditHeightMax ? defEditHeightMax : scrollHeight
+      const sendHeight = defSendHeight + scrollHeightFix + defAnswerHeight - defEditHeight
+      //
+      this.$refs.taskMsgEdit.style.height = scrollHeight + 'px'
+      document.documentElement.style.setProperty('--hex-parent-height', sendHeight + 'px')
+    },
+    addNewLineTaskMsg: function () {
+      this.taskMsg += '\n'
+      this.$nextTick(function () {
+        this.onInputTaskMsg()
+        this.$refs.taskMsgEdit.scrollTo(0, this.$refs.taskMsgEdit.scrollHeight)
+      })
+    },
+    onPasteEvent: function (e) {
+      const items = (e.clipboardData || e.originalEvent.clipboardData).items
+      let loadFile = false
+      for (const index in items) {
+        const item = items[index]
+        if (item.kind === 'file') {
+          const blob = item.getAsFile()
+          const formData = new FormData()
+          formData.append('files', blob)
+          const data = {
+            uid_task: this.selectedTask.uid,
+            name: formData
+          }
+          loadFile = true
+          this.isloading = true
+          this.$store.dispatch(CREATE_FILES_REQUEST, data).then(
+            resp => {
+              this.isloading = false
+              // ставим статус "на доработку" когда прикладываем файл
+              if (this.selectedTask.type === 2 || this.selectedTask.type === 3) {
+                if ([1, 5, 7, 8].includes(this.selectedTask.status)) {
+                  if (((this.selectedTask.uid_customer === this.user?.current_user_uid) && ((this.selectedTask.status === 1) || (this.selectedTask.status === 5)))) {
+                    this.selectedTask.status = 9
+                  }
+                }
+              }
+              // загрузка завершена - подписываемся опять
+              this.$refs.taskMsgEdit.addEventListener('paste', this.onPasteEvent, { once: true })
+            })
+          setTimeout(() => {
+            const elmnt = document.getElementById('content').lastElementChild
+            elmnt.scrollIntoView({ behavior: 'smooth' })
+          }, 100)
+        }
+      }
+      if (!loadFile) {
+        // не вставка файла - подписываемся опять
+        this.$refs.taskMsgEdit.addEventListener('paste', this.onPasteEvent, { once: true })
+      }
+    },
+    onReAssignToUser: function (userEmail) {
+      const data = {
+        uid: this.selectedTask.uid,
+        value: userEmail
+      }
+      this.$store.dispatch(TASK.CHANGE_TASK_REDELEGATE, data).then(
+        resp => {
+          this.$store.commit(TASK.SUBTASKS_REQUEST, resp.data)
+        }
+      )
+    },
+    shouldShowFreePerformer () {
+      if (this.user.tarif === 'free') {
+        this.showFreeModalPerform = true
+      }
+    },
+    onChangePerformer: function (userEmail) {
+      const taskUid = this.selectedTask.uid
+      const data = {
+        uid: this.selectedTask.uid,
+        value: userEmail
+      }
+      this.$store.dispatch(TASK.CHANGE_TASK_PERFORMER, data).then(
+        resp => {
+          this.selectedTask.email_performer = resp.data.email_performer
+          this.selectedTask.perform_time = resp.data.perform_time
+          this.selectedTask.performerreaded = resp.data.performerreaded
+          this.selectedTask.uid_performer = resp.data.uid_performer
+          this.selectedTask.type = resp.data.type
+        }
+      )
+      if (this.navStack.length && this.navStack.length > 0) {
+        const navStackUid = this.navStack[0]?.uid
+        if (navStackUid === '901841d9-0016-491d-ad66-8ee42d2b496b') {
+          this.$store.commit(TASK.REMOVE_TASK, taskUid)
+          this.$store.dispatch('asidePropertiesToggle', false)
+        }
+      }
+    },
+    onChangeDates: function (begin, end) {
+      const taskUid = this.selectedTask.uid
+      const data = {
+        uid_task: this.selectedTask.uid,
+        str_date_begin: begin,
+        str_date_end: end,
+        reset: 0
+      }
+      this.$store.dispatch(TASK.CHANGE_TASK_DATE, data).then(resp => {
+        this.selectedTask.is_overdue = resp.is_overdue
+        this.selectedTask.term_user = resp.term
+        this.selectedTask.date_begin = begin
+        this.selectedTask.date_end = end
+
+        if (!shouldAddTaskIntoList(this.selectedTask)) {
+          this.$store.commit(TASK.REMOVE_TASK, taskUid)
+          this.$store.dispatch('asidePropertiesToggle', false)
+        }
+      })
+    },
+    onChangeAccess: function (checkEmails) {
+      const emails = checkEmails.join('..')
+      const data = {
+        uid: this.selectedTask.uid,
+        value: emails
+      }
+      this.$store.dispatch(TASK.CHANGE_TASK_ACCESS, data).then(
+        resp => {
+          this.selectedTask.emails = emails
+        }
+      )
+    },
+    onChangeProject: function (projectUid) {
+      const data = {
+        uid: this.selectedTask.uid,
+        value: projectUid
+      }
+      this.$store.dispatch(TASK.CHANGE_TASK_PROJECT, data).then(
+        resp => {
+          this.selectedTask.uid_project = projectUid
+        }
+      )
+    },
+    onChangeTags: function (tags) {
+      const data = {
+        uid: this.selectedTask.uid,
+        tags: tags
+      }
+      this.$store.dispatch(TASK.CHANGE_TASK_TAGS, data).then(
+        resp => {
+          this.selectedTask.tags = [...tags]
+        }
+      )
+    },
+    onChangeColor: function (colorUid) {
+      const data = {
+        uid: this.selectedTask.uid,
+        value: colorUid
+      }
+      this.$store.dispatch(TASK.CHANGE_TASK_COLOR, data).then(
+        resp => {
+          this.selectedTask.uid_marker = colorUid
+        }
+      )
+    },
+    onChangeComment: function (text) {
+      const data = {
+        uid: this.selectedTask.uid,
+        value: text
+      }
+      this.$store.dispatch(TASK.CHANGE_TASK_COMMENT, data)
+    },
+    endChangeComment: function (text) {
+      // чтобы у нас в интерфейсе поменялось
+      // потому что на changeComment он только
+      // на сервер отправляет и всё
+      this.selectedTask.comment = text
+    },
+    gotoParentNode (uid) {
+      document.getElementById(uid).parentNode.click({ preventScroll: false })
+    },
+    onAnswerMessage (uid) {
+      this.currentAnswerMessageUid = uid
+      this.$nextTick(function () {
+        this.onInputTaskMsg()
+      })
+    },
+    onChangeChecklist (checklist) {
+      const data = {
+        uid_task: this.selectedTask.uid,
+        checklist: checklist
+      }
+      this.checklistSavedNow = true
+      this.$store.dispatch(TASK.CHANGE_TASK_CHECKLIST, data).then(
+        resp => {
+          this.selectedTask.checklist = checklist
+        }
+      ).finally(() => {
+        this.checklistSavedNow = false
+      })
+    },
+    onAddChecklistComplete () {
+      this.checklistshow = false
+    }
+  }
+}
+</script>
+
 <style>
 .dark {
   --popper-theme-background-color: #333333;
@@ -2169,7 +1655,6 @@ export default {
   --popper-theme-padding: 10px;
   --popper-theme-box-shadow: 0 6px 30px -6px rgba(0, 0, 0, 0.25);
 }
-
 .light {
   --popper-theme-background-color: #ffffff;
   --popper-theme-background-color-hover: #ffffff;
@@ -2181,7 +1666,6 @@ export default {
   --popper-theme-padding: 10px;
   --popper-theme-box-shadow: 0 6px 30px -6px rgba(0, 0, 0, 0.25);
 }
-
 .linkified {
   @apply text-blue-600;
 }
@@ -2380,11 +1864,6 @@ export default {
   color:black !important;
 
 }
-.calendar-properties .today:focus
-{
-
-}
-
 .calendar-properties .vc-arrow
 {
   color: black !important;
@@ -2496,12 +1975,10 @@ export default {
 .calendar-properties .vc-select select::-webkit-scrollbar {
   width: 2px;
 }
-
 .calendar-properties .vc-select select::-webkit-scrollbar-track {
   background-color: #e4e4e4;
   border-radius: 100px;
 }
-
 .calendar-properties .vc-select select::-webkit-scrollbar-thumb {
   background-color: #d4aa70;
   border-radius: 100px;
@@ -2520,47 +1997,9 @@ export default {
   height: 0;
   padding: 0;
 }
-
 .width100without20 {
   width: calc(100% - 20px);
 }
-/*  #drop-area {
-  border: 2px dashed #ccc;
-  border-radius: 20px;
-  width: 480px;
-  font-family: sans-serif;
-  margin: 100px auto;
-  padding: 20px;
-}
-#drop-area.highlight {
-  border-color: purple;
-}
-.my-form {
-  margin-bottom: 10px;
-}
-#gallery {
-  margin-top: 10px;
-}
-#gallery img {
-  width: 150px;
-  margin-bottom: 10px;
-  margin-right: 10px;
-  vertical-align: middle;
-}
-.button {
-  display: inline-block;
-  padding: 10px;
-  background: #ccc;
-  cursor: pointer;
-  border-radius: 5px;
-  border: 1px solid #ccc;
-}
-.button:hover {
-  background: #ddd;
-}
-#fileElem {
-  display: none;
-} */
 .droptarget {
   float: left;
   width: 100px;
