@@ -215,8 +215,7 @@ export default {
           project.global_property_uid = '431a3531-a77a-45c1-8035-f0bf75c32641'
           project.order = res.data.order
           project.color = '#A998B6'
-          project.quiet = !!project.quiet
-          //
+
           this.$store.commit(PROJECT.PUSH_PROJECT, [project])
           this.$store.commit(NAVIGATOR.NAVIGATOR_PUSH_PROJECT, [project])
           this.gotoChildren(project)
