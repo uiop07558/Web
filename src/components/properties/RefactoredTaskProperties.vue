@@ -4,7 +4,7 @@
     title="Удалить задачу"
     :text="modalBoxDeleteText"
     @cancel="showConfirm = false"
-    @yes="delTask(selectedTask)"
+    @yes="deleteTask(selectedTask)"
   />
   <ChatLimit
     v-if="showFreeModalChat"
@@ -99,7 +99,7 @@
         <TaskPropsButtonPerform
           v-if="selectedTask.status !== 3 && selectedTask.type !== 4 && !((selectedTask.uid_customer !== user?.current_user_uid) && (selectedTask.status === 1))"
           :task-type="selectedTask.type"
-          :current-user-uid="cusers?.current_user_uid"
+          :current-user-uid="user?.current_user_uid"
           :performer-email="selectedTask.email_performer"
           @changePerformer="onChangePerformer"
           @reAssign="onReAssignToUser"
@@ -108,7 +108,7 @@
         <!-- Кнопка Доступ -->
         <TaskPropsButtonAccess
           v-if="isAccessVisible && !((selectedTask.uid_customer !== user?.current_user_uid) && (selectedTask.status === 1))"
-          :current-user-uid="cusers?.current_user_uid"
+          :current-user-uid="user?.current_user_uid"
           :access-emails="selectedTask.emails ? selectedTask.emails.split('..') : []"
           :can-edit="selectedTask.type === 1 || selectedTask.type === 2"
           :is-customer="selectedTask.uid_customer === user?.current_user_uid"
@@ -685,7 +685,7 @@
         id="content"
         class="mt-3 h-3/6"
         :task-messages="taskMessages"
-        :current-user-uid="cusers?.current_user_uid"
+        :current-user-uid="user?.current_user_uid"
         :show-all-messages="showAllMessages"
         :show-only-files="showOnlyFiles"
         @answerMessage="onAnswerMessage"
@@ -883,37 +883,27 @@ export default {
       showFreeModalRepeat: false,
       showFreeModalChat: false,
       showFreeModalPerform: false,
+      timeStartActive: false,
+      checklistshow: false,
+      checklistSavedNow: false,
+      noRepeat: false,
+      everyDayRepeat: false,
+      everyWeekRepeat: false,
+      everyMonthRepeat: false,
+      everyYearRepeat: false,
+      isEditable: false,
+      isEditableTaskName: false,
+      showOnlyFiles: false,
+      showConfirm: false,
+
+      currentAnswerMessageUid: '',
       taskMsg: '',
-      lastSelectedTaskUid: '',
-      applybutton: false,
-      anymenuShow: false,
+      files: [], // replace this with const in function createTaskFiles
+
       months: ['Января', 'Февраля', 'Марта', 'Апреля', 'Мая', 'Июня', 'Июля', 'Августа', 'Сентября', 'Октября', 'Ноября', 'Декабря'],
       days: ['', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота', 'Воскресенье'],
       day: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'],
       firstcount: ['последний', 'первый', 'второй', 'третий', 'четвертый', 'последний'],
-      myday: ['вчера', 'cегодня', 'завтра'],
-      statuses: [
-        'status_not_begin',
-        'status_ready',
-        'task_by_link',
-        'status_note',
-        'status_in_work',
-        'status_task_ready',
-        'status_paused',
-        'status_cancelled',
-        'status_reject',
-        'status_refine'
-      ],
-      isEditable: false,
-      isEditableTaskName: false,
-      range: {
-        start: this.selectedTask?.term_customer === '' ? new Date() : new Date(this.selectedTask?.customer_date_begin),
-        end: this.selectedTask?.term_customer === '' ? new Date() : new Date(this.selectedTask?.customer_date_end)
-      },
-      timeStart: this.selectedTask?.term_customer === '' ? '' : new Date(this.selectedTask?.customer_date_begin).toLocaleTimeString(),
-      timeEnd: this.selectedTask?.term_customer === '' ? '' : new Date(this.selectedTask?.customer_date_end).toLocaleTimeString(),
-      showConfirm: false,
-      firstDayOfWeek: 2,
       myOptions: [
         { id: 'mon', text: 'Пн' },
         { id: 'tue', text: 'Вт' },
@@ -923,8 +913,14 @@ export default {
         { id: 'sat', text: 'Сб' },
         { id: 'sun', text: 'Вс' }
       ],
+
+      range: {
+        start: this.selectedTask?.term_customer === '' ? new Date() : new Date(this.selectedTask?.customer_date_begin),
+        end: this.selectedTask?.term_customer === '' ? new Date() : new Date(this.selectedTask?.customer_date_end)
+      },
+      timeStart: this.selectedTask?.term_customer === '' ? '' : new Date(this.selectedTask?.customer_date_begin).toLocaleTimeString(),
+      timeEnd: this.selectedTask?.term_customer === '' ? '' : new Date(this.selectedTask?.customer_date_end).toLocaleTimeString(),
       checkEmail: (this.selectedTask?.emails && this.selectedTask?.emails !== '') ? this.selectedTask.emails.split('..') : [],
-      showOnlyFiles: false,
       SeriesType: this.selectedTask?.SeriesType,
       SeriesAfterCount: this.selectedTask?.SeriesAfterCount,
       SeriesAfterType: this.selectedTask?.SeriesAfterType,
@@ -957,95 +953,22 @@ export default {
         this.selectedTask?.SeriesWeekFri === 1 ? 'fri' : ' ',
         this.selectedTask?.SeriesWeekSat === 1 ? 'sat' : ' ',
         this.selectedTask?.SeriesWeekSun === 1 ? 'sun' : ' '
-      ],
-      checklisteditable: false,
-      timeEditStart: false,
-      timeEditEnd: false,
-      timeEndRange: false,
-      timeStartActive: false,
-      checklistshow: false,
-      checklistSavedNow: false,
-      TimeActive: false,
-      checklistshowbutton: false,
-      checklistshowelement: false,
-      noRepeat: false,
-      everyDayRepeat: false,
-      everyWeekRepeat: false,
-      everyMonthRepeat: false,
-      everyYearRepeat: false,
-      showpastefile: false,
-      currentAnswerMessageUid: '',
-      dragAndDropCapable: false,
-      files: []
+      ]
     }
   },
   computed: {
-    taskMessages () {
-      return this.$store.state.taskfilesandmessages.messages
-    },
-    uploadStarted () {
-      return this.$store.state.taskfilesandmessages.uploadStarted
-    },
-    taskFiles () {
-      return this.$store.state.taskfilesandmessages.files
-    },
-    myFiles () {
-      return this.$store.state.taskfilesandmessages.files.myFiles
-    },
-    selectedTask () {
-      return this.$store.state.tasks.selectedTask
-    },
-    isPropertiesMobileExpanded () {
-      return this.$store.state.isPropertiesMobileExpanded
-    },
-    taskMessagesAndFiles () {
-      return this.$store.state.taskfilesandmessages.messages
-    },
-    user () {
-      return this.$store.state.user.user
-    },
-    navigator () {
-      return this.$store.state.navigator.navigator
-    },
-    tasks () {
-      return this.$store.state.tasks.newtasks
-    },
-    employeesByEmail () {
-      return this.$store.state.employees.employeesByEmail
-    },
-    isDark () {
-      return this.$store.state.darkMode
-    },
-    getfiles () {
-      return this.$store.state.taskfilesandmessages.file
-    },
-    cusers () {
-      return this.$store.state.user.user
-    },
-    tags () {
-      return this.$store.state.tasks.tags
-    },
-    employees () {
-      return this.$store.state.employees.employees
-    },
-    projects () {
-      return this.$store.state.projects.projects
-    },
-    colors () {
-      return this.$store.state.colors.colors
-    },
-    mycolors () {
-      return this.$store.state.colors.mycolors
-    },
-    calendarDates () {
-      return this.$store.state.calendar[1].dates
-    },
-    daysWithTasks () {
-      return this.$store.state.tasks.daysWithTasks
-    },
-    navStack () {
-      return this.$store.state.navbar.navStack
-    }
+    taskMessages () { return this.$store.state.taskfilesandmessages.messages },
+    uploadStarted () { return this.$store.state.taskfilesandmessages.uploadStarted },
+    selectedTask () { return this.$store.state.tasks.selectedTask },
+    isPropertiesMobileExpanded () { return this.$store.state.isPropertiesMobileExpanded },
+    taskMessagesAndFiles () { return this.$store.state.taskfilesandmessages.messages },
+    user () { return this.$store.state.user.user },
+    tasks () { return this.$store.state.tasks.newtasks },
+    isDark () { return this.$store.state.darkMode },
+    calendarDates () { return this.$store.state.calendar[1].dates },
+    daysWithTasks () { return this.$store.state.tasks.daysWithTasks },
+    navStack () { return this.$store.state.navbar.navStack },
+    isInFocus () { return this.selectedTask?.focus === 1 }
   },
   watch: {
     selectedTask: {
@@ -1078,90 +1001,11 @@ export default {
         (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
       )
     },
-    changeEmployee (email) {
-      if (email !== '') {
-        const data = {
-          uid: this.selectedTask.uid,
-          value: email.toLowerCase()
-        }
-        this.$store.dispatch(TASK.CHANGE_TASK_PERFORMER, data).then(
-          resp => {
-            this.selectedTask.email_performer = resp.data.email_performer
-            this.selectedTask.type = 2
-          }
-        )
-      }
-    },
-    ispolnit () {
-      const data = {
-        uid: this.selectedTask.uid,
-        value: this.cusers.current_user_email.toLowerCase()
-      }
-      this.$store.dispatch(TASK.CHANGE_TASK_PERFORMER, data).then(
-        resp => {
-          this.selectedTask.email_performer = resp.data.email_performer
-          this.selectedTask.type = 3
-        }
-      )
-    },
-    resetEmployes () {
-      this.$store.dispatch(TASK.CHANGE_TASK_PERFORMER, { uid: this.selectedTask.uid, value: '' }).then(
-        resp => {
-          this.selectedTask.email_performer = ''
-          this.selectedTask.type = 1
-        }
-      )
-    },
-    ClickAccessEmail () {
-      this.datas.push(this.checkEmail)
-      if (this.checkEmail !== '') {
-        const emails = this.checkEmail.join('..')
-        this.$store.dispatch(TASK.CHANGE_TASK_ACCESS, { uid: this.selectedTask.uid, value: emails }).then(
-          resp => {
-            this.selectedTask.emails = emails
-          }
-        )
-      }
-    },
-    resetAccess () {
-      this.$store.dispatch(TASK.CHANGE_TASK_ACCESS, { uid: this.selectedTask.uid, value: '' }).then(
-        resp => {
-          this.selectedTask.emails = resp.data
-          this.checkEmail = []
-        }
-      )
-    },
-    changeColors (uid, marker) {
-      this.$store.dispatch(TASK.CHANGE_TASK_COLOR, { uid: uid, value: marker }).then(
-        resp => {
-          this.selectedTask.uid_marker = marker
-        }
-      )
-    },
     changeFocus (uid, value) {
       this.$store.dispatch(TASK.CHANGE_TASK_FOCUS, { uid: uid, value: value }).then(
         resp => {
           this.selectedTask.focus = value
         })
-    },
-    ClickTagsChange () {
-      const data = {
-        uid: this.selectedTask.uid,
-        tags: this.selectedTask.tags
-      }
-      this.$store.dispatch(TASK.CHANGE_TASK_TAGS, data)
-
-      setTimeout(() => {
-        this.$store.dispatch(TASK.CHANGE_TASK_TAGS, data)
-      }, 100)
-    },
-    resetTags (key) {
-      this.selectedTask.tags.splice(this.selectedTask.tags.indexOf(key), 1)
-      const data = {
-        uid: this.selectedTask.uid,
-        tags: this.selectedTask.tags
-      }
-      this.$store.dispatch(TASK.CHANGE_TASK_TAGS, data)
     },
     createTaskFile (event) {
       this.files = event.target.files
@@ -1206,7 +1050,7 @@ export default {
         element.scrollIntoView({ behavior: 'smooth' })
       }, 100)
     },
-    delTask () {
+    deleteTask () {
       this.showConfirm = false
       if (this.isPropertiesMobileExpanded) {
         this.$store.dispatch('asidePropertiesToggle', false)
@@ -1228,64 +1072,6 @@ export default {
             })
         })
     },
-    createTaskMsg () {
-      const date = new Date()
-      const month = this.pad2(date.getUTCMonth() + 1)
-      const day = this.pad2(date.getUTCDate())
-      const year = this.pad2(date.getUTCFullYear())
-      const hours = this.pad2(date.getUTCHours())
-      const minutes = this.pad2(date.getUTCMinutes())
-      const seconds = this.pad2(date.getUTCSeconds())
-      const dateCreate = year + '-' + month + '-' + day + 'T' + hours + ':' + minutes + ':' + seconds
-      const data = {
-        uid_task: this.selectedTask.uid,
-        uid_creator: this.user.current_user_uid,
-        uid_msg: this.uuidv4(),
-        date_create: dateCreate,
-        text: this.taskMsg.value,
-        msg: this.taskMsg.value
-      }
-      this.$store.dispatch(CREATE_MESSAGE_REQUEST, data).then(
-        resp => {
-          this.selectedTask.has_msgs = true
-          if (this.selectedTask.type === 2 || this.selectedTask.type === 3) {
-            if ([1, 5, 7, 8].includes(this.selectedTask.status)) {
-              this.selectedTask.status = 9
-            }
-          }
-          this.selectedTask.msg = decodeURIComponent(this.taskMsg.value)
-          this.infoComplete = true
-          const wrapperElement = document.getElementById('content').lastElementChild
-          wrapperElement.scrollIntoView({ behavior: 'smooth' })
-        })
-      this.taskMsg.value = ''
-    },
-    cursorPosition () {
-      this.taskMsg += '\n'
-      const textarea = document.querySelector('textarea')
-      textarea.addEventListener('keyup', function () {
-        if (this.scrollTop > 0) {
-          //  this.style.height = this.scrollHeight + 'px'
-        }
-        if (this.value.length === 0) {
-          this.style.height = '40px'
-        }
-      })
-    },
-    moveCursorToEnd (obj) {
-      if (!(obj.updating)) {
-        obj.updating = true
-        const oldValue = obj.value
-        obj.value = ''
-        setTimeout(function () { obj.value = oldValue; obj.updating = false }, 100)
-      }
-      const textarea = document.querySelector('textarea')
-      textarea.addEventListener('keyup', function () {
-        if (this.scrollTop > 0) {
-          this.style.height = this.scrollHeight + 'px'
-        }
-      })
-    },
     deleteTaskMsg (uid) {
       this.$store.dispatch(DELETE_MESSAGE_REQUEST, { uid: uid }).then(
         resp => {
@@ -1302,38 +1088,6 @@ export default {
         value: event.target.innerText
       }
       this.$store.dispatch(TASK.CHANGE_TASK_NAME, data)
-    },
-    resetProject () {
-      this.$store.dispatch(TASK.CHANGE_TASK_PROJECT, { uid: this.selectedTask.uid, value: '00000000-0000-0000-0000-000000000000' }).then(
-        resp => {
-          this.selectedTask.uid_project = '00000000-0000-0000-0000-000000000000'
-        }
-      )
-    },
-    resetColor () {
-      this.$store.dispatch(TASK.CHANGE_TASK_COLOR, { uid: this.selectedTask.uid, value: '00000000-0000-0000-0000-000000000000' }).then(
-        resp => {
-          this.selectedTask.uid_marker = '00000000-0000-0000-0000-000000000000'
-        }
-      )
-    },
-    resetCalendar () {
-      const data = {
-        uid_task: this.selectedTask.uid,
-        str_date_begin: '0001-01-01T00:00:00',
-        str_date_end: '0001-01-01T23:59:59',
-        reset: 1
-      }
-      this.$store.dispatch(TASK.CHANGE_TASK_DATE, data).then(
-        resp => {
-          this.selectedTask.term_customer = resp.data.term
-          this.selectedTask.is_overdue = resp.data.is_overdue
-          this.range.start = new Date().getFullYear() + '-' + (this.pad2(new Date().getMonth() + 1)) + '-' + new Date().getDate() + 'T00:00:00'
-          this.range.end = new Date().getFullYear() + '-' + (this.pad2(new Date().getMonth() + 1)) + '-' + new Date().getDate() + 'T00:00:00'
-          this.timeEnd = ''
-          this.timeStart = ''
-          this.timeStartActive = false
-        })
     },
     handleInput () {
       const timestart = this.timeStart === '' ? 'T00:00:00' : 'T' + this.timeStart
@@ -1354,30 +1108,6 @@ export default {
           this.timeEnd = timeend !== '' ? '' : timeend
           this.timeStartActive = true
         })
-    },
-    TimeSelectStart () {
-      this.timeEditStart = !this.timeEditStart
-    },
-    TimeSelectEnd () {
-      this.timeEditEnd = !this.timeEditEnd
-    },
-    TimeActiveStart (event) {
-      if (event.target.value.length > 1) {
-        this.timeEndRange = true
-      } else {
-        this.timeEndRange = false
-      }
-    },
-    calendarTimeStartChange (event) {
-      const timeStartValue = event.target.value
-      this.$refs.inputTimeStart.value = timeStartValue
-    },
-    calendarTimeEndChange (event) {
-      const timeEndValue = event.target.value
-      this.$refs.inputTimeEnd.value = timeEndValue
-    },
-    onDayClick () {
-      this.timeStartActive = true
     },
     resetRepeat () {
       const data = {
@@ -1427,9 +1157,6 @@ export default {
       this.SeriesYearMonth = 0
       this.SeriesYearMonthDay = 0
     },
-    addsubmit () {
-      this.applybutton = true
-    },
     setCursorPosition (oInput, oStart, oEnd) {
       if (oInput.setSelectionRange) {
         oInput.setSelectionRange(oStart, oEnd)
@@ -1464,19 +1191,10 @@ export default {
       }
       this.$store.dispatch(TASK.CHANGE_TASK_COMMENT, data)
     },
-    editTaskName () {
-      this.isEditableTaskName = true
-    },
     removeEditTaskName (event) {
       this.isEditableTaskName = false
       const taskName = event.target.innerText
       this.selectedTask.name = taskName
-    },
-    resetFocusCalendar () {
-      this.range = {
-        start: '',
-        end: ''
-      }
     },
     scrollDown () {
       this.showAllMessages = true
@@ -1492,9 +1210,6 @@ export default {
         return
       }
       this.checklistshow = true
-    },
-    resetFocusChecklist () {
-      this.checklistshow = false
     },
     SaveRepeat () {
       if (this.$refs.SeriesType.value === '0') {
@@ -1636,27 +1351,71 @@ export default {
         }
       }
     },
+    tabChanged (event) {
+      if (event.target.value === '0') {
+        this.noRepeat = true
+        this.everyDayRepeat = false
+        this.everyWeekRepeat = false
+        this.everyMonthRepeat = false
+        this.everyYearRepeat = false
+        this.selectedTask.SeriesType = 0
+      }
+      if (event.target.value === '1') {
+        this.noRepeat = false
+        this.everyDayRepeat = true
+        this.everyWeekRepeat = false
+        this.everyMonthRepeat = false
+        this.everyYearRepeat = false
+        this.selectedTask.SeriesType = 1
+      }
+      if (event.target.value === '2') {
+        this.noRepeat = false
+        this.everyDayRepeat = false
+        this.everyWeekRepeat = true
+        this.everyMonthRepeat = false
+        this.everyYearRepeat = false
+        this.selectedTask.SeriesType = 2
+        this.selectedTask.SeriesWeekMon = 0
+        this.selectedTask.SeriesWeekCount = 1
+      }
+      if (event.target.value === '3') {
+        this.noRepeat = false
+        this.everyDayRepeat = false
+        this.everyWeekRepeat = false
+        this.everyMonthRepeat = true
+        this.everyYearRepeat = false
+        this.selectedTask.SeriesType = 3
+      }
+      if (event.target.value === '4') {
+        this.noRepeat = false
+        this.everyDayRepeat = false
+        this.everyWeekRepeat = false
+        this.everyMonthRepeat = false
+        this.everyYearRepeat = true
+        this.selectedTask.SeriesType = 4
+      }
+    },
     getFixedCommentName () {
       return this.selectedTask.name.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('\n', '<br/>')
     },
-    print: function (value) {
+    print (value) {
       console.log(value)
     },
-    dragStart: function (event) {
+    dragStart (event) {
       event.dataTransfer.setData('Text', event.target.id)
     },
-    dragging: function (event) {
+    dragging (event) {
       document.getElementById('demo').innerHTML =
         'The p element is being dragged'
     },
-    allowDrop: function (event) {
+    allowDrop (event) {
     },
-    drop: function (e) {
+    drop (e) {
       const item = e.files.clipboardData.items
       console.log(item)
     },
-    editable: function () {
-      if (this.cusers?.current_user_uid === this.selectedTask.uid_customer) {
+    editable () {
+      if (this.user?.current_user_uid === this.selectedTask.uid_customer) {
         this.isEditableTaskName = true
         this.$nextTick(() => {
           this.$refs.TaskName.focus()
@@ -1664,15 +1423,6 @@ export default {
       }
     },
     sendTaskMsg: function (msg) {
-      // this.showAllMessages = true
-      // const date = new Date()
-      // const month = this.pad2(date.getUTCMonth() + 1)
-      // const day = this.pad2(date.getUTCDate())
-      // const year = this.pad2(date.getUTCFullYear())
-      // const hours = this.pad2(date.getUTCHours())
-      // const minutes = this.pad2(date.getUTCMinutes())
-      // const seconds = this.pad2(date.getUTCSeconds())
-      // const dateCreate = year + '-' + month + '-' + day + 'T' + hours + ':' + minutes + ':' + seconds
       let msgtask = msg || this.taskMsg
       msgtask = msgtask.trim()
       msgtask = msgtask.replaceAll('&', '&amp;')
@@ -1682,7 +1432,7 @@ export default {
       const data = {
         uid_task: this.selectedTask.uid,
         uid: uid,
-        uid_creator: this.cusers?.current_user_uid,
+        uid_creator: this.user?.current_user_uid,
         uid_msg: uid,
         date_create: new Date().toISOString(),
         deleted: 0,
@@ -1695,7 +1445,7 @@ export default {
           resp => {
           // Answer last inspector message
             const lastInspectorMessage = this.taskMessagesAndFiles.slice().reverse().find(message => message.uid_creator === 'inspector')
-            if (lastInspectorMessage && this.selectedTask.uid_performer === this.cusers?.current_user_uid) {
+            if (lastInspectorMessage && this.selectedTask.uid_performer === this.user?.current_user_uid) {
               this.$store.dispatch(INSPECTOR.ANSWER_INSPECTOR_TASK, { id: lastInspectorMessage.id, answer: 1 }).then(() => {
                 lastInspectorMessage.performer_answer = 1
               })
@@ -1703,7 +1453,7 @@ export default {
             this.selectedTask.has_msgs = true
             if (this.selectedTask.type === 2 || this.selectedTask.type === 3) {
               if ([1, 5, 7, 8].includes(this.selectedTask.status)) {
-                if (((this.selectedTask.uid_customer === this.cusers?.current_user_uid) && ((this.selectedTask.status === 1) || (this.selectedTask.status === 5)))) {
+                if (((this.selectedTask.uid_customer === this.user?.current_user_uid) && ((this.selectedTask.status === 1) || (this.selectedTask.status === 5)))) {
                   this.selectedTask.status = 9
                 }
               }
@@ -1762,7 +1512,7 @@ export default {
               // ставим статус "на доработку" когда прикладываем файл
               if (this.selectedTask.type === 2 || this.selectedTask.type === 3) {
                 if ([1, 5, 7, 8].includes(this.selectedTask.status)) {
-                  if (((this.selectedTask.uid_customer === this.cusers?.current_user_uid) && ((this.selectedTask.status === 1) || (this.selectedTask.status === 5)))) {
+                  if (((this.selectedTask.uid_customer === this.user?.current_user_uid) && ((this.selectedTask.status === 1) || (this.selectedTask.status === 5)))) {
                     this.selectedTask.status = 9
                   }
                 }
@@ -1908,7 +1658,7 @@ export default {
     gotoParentNode (uid) {
       document.getElementById(uid).parentNode.click({ preventScroll: false })
     },
-    onAnswerMessage: function (uid) {
+    onAnswerMessage (uid) {
       console.log(this.taskMessages)
       this.currentAnswerMessageUid = uid
       this.$nextTick(function () {
@@ -1947,7 +1697,6 @@ export default {
   --popper-theme-padding: 10px;
   --popper-theme-box-shadow: 0 6px 30px -6px rgba(0, 0, 0, 0.25);
 }
-
 .light {
   --popper-theme-background-color: #ffffff;
   --popper-theme-background-color-hover: #ffffff;
@@ -1959,7 +1708,6 @@ export default {
   --popper-theme-padding: 10px;
   --popper-theme-box-shadow: 0 6px 30px -6px rgba(0, 0, 0, 0.25);
 }
-
 .linkified {
   @apply text-blue-600;
 }
@@ -2158,11 +1906,6 @@ export default {
   color:black !important;
 
 }
-.calendar-properties .today:focus
-{
-
-}
-
 .calendar-properties .vc-arrow
 {
   color: black !important;
@@ -2274,12 +2017,10 @@ export default {
 .calendar-properties .vc-select select::-webkit-scrollbar {
   width: 2px;
 }
-
 .calendar-properties .vc-select select::-webkit-scrollbar-track {
   background-color: #e4e4e4;
   border-radius: 100px;
 }
-
 .calendar-properties .vc-select select::-webkit-scrollbar-thumb {
   background-color: #d4aa70;
   border-radius: 100px;
@@ -2298,47 +2039,9 @@ export default {
   height: 0;
   padding: 0;
 }
-
 .width100without20 {
   width: calc(100% - 20px);
 }
-/*  #drop-area {
-  border: 2px dashed #ccc;
-  border-radius: 20px;
-  width: 480px;
-  font-family: sans-serif;
-  margin: 100px auto;
-  padding: 20px;
-}
-#drop-area.highlight {
-  border-color: purple;
-}
-.my-form {
-  margin-bottom: 10px;
-}
-#gallery {
-  margin-top: 10px;
-}
-#gallery img {
-  width: 150px;
-  margin-bottom: 10px;
-  margin-right: 10px;
-  vertical-align: middle;
-}
-.button {
-  display: inline-block;
-  padding: 10px;
-  background: #ccc;
-  cursor: pointer;
-  border-radius: 5px;
-  border: 1px solid #ccc;
-}
-.button:hover {
-  background: #ddd;
-}
-#fileElem {
-  display: none;
-} */
 .droptarget {
   float: left;
   width: 100px;
