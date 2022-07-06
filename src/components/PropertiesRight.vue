@@ -44,7 +44,7 @@ export default {
     :class="{ 'block right-0': isPropertiesMobileExpanded, 'hidden -right-[388px]': !isPropertiesMobileExpanded}"
   >
     <!-- серый отступ в 8px слева, чтобы когда панель налетала на белый элемент она не сливалась -->
-    <div class="bg-white pt-[20px] px-[20px] ml-[8px] min-h-full h-auto w-[370px]">
+    <div class="bg-white pt-[20px] px-[20px] ml-[8px] min-h-full h-auto w-[380px]">
       <RefactoredTaskProperties
         v-if="propertiesState == 'task'"
       />
