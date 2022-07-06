@@ -1,71 +1,85 @@
-<script setup>
-import { computed, ref, onMounted } from 'vue'
-import { useStore } from 'vuex'
-
+<script>
 import * as chartConfig from '@/components/Charts/chart.config.js'
 import AccKarmaLimit from '@/components/AccKarmaLimit.vue'
 import LineChart from '@/components/Charts/LineChart.vue'
 
-const store = useStore()
-const user = computed(() => store.state.user.user)
-const employees = computed(() => store.state.employees.employees)
-const karmaList = computed(() => store.state.inspector.karma)
-const showFreeModal = ref(false)
-
-const currentLocation = window.location.href
-const successChartData = ref(null)
-const overdueChartData = ref(null)
-
-const karmaQuantity = computed(() => {
-  let quantity = 0
-  for (const karma of karmaList.value) quantity += karma.points
-  return quantity
-})
-
-function dateToLabelFormat (calendarDate) {
-  const day = calendarDate.getDate()
-  const month = calendarDate.toLocaleString('default', { month: 'short' })
-  const weekday = calendarDate.toLocaleString('default', { weekday: 'short' })
-  return day + ' ' + month + ', ' + weekday
+export default {
+  components: {
+    AccKarmaLimit,
+    LineChart
+  },
+  data () {
+    return {
+      showFreeModal: false,
+      successChartData: null,
+      overdueChartData: null
+    }
+  },
+  computed: {
+    user () {
+      return this.$store.state.user.user
+    },
+    currentLocation () {
+      return window.location.href
+    },
+    employees () {
+      return this.$store.state.employees.employees
+    },
+    karmaList () {
+      return this.$store.state.inspector.karma
+    },
+    karmaQuantity () {
+      let quantity = 0
+      for (const karma of this.karmaList) quantity += karma.points
+      return quantity
+    },
+    successQuantity () {
+      let quantity = 0
+      for (const karma of this.karmaList) {
+        if (karma.points > 0) {
+          quantity += 1
+        }
+      }
+      return quantity
+    },
+    overdueQuantity () {
+      let quantity = 0
+      for (const karma of this.karmaList) {
+        if (karma.points < 0) {
+          quantity += 1
+        }
+      }
+      return quantity
+    },
+    sortedKarmaListByDate () {
+      return [...this.karmaList].sort((a, b) => new Date(b.creation_date) - new Date(a.creation_date))
+    }
+  },
+  mounted () {
+    if (this.user.tarif !== 'alpha') {
+      this.showFreeModal = true
+      return
+    }
+    this.$store.dispatch('KARMA_REQUEST', this.user.current_user_uid).then((resp) => {
+      const success = []
+      const overdue = []
+      for (const karma of resp.data) {
+        if (karma.points > 0) success.push(karma)
+        else if (karma.points < 0) overdue.push(karma)
+      }
+      this.successChartData = chartConfig.karmaChartData(success, 'success')
+      this.overdueChartData = chartConfig.karmaChartData(overdue, 'danger')
+    })
+  },
+  methods: {
+    dateToLabelFormat (calendarDate) {
+      const day = calendarDate.getDate()
+      const month = calendarDate.toLocaleString('default', { month: 'short' })
+      const weekday = calendarDate.toLocaleString('default', { weekday: 'short' })
+      return day + ' ' + month + ', ' + weekday
+    }
+  }
 }
-
-const successQuantity = computed(() => {
-  let quantity = 0
-  for (const karma of karmaList.value) {
-    if (karma.points > 0) {
-      quantity += 1
-    }
-  }
-  return quantity
-})
-
-const overdueQuantity = computed(() => {
-  let quantity = 0
-  for (const karma of karmaList.value) {
-    if (karma.points < 0) {
-      quantity += 1
-    }
-  }
-  return quantity
-})
-
-const sortedKarmaListByDate = computed(() => [...karmaList.value].sort((a, b) => new Date(b.creation_date) - new Date(a.creation_date)))
-
-onMounted(() => {
-  if (user.value.tarif !== 'alpha') {
-    showFreeModal.value = true
-  }
-  store.dispatch('KARMA_REQUEST', user.value.current_user_uid).then((resp) => {
-    const success = []
-    const overdue = []
-    for (const karma of resp.data) {
-      if (karma.points > 0) success.push(karma)
-      else if (karma.points < 0) overdue.push(karma)
-    }
-    successChartData.value = chartConfig.karmaChartData(success, 'success')
-    overdueChartData.value = chartConfig.karmaChartData(overdue, 'danger')
-  })
-})
 </script>
 
 <template>
