@@ -423,6 +423,9 @@ export default {
     currentUserUid () {
       return this.$store.state.user.user?.current_user_uid ?? ''
     },
+    tags () {
+      return this.$store.state.tasks.tags
+    },
     colors () {
       return this.$store.state.colors.colors
     },
