@@ -1,15 +1,16 @@
-<script setup>
-defineProps({
-  zIndex: {
-    type: String,
-    default: 'z-50'
+<script>
+export default {
+  props: {
+    zIndex: {
+      type: String,
+      default: 'z-50'
+    }
+  },
+  emits: ['overlay-click'],
+
+  overlayClick (event) {
+    this.$emit('overlay-click', event)
   }
-})
-
-const emit = defineEmits(['overlay-click'])
-
-const overlayClick = event => {
-  emit('overlay-click', event)
 }
 </script>
 
