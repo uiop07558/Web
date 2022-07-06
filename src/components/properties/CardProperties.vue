@@ -42,6 +42,13 @@ const boards = computed(() => store.state.boards.boards)
 const employees = computed(() => store.state.employees.employees)
 const employeesByEmail = computed(() => store.state.employees.employeesByEmail)
 const cardMessages = computed(() => store.state.cardfilesandmessages.messages)
+const canAddFiles = computed(() => {
+  const user = store.state.user.user
+  if (user.days_left <= 0) {
+    return false
+  }
+  return true
+})
 
 const showMessagesLimit = ref(false)
 const showChangeCardBudget = ref(false)
@@ -129,9 +136,7 @@ const endChangeComment = (text) => {
 }
 
 const createCardFile = (event) => {
-  const user = store.state.user.user
-  // если лицензия истекла
-  if (user.days_left <= 0) {
+  if (event === false) {
     showMessagesLimit.value = true
     return
   }
@@ -386,6 +391,7 @@ const removeCard = () => {
       />
       <card-message-input
         v-model="cardMessageInputValue"
+        :can-add-files="canAddFiles"
         @createCardMessage="createCardMessage"
         @createCardFile="createCardFile"
         @onPaste="onPasteEvent"
