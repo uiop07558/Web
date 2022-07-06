@@ -347,14 +347,6 @@ export default {
     TaskListActionHoverPanel,
     TaskListModalBoxLicenseLimit
   },
-  onMounted () {
-    document.addEventListener('keyup', function (evt) {
-      if (evt.keyCode === 27) {
-        this.$store.dispatch('asidePropertiesToggle', false)
-      }
-    })
-    window.getSelection().removeAllRanges()
-  },
   data () {
     return {
       createTaskText: '',
@@ -502,6 +494,14 @@ export default {
         })
       })
     }
+  },
+  mounted () {
+    document.addEventListener('keyup', function (evt) {
+      if (evt.keyCode === 27) {
+        this.$store.dispatch('asidePropertiesToggle', false)
+      }
+    })
+    window.getSelection().removeAllRanges()
   },
   methods: {
     scroll (step) {

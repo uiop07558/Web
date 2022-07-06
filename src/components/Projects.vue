@@ -210,8 +210,6 @@ export default {
           children: [],
           bold: 0
         }
-        console.log(`create project uid: ${project.uid}`, project)
-
         this.$store.dispatch(PROJECT.CREATE_PROJECT_REQUEST, project).then((res) => {
           // заполняем недостающие параметры
           project.global_property_uid = '431a3531-a77a-45c1-8035-f0bf75c32641'
