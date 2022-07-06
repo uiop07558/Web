@@ -1385,7 +1385,7 @@ export default {
     </div>
     <div
       id="generalscroll"
-      class="column-resize relative scroll-style"
+      class="column-resize relative"
     >
       <div />
       <div
