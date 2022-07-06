@@ -423,6 +423,9 @@ export default {
     currentUserUid () {
       return this.$store.state.user.user?.current_user_uid ?? ''
     },
+    tags () {
+      return this.$store.state.tasks.tags
+    },
     colors () {
       return this.$store.state.colors.colors
     },
@@ -829,6 +832,7 @@ export default {
       this.$store.commit(TASK.COPY_TASK, copiedTask)
     },
     nodeSelected (arg) {
+      if (this.lastSelectedTaskUid === arg.id) return
       this.lastSelectedTaskUid = arg.id
       // nextTick поставил чтобы сначала выделилось, а потом делало
       // всё остальное
