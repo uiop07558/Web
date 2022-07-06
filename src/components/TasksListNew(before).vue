@@ -348,59 +348,29 @@ export default {
     TaskListActionHoverPanel,
     TaskListModalBoxLicenseLimit
   },
-  data () {
-    return {
-      createTaskText: ''
-    }
-  },
-  computed: {
-    loadedTasks () {
-      return this.$store.state.tasks.loadedTasks
-    },
-    employees () {
-      return this.$store.state.employees.employees
-    },
-    employeesByEmail () {
-      return this.$store.state.employees.employeesByEmail
-    },
-    taskListSource () {
-      return this.$store.state.taskListSource
-    },
-    projects () {
-      return this.$store.state.projects.projects
-    },
-    status () {
-      return this.$store.state.tasks.status
-    },
-    user () {
-      return this.$store.state.user.user
-    },
-    newConfig () {
-      return this.$store.state.tasks.newConfig 
-    },
-    storeTasks () {
-      return this.$store.state.tasks.newtasks
-    },
-    overdue () {
-      return this.$store.state.tasks.overdue
-    },
-    navStack () {
-      return this.$store.state.navbar.navStack
-    },
-    settings () {
-      return this.$store.state.navigator.navigator.settings
-    },
-    lastVisitedDate () {
-      return (this.navStack && this.navStack.length && this.navStack[this.navStack.length - 1] && this.navStack[this.navStack.length - 1].uid && this.navStack[this.navStack.length - 1].uid === '901841d9-0016-491d-ad66-8ee42d2b496b' && this.navStack[this.navStack.length - 1].param ? new Date(this.navStack[this.navStack.length - 1].param) : new Date())
-    },
-    isPropertiesMobileExpanded () {
-      return this.$store.state.isPropertiesMobileExpanded
-    }
-  },
-  methods: {
-
-  },
   setup (props) {
+    const store = useStore()
+    const loadedTasks = computed(() => store.state.tasks.loadedTasks)
+    const employees = computed(() => store.state.employees.employees)
+    const employeesByEmail = computed(() => store.state.employees.employeesByEmail)
+    const taskListSource = computed(() => store.state.taskListSource)
+    const projects = computed(() => store.state.projects.projects)
+    const createTaskText = ref('')
+    const status = computed(() => store.state.tasks.status)
+    const user = computed(() => store.state.user.user)
+    const newConfig = computed(() => store.state.tasks.newConfig)
+    const storeTasks = computed(() => store.state.tasks.newtasks)
+    const overdue = computed(() => store.state.tasks.overdue)
+    const isDark = computed(() => store.state.darkMode)
+    const navStack = computed(() => store.state.navbar.navStack)
+    const settings = computed(() => {
+      return store.state.navigator.navigator.settings
+    })
+
+    const lastVisitedDate = computed(() => {
+      return (navStack.value && navStack.value.length && navStack.value[navStack.value.length - 1].value && navStack.value[navStack.value.length - 1].value.uid && navStack.value[navStack.value.length - 1].value.uid === '901841d9-0016-491d-ad66-8ee42d2b496b' && navStack.value[navStack.value.length - 1].value.param ? new Date(navStack.value[navStack.value.length - 1].value.param) : new Date())
+    })
+
     const isPropertiesMobileExpanded = computed(() => store.state.isPropertiesMobileExpanded)
     const copiedTasks = computed(() => store.state.tasks.copiedTasks)
     const lastSelectedTaskUid = ref('')
