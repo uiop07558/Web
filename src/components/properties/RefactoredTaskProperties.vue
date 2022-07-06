@@ -998,6 +998,9 @@ export default {
     isPropertiesMobileExpanded () {
       return this.$store.state.isPropertiesMobileExpanded
     },
+    taskMessagesAndFiles () {
+      return this.$store.state.taskfilesandmessages.messages
+    },
     user () {
       return this.$store.state.user.user
     },
