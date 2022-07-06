@@ -383,21 +383,24 @@ export default {
     },
     overdue () {
       return this.$store.state.tasks.overdue
+    },
+    navStack () {
+      return this.$store.state.navbar.navStack
+    },
+    settings () {
+      return this.$store.state.navigator.navigator.settings
+    },
+    lastVisitedDate () {
+      return (this.navStack && this.navStack.length && this.navStack[this.navStack.length - 1] && this.navStack[this.navStack.length - 1].uid && this.navStack[this.navStack.length - 1].uid === '901841d9-0016-491d-ad66-8ee42d2b496b' && this.navStack[this.navStack.length - 1].param ? new Date(this.navStack[this.navStack.length - 1].param) : new Date())
+    },
+    isPropertiesMobileExpanded () {
+      return this.$store.state.isPropertiesMobileExpanded
     }
   },
   methods: {
 
   },
   setup (props) {
-    const navStack = computed(() => store.state.navbar.navStack)
-    const settings = computed(() => {
-      return store.state.navigator.navigator.settings
-    })
-
-    const lastVisitedDate = computed(() => {
-      return (navStack.value && navStack.value.length && navStack.value[navStack.value.length - 1].value && navStack.value[navStack.value.length - 1].value.uid && navStack.value[navStack.value.length - 1].value.uid === '901841d9-0016-491d-ad66-8ee42d2b496b' && navStack.value[navStack.value.length - 1].value.param ? new Date(navStack.value[navStack.value.length - 1].value.param) : new Date())
-    })
-
     const isPropertiesMobileExpanded = computed(() => store.state.isPropertiesMobileExpanded)
     const copiedTasks = computed(() => store.state.tasks.copiedTasks)
     const lastSelectedTaskUid = ref('')

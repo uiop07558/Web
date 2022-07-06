@@ -296,7 +296,7 @@ const tarifS = () => {
       />
     </div>
     <EventAlert
-      v-if="user.tarif === 'free' || user.tarif === 'trial'"
+      v-if="user?.tarif === 'free' || user?.tarif === 'trial'"
       :bg-color="'#FFCA86'"
       :link="'https://www.leadertask.ru/alpha'"
       :message-text="user.tarif === 'trial' ? 'Ваш тариф имеет ограниченный набор действий. Пожалуйста, обновите тариф.' : 'У вас истекла лицензия. Пожалуйста, обновите тариф.'"
