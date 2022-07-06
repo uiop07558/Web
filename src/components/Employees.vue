@@ -398,7 +398,7 @@ export default {
           email: empEmail
         })
           .catch((e) => {
-            if (e.response?.data?.error === "in user's org present employees") {
+            if (e.response?.data?.error === "in user's org present employees" || e.response?.data?.error === 'the employee has license') {
               this.showOtherOrg = true
             }
           })
