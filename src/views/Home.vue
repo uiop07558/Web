@@ -406,8 +406,8 @@ if (router.currentRoute.value.name === 'task' && router.currentRoute.value.param
     <!-- Greed section -->
     <div
       v-if="mainSectionState === 'greed'"
-      class="h-auto"
-      :class="{ 'overflow-auto scroll-style relative': greedPath === 'doitnow' }"
+      class="h-full"
+      :class="{ 'overflow-auto scroll-style relative': greedPath === 'doitnow', 'h-auto': greedPath === 'projects_children' }"
     >
       <projects
         v-if="greedPath === 'new_private_projects'"
