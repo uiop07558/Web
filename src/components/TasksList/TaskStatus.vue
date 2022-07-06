@@ -1,4 +1,4 @@
-<script setup>
+<script>
 import Icon from '@/components/Icon.vue'
 import PopMenu from '@/components/modals/PopMenu.vue'
 import PopMenuItem from '@/components/modals/PopMenuItem.vue'
@@ -12,62 +12,83 @@ import canceled from '@/icons/canceled.js'
 import improve from '@/icons/improve.js'
 import repeat from '@/icons/repeat.js'
 
-const emit = defineEmits(['changeStatus'])
+export default {
+  components: {
+    Icon,
+    PopMenu,
+    PopMenuItem
+  },
 
-const props = defineProps({
-  task: {
-    type: Object,
-    default: () => ({})
+  props: {
+    task: {
+      type: Object,
+      default: () => ({})
+    }
+  },
+  emits: ['changeStatus'],
+
+  data () {
+    return {
+      readyStatus,
+      note,
+      inwork,
+      pause,
+      canceled,
+      improve,
+      repeat,
+
+      statusesLabels: [
+        'Не началось',
+        'Задача выполнена',
+        'Задача по ссылке',
+        'Заметка',
+        'В работе',
+        'Готово к сдаче',
+        'Отложено',
+        'Отменено',
+        'Отклонено',
+        'На доработку'
+      ],
+
+      statusColor: {
+        4: 'text-green-600',
+        5: 'text-red-600',
+        8: 'text-red-600',
+        9: 'text-blue-500'
+      },
+
+      statuses: [
+        undefined, // we don't have 0 status
+        readyStatus,
+        readyStatus,
+        note,
+        inwork,
+        readyStatus,
+        pause,
+        canceled,
+        canceled,
+        improve
+      ]
+    }
+  },
+
+  methods: {
+    showStatusOrNot (type, status) {
+      if (type === 1 && [0, 1, 3, 4, 6, 7].includes(status)) {
+        return true
+      } else if (type === 2 && [0, 1, 3, 4, 6, 7, 9].includes(status)) {
+        return true
+      } else if (type === 3 && [0, 4, 5, 6, 8].includes(status)) {
+        return true
+      } else {
+        return false
+      }
+    },
+
+    changeTaskStatus (uid, status) {
+      this.$emit('changeStatus', status)
+    }
   }
-})
-
-const statusesLabels = [
-  'Не началось',
-  'Задача выполнена',
-  'Задача по ссылке',
-  'Заметка',
-  'В работе',
-  'Готово к сдаче',
-  'Отложено',
-  'Отменено',
-  'Отклонено',
-  'На доработку'
-]
-
-const statusColor = {
-  4: 'text-green-600',
-  5: 'text-red-600',
-  8: 'text-red-600',
-  9: 'text-blue-500'
-}
-
-const statuses = [
-  undefined, // we don't have 0 status
-  readyStatus,
-  readyStatus,
-  note,
-  inwork,
-  readyStatus,
-  pause,
-  canceled,
-  canceled,
-  improve
-]
-
-const showStatusOrNot = (type, status) => {
-  if (type === 1 && [0, 1, 3, 4, 6, 7].includes(status)) {
-    return true
-  } else if (type === 2 && [0, 1, 3, 4, 6, 7, 9].includes(status)) {
-    return true
-  } else if (type === 3 && [0, 4, 5, 6, 8].includes(status)) {
-    return true
-  } else {
-    return false
-  }
-}
-
-const changeTaskStatus = (uid, status) => {
-  emit('changeStatus', status)
 }
 </script>
 
