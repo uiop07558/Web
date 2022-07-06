@@ -46,7 +46,7 @@
     </div>
     <div
       id="generalscroll"
-      class="column-resize relative scroll-style"
+      class="column-resize relative overflow-hidden"
     >
       <div />
       <div
