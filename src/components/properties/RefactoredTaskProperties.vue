@@ -1164,6 +1164,10 @@ export default {
       this.$store.dispatch(TASK.CHANGE_TASK_TAGS, data)
     },
     createTaskFile (event) {
+      if (this.user.tarif === 'free') {
+        this.showFreeModalChat = true
+        return
+      }
       this.files = event.target.files
       const formData = new FormData()
       for (let i = 0; i < this.files.length; i++) {
@@ -1664,6 +1668,10 @@ export default {
       }
     },
     sendTaskMsg: function (msg) {
+      if (this.user.tarif === 'free') {
+        this.showFreeModalChat = true
+        return
+      }
       // this.showAllMessages = true
       // const date = new Date()
       // const month = this.pad2(date.getUTCMonth() + 1)
