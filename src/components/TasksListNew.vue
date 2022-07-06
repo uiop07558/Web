@@ -832,6 +832,7 @@ export default {
       this.$store.commit(TASK.COPY_TASK, copiedTask)
     },
     nodeSelected (arg) {
+      if (this.lastSelectedTaskUid === arg.id) return
       this.lastSelectedTaskUid = arg.id
       // nextTick поставил чтобы сначала выделилось, а потом делало
       // всё остальное
