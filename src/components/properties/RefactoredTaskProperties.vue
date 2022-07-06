@@ -466,7 +466,7 @@
                       <div class="form-group">
                         <div class="form-everyyear-container">
                           <div
-                            v-for="day in (SeriesYearMonth === 2 ? 28 : 31)"
+                            v-for="day in 28"
                             :key="day"
                             class="form_radio_btn-custom"
                           >
@@ -742,10 +742,6 @@
     <div
       id="drop-area"
       class="input-group bg-gray-100 rounded-[10px] mt-2"
-      @drop="drop($refs.file_attach)"
-      @dragover="allowDrop($refs.file_attach)"
-      @dragstart="dragStart"
-      @drag="dragging"
     >
       <span class="input-group-addon input-group-attach dark:bg-gray-800 dark:text-gray-100">
         <div class="example-1">
@@ -781,10 +777,6 @@
         placeholder="Напишите сообщение..."
         rows="58"
         @input="onInputTaskMsg"
-        @drop="drop($refs.file_attach)"
-        @dragover="allowDrop($refs.file_attach)"
-        @dragstart="dragStart"
-        @drag="dragging"
         @keydown.enter.exact.prevent="sendTaskMsg()"
         @keydown.enter.shift.exact.prevent="addNewLineTaskMsg"
       />
@@ -920,7 +912,6 @@ export default {
       },
       timeStart: this.selectedTask?.term_customer === '' ? '' : new Date(this.selectedTask?.customer_date_begin).toLocaleTimeString(),
       timeEnd: this.selectedTask?.term_customer === '' ? '' : new Date(this.selectedTask?.customer_date_end).toLocaleTimeString(),
-      checkEmail: (this.selectedTask?.emails && this.selectedTask?.emails !== '') ? this.selectedTask.emails.split('..') : [],
       SeriesType: this.selectedTask?.SeriesType,
       SeriesAfterCount: this.selectedTask?.SeriesAfterCount,
       SeriesAfterType: this.selectedTask?.SeriesAfterType,
@@ -935,7 +926,6 @@ export default {
       SeriesYearMonthDay: this.selectedTask?.SeriesYearMonthDay,
       SeriesYearWeekType: this.selectedTask?.SeriesYearWeekType,
       SeriesYearDayOfWeek: this.selectedTask?.SeriesYearDayOfWeek,
-      selectedTaskcomment: this.selectedTask?.comment,
       ActiveSelect: this.selectedTask?.SeriesMonthType,
       ActiveYartype: this.selectedTask?.SeriesYearType,
       SeriesWeekMon: this.selectedTask?.SeriesWeekMon === 1 ? 'mon' : ' ',
@@ -1172,19 +1162,6 @@ export default {
         range.select()
       }
     },
-    editcomment () {
-      if (!this.canEditComment) return
-      this.isEditable = true
-    },
-    removeeditcomment (event) {
-      if (!this.canEditComment) return
-      this.isEditable = false
-      // чтобы у нас в интерфейсе поменялось
-      // потому что на changeComment он только
-      // на сервер отправляет и всё
-      const message = event.target.innerText.trim()
-      this.selectedTask.comment = message
-    },
     changeComment (event) {
       if (!this.canEditComment) return
       const message = event.target.innerText.trim()
@@ -1405,27 +1382,6 @@ export default {
     print (value) {
       console.log(value)
     },
-    dragStart (event) {
-      event.dataTransfer.setData('Text', event.target.id)
-    },
-    dragging (event) {
-      document.getElementById('demo').innerHTML =
-        'The p element is being dragged'
-    },
-    allowDrop (event) {
-    },
-    drop (e) {
-      const item = e.files.clipboardData.items
-      console.log(item)
-    },
-    editable () {
-      if (this.user?.current_user_uid === this.selectedTask.uid_customer) {
-        this.isEditableTaskName = true
-        this.$nextTick(() => {
-          this.$refs.TaskName.focus()
-        })
-      }
-    },
     sendTaskMsg: function (msg) {
       if (this.user.tarif === 'free') {
         this.showFreeModalChat = true
@@ -1540,15 +1496,12 @@ export default {
       }
     },
     onReAssignToUser: function (userEmail) {
-      console.log('onReAssignToUser', userEmail)
-      console.log('onReAssignToUser is not resolved')
       const data = {
         uid: this.selectedTask.uid,
         value: userEmail
       }
       this.$store.dispatch(TASK.CHANGE_TASK_REDELEGATE, data).then(
         resp => {
-          console.log(resp.data)
           this.$store.commit(TASK.SUBTASKS_REQUEST, resp.data)
         }
       )
@@ -1602,9 +1555,7 @@ export default {
       })
     },
     onChangeAccess: function (checkEmails) {
-      console.log(this.selectedTask)
       const emails = checkEmails.join('..')
-      console.log('onChangeAccess', emails)
       const data = {
         uid: this.selectedTask.uid,
         value: emails
@@ -1616,7 +1567,6 @@ export default {
       )
     },
     onChangeProject: function (projectUid) {
-      console.log('onChangeProject', projectUid)
       const data = {
         uid: this.selectedTask.uid,
         value: projectUid
@@ -1639,7 +1589,6 @@ export default {
       )
     },
     onChangeColor: function (colorUid) {
-      console.log('onChangeColor', colorUid)
       const data = {
         uid: this.selectedTask.uid,
         value: colorUid
@@ -1667,14 +1616,12 @@ export default {
       document.getElementById(uid).parentNode.click({ preventScroll: false })
     },
     onAnswerMessage (uid) {
-      console.log(this.taskMessages)
       this.currentAnswerMessageUid = uid
       this.$nextTick(function () {
         this.onInputTaskMsg()
       })
     },
     onChangeChecklist (checklist) {
-      console.log('onChangeChecklist:', checklist.replaceAll('\r\n\r\n', ' | ').replaceAll('\r\n', ' '))
       const data = {
         uid_task: this.selectedTask.uid,
         checklist: checklist
