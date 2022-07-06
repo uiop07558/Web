@@ -409,7 +409,6 @@ if (router.currentRoute.value.name === 'task' && router.currentRoute.value.param
       class="h-full"
       :class="{ 'overflow-auto scroll-style relative': greedPath === 'doitnow', 'h-auto': greedPath === 'projects_children' }"
     >
-      <pre>{{ greedPath }}</pre>
       <projects
         v-if="greedPath === 'new_private_projects'"
         :items="greedSource"
