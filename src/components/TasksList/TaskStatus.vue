@@ -94,7 +94,7 @@ export default {
 
 <template>
   <PopMenu
-    :disabled="props.task.type == 4"
+    :disabled="task.type == 4"
     placement="left"
   >
     <template #menu>
@@ -103,8 +103,8 @@ export default {
         :key="taskStatus"
       >
         <PopMenuItem
-          v-if="showStatusOrNot(props.task.type, taskStatus - 1) && props.task.status !== (taskStatus - 1)"
-          @click="changeTaskStatus(props.task.uid, taskStatus - 1)"
+          v-if="showStatusOrNot(task.type, taskStatus - 1) && task.status !== (taskStatus - 1)"
+          @click="changeTaskStatus(task.uid, taskStatus - 1)"
         >
           <div
             class="border-2 border-gray-300 rounded-md flex items-center justify-center"
@@ -125,19 +125,19 @@ export default {
     </template>
     <div
       class="border-2 relative border-gray-300 rounded-md bg-white flex items-center justify-center"
-      :class="{ 'cursor-pointer': [1, 2, 3].includes(props.task.type), 'cursor-not-allowed': props.task.type == 4 }"
+      :class="{ 'cursor-pointer': [1, 2, 3].includes(task.type), 'cursor-not-allowed': task.type == 4 }"
       style="min-width:20px; min-height: 20px;"
     >
       <Icon
-        v-if="statuses[props.task.status]"
-        :path="statuses[props.task.status].path"
-        :class="statusColor[props.task.status] ? statusColor[props.task.status] : 'text-gray-500 dark:text-gray-100'"
-        :box="statuses[props.task.status].viewBox"
-        :width="statuses[props.task.status].width"
-        :height="statuses[props.task.status].height"
+        v-if="statuses[task.status]"
+        :path="statuses[task.status].path"
+        :class="statusColor[task.status] ? statusColor[task.status] : 'text-gray-500 dark:text-gray-100'"
+        :box="statuses[task.status].viewBox"
+        :width="statuses[task.status].width"
+        :height="statuses[task.status].height"
       />
       <Icon
-        v-if="props.task.SeriesType !== 0"
+        v-if="task.SeriesType !== 0"
         :path="repeat.path"
         class="text-blue-500 bg-white absolute -bottom-1.5 -right-1.5 p-0.5 rounded-full"
         :box="repeat.viewBox"
