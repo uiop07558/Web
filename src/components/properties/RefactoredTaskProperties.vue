@@ -1008,6 +1008,10 @@ export default {
         })
     },
     createTaskFile (event) {
+      if (this.user.tarif === 'free') {
+        this.showFreeModalChat = true
+        return
+      }
       this.files = event.target.files
       const formData = new FormData()
       for (let i = 0; i < this.files.length; i++) {
@@ -1423,6 +1427,10 @@ export default {
       }
     },
     sendTaskMsg: function (msg) {
+      if (this.user.tarif === 'free') {
+        this.showFreeModalChat = true
+        return
+      }
       let msgtask = msg || this.taskMsg
       msgtask = msgtask.trim()
       msgtask = msgtask.replaceAll('&', '&amp;')
