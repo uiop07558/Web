@@ -948,7 +948,7 @@ export default {
       SeriesAfterType: this.selectedTask?.SeriesAfterType,
       SeriesWeekCount: this.selectedTask?.SeriesWeekCount,
       SeriesMonthType: this.selectedTask?.SeriesMonthType === 1 ? this.selectedTask?.SeriesMonthType : this.selectedTask?.SeriesMonthWeekType,
-      SeriesMonthCount: this.selectedTask?.SeriesMonthCount,
+      SeriesMonthCount: this.selectedTask?.SeriesMonthCount ?? 1,
       SeriesMonthDay: this.selectedTask?.SeriesMonthDay,
       SeriesMonthWeekType: this.selectedTask?.SeriesMonthWeekType,
       SeriesMonthDayOfWeek: this.selectedTask?.SeriesMonthDayOfWeek,
