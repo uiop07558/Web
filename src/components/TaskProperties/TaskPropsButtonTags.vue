@@ -94,7 +94,7 @@
             fill-opacity="1"
           />
         </svg>
-        <span class="rounded custom-method">{{
+        <span class="rounded custom-method truncate max-w-[300px]">{{
           tags[key]?.name ?? '???'
         }}</span>
         <button
