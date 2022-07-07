@@ -89,7 +89,7 @@
             @click="onCheckTag(tag.uid)"
           >
           <label
-            class="w-full break-words cursor-pointer"
+            class=" cursor-pointer truncate"
             :for="`tag-check-button-${tag.uid}`"
           >
             {{ tag.name }}
