@@ -103,7 +103,7 @@ export default {
     },
     // TODO: clean up messy logic
     menuClick (event, item) {
-      if (this.ropertiesMobileExpanded) {
+      if (this.isPropertiesMobileExpanded) {
         this.$store.dispatch('asidePropertiesToggle', false)
       }
 
