@@ -16,6 +16,7 @@ const state = {
   selectedBoard: undefined,
   showArchive: false,
   showOnlyMyCards: false,
+  showOnlyMyCardsCreated: false,
   showOnlySearchText: undefined
 }
 
@@ -332,12 +333,16 @@ const mutations = {
   [BOARD.SHOW_BOARD_MY_CARDS]: (state, showMyCards) => {
     state.showOnlyMyCards = showMyCards
   },
+  [BOARD.SHOW_BOARD_MY_CARDS_CREATED]: (state, showMyCardsCreated) => {
+    state.showOnlyMyCardsCreated = showMyCardsCreated
+  },
   [BOARD.SHOW_SEARCH_CARDS]: (state, searchText) => {
     state.showOnlySearchText = searchText
   },
   [BOARD.BOARD_CLEAR_FILTER]: (state) => {
     state.showArchive = false
     state.showOnlyMyCards = false
+    state.showOnlyMyCardsCreated = false
   }
 }
 
