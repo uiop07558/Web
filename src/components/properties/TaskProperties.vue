@@ -959,6 +959,11 @@ export default {
     daysWithTasks () { return this.$store.state.tasks.daysWithTasks },
     navStack () { return this.$store.state.navbar.navStack },
     isInFocus () { return this.selectedTask?.focus === 1 },
+    isAccessVisible () {
+      if (this.selectedTask.emails) return true
+      if (this.selectedTask.type === 1 || this.selectedTask.type === 2) return true
+      return false
+    },
     modalBoxDeleteText () {
       let text = 'Вы действительно хотите удалить задачу?'
       if (this.tasks[this.selectedTask.uid]?.children?.length > 0) {
