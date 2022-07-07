@@ -148,7 +148,7 @@ export default {
   },
   emits: ['changeColor'],
   data: () => ({
-    currColor: '00000000-0000-0000-0000-000000000000'
+    currColor: this?.selectedColor
   }),
   computed: {
     colors () {
