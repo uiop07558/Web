@@ -10,7 +10,7 @@
     <PopMenu>
       <NavBarButtonIcon
         icon="filter"
-        :colored="showOnlyMyCards || showArchive"
+        :colored="showOnlyMyCardsCreated || showOnlyMyCards || showArchive"
       />
       <template #menu>
         <PopMenuItem
@@ -20,16 +20,22 @@
           Ответственный я
         </PopMenuItem>
         <PopMenuItem
+          :icon="showOnlyMyCardsCreated ? 'check' : 'uncheck'"
+          @click="clickBoardMyCardsCreated"
+        >
+          Создатель я
+        </PopMenuItem>
+        <PopMenuItem
           :icon="showArchive ? 'check' : 'uncheck'"
           @click="clickBoardArchive"
         >
           Архив
         </PopMenuItem>
         <PopMenuDivider
-          v-if="showOnlyMyCards || showArchive"
+          v-if="showOnlyMyCardsCreated || showOnlyMyCards || showArchive"
         />
         <PopMenuItem
-          v-if="showOnlyMyCards || showArchive"
+          v-if="showOnlyMyCardsCreated || showOnlyMyCards || showArchive"
           icon="uncheck"
           @click="clickBoardFilterClear"
         >
@@ -100,6 +106,9 @@ export default {
     },
     showOnlyMyCards () {
       return this.$store.state.boards.showOnlyMyCards
+    },
+    showOnlyMyCardsCreated () {
+      return this.$store.state.boards.showOnlyMyCardsCreated
     }
   },
   methods: {
@@ -130,6 +139,9 @@ export default {
     },
     clickBoardMyCards () {
       this.$store.commit(BOARD.SHOW_BOARD_MY_CARDS, !this.showOnlyMyCards)
+    },
+    clickBoardMyCardsCreated () {
+      this.$store.commit(BOARD.SHOW_BOARD_MY_CARDS_CREATED, !this.showOnlyMyCardsCreated)
     },
     clickBoardArchive () {
       this.$store.commit(BOARD.SHOW_BOARD_ARCHIVE, !this.showArchive)
