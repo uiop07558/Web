@@ -17,6 +17,8 @@ import AccKarma from '@/components/AccKarma.vue'
 import 'v-calendar/dist/style.css'
 import { UID_TO_ACTION } from '@/store/helpers/functions'
 
+import warn from '@/icons/warn.js'
+
 import * as TASK from '@/store/actions/tasks'
 import { AUTH_LOGOUT } from '@/store/actions/auth'
 
@@ -297,9 +299,11 @@ const tarifS = () => {
     </div>
     <EventAlert
       v-if="user?.tarif === 'free' || user?.tarif === 'trial'"
-      :bg-color="'#FFCA86'"
+      :bg-color="'#DA4C40'"
+      :text-color="'white'"
+      :user-icon="warn"
       :link="'https://www.leadertask.ru/alpha'"
-      :message-text="user.tarif === 'trial' ? 'Ваш тариф имеет ограниченный набор действий. Пожалуйста, обновите тариф.' : 'У вас истекла лицензия. Пожалуйста, обновите тариф.'"
+      :message-text="user.tarif === 'trial' ? 'Пробный тариф.' : 'Закончилась лицензия.'"
     />
     <div class="my-[10px]">
       <template v-for="(menuGroup, index) in menu">
