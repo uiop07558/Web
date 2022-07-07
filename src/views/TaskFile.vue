@@ -1,37 +1,36 @@
-<script setup>
-import { onMounted, ref } from 'vue'
-import { useStore } from 'vuex'
-import { useRouter } from 'vue-router'
+<script>
 import { GETFILES } from '@/store/actions/taskfiles'
-
-let intervalId = 0
-const store = useStore()
-const router = useRouter()
-const text = ref('Идет загрузка файла. Пожалуйста, подождите')
-const dots = ref('.')
-
-onMounted(() => {
+export default {
+  data () {
+    return {
+      intervalId: 0,
+      text: ('Идет загрузка файла. Пожалуйста, подождите'),
+      dots: ('.')
+    }
+  },
+  mounted () {
   // Start dots blinking
-  intervalId = setInterval(() => {
-    dots.value.length < 3 ? dots.value += '.' : dots.value = '.'
-  }, 500)
+    this.intervalId = setInterval(() => {
+      this.dots.value.length < 3 ? this.dots.value += '.' : this.dots.value = '.'
+    }, 500)
 
-  const type = router.currentRoute.value.query.type
-  const format = router.currentRoute.value.query.format
+    const type = this.$router.currentRoute.value.query.type
+    const format = this.$router.currentRoute.value.query.format
 
-  store.dispatch(GETFILES, router.currentRoute.value.params.id).then((resp) => {
-    const fileBlob = new Blob([resp.data], { type: type + '/' + format })
-    const urlCreator = window.URL || window.webkitURL
-    const fileURL = urlCreator.createObjectURL(fileBlob)
-    dots.value = '.'
-    window.location.href = fileURL
-    clearInterval(intervalId)
-  }).catch((err) => {
-    text.value = err
-    dots.value = '.'
-    clearInterval(intervalId)
-  })
-})
+    this.$store.dispatch(GETFILES, this.$router.currentRoute.value.params.id).then((resp) => {
+      const fileBlob = new Blob([resp.data], { type: type + '/' + format })
+      const urlCreator = window.URL || window.webkitURL
+      const fileURL = urlCreator.createObjectURL(fileBlob)
+      this.dots.value = '.'
+      window.location.href = fileURL
+      clearInterval(this.intervalId)
+    }).catch((err) => {
+      this.text.value = err
+      this.dots.value = '.'
+      clearInterval(this.intervalId)
+    })
+  }
+}
 
 </script>
 <template>
