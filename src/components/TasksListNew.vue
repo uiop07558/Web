@@ -832,16 +832,18 @@ export default {
       this.$store.commit(TASK.COPY_TASK, copiedTask)
     },
     nodeSelected (arg) {
-      this.lastSelectedTaskUid = arg.id
-      // nextTick поставил чтобы сначала выделилось, а потом делало
-      // всё остальное
-      this.$nextTick(() => {
-        if (!this.isPropertiesMobileExpanded && arg.info.name) {
-          this.$store.dispatch('asidePropertiesToggle', true)
-        }
-        this.$store.commit('basic', { key: 'propertiesState', value: 'task' })
-        this.$store.dispatch(TASK.SELECT_TASK, arg.info)
-      })
+      if (!this.isPropertiesMobileExpanded && arg.info.name) {
+        this.$store.dispatch('asidePropertiesToggle', true)
+      }
+
+      if (this.lastSelectedTaskUid !== arg.id) {
+        this.lastSelectedTaskUid = arg.id
+
+        this.$nextTick(() => {
+          this.$store.commit('basic', { key: 'propertiesState', value: 'task' })
+          this.$store.dispatch(TASK.SELECT_TASK, arg.info)
+        })
+      }
     },
     nodeDragEnd (node) {
       if (this.storeTasks[node.dragged.node.id]) {

@@ -39,7 +39,8 @@ const state = {
   files: [],
   file: '',
   myfiles: {},
-  uploadStarted: false
+  uploadStarted: false,
+  fileAbortController: null
 }
 
 const getters = {}
@@ -47,17 +48,22 @@ const getters = {}
 const actions = {
   [FILES_REQUEST]: ({ commit, dispatch }, taskUid) => {
     return new Promise((resolve, reject) => {
+      commit('abortFileAbortController')
+      const fileAbortController = new AbortController()
+      commit('initFileAbortController', fileAbortController)
       commit(FILES_REQUEST)
       const url =
         process.env.VUE_APP_LEADERTASK_API +
         'api/v1/tasksfiles/bytask?uid=' +
         taskUid
-      axios({ url: url, method: 'GET' })
+      axios({ url: url, method: 'GET', signal: fileAbortController.signal })
         .then((resp) => {
+          commit(REFRESH_FILES)
           commit(FILES_SUCCESS, resp)
           resolve(resp)
         })
         .catch((err) => {
+          commit(REFRESH_FILES)
           commit(FILES_ERROR)
           reject(err)
         })
@@ -387,6 +393,14 @@ const mutations = {
   },
   [TOGGLE_UPLOAD_STATUS]: (state) => {
     state.uploadStarted = !state.uploadStarted
+  },
+  initFileAbortController (state, controller) {
+    state.fileAbortController = controller
+  },
+  abortFileAbortController (state) {
+    if (state.fileAbortController) {
+      state.fileAbortController.abort()
+    }
   }
 }
 
