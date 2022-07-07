@@ -142,7 +142,7 @@ export default {
   },
   emits: ['changeProject'],
   data: () => ({
-    currProject: '00000000-0000-0000-0000-000000000000',
+    currProject: this?.selectedProject,
     collapsedProject: []
   }),
   computed: {
@@ -182,6 +182,8 @@ export default {
       if (this.currProject !== projectUid) {
         this.currProject = projectUid
         this.onSave()
+      } else {
+        this.removeProject()
       }
     },
     onCollapseProject (projectUid) {
