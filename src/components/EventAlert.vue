@@ -1,26 +1,26 @@
 <template>
   <div
-    :style="{ backgroundColor: bgColor, borderColor: borderColor }"
-    class="p-4 max-w-sm rounded-xl shadow-lg flex items-start space-x-4 mx-3.5 my-5"
+    :style="{ backgroundColor: bgColor, borderColor: borderColor, color: textColor }"
+    class="p-4 max-w-sm rounded-xl shadow-lg flex items-center space-x-4 mx-3.5 my-5"
   >
     <Icon
-      :path="DefaultIcon.path"
+      :path="userIcon.path"
       class="flex-none h-7 w-7"
       :style="{ color: textColor }"
-      :box="DefaultIcon.viewBox"
-      :width="DefaultIcon.width"
-      :height="DefaultIcon.height"
+      :box="userIcon.viewBox"
+      :width="userIcon.width"
+      :height="userIcon.height"
     />
     <p
       v-if="!link.length"
-      class="w-full mx-3.5"
+      class="w-full mx-3.5 font-semibold"
       :style="{ color: textColor }"
     >
       {{ messageText }}
     </p>
     <a
       v-if="link.length"
-      class="w-full mx-3.5"
+      class="w-full mx-3.5 font-semibold"
       :href="link"
       :style="{ color: textColor }"
       target="_blank"
@@ -59,6 +59,10 @@ export default {
     link: {
       type: String,
       default: ''
+    },
+    userIcon: {
+      type: Object,
+      default: DefaultIcon
     }
   },
   data () {
