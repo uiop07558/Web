@@ -222,12 +222,14 @@ export default {
       )
     }
   },
+  mounted () {
+    this.checkTags = [...this.selectedTags]
+  },
   methods: {
     print (val) {
       console.log(val)
     },
     onShowSelectTags () {
-      this.checkTags = [...this.selectedTags]
       this.collapsedTags = []
     },
     isCheckedTag (tagUid) {
