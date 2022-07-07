@@ -496,11 +496,6 @@ export default {
     }
   },
   mounted () {
-    document.addEventListener('keyup', function (evt) {
-      if (evt.keyCode === 27) {
-        this.$store.dispatch('asidePropertiesToggle', false)
-      }
-    })
     window.getSelection().removeAllRanges()
   },
   methods: {
