@@ -1111,8 +1111,8 @@ export default {
       }
       this.$store.dispatch(TASK.CHANGE_TASK_DATE, data).then(
         resp => {
-          this.selectedTask.term_customer = resp.data.term
-          this.selectedTask.is_overdue = resp.data.is_overdue
+          this.selectedTask.term_customer = resp.term
+          this.selectedTask.is_overdue = resp.is_overdue
           this.timeStart = timestart !== '' ? '' : timestart
           this.timeEnd = timeend !== '' ? '' : timeend
           this.timeStartActive = true
