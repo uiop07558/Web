@@ -230,7 +230,7 @@
           </div>
           <!--кнопка добавить карточку -->
           <div
-            v-if="column.AddCard && !showOnlyMyCards && !showOnlySearchText"
+            v-if="column.AddCard && !showOnlyMyCardsCreated && !showOnlyMyCards && !showOnlySearchText"
             class="mt-2 h-[40px]"
           >
             <button
@@ -318,9 +318,6 @@ export default {
     BoardCard,
     draggable
   },
-  unmounted () {
-    this.$store.commit(BOARD.SHOW_SEARCH_CARDS, undefined)
-  },
   props: {
     storeCards: {
       type: Array,
@@ -378,6 +375,9 @@ export default {
     showOnlyMyCards () {
       return this.$store.state.boards.showOnlyMyCards
     },
+    showOnlyMyCardsCreated () {
+      return this.$store.state.boards.showOnlyMyCardsCreated
+    },
     showOnlySearchText () {
       return this.$store.state.boards.showOnlySearchText
     },
@@ -401,6 +401,9 @@ export default {
         }
       }
     }
+  },
+  unmounted () {
+    this.$store.commit(BOARD.SHOW_SEARCH_CARDS, undefined)
   },
   methods: {
     print (val) {
@@ -450,6 +453,9 @@ export default {
       if (this.showOnlyMyCards) {
         const currentUserEmail = this.$store.state.user.user.current_user_email.toLowerCase()
         return column.cards.filter(card => card.user.toLowerCase() === currentUserEmail)
+      } else if (this.showOnlyMyCardsCreated) {
+        const currentUserEmail = this.$store.state.user.user.current_user_email.toLowerCase()
+        return column.cards.filter(card => card.email_creator.toLowerCase() === currentUserEmail)
       } else if (this.showOnlySearchText) {
         return column.cards.filter(card => card.name.toLowerCase().includes(this.showOnlySearchText.toLowerCase()))
       }
