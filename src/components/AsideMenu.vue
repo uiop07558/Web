@@ -1,11 +1,7 @@
-<script setup>
-import { computed, ref } from 'vue'
-import { useStore } from 'vuex'
-import { useRouter } from 'vue-router'
+<script>
 import EventAlert from '@/components/EventAlert.vue'
 import ModalBox from '@/components/ModalBox.vue'
 import { DatePicker } from 'v-calendar'
-import { mdiMenu } from '@mdi/js'
 import NavBarItem from '@/components/NavBarItem.vue'
 import Icon from '@/components/Icon.vue'
 import AccModal from '@/components/AccModal.vue'
@@ -18,169 +14,207 @@ import 'v-calendar/dist/style.css'
 import { UID_TO_ACTION } from '@/store/helpers/functions'
 
 import warn from '@/icons/warn.js'
+import { mdiMenu } from '@mdi/js'
 
 import * as TASK from '@/store/actions/tasks'
 import { AUTH_LOGOUT } from '@/store/actions/auth'
 
-const router = useRouter()
-
-defineProps({
-  menu: {
-    type: Array,
-    default: () => []
-  }
-})
-
-let modalOneActive = ref(false)
-
-const store = useStore()
-const isFullScreen = computed(() => store.state.isFullScreen)
-const isAsideMobileExpanded = computed(() => store.state.isAsideMobileExpanded)
-const isPropertiesMobileExpanded = computed(() => store.state.isPropertiesMobileExpanded)
-const isAsideLgActive = computed(() => store.state.isAsideLgActive)
-const isDark = computed(() => store.state.darkMode)
-const navStack = computed(() => store.state.navbar.navStack)
-
-const datePickerBG = computed(() => {
-  return isDark.value ? 'rgb(31 41 55)' : '#f4f5f7'
-})
-const attrs = computed(() => store.state.calendar.calendar)
-const user = computed(() => store.state.user.user)
-const storeNavigator = computed(() => store.state.navigator.navigator)
-const navig = computed(() => store.state.navig)
-const getNavigatorLanguage = () => (navigator.languages && navigator.languages.length) ? navigator.languages[0] : navigator.userLanguage || navigator.language || navigator.browserLanguage || 'en'
-const lastVisitedDate = navStack.value && navStack.value.length && navStack.value[navStack.value.length - 1].value && navStack.value[navStack.value.length - 1].value.uid && navStack.value[navStack.value.length - 1].value.uid === '901841d9-0016-491d-ad66-8ee42d2b496b' && navStack.value[navStack.value.length - 1].value.param ? new Date(navStack.value[navStack.value.length - 1].value.param) : new Date()
-
-const logout = () => {
-  modalOneActive = false
-  store.dispatch(AUTH_LOGOUT)
-  router.push('/login')
-  if (isPropertiesMobileExpanded.value) { store.dispatch('asidePropertiesToggle', false) }
-}
-
-function dateToLabelFormat (calendarDate) {
-  const day = calendarDate.getDate()
-  const month = calendarDate.toLocaleString('default', { month: 'short' })
-  const weekday = calendarDate.toLocaleString('default', { weekday: 'short' })
-  return day + ' ' + month + ', ' + weekday
-}
-
-const asideLgClose = () => {
-  store.dispatch('asideLgToggle', false)
-}
-
-// TODO: clean up messy logic
-const menuClick = (event, item) => {
-  if (isPropertiesMobileExpanded.value) {
-    store.dispatch('asidePropertiesToggle', false)
-  }
-
-  // desktop check
-  if (item.uid === '2bad1413-a373-4926-8a3c-58677a680714') {
-    const navElem = {
-      name: item.label,
-      key: 'greedSource',
-      value: { uid: item.uid, param: null }
+export default {
+  components: {
+    EventAlert,
+    ModalBox,
+    DatePicker,
+    NavBarItem,
+    Icon,
+    AccModal,
+    AccTarif,
+    AsideMenuList,
+    AccModalPass,
+    AccOption,
+    AccKarma
+  },
+  props: {
+    menu: {
+      type: Array,
+      default: () => []
     }
-    store.commit('updateStackWithInitValue', navElem)
-    store.commit('basic', { key: 'mainSectionState', value: 'greed' })
-    store.commit('basic', { key: 'greedPath', value: 'dashboard' })
-    return
-  }
-
-  // do it now
-  if (item.uid === '2cf6b167-6506-4b05-bc34-70a8d88e3b25') {
-    const navElem = {
-      name: item.label,
-      key: 'greedSource',
-      value: { uid: item.uid, param: null },
-      greedPath: 'doitnow'
+  },
+  data () {
+    return {
+      mdiMenu,
+      warn,
+      modalOneActive: false,
+      lastVisitedDate: this.navStack && this.navStack.length && this.navStack[this.navStack.length - 1] && this.navStack[this.navStack.length - 1].uid && this.navStack[this.navStack.length - 1].uid === '901841d9-0016-491d-ad66-8ee42d2b496b' && this.navStack[this.navStack.length - 1].param ? new Date(this.navStack[this.navStack.length - 1].param) : new Date()
     }
-    store.commit('updateStackWithInitValue', navElem)
-    store.commit('basic', { key: 'mainSectionState', value: 'greed' })
-    store.commit('basic', { key: 'greedPath', value: 'doitnow' })
-    return
-  }
-
-  // other
-  if (item.uid === '757be87d-c269-40e0-b224-6b2bb0e4f97d') {
-    const navElem = {
-      name: item.label,
-      key: 'greedSource',
-      value: { uid: item.uid, param: null },
-      greedPath: 'other'
+  },
+  computed: {
+    isFullScreen () {
+      return this.$store.state.isFullScreen
+    },
+    isAsideMobileExpanded () {
+      return this.$store.state.isAsideMobileExpanded
+    },
+    isPropertiesMobileExpanded () {
+      return this.$store.state.isPropertiesMobileExpanded
+    },
+    isAsideLgActive () {
+      return this.$store.state.isAsideLgActive
+    },
+    isDark () {
+      return this.$store.state.darkMode
+    },
+    navStack () {
+      return this.$store.state.navbar.navStack
+    },
+    datePickerBG () {
+      return this.isDark ? 'rgb(31 41 55)' : '#f4f5f7'
+    },
+    attrs () {
+      return this.$store.state.calendar.calendar
+    },
+    user () {
+      return this.$store.state.user.user
+    },
+    storeNavigator () {
+      return this.$store.state.navigator.navigator
+    },
+    navig () {
+      return this.$store.state.navig
+    },
+    getNavigatorLanguage () {
+      return (navigator.languages && navigator.languages.length) ? navigator.languages[0] : navigator.userLanguage || navigator.language || navigator.browserLanguage || 'en'
     }
-    store.commit('updateStackWithInitValue', navElem)
-    store.commit('basic', { key: 'mainSectionState', value: 'greed' })
-    store.commit('basic', { key: 'greedPath', value: 'other' })
-    return
-  }
-
-  // Tasks list source
-  if (UID_TO_ACTION[item.uid] && item.type === 'uid') {
-    store.dispatch(UID_TO_ACTION[item.uid])
-    const navElem = {
-      name: item.label,
-      key: 'taskListSource',
-      value: { uid: item.uid, param: new Date() },
-      typeVal: new Date(),
-      type: 'date'
-    }
-    store.commit('updateStackWithInitValue', navElem)
-    if (item.uid === '901841d9-0016-491d-ad66-8ee42d2b496b') { lastVisitedDate.value = new Date() } // desktop check
-    store.commit('basic', { key: 'taskListSource', value: { uid: item.uid, param: null } })
-    store.commit('basic', { key: 'mainSectionState', value: 'tasks' })
-  // Grid source (projects, employees, colors, tags)
-  } else {
-    store.commit('basic', { key: 'mainSectionState', value: 'greed' })
-    store.commit('basic', { key: 'greedPath', value: item.path })
-    if (item.path === 'new_private_projects' || item.path === 'new_emps' || item.path === 'new_delegate' || item.path === 'new_private_boards') {
-      const navElem = {
-        name: item.label,
-        key: 'greedSource',
-        greedPath: item.path,
-        value: storeNavigator.value[item.path]
+  },
+  methods: {
+    logout () {
+      this.modalOneActive = false
+      this.$store.dispatch(AUTH_LOGOUT)
+      this.$router.push('/login')
+      if (this.isPropertiesMobileExpanded) { this.$store.dispatch('asidePropertiesToggle', false) }
+    },
+    dateToLabelFormat (calendarDate) {
+      const day = calendarDate.getDate()
+      const month = calendarDate.toLocaleString('default', { month: 'short' })
+      const weekday = calendarDate.toLocaleString('default', { weekday: 'short' })
+      return day + ' ' + month + ', ' + weekday
+    },
+    asideLgClose () {
+      this.$store.dispatch('asideLgToggle', false)
+    },
+    // TODO: clean up messy logic
+    menuClick (event, item) {
+      if (this.ropertiesMobileExpanded) {
+        this.$store.dispatch('asidePropertiesToggle', false)
       }
-      store.commit('updateStackWithInitValue', navElem)
-      store.commit('basic', { key: 'greedSource', value: storeNavigator.value[item.path] })
-    } else {
-      const navElem = {
-        name: item.label,
-        key: 'greedSource',
-        greedPath: item.path,
-        value: storeNavigator.value[item.path].items
+
+      // desktop check
+      if (item.uid === '2bad1413-a373-4926-8a3c-58677a680714') {
+        const navElem = {
+          name: item.label,
+          key: 'greedSource',
+          value: { uid: item.uid, param: null }
+        }
+        this.$store.commit('updateStackWithInitValue', navElem)
+        this.$store.commit('basic', { key: 'mainSectionState', value: 'greed' })
+        this.$store.commit('basic', { key: 'greedPath', value: 'dashboard' })
+        return
       }
-      store.commit('updateStackWithInitValue', navElem)
-      store.commit('basic', { key: 'greedSource', value: storeNavigator.value[item.path].items })
+
+      // do it now
+      if (item.uid === '2cf6b167-6506-4b05-bc34-70a8d88e3b25') {
+        const navElem = {
+          name: item.label,
+          key: 'greedSource',
+          value: { uid: item.uid, param: null },
+          greedPath: 'doitnow'
+        }
+        this.$store.commit('updateStackWithInitValue', navElem)
+        this.$store.commit('basic', { key: 'mainSectionState', value: 'greed' })
+        this.$store.commit('basic', { key: 'greedPath', value: 'doitnow' })
+        return
+      }
+
+      // other
+      if (item.uid === '757be87d-c269-40e0-b224-6b2bb0e4f97d') {
+        const navElem = {
+          name: item.label,
+          key: 'greedSource',
+          value: { uid: item.uid, param: null },
+          greedPath: 'other'
+        }
+        this.$store.commit('updateStackWithInitValue', navElem)
+        this.$store.commit('basic', { key: 'mainSectionState', value: 'greed' })
+        this.$store.commit('basic', { key: 'greedPath', value: 'other' })
+        return
+      }
+
+      // Tasks list source
+      if (UID_TO_ACTION[item.uid] && item.type === 'uid') {
+        this.$store.dispatch(UID_TO_ACTION[item.uid])
+        const navElem = {
+          name: item.label,
+          key: 'taskListSource',
+          value: { uid: item.uid, param: new Date() },
+          typeVal: new Date(),
+          type: 'date'
+        }
+        this.$store.commit('updateStackWithInitValue', navElem)
+        if (item.uid === '901841d9-0016-491d-ad66-8ee42d2b496b') { this.lastVisitedDate = new Date() } // desktop check
+        this.$store.commit('basic', { key: 'taskListSource', value: { uid: item.uid, param: null } })
+        this.$store.commit('basic', { key: 'mainSectionState', value: 'tasks' })
+      // Grid source (projects, employees, colors, tags)
+      } else {
+        this.$store.commit('basic', { key: 'mainSectionState', value: 'greed' })
+        this.$store.commit('basic', { key: 'greedPath', value: item.path })
+        if (item.path === 'new_private_projects' || item.path === 'new_emps' || item.path === 'new_delegate' || item.path === 'new_private_boards') {
+          const navElem = {
+            name: item.label,
+            key: 'greedSource',
+            greedPath: item.path,
+            value: this.storeNavigator[item.path]
+          }
+          this.$store.commit('updateStackWithInitValue', navElem)
+          this.$store.commit('basic', { key: 'greedSource', value: this.storeNavigator[item.path] })
+        } else {
+          const navElem = {
+            name: item.label,
+            key: 'greedSource',
+            greedPath: item.path,
+            value: this.storeNavigator[item.path].items
+          }
+          this.$store.commit('updateStackWithInitValue', navElem)
+          this.$store.commit('basic', { key: 'greedSource', value: this.storeNavigator[item.path].items })
+        }
+      }
+    },
+    onDayClick (day) {
+      this.$store.dispatch(TASK.TASKS_REQUEST, new Date(day.date))
+      const navElem = {
+        name: this.dateToLabelFormat(day.date),
+        key: 'taskListSource',
+        value: { uid: '901841d9-0016-491d-ad66-8ee42d2b496b', param: new Date(day.date) },
+        typeVal: new Date(day.date),
+        type: 'date'
+      }
+      this.$store.commit('updateStackWithInitValue', navElem)
+      this.lastVisitedDate = new Date() // desktop check
+      this.$store.commit('basic', { key: 'taskListSource', value: { uid: '901841d9-0016-491d-ad66-8ee42d2b496b', param: new Date(day.date) } })
+      this.$store.commit('basic', { key: 'mainSectionState', value: 'tasks' })
+    },
+    TitleName () {
+      if (this.navig === 0) return ('Аккаунт')
+      else if (this.navig === 1) return ('Тариф')
+      else if (this.navig === 2) return ('Основное')
+      else if (this.navig === 3) return ('Изменение пароля')
+      else if (this.navig === 4) return ('Карма')
+    },
+    accs () {
+      this.$store.commit('basic', { key: 'navig', value: 0 })
+    },
+    tarifs () {
+      this.$store.commit('basic', { key: 'navig', value: 1 })
     }
   }
-}
-const onDayClick = (day) => {
-  store.dispatch(TASK.TASKS_REQUEST, new Date(day.date))
-  const navElem = {
-    name: dateToLabelFormat(day.date),
-    key: 'taskListSource',
-    value: { uid: '901841d9-0016-491d-ad66-8ee42d2b496b', param: new Date(day.date) },
-    typeVal: new Date(day.date),
-    type: 'date'
-  }
-  store.commit('updateStackWithInitValue', navElem)
-  lastVisitedDate.value = new Date() // desktop check
-  store.commit('basic', { key: 'taskListSource', value: { uid: '901841d9-0016-491d-ad66-8ee42d2b496b', param: new Date(day.date) } })
-  store.commit('basic', { key: 'mainSectionState', value: 'tasks' })
-}
-const TitleName = () => {
-  if (navig.value === 0) return ('Аккаунт')
-  else if (navig.value === 1) return ('Тариф')
-  else if (navig.value === 2) return ('Основное')
-  else if (navig.value === 3) return ('Изменение пароля')
-  else if (navig.value === 4) return ('Карма')
-}
-const accS = () => {
-  store.commit('basic', { key: 'navig', value: 0 })
-}
-const tarifS = () => {
-  store.commit('basic', { key: 'navig', value: 1 })
 }
 </script>
 
@@ -189,8 +223,8 @@ const tarifS = () => {
   <modal-box
     v-model="modalOneActive"
     :title="TitleName()"
-    @acc="accS()"
-    @tarif="tarifS()"
+    @acc="accs()"
+    @tarif="tarifs()"
   >
     <acc-modal
       v-if="navig === 0"
@@ -284,7 +318,7 @@ const tarifS = () => {
         from-page="fromPage"
         to-page="toPage"
         is-expanded
-        :locale="getNavigatorLanguage()"
+        :locale="getNavigatorLanguage"
         :masks="{ weekdays: 'WWW' }"
         :attributes="attrs"
         :is-dark="isDark"
