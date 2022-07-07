@@ -369,6 +369,9 @@ export default {
         (column) => column.UID === this.currentCard.uid_stage
       )
     },
+    employeesByEmail () {
+      return this.$store.state.employees.employeesByEmail
+    },
     showArchive () {
       return this.$store.state.boards.showArchive
     },
@@ -457,7 +460,9 @@ export default {
         const currentUserEmail = this.$store.state.user.user.current_user_email.toLowerCase()
         return column.cards.filter(card => card.email_creator.toLowerCase() === currentUserEmail)
       } else if (this.showOnlySearchText) {
-        return column.cards.filter(card => card.name.toLowerCase().includes(this.showOnlySearchText.toLowerCase()))
+        return column.cards.filter(
+          card => (card.comment + card.name + this.employeesByEmail[card.user]?.name ?? card.user).toLowerCase().includes(this.showOnlySearchText.toLowerCase())
+        )
       }
       return column.cards
     },
