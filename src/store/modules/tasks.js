@@ -20,6 +20,8 @@ function pad2 (n) {
 }
 
 const state = {
+  doitnowAbortController: null,
+
   tasks: false,
   unread: '',
   today: '',
@@ -74,6 +76,7 @@ const getters = {
 
 const actions = {
   [TASK.TASKS_REQUEST]: ({ commit, dispatch }, chosenDate) => {
+    commit('abortDoitnowAbortController')
     return new Promise((resolve, reject) => {
       commit(TASK.TASKS_REQUEST)
       if (!chosenDate) {
@@ -342,6 +345,8 @@ const actions = {
     })
   },
   [TASK.DOITNOW_TASKS_REQUEST]: ({ commit, dispatch }) => {
+    const doitnowAbortController = new AbortController()
+    commit('initDoitnowAbortController', doitnowAbortController)
     return new Promise((resolve, reject) => {
       commit(TASK.TASKS_REQUEST)
       const urlUnread =
@@ -357,9 +362,9 @@ const actions = {
         'api/v1/tasks/withdate?value=' +
         formattedDate
       Promise.all([
-        axios({ url: urlUnread, method: 'GET' }),
-        axios({ url: urlOverdue, method: 'GET' }),
-        axios({ url: urlToday, method: 'GET' })
+        axios({ url: urlUnread, method: 'GET', signal: doitnowAbortController.signal }),
+        axios({ url: urlOverdue, method: 'GET', signal: doitnowAbortController.signal }),
+        axios({ url: urlToday, method: 'GET', signal: doitnowAbortController.signal })
       ])
         .then((respAll) => {
           const unreadTasks = [...respAll[0].data.tasks]
@@ -393,15 +398,17 @@ const actions = {
           resolve([unreadTasks, overdueTasks, todayTasks])
         })
         .catch((err) => {
-          notify(
-            {
-              group: 'api',
-              title: 'REST API Error, please make screenshot',
-              action: TASK.DOITNOW_TASKS_REQUEST,
-              text: err.response.data
-            },
-            15000
-          )
+          if (err?.message !== 'canceled') {
+            notify(
+              {
+                group: 'api',
+                title: 'REST API Error, please make screenshot',
+                action: TASK.DOITNOW_TASKS_REQUEST,
+                text: err?.response?.data
+              },
+              15000
+            )
+          }
           commit(TASK.TASKS_ERROR, err)
           reject(err)
         })
@@ -776,18 +783,7 @@ const actions = {
     commit(REFRESH_MESSAGES)
     commit(TASK.SELECT_TASK, data)
 
-    // dispatch(INSPECTOR_MESSAGES_REQUEST, data.uid)
-    // if (data.has_msgs && !data.has_files) {
-    //   dispatch(MESSAGES_REQUEST, data.uid)
-    // }
-    // if (data.has_files && !data.has_msgs) {
-    //   dispatch(FILES_REQUEST, data.uid).then(() => {
-    //     commit(MERGE_FILES_WITH_MESSAGES)
-    //   })
-    // }
-    // if (data.has_files && data.has_msgs) {
     dispatch('fetchMessagesAndFiles', data.uid)
-    // }
   },
   [TASK.CHANGE_TASK_READ]: ({ commit, dispatch }, uid) => {
     return new Promise((resolve, reject) => {
@@ -1781,6 +1777,14 @@ const mutations = {
   },
   [TASK.RESET_COPY_TASK]: (state) => {
     state.copiedTasks = {}
+  },
+  initDoitnowAbortController (state, controller) {
+    state.doitnowAbortController = controller
+  },
+  abortDoitnowAbortController (state) {
+    if (state.doitnowAbortController) {
+      state.doitnowAbortController.abort()
+    }
   }
 }
 
