@@ -2,7 +2,7 @@
   <ModalBoxDelete
     v-if="showConfirm"
     title="Удалить задачу"
-    :text="'Вы действительно хотите удалить задачу?'"
+    :text="modalBoxDeleteText"
     @cancel="showConfirm = false"
     @yes="deleteTask(selectedTask)"
   />
@@ -959,6 +959,13 @@ export default {
     daysWithTasks () { return this.$store.state.tasks.daysWithTasks },
     navStack () { return this.$store.state.navbar.navStack },
     isInFocus () { return this.selectedTask?.focus === 1 },
+    modalBoxDeleteText () {
+      let text = 'Вы действительно хотите удалить задачу?'
+      if (this.tasks[this.selectedTask.uid]?.children?.length > 0) {
+        text = 'Вы действительно хотите удалить задачу с подзадачами в количестве: ' + this.tasks[this.selectedTask.uid]?.children?.length + '?'
+      }
+      return text
+    },
     canEditChecklist () { return (this.selectedTask.type === 1 || this.selectedTask.type === 2) && this.user.tarif !== 'free' },
     canCheckChecklist () { return (this.canEditChecklist || this.selectedTask.type === 3) && this.user.tarif !== 'free' },
     canEditComment () { return (this.selectedTask.type === 1 || this.selectedTask.type === 2) }
