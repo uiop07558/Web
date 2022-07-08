@@ -270,6 +270,12 @@ export default {
       })
       return items
     },
+    user () {
+      return this.$store.state.user.user
+    },
+    currUserWorkspaces () {
+      return this.items[0].items.length
+    },
     isGridView () {
       return this.$store.state.isGridView
     },
@@ -372,16 +378,14 @@ export default {
       }
     },
     clickAddEmployee () {
-      const user = this.$store.state.user.user
       // если лицензия истекла
-      if (user.days_left <= 0) {
+      if (this.user.days_left <= 0) {
         this.showUsersLimit = true
         return
       }
-      const currentUsersCount = this.$store.state.navigator.navigator.emps.items.length
       // если у нас куплены рабочие места
       // проверяем на превышение лицензии
-      if (user.count_workplaces !== 0 && user.count_workplaces <= currentUsersCount) {
+      if (this.user.count_workplaces !== 0 && this.user.count_workplaces <= this.currUserWorkspaces) {
         this.showUsersLimit = true
         return
       }
