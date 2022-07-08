@@ -29,7 +29,7 @@ const actions = {
           resolve(resp)
         })
         .catch((err) => {
-          if (err.response?.data?.error !== "in user's org present employees") {
+          if (err.response?.data?.error !== "in user's org present employees" && err.response?.data?.error !== 'the employee is the director of the organization') {
             notify(
               {
                 group: 'api',
