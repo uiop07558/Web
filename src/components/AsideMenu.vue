@@ -331,11 +331,11 @@ export default {
     </div>
     <EventAlert
       v-if="user?.tarif === 'free' || user?.tarif === 'trial'"
-      :bg-color="user?.tarif === 'free' ? '#DA4C40' : '#44944A'"
+      :bg-color="'#FF912380'"
       :text-color="'white'"
       :user-icon="warn"
       :link="'https://www.leadertask.ru/alpha'"
-      :message-text="user.tarif === 'trial' ? 'Пробный тариф.' : 'Закончилась лицензия.'"
+      :message-text="user?.tarif === 'trial' ? 'Пробный тариф.' : 'Закончилась лицензия.'"
     />
     <div class="my-[10px]">
       <template v-for="(menuGroup, index) in menu">
