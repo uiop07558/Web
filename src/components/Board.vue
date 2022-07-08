@@ -1,7 +1,11 @@
 <template>
+  <BoardSkeleton
+    v-if="status == 'loading'"
+  />
   <div
     id="Board"
     class="h-full"
+    v-if="status == 'success'"
   >
     <BoardModalBoxDelete
       v-if="showDeleteCard"
@@ -302,6 +306,7 @@ import BoardModalBoxDelete from '@/components/Board/BoardModalBoxDelete.vue'
 import BoardModalBoxColor from '@/components/Board/BoardModalBoxColor.vue'
 import BoardModalBoxMove from '@/components/Board/BoardModalBoxMove.vue'
 import BoardModalBoxCardMove from '@/components/Board/BoardModalBoxCardMove.vue'
+import BoardSkeleton from '@/components/Board/BoardSkeleton.vue'
 import * as BOARD from '@/store/actions/boards'
 import * as CARD from '@/store/actions/cards'
 import { FETCH_FILES_AND_MESSAGES, REFRESH_MESSAGES, REFRESH_FILES } from '@/store/actions/cardfilesandmessages'
@@ -315,6 +320,7 @@ export default {
     BoardModalBoxColor,
     BoardModalBoxMove,
     BoardModalBoxCardMove,
+    BoardSkeleton,
     BoardCard,
     draggable
   },
@@ -368,6 +374,9 @@ export default {
       return this.usersColumns.findIndex(
         (column) => column.UID === this.currentCard.uid_stage
       )
+    },
+    status () {
+      return this.$store.state.cards.status
     },
     employeesByEmail () {
       return this.$store.state.employees.employeesByEmail
