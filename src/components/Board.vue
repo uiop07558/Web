@@ -1,7 +1,11 @@
 <template>
+  <BoardSkeleton
+    v-if="status == 'loading'"
+  />
   <div
     id="Board"
     class="h-full"
+    v-if="status == 'success'"
   >
     <BoardModalBoxDelete
       v-if="showDeleteCard"
@@ -230,7 +234,7 @@
           </div>
           <!--кнопка добавить карточку -->
           <div
-            v-if="column.AddCard && !showOnlyMyCardsCreated && !showOnlyMyCards && !showOnlySearchText"
+            v-if="column.AddCard && !showOnlyMyCreatedCards && !showOnlyCardsWhereIAmResponsible && !showOnlySearchText"
             class="mt-2 h-[40px]"
           >
             <button
@@ -302,6 +306,7 @@ import BoardModalBoxDelete from '@/components/Board/BoardModalBoxDelete.vue'
 import BoardModalBoxColor from '@/components/Board/BoardModalBoxColor.vue'
 import BoardModalBoxMove from '@/components/Board/BoardModalBoxMove.vue'
 import BoardModalBoxCardMove from '@/components/Board/BoardModalBoxCardMove.vue'
+import BoardSkeleton from '@/components/Board/BoardSkeleton.vue'
 import * as BOARD from '@/store/actions/boards'
 import * as CARD from '@/store/actions/cards'
 import { FETCH_FILES_AND_MESSAGES, REFRESH_MESSAGES, REFRESH_FILES } from '@/store/actions/cardfilesandmessages'
@@ -315,6 +320,7 @@ export default {
     BoardModalBoxColor,
     BoardModalBoxMove,
     BoardModalBoxCardMove,
+    BoardSkeleton,
     BoardCard,
     draggable
   },
@@ -369,17 +375,20 @@ export default {
         (column) => column.UID === this.currentCard.uid_stage
       )
     },
+    status () {
+      return this.$store.state.cards.status
+    },
     employeesByEmail () {
       return this.$store.state.employees.employeesByEmail
     },
     showArchive () {
       return this.$store.state.boards.showArchive
     },
-    showOnlyMyCards () {
-      return this.$store.state.boards.showOnlyMyCards
+    showOnlyCardsWhereIAmResponsible () {
+      return this.$store.state.boards.showOnlyCardsWhereIAmResponsible
     },
-    showOnlyMyCardsCreated () {
-      return this.$store.state.boards.showOnlyMyCardsCreated
+    showOnlyMyCreatedCards () {
+      return this.$store.state.boards.showOnlyMyCreatedCards
     },
     showOnlySearchText () {
       return this.$store.state.boards.showOnlySearchText
@@ -453,10 +462,10 @@ export default {
       return ''
     },
     getColumnCards (column) {
-      if (this.showOnlyMyCards) {
+      if (this.showOnlyCardsWhereIAmResponsible) {
         const currentUserEmail = this.$store.state.user.user.current_user_email.toLowerCase()
         return column.cards.filter(card => card.user.toLowerCase() === currentUserEmail)
-      } else if (this.showOnlyMyCardsCreated) {
+      } else if (this.showOnlyMyCreatedCards) {
         const currentUserEmail = this.$store.state.user.user.current_user_email.toLowerCase()
         return column.cards.filter(card => card.email_creator.toLowerCase() === currentUserEmail)
       } else if (this.showOnlySearchText) {

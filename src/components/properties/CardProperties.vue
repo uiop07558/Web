@@ -308,6 +308,14 @@ const removeCard = () => {
     @cancel="showChangeCardBudget = false"
     @save="changeCardBudget"
   />
+  <Icon
+    :path="close.path"
+    class="text-[#7E7E80] dark:text-white cursor-pointer fixed top-[25px] right-[25px] z-10"
+    :box="close.viewBox"
+    :width="close.width"
+    :height="close.height"
+    @click="closeProperties"
+  />
   <div class="relative min-h-full">
     <!-- Close icon -->
     <div class="flex items-center justify-between mb-[10px]">
@@ -318,14 +326,6 @@ const removeCard = () => {
         :show-files-only="showFilesOnly"
         @clickRemoveButton="showDeleteCard = true"
         @toggleShowOnlyFiles="showFilesOnly = !showFilesOnly"
-      />
-      <Icon
-        :path="close.path"
-        class="text-[#7E7E80] dark:text-white cursor-pointer"
-        :box="close.viewBox"
-        :width="close.width"
-        :height="close.height"
-        @click="closeProperties"
       />
     </div>
 

@@ -2045,4 +2045,7 @@ export default {
   padding: 10px;
   border: 1px solid #aaaaaa;
 }
+#generalscroll {
+  scrollbar-width: none;
+}
 </style>
