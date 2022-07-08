@@ -8,7 +8,6 @@ import Icon from '@/components/Icon.vue'
 import AccModal from '@/components/AccModal.vue'
 import AccTarif from '@/components/AccTarif.vue'
 import AsideMenuList from '@/components/AsideMenuList.vue'
-import AccModalPass from '@/components/AccModalPass.vue'
 import AccOption from '@/components/AccOption.vue'
 import AccKarma from '@/components/AccKarma.vue'
 import 'v-calendar/dist/style.css'
@@ -31,7 +30,6 @@ export default {
     AccModal,
     AccTarif,
     AsideMenuList,
-    AccModalPass,
     AccOption,
     AccKarma
   },

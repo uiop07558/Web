@@ -171,16 +171,16 @@ export default {
       )
     },
     clickAddProject () {
-      this.showAddProject = true
-    },
-    onAddNewProject (name) {
-      this.showAddProject = false
-      // если лицензия истекла
       const user = this.$store.state.user.user
+      // если лицензия истекла
       if (Object.keys(this.$store.state.projects.projects).length >= 10 && user.days_left <= 0) {
         this.showProjectsLimit = true
         return
       }
+      this.showAddProject = true
+    },
+    onAddNewProject (name) {
+      this.showAddProject = false
       const title = name.trim()
       if (title) {
         // добавляем новый проект и переходим в него
