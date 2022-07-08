@@ -1,7 +1,7 @@
 <template>
   <div
     :style="{ backgroundColor: bgColor, borderColor: borderColor, color: textColor }"
-    class="p-4 max-w-sm rounded-xl shadow-lg flex items-center space-x-4 mx-3.5 my-5 cursor-pointer"
+    class="p-4 max-w-sm rounded-xl flex items-center space-x-4 mx-3.5 my-5 cursor-pointer"
     @click="redirect"
   >
     <Icon
