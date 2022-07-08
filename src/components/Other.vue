@@ -48,6 +48,7 @@
           :key="item.link"
         >
           <ListBlocItem
+            v-if="settings.nav_show_overdue ? true : (item.name === 'Просроченные' ? false : true)"
             :title="item.name"
             @click="gotoChildren(item)"
           >
@@ -194,6 +195,9 @@ export default {
   computed: {
     isGridView () {
       return this.$store.state.isGridView
+    },
+    settings () {
+      return this.$store.state.navigator.navigator.settings
     },
     isPropertiesMobileExpanded () {
       return this.$store.state.isPropertiesMobileExpanded
