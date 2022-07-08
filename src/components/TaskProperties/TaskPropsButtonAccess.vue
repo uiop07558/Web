@@ -328,6 +328,7 @@ export default {
   cursor: pointer;
 }
 .container-employee-popover {
+  position: relative;
   height: 220px;
   overflow-y: auto;
   /* margin-top: 10px; */

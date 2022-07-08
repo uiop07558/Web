@@ -117,7 +117,7 @@
             Проект:
           </span>
         </div>
-        <div class="flex flex-col font-medium min-w-full">
+        <div class="flex flex-col font-medium w-[720px]">
           <!-- customer -->
           <div
             v-show="(task.uid_customer !== task.uid_performer) && (task.uid_customerr !== user.current_user_uid)"
@@ -159,7 +159,7 @@
             v-if="projects[task.uid_project]"
             class="flex mb-2"
           >
-            <span class="text-black">{{ projects[task.uid_project].name }}</span>
+            <span class="text-black overflow-hidden truncate">{{ projects[task.uid_project].name }}</span>
           </div>
         </div>
       </div>

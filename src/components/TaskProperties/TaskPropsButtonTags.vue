@@ -94,7 +94,7 @@
             fill-opacity="1"
           />
         </svg>
-        <span class="rounded custom-method">{{
+        <span class="rounded custom-method truncate max-w-[300px]">{{
           tags[key]?.name ?? '???'
         }}</span>
         <button
@@ -222,12 +222,19 @@ export default {
       )
     }
   },
+  watch: {
+    selectedTags (newTags, oldTags) {
+      this.checkTags = [...this.selectedTags]
+    }
+  },
+  mounted () {
+    this.checkTags = [...this.selectedTags]
+  },
   methods: {
     print (val) {
       console.log(val)
     },
     onShowSelectTags () {
-      this.checkTags = [...this.selectedTags]
       this.collapsedTags = []
     },
     isCheckedTag (tagUid) {
