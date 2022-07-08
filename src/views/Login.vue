@@ -1,8 +1,5 @@
-<script setup>
-import { reactive } from 'vue'
-import { useRouter } from 'vue-router'
+<script>
 import axios from 'axios'
-import store from '@/store'
 import { mdiEmailOutline, mdiEyeOffOutline, mdiAccountOutline, mdiArrowRight, mdiCheckBold, mdiChevronLeft } from '@mdi/js'
 import FullScreenSection from '@/components/FullScreenSection.vue'
 import CardComponent from '@/components/CardComponent.vue'
@@ -14,156 +11,161 @@ import JbButton from '@/components/JbButton.vue'
 
 import { AUTH_REQUEST, AUTH_REGISTER } from '@/store/actions/auth'
 
-const form = reactive({
-  email: '',
-  password: '',
-  username: '',
-  showError: false,
-  errorMessage: '',
-  isEmailValid: false,
-  emailMdi: mdiEmailOutline,
-  emailIconClass: '',
-  emailControlDisabled: false,
-  startScreenText: 'ЛидерТаск',
-  showCheckButton: true,
-  showBackButton: false
-})
-
-const showValues = reactive({
-  showRegisterInputsValue: false,
-  showLoginInputsValue: false
-})
-
-const router = useRouter()
-
-const submit = () => {
-  if (showValues.showLoginInputsValue) {
-    login()
-  } else if (showValues.showRegisterInputsValue && form.password.length > 7 && form.email.length > 2) {
-    register()
-  }
-}
-
-const getOSName = () => {
-  let detectOS = 'web'
-
-  if (navigator.appVersion.indexOf('Mac') !== -1) {
-    detectOS = 'mac'
-  } else if (navigator.appVersion.indexOf('Win') !== -1) {
-    detectOS = 'windows'
-  } else if (navigator.appVersion.indexOf('Android') !== -1) {
-    detectOS = 'android'
-  } else if (navigator.appVersion.indexOf('iPhone') !== -1) {
-    detectOS = 'ios'
-  }
-
-  return detectOS
-}
-
-const isMobile = () => {
-  return navigator.userAgent.match(/(iPad)|(iPhone)|(iPod)|(android)|(webOS)/i)
-}
-
-const getSysType = () => {
-  return isMobile() ? 'mobile' : 'desktop'
-}
-
-const login = () => {
-  const uri = process.env.VUE_APP_LEADERTASK_API + 'api/v1/users/auth?login=' + form.email + '&password=' + encodeURIComponent(form.password) + '&system=' + getOSName() + '&type_device=' + getSysType()
-  store.dispatch(AUTH_REQUEST, uri)
-    .then(() => {
-      router.push('/')
-    })
-    .catch(() => {
-      form.showError = true
-      form.errorMessage = 'Неверный email пользователя или пароль'
-    })
-}
-
-const register = () => {
-  if (!form.password || !form.username) { return }
-  const data = {
-    email: form.email,
-    password: form.password,
-    name: form.username,
-    system: 'web',
-    language: 'russian',
-    type_device: 'mobile'
-  }
-  store.dispatch(AUTH_REGISTER, data)
-    .then(() => {
-      router.push('/')
-    })
-    .catch(() => {
-      form.showError = true
-      form.errorMessage = 'Unknown error'
-    })
-}
-
-const getBack = () => {
-  hideLoginInputs()
-  hideRegisterInputs()
-  form.emailControlDisabled = false
-  form.email = ''
-  form.password = ''
-  form.username = ''
-  form.startScreenText = 'ЛидерТаск'
-  form.emailMdi = mdiEmailOutline
-  form.emailIconClass = ''
-  form.showCheckButton = true
-  form.showBackButton = false
-  form.showError = false
-  form.errorMessage = ''
-}
-
-const hideLoginInputs = () => {
-  showValues.showLoginInputsValue = false
-}
-
-const showLoginInputs = () => {
-  showValues.showLoginInputsValue = true
-  hideRegisterInputs()
-}
-
-const hideRegisterInputs = () => {
-  showValues.showRegisterInputsValue = false
-}
-
-const showRegisterInputs = () => {
-  showValues.showRegisterInputsValue = true
-  hideLoginInputs()
-}
-
-const validateEmail = () => {
-  if (/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(.\w{2,3})+$/.test(form.email)) {
-    return true
-  }
-  return false
-}
-
-const checkEmailExistense = () => {
-  if (form.email) {
-    if (validateEmail()) {
-      const uri = process.env.VUE_APP_LEADERTASK_API + 'api/v1/users/exists?email=' + form.email
-      axios.get(uri)
+export default {
+  components: {
+    FullScreenSection,
+    CardComponent,
+    Field,
+    Icon,
+    Control,
+    JbButton
+  },
+  data () {
+    return {
+      mdiEmailOutline,
+      mdiEyeOffOutline,
+      mdiAccountOutline,
+      mdiArrowRight,
+      mdiChevronLeft,
+      form: {
+        email: '',
+        password: '',
+        username: '',
+        showError: false,
+        errorMessage: '',
+        isEmailValid: false,
+        emailMdi: mdiEmailOutline,
+        emailIconClass: '',
+        emailControlDisabled: false,
+        startScreenText: 'ЛидерТаск',
+        showCheckButton: true,
+        showBackButton: false
+      },
+      showValues: {
+        showRegisterInputsValue: false,
+        showLoginInputsValue: false
+      }
+    }
+  },
+  methods: {
+    login () {
+      const uri = process.env.VUE_APP_LEADERTASK_API + 'api/v1/users/auth?login=' + this.form.email + '&password=' + encodeURIComponent(this.form.password) + '&system=' + this.getOSName() + '&type_device=' + this.getSysType()
+      this.$store.dispatch(AUTH_REQUEST, uri)
         .then(() => {
-          showLoginInputs()
-          form.emailMdi = mdiCheckBold
-          form.startScreenText = 'Войти в ЛидерТаск'
-          form.emailIconClass = 'text-lime-500'
-          form.emailControlDisabled = true
-          form.showCheckButton = false
-          form.showBackButton = true
+          this.$router.push('/')
         })
         .catch(() => {
-          showRegisterInputs()
-          form.emailMdi = mdiCheckBold
-          form.startScreenText = 'Создать аккаунт'
-          form.emailIconClass = 'text-lime-500'
-          form.emailControlDisabled = true
-          form.showCheckButton = false
-          form.showBackButton = true
+          this.form.showError = true
+          this.form.errorMessage = 'Неверный email пользователя или пароль'
         })
+    },
+    register () {
+      if (!this.form.password || !this.form.username) { return }
+      const data = {
+        email: this.form.email,
+        password: this.form.password,
+        name: this.form.username,
+        system: 'web',
+        language: 'russian',
+        type_device: 'mobile'
+      }
+      this.$store.dispatch(AUTH_REGISTER, data)
+        .then(() => {
+          this.$router.push('/')
+        })
+        .catch(() => {
+          this.form.showError = true
+          this.form.errorMessage = 'Unknown error'
+        })
+    },
+    submit () {
+      if (this.showValues.showLoginInputsValue) {
+        this.login()
+      } else if (this.showValues.showRegisterInputsValue && this.form.password.length > 7 && this.form.email.length > 2) {
+        this.register()
+      }
+    },
+    getOSName () {
+      let detectOS = 'web'
+
+      if (navigator.appVersion.indexOf('Mac') !== -1) {
+        detectOS = 'mac'
+      } else if (navigator.appVersion.indexOf('Win') !== -1) {
+        detectOS = 'windows'
+      } else if (navigator.appVersion.indexOf('Android') !== -1) {
+        detectOS = 'android'
+      } else if (navigator.appVersion.indexOf('iPhone') !== -1) {
+        detectOS = 'ios'
+      }
+
+      return detectOS
+    },
+    isMobile () {
+      return navigator.userAgent.match(/(iPad)|(iPhone)|(iPod)|(android)|(webOS)/i)
+    },
+    getSysType () {
+      return this.isMobile() ? 'mobile' : 'desktop'
+    },
+    hideLoginInputs () {
+      this.showValues.showLoginInputsValue = false
+    },
+    hideRegisterInputs () {
+      this.showValues.showRegisterInputsValue = false
+    },
+    showLoginInputs () {
+      this.showValues.showLoginInputsValue = true
+      this.hideRegisterInputs()
+    },
+    showRegisterInputs () {
+      this.showValues.showRegisterInputsValue = true
+      this.hideLoginInputs()
+    },
+    getBack () {
+      this.hideLoginInputs()
+      this.hideRegisterInputs()
+      this.form.emailControlDisabled = false
+      this.form.email = ''
+      this.form.password = ''
+      this.form.username = ''
+      this.form.startScreenText = 'ЛидерТаск'
+      this.form.emailMdi = mdiEmailOutline
+      this.form.emailIconClass = ''
+      this.form.showCheckButton = true
+      this.form.showBackButton = false
+      this.form.showError = false
+      this.form.errorMessage = ''
+    },
+    validateEmail () {
+      if (/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(.\w{2,3})+$/.test(this.form.email)) {
+        return true
+      }
+      return false
+    },
+    checkEmailExistense () {
+      if (this.form.email) {
+        if (this.validateEmail()) {
+          const uri = process.env.VUE_APP_LEADERTASK_API + 'api/v1/users/exists?email=' + this.form.email
+          axios.get(uri)
+            .then(() => {
+              this.showLoginInputs()
+              this.form.emailMdi = mdiCheckBold
+              this.form.startScreenText = 'Войти в ЛидерТаск'
+              this.form.emailIconClass = 'text-lime-500'
+              this.form.emailControlDisabled = true
+              this.form.showCheckButton = false
+              this.form.showBackButton = true
+            })
+            .catch(() => {
+              this.showRegisterInputs()
+              this.form.emailMdi = mdiCheckBold
+              this.form.startScreenText = 'Создать аккаунт'
+              this.form.emailIconClass = 'text-lime-500'
+              this.form.emailControlDisabled = true
+              this.form.showCheckButton = false
+              this.form.showBackButton = true
+            })
+        }
+      }
     }
   }
 }
