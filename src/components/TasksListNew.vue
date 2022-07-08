@@ -901,7 +901,7 @@ export default {
       }
     },
     shouldShowInspector () {
-      if (this.user.tarif !== 'alpha') {
+      if (this.user.tarif !== 'alpha' && this.user.tarif !== 'trial') {
         this.showFreeModal = true
         return
       }

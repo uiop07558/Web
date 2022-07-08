@@ -6,10 +6,6 @@
     has-cancel
     button-label="Delete"
   />
-  <DoitnowLimit
-    v-if="showFreeModal"
-    @cancel="showFreeModal = false"
-  />
   <div
     v-if="tasksCount"
     class="flex items-center mb-5 justify-between"
@@ -77,7 +73,6 @@ import * as MSG from '@/store/actions/taskmessages.js'
 import * as TASK from '@/store/actions/tasks.js'
 
 import InspectorModalBox from '@/components/Inspector/InspectorModalBox.vue'
-import DoitnowLimit from '@/components/Doitnow/DoitnowLimit.vue'
 import DoitnowEmpty from '@/components/Doitnow/DoitnowEmpty.vue'
 import DoitnowTask from '@/components/Doitnow/DoitnowTask.vue'
 import Icon from '@/components/Icon.vue'
@@ -88,7 +83,6 @@ import { PUSH_COLOR } from '@/store/actions/colors'
 export default {
   components: {
     DoitnowEmpty,
-    DoitnowLimit,
     DoitnowTask,
     InspectorModalBox,
     Icon
@@ -101,7 +95,6 @@ export default {
   data: () => ({
     unreadTasks: [],
     overdueTasks: [],
-    showFreeModal: false,
     todayTasks: [],
     readyTasks: [],
     unreadDelegateByMe: [],
@@ -190,10 +183,6 @@ export default {
     }
   },
   mounted: function () {
-    if (this.user.tarif !== 'alpha') {
-      this.showFreeModal = true
-      return
-    }
     this.loadAllTasks()
   },
   methods: {

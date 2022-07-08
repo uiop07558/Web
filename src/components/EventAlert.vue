@@ -1,7 +1,8 @@
 <template>
   <div
     :style="{ backgroundColor: bgColor, borderColor: borderColor, color: textColor }"
-    class="p-4 max-w-sm rounded-xl shadow-lg flex items-center space-x-4 mx-3.5 my-5"
+    class="p-4 max-w-sm rounded-xl shadow-lg flex items-center space-x-4 mx-3.5 my-5 cursor-pointer"
+    @click="redirect"
   >
     <Icon
       :path="userIcon.path"
@@ -12,21 +13,11 @@
       :height="userIcon.height"
     />
     <p
-      v-if="!link.length"
       class="w-full mx-3.5 font-semibold"
       :style="{ color: textColor }"
     >
       {{ messageText }}
     </p>
-    <a
-      v-if="link.length"
-      class="w-full mx-3.5 font-semibold"
-      :href="link"
-      :style="{ color: textColor }"
-      target="_blank"
-    >
-      {{ messageText }}
-    </a>
   </div>
 </template>
 
@@ -69,6 +60,13 @@ export default {
     return {
       DefaultIcon,
       CloseIcon
+    }
+  },
+  methods: {
+    redirect () {
+      if (this.link.length) {
+        window.open(this.link)
+      }
     }
   }
 }

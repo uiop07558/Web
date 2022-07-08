@@ -89,7 +89,7 @@
             @click="onCheckTag(tag.uid)"
           >
           <label
-            class="cursor-pointer break-words"
+            class="w-full break-words cursor-pointer"
             :for="`tag-check-button-${tag.uid}`"
           >
             <span class="max-w-[160px] truncate ... mr-20px">
