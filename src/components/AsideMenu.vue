@@ -331,7 +331,7 @@ export default {
     </div>
     <EventAlert
       v-if="user?.tarif === 'free' || user?.tarif === 'trial'"
-      :bg-color="'#DA4C40'"
+      :bg-color="user?.tarif === 'free' ? '#DA4C40' : '#44944A'"
       :text-color="'white'"
       :user-icon="warn"
       :link="'https://www.leadertask.ru/alpha'"
