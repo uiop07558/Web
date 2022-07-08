@@ -1,55 +1,85 @@
-<script setup>
-import { computed } from 'vue'
+<script>
 import JbButton from '@/components/JbButton.vue'
 import JbButtons from '@/components/JbButtons.vue'
 import CardComponent from '@/components/CardComponent.vue'
 import Divider from '@/components/Divider.vue'
 import Overlay from '@/components/modals/Overlay.vue'
 
-const props = defineProps({
-  title: {
-    type: String,
-    default: null
+export default {
+  components: {
+    JbButton,
+    JbButtons,
+    CardComponent,
+    Divider,
+    Overlay
   },
-  largeTitle: {
-    type: String,
-    default: null
+  props: {
+    title: {
+      type: String,
+      default: null
+    },
+    largeTitle: {
+      type: String,
+      default: null
+    },
+    button: {
+      type: String,
+      default: 'info'
+    },
+    buttonLabel: {
+      type: String,
+      default: 'Done'
+    },
+    hasCancel: Boolean,
+    modelValue: {
+      type: [String, Number, Boolean],
+      default: null
+    },
+    hasButton: Boolean
   },
-  button: {
-    type: String,
-    default: 'info'
-  },
-  buttonLabel: {
-    type: String,
-    default: 'Done'
-  },
-  hasCancel: Boolean,
-  modelValue: {
-    type: [String, Number, Boolean],
-    default: null
-  },
-  hasButton: Boolean
-})
 
-const emit = defineEmits(['update:modelValue', 'cancel', 'acc', 'tarif', 'logout', 'confirm'])
+  emits: ['update:modelValue', 'cancel', 'acc', 'tarif', 'logout', 'confirm'],
 
-const value = computed({
-  get: () => props.modelValue,
-  set: value => emit('update:modelValue', value)
-})
-const accSelect = value => { emit(value) }
-const tarifSelect = value => { emit(value) }
-const logoutAcc = value => { emit(value) }
-const confirmCancel = mode => {
-  value.value = false
-  emit(mode)
+  computed: {
+    value: {
+      get () {
+        return this.modelValue
+      },
+      set (value) { this.$emit('update:modelValue', value) }
+    }
+  },
+  methods: {
+    accSelect (value) {
+      this.$emit(value)
+    },
+    tarifSelect (value) {
+      this.$emit(value)
+    },
+    logoutAcc (value) {
+      this.$emit(value)
+    },
+    confirmCancel (mode) {
+      this.value = false
+      this.$emit(mode)
+    },
+
+    logout () {
+      return this.logoutAcc('logout')
+    },
+    confirm () {
+      return this.confirmCancel('confirm')
+    },
+    cancel () {
+      return this.confirmCancel('cancel')
+    },
+    acc () {
+      return this.accSelect('acc')
+    },
+    tarif () {
+      return this.tarifSelect('tarif')
+    }
+  }
 }
-
-const logout = () => logoutAcc('logout')
-const confirm = () => confirmCancel('confirm')
-const cancel = () => confirmCancel('cancel')
-const acc = () => accSelect('acc')
-const tarif = () => tarifSelect('tarif')
 </script>
 
 <template>
