@@ -1,6 +1,7 @@
 import axios from 'axios'
 import { notify } from 'notiwind'
 import * as BOARD from '../actions/boards'
+import { visitChildren } from '@/store/helpers/functions'
 
 function uuidv4 () {
   return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, (c) =>
@@ -317,6 +318,7 @@ const actions = {
 
 const mutations = {
   [BOARD.REMOVE_BOARD_REQUEST]: (state, uid) => {
+    visitChildren([state.boards[uid]], value => (delete state.boards[value.uid]))
     delete state.boards[uid]
   },
   [BOARD.PUSH_BOARD]: (state, boards) => {

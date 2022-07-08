@@ -162,7 +162,7 @@ export default {
     clickAddColor () {
       const user = this.$store.state.user.user
       // если лицензия истекла
-      if (Object.keys(this.$store.state.colors.mycolors).length === 3 && user.days_left <= 0) {
+      if (Object.keys(this.$store.state.colors.mycolors).length >= 3 && user.days_left <= 0) {
         this.showColorsLimit = true
         return
       }

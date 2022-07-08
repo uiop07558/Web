@@ -112,7 +112,7 @@ export default {
     clickAddTag () {
       const user = this.$store.state.user.user
       // если лицензия истекла
-      if (Object.keys(this.$store.state.tasks.tags).length === 2 && user.days_left <= 0) {
+      if (Object.keys(this.$store.state.tasks.tags).length >= 3 && user.days_left <= 0) {
         this.showTagsLimit = true
         return
       }
