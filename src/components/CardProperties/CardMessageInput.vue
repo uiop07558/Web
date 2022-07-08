@@ -66,7 +66,7 @@ const computedValue = computed({
     <textarea
       id="card-message-textarea"
       v-model="computedValue"
-      class="bg-[#F4F5F7] py-[17px] pr-[15px] pl-[10px] text-[#656566] w-full text-[14px] border-none focus:ring-0 scroll-style"
+      class="bg-[#F4F5F7] py-[10px] pr-[15px] pl-[10px] text-[#656566] w-full text-[14px] border-none focus:ring-0 scroll-style"
       style="resize: none;"
       rows="1"
       type="text"
