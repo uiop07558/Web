@@ -16,7 +16,7 @@ function pad2 (n) {
   return (n < 10 ? '0' : '') + n
 }
 
-document.body.addEventListener('keypress', function (e) {
+document.addEventListener('keydown', function (e) {
   if (e.key === 'Escape') {
     store.dispatch('asidePropertiesToggle', false)
   }
