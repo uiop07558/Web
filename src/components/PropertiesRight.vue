@@ -67,3 +67,9 @@ export default {
     </div>
   </aside>
 </template>
+<style scoped>
+#aside-right {
+  overflow-x: hidden;
+  scrollbar-width: none;
+}
+</style>
