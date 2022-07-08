@@ -1,6 +1,6 @@
 <template>
   <div
-    class="group bg-white rounded-[10px] border px-[18px] py-[20px]"
+    class="group bg-white rounded-[10px] border px-[18px] py-[20px] cursor-default"
     :class="{ 'border-[#e5e5e5]': !selected, 'border-[#ff9123]': selected }"
     @click="selectCard"
   >
