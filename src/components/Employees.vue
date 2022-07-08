@@ -49,6 +49,10 @@
       @cancel="showOtherOrg = false"
       @ok="showOtherOrg = false"
     />
+    <EmployeesModalBoxAlreadyExist
+      v-if="alreadyExist"
+      @cancel="alreadyExist = false"
+    />
     <div
       v-for="(value, index) in items"
       :key="index"
@@ -208,6 +212,7 @@ import EmployeesModalBoxAdd from '@/components/Employees/EmployeesModalBoxAdd.vu
 import EmployeesModalBoxMove from '@/components/Employees/EmployeesModalBoxMove.vue'
 import PopMenu from '@/components/modals/PopMenu.vue'
 import PopMenuItem from '@/components/modals/PopMenuItem.vue'
+import EmployeesModalBoxAlreadyExist from '@/components/Employees/EmployeesModalBoxAlreadyExist'
 
 import * as EMPLOYEE from '@/store/actions/employees'
 import * as DEPARTMENT from '@/store/actions/departments'
@@ -217,6 +222,7 @@ import listView from '@/icons/list-view.js'
 
 export default {
   components: {
+    EmployeesModalBoxAlreadyExist,
     Icon,
     ListBlocItem,
     ListBlocAdd,
@@ -247,7 +253,8 @@ export default {
       showRenameDep: false,
       showMoveDep: false,
       showUsersLimit: false,
-      showOtherOrg: false
+      showOtherOrg: false,
+      alreadyExist: false
     }
   },
   computed: {
@@ -398,8 +405,11 @@ export default {
           email: empEmail
         })
           .catch((e) => {
-            if (e.response?.data?.error === "in user's org present employees" || e.response?.data?.error === 'the employee has license') {
+            if (e.response?.data?.error === 'the employee is already present in this organization' || e.response?.data?.error === 'the employee has license') {
               this.showOtherOrg = true
+            }
+            if (e.response?.data?.error === 'the employee is the director of the organization') {
+              this.alreadyExist = true
             }
           })
           .then((resp) => {
