@@ -87,13 +87,13 @@
           style="color: #7E7E80"
         >
           <span
-            v-show="(task.uid_customer !== task.uid_performer) && (task.uid_customerr !== user.current_user_uid)"
+            v-show="(task.uid_customer !== task.uid_performer) && (task.uid_customer !== user.current_user_uid)"
             class="mb-2 w-[100px]"
           >
             Заказчик:
           </span>
           <span
-            v-show="(task.uid_customer !== task.uid_performer) && (task.uid_customerr !== user.current_user_uid)"
+            v-show="(task.uid_customer !== task.uid_performer) && (task.uid_customer !== user.current_user_uid)"
             class="mb-2 w-[100px]"
           >
             Исполнитель:
@@ -120,7 +120,7 @@
         <div class="flex flex-col font-medium w-[720px]">
           <!-- customer -->
           <div
-            v-show="(task.uid_customer !== task.uid_performer) && (task.uid_customerr !== user.current_user_uid)"
+            v-show="(task.uid_customer !== task.uid_performer) && (task.uid_customer !== user.current_user_uid)"
             class="flex mb-2"
           >
             <img
