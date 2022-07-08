@@ -222,6 +222,11 @@ export default {
       )
     }
   },
+  watch: {
+    selectedTags (newTags, oldTags) {
+      this.checkTags = [...this.selectedTags]
+    }
+  },
   mounted () {
     this.checkTags = [...this.selectedTags]
   },
