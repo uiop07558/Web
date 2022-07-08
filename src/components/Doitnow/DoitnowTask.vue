@@ -124,10 +124,10 @@
             class="flex mb-2"
           >
             <img
-              :src="employees[task.uid_customer] ? employees[task.uid_customer].fotolink : ''"
+              :src="employees[task.uid_customer] ? employees[task.uid_customer]?.fotolink : ''"
               class="rounded-lg ml-1 h-[20px] w-[20px]"
             >
-            <span class="ml-1 text-black">{{ employees[task.uid_customer].name }}</span>
+            <span class="ml-1 text-black">{{ employees[task.uid_customer]?.name }}</span>
           </div>
           <!-- performer -->
           <div
@@ -135,10 +135,10 @@
             class="flex mb-2"
           >
             <img
-              :src="employees[task.uid_performer] ? employees[task.uid_performer].fotolink : ''"
+              :src="employees[task.uid_performer] ? employees[task.uid_performer]?.fotolink : ''"
               class="rounded-lg ml-1 h-[20px] w-[20px]"
             >
-            <span class="ml-1 text-black">{{ employees[task.uid_performer].name }}</span>
+            <span class="ml-1 text-black">{{ employees[task.uid_performer]?.name }}</span>
           </div>
           <!-- days -->
           <div
@@ -159,7 +159,7 @@
             v-if="projects[task.uid_project]"
             class="flex mb-2"
           >
-            <span class="text-black overflow-hidden truncate">{{ projects[task.uid_project].name }}</span>
+            <span class="text-black overflow-hidden truncate">{{ projects[task.uid_project]?.name }}</span>
           </div>
         </div>
       </div>
