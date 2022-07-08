@@ -11,7 +11,7 @@ export default {
   mounted () {
   // Start dots blinking
     this.intervalId = setInterval(() => {
-      this.dots.value.length < 3 ? this.dots.value += '.' : this.dots.value = '.'
+      this.dots.length < 3 ? this.dots += '.' : this.dots = '.'
     }, 500)
 
     const type = this.$router.currentRoute.value.query.type
@@ -21,12 +21,12 @@ export default {
       const fileBlob = new Blob([resp.data], { type: type + '/' + format })
       const urlCreator = window.URL || window.webkitURL
       const fileURL = urlCreator.createObjectURL(fileBlob)
-      this.dots.value = '.'
+      this.dots = '.'
       window.location.href = fileURL
       clearInterval(this.intervalId)
     }).catch((err) => {
-      this.text.value = err
-      this.dots.value = '.'
+      this.text = err
+      this.dots = '.'
       clearInterval(this.intervalId)
     })
   }
