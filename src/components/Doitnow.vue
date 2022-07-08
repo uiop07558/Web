@@ -62,7 +62,7 @@
     />
   </transition>
   <DoitnowEmpty
-    v-if="(tasksCount === 0 && !isLoading) && (user.tarif === 'alpha')"
+    v-if="(tasksCount === 0 && !isLoading)"
     @clickPlanning="goToNextDay"
   />
 </template>

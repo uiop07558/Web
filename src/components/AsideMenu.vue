@@ -252,6 +252,7 @@ export default {
   <aside
     v-show="!isFullScreen"
     id="aside"
+    style="overflow-x:hidden; scrollbar-width: none;"
     class="w-[292px] fixed top-0 z-30 h-screen transition-position lg:left-0 bg-[#f4f5f7] font-SfProDisplayNormal text-sm"
     :class="[ isAsideMobileExpanded ? 'left-0' : '-left-[292px]', isAsideLgActive ? 'block' : 'lg:hidden xl:block' ]"
   >
@@ -332,11 +333,11 @@ export default {
     </div>
     <EventAlert
       v-if="user?.tarif === 'free' || user?.tarif === 'trial'"
-      :bg-color="user?.tarif === 'free' ? '#DA4C40' : '#44944A'"
+      :bg-color="'#FF912380'"
       :text-color="'white'"
       :user-icon="warn"
       :link="'https://www.leadertask.ru/alpha'"
-      :message-text="user.tarif === 'trial' ? 'Пробный тариф.' : 'Закончилась лицензия.'"
+      :message-text="user?.tarif === 'trial' ? 'Пробный тариф.' : 'Закончилась лицензия.'"
     />
     <div class="my-[10px]">
       <template v-for="(menuGroup, index) in menu">

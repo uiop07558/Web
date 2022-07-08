@@ -152,16 +152,16 @@
             />
             <!-- Data -->
             <TaskListIconLabel
-              v-if="(props.node.info.type === 1 || props.node.info.type === 2) && (props.node.info.term_user || props.node.info.term_customer)"
+              v-if="props.node.info.term_user"
               :icon-path="clock.path"
               :icon-box="clock.viewBox"
-              :text="props.node.info.term_user ? props.node.info.term_user : props.node.info.term_customer"
+              :text="props.node.info.term_user"
               icon-width="16"
               class="h-[22px]"
               icon-height="16"
             />
             <TaskListIconLabel
-              v-if="(props.node.info.type !== 1 && props.node.info.type !== 2) && (props.node.info.term_user || props.node.info.term_customer)"
+              v-if="props.node.info.type !== 1 && props.node.info.type !== 2 && props.node.info.term_customer"
               :icon-path="clock.path"
               :icon-box="clock.viewBox"
               :text="props.node.info.term_customer"
@@ -293,6 +293,7 @@
 
 <script>
 import { computed } from 'vue'
+import { useStore } from 'vuex'
 import treeview from 'vue3-treeview'
 import InspectorLimit from '@/components/TasksList/InspectorLimit.vue'
 import TaskStatus from '@/components/TasksList/TaskStatus.vue'
@@ -497,6 +498,13 @@ export default {
   },
   mounted () {
     window.getSelection().removeAllRanges()
+    // не удалять, без объявление сторы через useStore не работает закрытие на escape
+    const store = useStore()
+    document.addEventListener('keyup', function (evt) {
+      if (evt.keyCode === 27) {
+        store.dispatch('asidePropertiesToggle', false)
+      }
+    })
   },
   methods: {
     scroll (step) {
