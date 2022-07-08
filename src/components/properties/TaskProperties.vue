@@ -1011,7 +1011,7 @@ export default {
   watch: {
     selectedTask (newval, oldval) {
       this.showOnlyFiles = false
-      this.showAllMessages = true
+      this.showAllMessages = false
       this.currentAnswerMessageUid = ''
       this.$nextTick(function () {
         this.onInputTaskMsg()
