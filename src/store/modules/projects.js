@@ -1,6 +1,7 @@
 import axios from 'axios'
 import { notify } from 'notiwind'
 import * as PROJECT from '../actions/projects'
+import { visitChildren } from '@/store/helpers/functions'
 
 const state = {
   projects: {},
@@ -154,6 +155,7 @@ const actions = {
 
 const mutations = {
   [PROJECT.REMOVE_PROJECT_REQUEST]: (state, uid) => {
+    visitChildren([state.projects[uid]], value => (delete state.projects[value.uid]))
     delete state.projects[uid]
   },
   [PROJECT.PUSH_PROJECT]: (state, projects) => {
