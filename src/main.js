@@ -16,6 +16,12 @@ function pad2 (n) {
   return (n < 10 ? '0' : '') + n
 }
 
+document.addEventListener('keydown', function (e) {
+  if (e.key === 'Escape') {
+    store.dispatch('asidePropertiesToggle', false)
+  }
+})
+
 const chosenDate = new Date()
 const month = pad2(chosenDate.getMonth() + 1)
 const day = pad2(chosenDate.getDate())

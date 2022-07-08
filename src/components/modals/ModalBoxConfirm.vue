@@ -1,45 +1,57 @@
-<script setup>
-import { computed } from 'vue'
+<script>
 import JbButton from '@/components/JbButton.vue'
 import CardComponent from '@/components/CardComponent.vue'
 import Overlay from '@/components/modals/Overlay.vue'
 
-const props = defineProps({
-  title: {
-    type: String,
-    default: null
+export default {
+  components: {
+    JbButton,
+    CardComponent,
+    Overlay
   },
-  button: {
-    type: String,
-    default: 'white'
-  },
-  buttonLabel: {
-    type: String,
-    default: 'Done'
-  },
-  hasCancel: Boolean,
-  modelValue: {
-    type: [String, Number, Boolean],
-    default: null
-  },
-  hasButton: Boolean
-})
 
-const emit = defineEmits(['update:modelValue', 'cancel', 'confirm'])
+  props: {
+    title: {
+      type: String,
+      default: null
+    },
+    button: {
+      type: String,
+      default: 'white'
+    },
+    buttonLabel: {
+      type: String,
+      default: 'Done'
+    },
+    hasCancel: Boolean,
+    modelValue: {
+      type: [String, Number, Boolean],
+      default: null
+    },
+    hasButton: Boolean
+  },
 
-const value = computed({
-  get: () => props.modelValue,
-  set: value => emit('update:modelValue', value)
-})
+  emits: ['update:modelValue', 'cancel', 'confirm'],
 
-const confirmCancel = mode => {
-  value.value = false
-  emit(mode)
+  computed: {
+    value: {
+      get () {
+        return this.modelValue
+      },
+      set (value) { this.$emit('update:modelValue', value) }
+    }
+  },
+
+  methods: {
+    confirmCancel (mode) {
+      this.value = false
+      this.$emit(mode)
+    },
+
+    confirm () { this.confirmCancel('confirm') },
+    cancel () { this.confirmCancel('cancel') }
+  }
 }
-
-const confirm = () => confirmCancel('confirm')
-const cancel = () => confirmCancel('cancel')
-
 </script>
 
 <template>

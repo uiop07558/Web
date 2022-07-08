@@ -1,7 +1,8 @@
 <script setup>
 import { mdiCog } from '@mdi/js'
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import Icon from '@/components/Icon.vue'
+import AccKarmaLimit from '@/components/AccKarmaLimit'
 import { useStore } from 'vuex'
 
 const props = defineProps({
@@ -32,7 +33,11 @@ const emit = defineEmits(['header-icon-click', 'submit'])
 
 const is = computed(() => props.form ? 'form' : 'div')
 
+const showFreeModal = ref(false)
+
 const navig = computed(() => store.state.navig)
+
+const user = computed(() => store.state.user.user)
 
 const store = useStore()
 
@@ -57,6 +62,10 @@ const tarif = () => {
 }
 
 const karma = () => {
+  if (user.value.tarif !== 'alpha' && user.value.tarif !== 'trial') {
+    showFreeModal.value = true
+    return
+  }
   store.commit('basic', { key: 'navig', value: 4 })
 }
 
@@ -82,6 +91,10 @@ const submit = e => {
     class="bg-white dark:bg-zinc-900"
     @submit="submit"
   >
+    <AccKarmaLimit
+      v-if="showFreeModal"
+      @cancel="showFreeModal = false"
+    />
     <fieldset class="flex h-full">
       <form
         v-if="title"

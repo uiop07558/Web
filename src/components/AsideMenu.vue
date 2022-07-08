@@ -3,6 +3,7 @@ import EventAlert from '@/components/EventAlert.vue'
 import ModalBox from '@/components/ModalBox.vue'
 import { DatePicker } from 'v-calendar'
 import NavBarItem from '@/components/NavBarItem.vue'
+import DoitnowLimit from '@/components/Doitnow/DoitnowLimit.vue'
 import Icon from '@/components/Icon.vue'
 import AccModal from '@/components/AccModal.vue'
 import AccTarif from '@/components/AccTarif.vue'
@@ -23,6 +24,7 @@ export default {
   components: {
     EventAlert,
     ModalBox,
+    DoitnowLimit,
     DatePicker,
     NavBarItem,
     Icon,
@@ -43,6 +45,7 @@ export default {
     return {
       mdiMenu,
       warn,
+      showFreeModal: false,
       modalOneActive: false,
       lastVisitedDate: this.navStack && this.navStack.length && this.navStack[this.navStack.length - 1] && this.navStack[this.navStack.length - 1].uid && this.navStack[this.navStack.length - 1].uid === '901841d9-0016-491d-ad66-8ee42d2b496b' && this.navStack[this.navStack.length - 1].param ? new Date(this.navStack[this.navStack.length - 1].param) : new Date()
     }
@@ -107,21 +110,12 @@ export default {
         this.$store.dispatch('asidePropertiesToggle', false)
       }
 
-      // desktop check
-      if (item.uid === '2bad1413-a373-4926-8a3c-58677a680714') {
-        const navElem = {
-          name: item.label,
-          key: 'greedSource',
-          value: { uid: item.uid, param: null }
-        }
-        this.$store.commit('updateStackWithInitValue', navElem)
-        this.$store.commit('basic', { key: 'mainSectionState', value: 'greed' })
-        this.$store.commit('basic', { key: 'greedPath', value: 'dashboard' })
-        return
-      }
-
       // do it now
       if (item.uid === '2cf6b167-6506-4b05-bc34-70a8d88e3b25') {
+        if (this.user.tarif !== 'alpha' && this.user.tarif !== 'trial') {
+          this.showFreeModal = true
+          return
+        }
         const navElem = {
           name: item.label,
           key: 'greedSource',
@@ -188,6 +182,7 @@ export default {
       }
     },
     onDayClick (day) {
+      this.$store.dispatch('asidePropertiesToggle', false)
       this.$store.dispatch(TASK.TASKS_REQUEST, new Date(day.date))
       const navElem = {
         name: this.dateToLabelFormat(day.date),
@@ -226,6 +221,10 @@ export default {
     @acc="accs()"
     @tarif="tarifs()"
   >
+    <DoitnowLimit
+      v-if="showFreeModal"
+      @cancel="showFreeModal = false"
+    />
     <acc-modal
       v-if="navig === 0"
       class="text-lg"
@@ -333,7 +332,7 @@ export default {
     </div>
     <EventAlert
       v-if="user?.tarif === 'free' || user?.tarif === 'trial'"
-      :bg-color="'#DA4C40'"
+      :bg-color="user?.tarif === 'free' ? '#DA4C40' : '#44944A'"
       :text-color="'white'"
       :user-icon="warn"
       :link="'https://www.leadertask.ru/alpha'"

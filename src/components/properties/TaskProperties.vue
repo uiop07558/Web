@@ -743,9 +743,7 @@
       id="drop-area"
       class="input-group bg-gray-100 rounded-[10px] mt-2"
     >
-      <span
-        class="input-group-addon input-group-attach dark:bg-gray-800 dark:text-gray-100"
-      >
+      <span class="input-group-addon input-group-attach dark:bg-gray-800 dark:text-gray-100">
         <div class="example-1">
           <label
             v-if="user.tarif !== 'free'"
@@ -773,35 +771,26 @@
               @change="createTaskFile($event)"
             >
           </label>
-          <label
+          <svg
             v-if="user.tarif === 'free'"
-            class="label"
-            @click.prevent="showFreeModalChat = true"
+            class="mx-3.5 cursor-pointer"
+            @click="showFreeModalChat = true"
+            width="20"
+            height="20"
+            viewBox="0 0 20 20"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
           >
-            <svg
-              width="20"
-              height="20"
-              viewBox="0 0 20 20"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M1.94475 17.443C3.17452 18.6611 4.78671 19.2627 6.3989 19.2627C8.0111 19.2627 9.62329 18.6537 10.8531 17.4356L18.5841 9.77812C20.3388 8.04015 20.3388 5.21038 18.5841 3.47241C17.7368 2.63313 16.6045 2.16522 15.4047 2.16522C14.2049 2.16522 13.0726 2.6257 12.2253 3.47241L5.12415 10.506C4.07435 11.5458 4.07435 13.2466 5.12415 14.2865C6.17395 15.3263 7.89112 15.3263 8.94092 14.2865L13.6125 9.65929C13.965 9.31021 13.965 8.74574 13.6125 8.39666C13.2601 8.04758 12.6902 8.04758 12.3378 8.39666L7.67366 13.0313C7.32123 13.3803 6.75134 13.3803 6.3989 13.0313C6.04647 12.6822 6.04647 12.1177 6.3989 11.7686L13.4926 4.74246C14.0025 4.23741 14.6773 3.96261 15.4047 3.96261C16.1246 3.96261 16.8069 4.23741 17.3168 4.74246C18.3666 5.78228 18.3666 7.48311 17.3168 8.52292L9.5783 16.1804C7.82364 17.9184 4.96668 17.9184 3.21201 16.1804C2.36467 15.3411 1.89976 14.2196 1.89976 13.0313C1.89976 11.8429 2.36467 10.7214 3.21951 9.88211L10.943 2.22463C11.2955 1.87555 11.2955 1.31108 10.943 0.962005C10.5906 0.612925 10.0207 0.612925 9.66829 0.962005L1.94475 8.61948C0.752474 9.79298 0.100098 11.3601 0.100098 13.0313C0.100098 14.695 0.752474 16.2621 1.94475 17.443Z"
-                fill="black"
-                fill-opacity="0.5"
-              />
-            </svg>
-            <input
-              id="file_attach"
-              ref="file_attach"
-              type="file"
-              multiple="multiple"
-              name="file_attach"
-            >
-          </label>
+            <path
+              d="M1.94475 17.443C3.17452 18.6611 4.78671 19.2627 6.3989 19.2627C8.0111 19.2627 9.62329 18.6537 10.8531 17.4356L18.5841 9.77812C20.3388 8.04015 20.3388 5.21038 18.5841 3.47241C17.7368 2.63313 16.6045 2.16522 15.4047 2.16522C14.2049 2.16522 13.0726 2.6257 12.2253 3.47241L5.12415 10.506C4.07435 11.5458 4.07435 13.2466 5.12415 14.2865C6.17395 15.3263 7.89112 15.3263 8.94092 14.2865L13.6125 9.65929C13.965 9.31021 13.965 8.74574 13.6125 8.39666C13.2601 8.04758 12.6902 8.04758 12.3378 8.39666L7.67366 13.0313C7.32123 13.3803 6.75134 13.3803 6.3989 13.0313C6.04647 12.6822 6.04647 12.1177 6.3989 11.7686L13.4926 4.74246C14.0025 4.23741 14.6773 3.96261 15.4047 3.96261C16.1246 3.96261 16.8069 4.23741 17.3168 4.74246C18.3666 5.78228 18.3666 7.48311 17.3168 8.52292L9.5783 16.1804C7.82364 17.9184 4.96668 17.9184 3.21201 16.1804C2.36467 15.3411 1.89976 14.2196 1.89976 13.0313C1.89976 11.8429 2.36467 10.7214 3.21951 9.88211L10.943 2.22463C11.2955 1.87555 11.2955 1.31108 10.943 0.962005C10.5906 0.612925 10.0207 0.612925 9.66829 0.962005L1.94475 8.61948C0.752474 9.79298 0.100098 11.3601 0.100098 13.0313C0.100098 14.695 0.752474 16.2621 1.94475 17.443Z"
+              fill="black"
+              fill-opacity="0.5"
+            />
+          </svg>
         </div>
       </span>
       <textarea
+        v-if="user.tarif !== 'free'"
         ref="taskMsgEdit"
         v-model="taskMsg"
         class="form-control mt-[6px] mb-[8px] text-group-design task-msg overflow-auto scroll-style dark:bg-gray-800 dark:text-gray-100 focus:ring-0"
@@ -811,6 +800,19 @@
         @keydown.enter.exact.prevent="sendTaskMsg()"
         @keydown.enter.shift.exact.prevent="addNewLineTaskMsg"
       />
+      <div
+        v-if="user.tarif === 'free'"
+        @click="showFreeModalChat = true"
+      >
+        <textarea
+          ref="taskMsgEdit"
+          v-model="taskMsg"
+          class="form-control mt-[6px] mb-[8px] text-group-design task-msg overflow-auto scroll-style dark:bg-gray-800 dark:text-gray-100 focus:ring-0"
+          placeholder="Напишите сообщение..."
+          rows="58"
+          disabled
+        />
+      </div>
       <span class="input-group-addon input-group-btn-send dark:bg-gray-800 dark:text-gray-100">
         <button
           type="button"
@@ -948,7 +950,7 @@ export default {
       SeriesAfterType: this.selectedTask?.SeriesAfterType,
       SeriesWeekCount: this.selectedTask?.SeriesWeekCount,
       SeriesMonthType: this.selectedTask?.SeriesMonthType === 1 ? this.selectedTask?.SeriesMonthType : this.selectedTask?.SeriesMonthWeekType,
-      SeriesMonthCount: this.selectedTask?.SeriesMonthCount,
+      SeriesMonthCount: this.selectedTask?.SeriesMonthCount ?? 1,
       SeriesMonthDay: this.selectedTask?.SeriesMonthDay,
       SeriesMonthWeekType: this.selectedTask?.SeriesMonthWeekType,
       SeriesMonthDayOfWeek: this.selectedTask?.SeriesMonthDayOfWeek,
@@ -990,6 +992,18 @@ export default {
     daysWithTasks () { return this.$store.state.tasks.daysWithTasks },
     navStack () { return this.$store.state.navbar.navStack },
     isInFocus () { return this.selectedTask?.focus === 1 },
+    isAccessVisible () {
+      if (this.selectedTask.emails) return true
+      if (this.selectedTask.type === 1 || this.selectedTask.type === 2) return true
+      return false
+    },
+    modalBoxDeleteText () {
+      let text = 'Вы действительно хотите удалить задачу?'
+      if (this.tasks[this.selectedTask.uid]?.children?.length > 0) {
+        text = 'Вы действительно хотите удалить задачу с подзадачами в количестве: ' + this.tasks[this.selectedTask.uid]?.children?.length + '?'
+      }
+      return text
+    },
     canEditChecklist () { return (this.selectedTask.type === 1 || this.selectedTask.type === 2) && this.user.tarif !== 'free' },
     canCheckChecklist () { return (this.canEditChecklist || this.selectedTask.type === 3) && this.user.tarif !== 'free' },
     canEditComment () { return (this.selectedTask.type === 1 || this.selectedTask.type === 2) }
@@ -1032,10 +1046,6 @@ export default {
         })
     },
     createTaskFile (event) {
-      if (this.user.tarif === 'free') {
-        this.showFreeModalChat = true
-        return
-      }
       this.files = event.target.files
       const formData = new FormData()
       for (let i = 0; i < this.files.length; i++) {
@@ -1130,8 +1140,8 @@ export default {
       }
       this.$store.dispatch(TASK.CHANGE_TASK_DATE, data).then(
         resp => {
-          this.selectedTask.term_customer = resp.data.term
-          this.selectedTask.is_overdue = resp.data.is_overdue
+          this.selectedTask.term_customer = resp.term
+          this.selectedTask.is_overdue = resp.is_overdue
           this.timeStart = timestart !== '' ? '' : timestart
           this.timeEnd = timeend !== '' ? '' : timeend
           this.timeStartActive = true
@@ -1417,10 +1427,6 @@ export default {
       console.log(value)
     },
     sendTaskMsg: function (msg) {
-      if (this.user.tarif === 'free') {
-        this.showFreeModalChat = true
-        return
-      }
       let msgtask = msg || this.taskMsg
       msgtask = msgtask.trim()
       msgtask = msgtask.replaceAll('&', '&amp;')
