@@ -15,8 +15,8 @@ const state = {
   boards: {},
   selectedBoard: undefined,
   showArchive: false,
-  showOnlyMyCards: false,
-  showOnlyMyCardsCreated: false,
+  showOnlyCardsWhereIAmResponsible: false,
+  showOnlyMyCreatedCards: false,
   showOnlySearchText: undefined
 }
 
@@ -330,19 +330,19 @@ const mutations = {
   [BOARD.SHOW_BOARD_ARCHIVE]: (state, showArchive) => {
     state.showArchive = showArchive
   },
-  [BOARD.SHOW_BOARD_MY_CARDS]: (state, showMyCards) => {
-    state.showOnlyMyCards = showMyCards
+  [BOARD.SHOW_BOARD_MY_CARDS_WHERE_IAM_RESPONSIBLE]: (state, showCardsWhereIAmResponsible) => {
+    state.showOnlyCardsWhereIAmResponsible = showCardsWhereIAmResponsible
   },
-  [BOARD.SHOW_BOARD_MY_CARDS_CREATED]: (state, showMyCardsCreated) => {
-    state.showOnlyMyCardsCreated = showMyCardsCreated
+  [BOARD.SHOW_BOARD_MY_CREATED_CARDS]: (state, showMyCreatedCards) => {
+    state.showOnlyMyCreatedCards = showMyCreatedCards
   },
   [BOARD.SHOW_SEARCH_CARDS]: (state, searchText) => {
     state.showOnlySearchText = searchText
   },
   [BOARD.BOARD_CLEAR_FILTER]: (state) => {
     state.showArchive = false
-    state.showOnlyMyCards = false
-    state.showOnlyMyCardsCreated = false
+    state.showOnlyCardsWhereIAmResponsible = false
+    state.showOnlyMyCreatedCards = false
   }
 }
 

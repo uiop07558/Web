@@ -10,17 +10,17 @@
     <PopMenu>
       <NavBarButtonIcon
         icon="filter"
-        :colored="showOnlyMyCardsCreated || showOnlyMyCards || showArchive"
+        :colored="showOnlyMyCreatedCards || showOnlyCardsWhereIAmResponsible || showArchive"
       />
       <template #menu>
         <PopMenuItem
-          :icon="showOnlyMyCards ? 'check' : 'uncheck'"
+          :icon="showOnlyCardsWhereIAmResponsible ? 'check' : 'uncheck'"
           @click="clickBoardMyCards"
         >
           Ответственный я
         </PopMenuItem>
         <PopMenuItem
-          :icon="showOnlyMyCardsCreated ? 'check' : 'uncheck'"
+          :icon="showOnlyMyCreatedCards ? 'check' : 'uncheck'"
           @click="clickBoardMyCardsCreated"
         >
           Создатель я
@@ -32,10 +32,10 @@
           Архив
         </PopMenuItem>
         <PopMenuDivider
-          v-if="showOnlyMyCardsCreated || showOnlyMyCards || showArchive"
+          v-if="showOnlyMyCreatedCards || showOnlyCardsWhereIAmResponsible || showArchive"
         />
         <PopMenuItem
-          v-if="showOnlyMyCardsCreated || showOnlyMyCards || showArchive"
+          v-if="showOnlyMyCreatedCards || showOnlyCardsWhereIAmResponsible || showArchive"
           icon="uncheck"
           @click="clickBoardFilterClear"
         >
@@ -104,11 +104,11 @@ export default {
     showArchive () {
       return this.$store.state.boards.showArchive
     },
-    showOnlyMyCards () {
-      return this.$store.state.boards.showOnlyMyCards
+    showOnlyCardsWhereIAmResponsible () {
+      return this.$store.state.boards.showOnlyCardsWhereIAmResponsible
     },
-    showOnlyMyCardsCreated () {
-      return this.$store.state.boards.showOnlyMyCardsCreated
+    showOnlyMyCreatedCards () {
+      return this.$store.state.boards.showOnlyMyCreatedCards
     }
   },
   methods: {
@@ -138,10 +138,10 @@ export default {
         })
     },
     clickBoardMyCards () {
-      this.$store.commit(BOARD.SHOW_BOARD_MY_CARDS, !this.showOnlyMyCards)
+      this.$store.commit(BOARD.SHOW_BOARD_MY_CARDS_WHERE_IAM_RESPONSIBLE, !this.showOnlyCardsWhereIAmResponsible)
     },
     clickBoardMyCardsCreated () {
-      this.$store.commit(BOARD.SHOW_BOARD_MY_CARDS_CREATED, !this.showOnlyMyCardsCreated)
+      this.$store.commit(BOARD.SHOW_BOARD_MY_CREATED_CARDS, !this.showOnlyMyCreatedCards)
     },
     clickBoardArchive () {
       this.$store.commit(BOARD.SHOW_BOARD_ARCHIVE, !this.showArchive)
