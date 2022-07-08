@@ -1009,15 +1009,13 @@ export default {
     canEditComment () { return (this.selectedTask.type === 1 || this.selectedTask.type === 2) }
   },
   watch: {
-    selectedTask: {
-      immediate: true,
-      handler: function (val) {
-        this.showOnlyFiles = false
-        this.currentAnswerMessageUid = ''
-        this.$nextTick(function () {
-          this.onInputTaskMsg()
-        })
-      }
+    selectedTask (newval, oldval) {
+      this.showOnlyFiles = false
+      this.showAllMessages = true
+      this.currentAnswerMessageUid = ''
+      this.$nextTick(function () {
+        this.onInputTaskMsg()
+      })
     }
   },
   mounted: function () {
