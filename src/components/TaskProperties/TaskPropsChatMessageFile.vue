@@ -32,6 +32,15 @@
             class="float-right"
           >
             <a
+              v-if="movies.includes(file.file_name.split('.').pop())"
+              :href="currentlocation + 'taskfile/' + file.uid + '?type=video&format=' + file.file_name.split('.').pop()"
+              target="_blank"
+              class="table font-bold text-[#4C4C4D] text-[13px] leading-[15px]"
+            >
+              {{ fileName }}
+            </a>
+            <a
+              v-else
               :href="!isAudio ? fileUrl : null"
               :src="isAudio ? fileUrl : null"
               :download="fileName"
@@ -380,6 +389,12 @@ export default {
       pics,
       fileUrl,
       isAudio
+    }
+  },
+  data () {
+    return {
+      movies: ['mov', 'mp4', 'wmv', 'avi', 'avchd', 'mkv', 'webm', 'mpeg-2'],
+      currentlocation: window.location.href
     }
   },
   computed: {
