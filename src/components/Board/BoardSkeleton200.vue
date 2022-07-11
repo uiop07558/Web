@@ -16,8 +16,8 @@
 <script>
 export default {
   data: () => ({
-    lightText: 'block h-[8px] bg-neutral-300  mb-1.5 rounded-[10px]',
-    text: 'block h-[10px] bg-neutral-400  mb-1.5 rounded-[10px]',
+    lightText: 'block h-[8px] bg-neutral-200  mb-1.5 rounded-[10px]',
+    text: 'block h-[10px] bg-neutral-300  mb-1.5 rounded-[10px]',
     userIcon: 'mr-2 w-[22px] h-[22px] rounded-[10px]'
   })
 }

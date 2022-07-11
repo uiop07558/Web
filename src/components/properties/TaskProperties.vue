@@ -1540,7 +1540,7 @@ export default {
       }
       this.$store.dispatch(TASK.CHANGE_TASK_REDELEGATE, data).then(
         resp => {
-          this.$store.commit(TASK.SUBTASKS_REQUEST, resp.data)
+          this.$store.dispatch(TASK.ADD_SUBTASK, resp.data)
         }
       )
     },
