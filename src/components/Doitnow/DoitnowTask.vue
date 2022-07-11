@@ -81,85 +81,96 @@
           </template>
         </Popper>
       </div>
-      <div class="flex text-sm text-left justify-between w-[200px]">
-        <div
-          class="flex flex-col"
-          style="color: #7E7E80"
-        >
-          <span
-            v-show="(task.uid_customer !== task.uid_performer) && (task.uid_customer !== user.current_user_uid)"
-            class="mb-2 w-[100px]"
-          >
-            Заказчик:
-          </span>
-          <span
-            v-show="(task.uid_customer !== task.uid_performer) && (task.uid_customer !== user.current_user_uid)"
-            class="mb-2 w-[100px]"
-          >
-            Исполнитель:
-          </span>
-          <span
-            v-show="dateClearWords"
-            class="mb-2 w-[100px]"
-          >
-            Срок:
-          </span>
-          <span
-            v-show="plural"
-            class="mb-2 w-[100px]"
-          >
-            Просрочено:
-          </span>
-          <span
-            v-if="projects[task.uid_project]"
-            class="mb-2 w-[100px]"
-          >
-            Проект:
-          </span>
-        </div>
+      <div class="flex text-sm text-left justify-between w-[400px]">
         <div class="flex flex-col font-medium w-[720px]">
           <!-- customer -->
           <div
             v-show="(task.uid_customer !== task.uid_performer) && (task.uid_customer !== user.current_user_uid)"
             class="flex mb-2"
           >
-            <img
-              :src="employees[task.uid_customer] ? employees[task.uid_customer]?.fotolink : ''"
-              class="rounded-lg ml-1 h-[20px] w-[20px]"
+            <span
+              class="mr-2 w-[90px] shrink-0"
             >
-            <span class="ml-1 text-black">{{ employees[task.uid_customer]?.name }}</span>
+              Заказчик:
+            </span>
+            <div
+              v-show="(task.uid_customer !== task.uid_performer) && (task.uid_customer !== user.current_user_uid)"
+              class="flex"
+            >
+              <img
+                :src="employees[task.uid_customer] ? employees[task.uid_customer]?.fotolink : ''"
+                class="rounded-lg ml-1 h-[20px] w-[20px]"
+              >
+              <span class="ml-1 text-black">{{ employees[task.uid_customer]?.name }}</span>
+            </div>
           </div>
           <!-- performer -->
           <div
-            v-show="(task.uid_customer !== task.uid_performer)"
+            v-show="(task.uid_customer !== task.uid_performer) && (task.uid_customer !== user.current_user_uid)"
             class="flex mb-2"
           >
-            <img
-              :src="employees[task.uid_performer] ? employees[task.uid_performer]?.fotolink : ''"
-              class="rounded-lg ml-1 h-[20px] w-[20px]"
+            <span
+              class="mr-2 w-[90px] shrink-0"
             >
-            <span class="ml-1 text-black">{{ employees[task.uid_performer]?.name }}</span>
+              Исполнитель:
+            </span>
+            <div
+              v-show="(task.uid_customer !== task.uid_performer)"
+              class="flex"
+            >
+              <img
+                :src="employees[task.uid_performer] ? employees[task.uid_performer]?.fotolink : ''"
+                class="rounded-lg ml-1 h-[20px] w-[20px]"
+              >
+              <span class="ml-1 text-black">{{ employees[task.uid_performer]?.name }}</span>
+            </div>
           </div>
           <!-- days -->
           <div
             v-show="dateClearWords"
             class="flex mb-2"
           >
-            <span class="ml-1 text-black">{{ dateClearWords + getTime }}</span>
+            <span
+              class="mr-2 w-[90px] shrink-0"
+            >
+              Срок:
+            </span>
+            <div
+              v-show="dateClearWords"
+              class="flex"
+            >
+              <span class="text-black">{{ dateClearWords + getTime }}</span>
+            </div>
           </div>
           <!-- overdue -->
           <div
             v-show="plural"
             class="flex mb-2"
           >
-            <span class="ml-1 text-red-500">{{ plural }}</span>
+            <span class="mr-2 w-[90px] shrink-0">
+              Просрочено:
+            </span>
+            <div
+              class="flex mb-2"
+            >
+              <span class="text-red-500">{{ plural }}</span>
+            </div>
           </div>
           <!-- project -->
           <div
             v-if="projects[task.uid_project]"
             class="flex mb-2"
           >
-            <span class="text-black overflow-hidden truncate">{{ projects[task.uid_project]?.name }}</span>
+            <span
+              class="mr-2 w-[90px] shrink-0"
+            >
+              Проект:
+            </span>
+            <div
+              class="flex mb-2"
+            >
+              <span class="text-black overflow-hidden truncate">{{ projects[task.uid_project]?.name }}</span>
+            </div>
           </div>
         </div>
       </div>
@@ -226,7 +237,10 @@
           class="flex py-0.5 items-center justify-center text-sm hover:bg-white bg-green-100 hover:bg-opacity-90 font-medium border-green-400 min-h-[40px] w-[181px] rounded-lg border hover:text-green-500 mb-2 hover:animate-fadeIn"
           @click="accept"
         >
-          <span class="ml-8 w-[70px]">{{ task.uid_customer === user.current_user_uid ? (task.uid_performer === user.current_user_uid ? 'Завершить' : 'Принять и завершить') : 'Готово к сдаче' }}</span>
+          <span
+            class="ml-8 w-[70px]"
+          >{{ task.uid_customer === user.current_user_uid ? (task.uid_performer === user.current_user_uid ? 'Завершить' : 'Принять и завершить') : 'Готово к сдаче'
+          }}</span>
           <Icon
             :path="check.path"
             :width="check.width"
@@ -240,7 +254,10 @@
           class="flex py-0.5 items-center justify-center text-sm bg-gray-100 w-[181px] hover:bg-red-200 hover:border hover:border-red-300 min-h-[40px] hover:bg-opacity-90 font-medium rounded-lg hover:text-red-500 mb-2 hover:animate-fadeIn"
           @click="reDo"
         >
-          <span class="ml-8 w-[70px]">{{ task.uid_customer === user.current_user_uid ? (task.uid_performer === user.current_user_uid ? 'Отменить' : 'На доработку') : 'Отклонить' }}</span>
+          <span
+            class="ml-8 w-[70px]"
+          >{{ task.uid_customer === user.current_user_uid ? (task.uid_performer === user.current_user_uid ? 'Отменить' : 'На доработку') : 'Отклонить'
+          }}</span>
           <Icon
             :path="close.path"
             :width="close.width"
@@ -604,7 +621,7 @@ export default {
     },
     copyUrl (task) {
       copyText(`${window.location.origin}/task/${task.uid}`, undefined, (error, event) => {
-      // copyText('lt://planning?{' + selectedTask.value.uid.toUpperCase() + '}', undefined, (error, event) => {
+        // copyText('lt://planning?{' + selectedTask.value.uid.toUpperCase() + '}', undefined, (error, event) => {
         if (error) {
           console.log(error)
         } else {
@@ -663,13 +680,19 @@ export default {
       }
     },
     updateTask (event, task) {
-      this.$store.dispatch(TASK.CHANGE_TASK_NAME, { uid: task.uid, value: this.name.replace(/\r?\n|\r/g, '') })
+      this.$store.dispatch(TASK.CHANGE_TASK_NAME, {
+        uid: task.uid,
+        value: this.name.replace(/\r?\n|\r/g, '')
+      })
       if (task.name.length > 0) {
         if (task._justCreated) {
           task._addToList = true
           this.$store.dispatch(TASK.CREATE_TASK, task)
         } else {
-          this.$store.dispatch(TASK.CHANGE_TASK_NAME, { uid: task.uid, value: this.name })
+          this.$store.dispatch(TASK.CHANGE_TASK_NAME, {
+            uid: task.uid,
+            value: this.name
+          })
         }
         const data = {
           _isEditing: false
@@ -744,7 +767,10 @@ export default {
       return ''
     },
     countChecklist (checklist) {
-      const data = { done: 0, undone: 0 }
+      const data = {
+        done: 0,
+        undone: 0
+      }
       for (const line of checklist.split('\r\n\r\n')) {
         data.undone++
         if (+line.split('\r\n')[0] === 1) {
@@ -760,7 +786,10 @@ export default {
       this.$emit('nextTask')
     },
     changeFocus (uid, value) {
-      this.$store.dispatch(TASK.CHANGE_TASK_FOCUS, { uid: uid, value: value })
+      this.$store.dispatch(TASK.CHANGE_TASK_FOCUS, {
+        uid: uid,
+        value: value
+      })
         .then(() => {
           const data = {
             focus: value
@@ -827,15 +856,24 @@ export default {
     reDo () {
       this.readTask()
       if (this.task.uid_performer === this.user.current_user_uid && this.task.uid_customer === this.user.current_user_uid) {
-        this.$store.dispatch(TASK.CHANGE_TASK_STATUS, { uid: this.task.uid, value: 7 })
+        this.$store.dispatch(TASK.CHANGE_TASK_STATUS, {
+          uid: this.task.uid,
+          value: 7
+        })
         this.$emit('changeValue', { status: 7 })
       }
       if (this.task.uid_performer === this.user.current_user_uid && this.task.uid_customer !== this.user.current_user_uid) {
-        this.$store.dispatch(TASK.CHANGE_TASK_STATUS, { uid: this.task.uid, value: 8 })
+        this.$store.dispatch(TASK.CHANGE_TASK_STATUS, {
+          uid: this.task.uid,
+          value: 8
+        })
         this.$emit('changeValue', { status: 8 })
       }
       if (this.task.uid_performer !== this.user.current_user_uid && this.task.uid_customer === this.user.current_user_uid) {
-        this.$store.dispatch(TASK.CHANGE_TASK_STATUS, { uid: this.task.uid, value: 9 })
+        this.$store.dispatch(TASK.CHANGE_TASK_STATUS, {
+          uid: this.task.uid,
+          value: 9
+        })
         this.$emit('changeValue', { status: 9 })
       }
       this.nextTask()
@@ -843,18 +881,27 @@ export default {
     accept () {
       this.readTask()
       if ((this.task.uid_performer === this.user.current_user_uid && this.task.uid_customer === this.user.current_user_uid) ||
-      (this.task.uid_performer !== this.user.current_user_uid && this.task.uid_customer === this.user.current_user_uid)) {
-        this.$store.dispatch(TASK.CHANGE_TASK_STATUS, { uid: this.task.uid, value: 1 })
+        (this.task.uid_performer !== this.user.current_user_uid && this.task.uid_customer === this.user.current_user_uid)) {
+        this.$store.dispatch(TASK.CHANGE_TASK_STATUS, {
+          uid: this.task.uid,
+          value: 1
+        })
         this.$emit('changeValue', { status: 1 })
       } else {
-        this.$store.dispatch(TASK.CHANGE_TASK_STATUS, { uid: this.task.uid, value: 5 })
+        this.$store.dispatch(TASK.CHANGE_TASK_STATUS, {
+          uid: this.task.uid,
+          value: 5
+        })
         this.$emit('changeValue', { status: 5 })
       }
       this.nextTask()
     },
     decline () {
       this.readTask()
-      this.$store.dispatch(TASK.CHANGE_TASK_STATUS, { uid: this.task.uid, value: 6 })
+      this.$store.dispatch(TASK.CHANGE_TASK_STATUS, {
+        uid: this.task.uid,
+        value: 6
+      })
       this.$emit('changeValue', { status: 6 })
       this.nextTask()
     },
@@ -928,7 +975,10 @@ export default {
           const lastInspectorMessage = this.taskMessagesAndFiles[this.taskMessagesAndFiles.length - 2].uid_creator === 'inspector' ? this.taskMessagesAndFiles[this.taskMessagesAndFiles.length - 2] : false
           console.log('lastInspectorMessage: ', lastInspectorMessage)
           if (lastInspectorMessage) {
-            this.$store.dispatch(INSPECTOR.ANSWER_INSPECTOR_TASK, { id: lastInspectorMessage.id, answer: 1 }).then(() => {
+            this.$store.dispatch(INSPECTOR.ANSWER_INSPECTOR_TASK, {
+              id: lastInspectorMessage.id,
+              answer: 1
+            }).then(() => {
               lastInspectorMessage.performer_answer = 1
             })
           }
@@ -966,7 +1016,10 @@ export default {
           })
     },
     changeStatus (status) {
-      this.$store.dispatch(TASK.CHANGE_TASK_STATUS, { uid: this.task.uid, value: status }).then(() => {
+      this.$store.dispatch(TASK.CHANGE_TASK_STATUS, {
+        uid: this.task.uid,
+        value: status
+      }).then(() => {
         this.$emit('changeValue', { status: status })
       })
     }
