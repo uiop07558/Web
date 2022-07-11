@@ -147,9 +147,9 @@ export default {
   },
   data: () => ({
     container: 'animate-pulse bg-white rounded-[10px] border px-[18px] py-[20px] border-[#e5e5e5] mt-2',
-    containerOuter: 'max-h-full flex flex-col flex-none bg-white rounded-xl px-3 py-4 w-[280px] mr-[10px] stage-column',
-    headers: 'block h-[18px]  bg-neutral-400 mb-1.5 rounded-[10px]',
-    lightText: 'block h-[8px] bg-neutral-300  mb-1.5 rounded-[10px]',
+    containerOuter: 'max-h-full flex-none bg-white rounded-xl px-3 py-4 w-[280px] mr-[10px] stage-column',
+    headers: 'block h-[18px]  bg-neutral-300 mb-1.5 rounded-[10px]',
+    lightText: 'block h-[8px] bg-neutral-200  mb-1.5 rounded-[10px]',
     userIcon: 'mr-2 w-[22px] h-[22px] rounded-[10px]'
   })
 }
