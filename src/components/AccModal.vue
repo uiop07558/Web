@@ -258,7 +258,7 @@ export default {
               Email
             </p>
             <div
-              contenteditable="true"
+              contenteditable="false"
               class="text-[13px] landing-[13px] text-[#007BE5]"
             >
               {{ $store.state.user.user?.current_user_email }}
