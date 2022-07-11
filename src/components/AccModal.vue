@@ -1,105 +1,110 @@
-<script setup>
-
-import { computed, ref } from 'vue'
-import { useStore } from 'vuex'
+<script>
 import { USER_CHANGE_PHOTO, USER_CHANGE_PHONE } from '@/store/actions/user.js'
 import { AUTH_CHANGE_PASSWORD } from '@/store/actions/auth.js'
 import { CHANGE_EMPLOYEE_NAME } from '@/store/actions/employees.js'
+
 import BoardModalBoxRename from '@/components/Board/BoardModalBoxRename.vue'
 import ModalBox from '@/components/modals/ModalBox.vue'
-const emit = defineEmits(['AccLogout'])
-const store = useStore()
-const user = computed(() => store.state.user.user)
-const showEditname = ref(false)
-const newPassword = ref('')
-const confirmNewPassword = ref('')
-const showError = ref(false)
-const showEditphone = ref(false)
-//  const showEditemail = ref(false)
-const showEditpassword = ref(false)
-const tarif = () => {
-  store.commit('basic', { key: 'navig', value: 1 })
-}
-/*  const pass = () => {
-  store.commit('basic', { key: 'navig', value: 3 })
-}  */
-const logout = () => {
-  emit('AccLogout')
-}
 
-const tarifText = computed(() => {
-  switch (user?.value?.tarif) {
-    case 'trial':
-      return 'Пробная версия'
-    case 'free':
-      return 'Закончилась лицензия, Истек триал, Превышен лимит рабочих мест'
-    case 'expert':
-      return 'Действительная лицензия с одним рабочим местом'
-    case 'business':
-      return 'Действительная лицензия с несколькими рабочими местами'
-    default:
-      return user?.value?.tarif
-  }
-})
+export default {
+  components: {
+    ModalBox,
+    BoardModalBoxRename
+  },
+  emits: ['AccLogout'],
+  data () {
+    return {
+      showEditname: false,
+      newPassword: '',
+      confirmNewPassword: '',
+      showError: false,
+      showEditphone: false,
+      showEditpassword: false
+    }
+  },
+  computed: {
+    tarifText () {
+      switch (this.$store.state.user.user?.tarif) {
+        case 'trial':
+          return 'Пробная версия'
+        case 'free':
+          return 'Закончилась лицензия, Истек триал, Превышен лимит рабочих мест'
+        case 'expert':
+          return 'Действительная лицензия с одним рабочим местом'
+        case 'business':
+          return 'Действительная лицензия с несколькими рабочими местами'
+        default:
+          return this.$store.state.user.user?.tarif
+      }
+    }
+  },
+  methods: {
+    tarif () {
+      this.$store.commit('basic', { key: 'navig', value: 1 })
+    },
+    logout () {
+      this.$emit('AccLogout')
+    },
 
-const changeUserPhoto = (event) => {
-  const files = event.target.files
-  const formData = new FormData()
-  const file = files[0]
-  formData.append('files[0]', file)
-  const data = {
-    file: formData
-  }
-  store.dispatch(USER_CHANGE_PHOTO, data)
-}
-const changeUserPassword = () => {
-  const password = newPassword.value
-  const data = {
-    password: password
-  }
-  if (newPassword.value === confirmNewPassword.value) {
-    store.dispatch(AUTH_CHANGE_PASSWORD, data)
-    showEditpassword.value = false
-    showError.value = false
-  } else {
-    showError.value = true
-  }
-}
+    changeUserPhoto (event) {
+      const files = event.target.files
+      const formData = new FormData()
+      const file = files[0]
+      formData.append('files[0]', file)
+      const data = {
+        file: formData
+      }
+      this.$store.dispatch(USER_CHANGE_PHOTO, data)
+    },
+    changeUserPassword () {
+      const password = this.newPassword
+      const data = {
+        password: password
+      }
+      if (this.newPassword === this.confirmNewPassword) {
+        this.$store.dispatch(AUTH_CHANGE_PASSWORD, data)
+        this.showEditpassword = false
+        this.showError = false
+      } else {
+        this.showError = true
+      }
+    },
 
-const changeUserPhone = (phone) => {
-  showEditphone.value = false
-  const date = new Date()
-  const timezone = date.getTimezoneOffset() / 60 * (-1)
-  const data = {
-    phone: phone,
-    timezone: timezone
+    changeUserPhone (phone) {
+      this.showEditphone = false
+      const date = new Date()
+      const timezone = date.getTimezoneOffset() / 60 * (-1)
+      const data = {
+        phone: phone,
+        timezone: timezone
+      }
+      this.$store.dispatch(USER_CHANGE_PHONE, data)
+    },
+
+    changeUserName (name) {
+      this.showEditname = false
+      const data = {
+        name: name,
+        email: this.$store.state.user.user.current_user_email
+      }
+      this.$store.dispatch(CHANGE_EMPLOYEE_NAME, data)
+    },
+
+    userName () {
+      const name = this.$store.state.user.user.current_user_name ?? ''
+      return name
+    },
+
+    userPhone () {
+      const phone = this.$store.state.user.user.current_user_phone ?? ''
+      const index = phone.lastIndexOf(' ("')
+      if (index !== -1) {
+        return phone.slice(0, index)
+      }
+      return phone
+    }
   }
-  store.dispatch(USER_CHANGE_PHONE, data)
 }
-
-const changeUserName = (name) => {
-  showEditname.value = false
-  const data = {
-    name: name,
-    email: user.value?.current_user_email
-  }
-  store.dispatch(CHANGE_EMPLOYEE_NAME, data)
-}
-
-const userName = function () {
-  const name = user.value?.current_user_name ?? ''
-  return name
-}
-
-const userPhone = function () {
-  const phone = user.value?.current_user_phone ?? ''
-  const index = phone.lastIndexOf(' ("')
-  if (index !== -1) {
-    return phone.slice(0, index)
-  }
-  return phone
-}
-
 </script>
 
 <template>
@@ -167,8 +172,8 @@ const userPhone = function () {
           <div class="pr-2">
             <span class="circle-image">
               <img
-                v-if="user?.foto_link"
-                :src="user?.foto_link"
+                v-if="$store.state.user.user?.foto_link"
+                :src="$store.state.user.user?.foto_link"
                 class="rounded-[27px] content-center object-cover"
               >
             </span>
@@ -201,10 +206,10 @@ const userPhone = function () {
           {{ tarifText }}
         </p>
         <p
-          v-if="user?.date_expired"
+          v-if="$store.state.user.user?.date_expired"
           class="mt-1 text-sm font-normal font-[Roboto] landing-5 text-[#606061]"
         >
-          <a>{{ user?.date_expired }}({{ user?.days_left ?? 0 }})</a>
+          <a>{{ $store.state.user.user?.date_expired }}({{ $store.state.user.user?.days_left ?? 0 }})</a>
         </p>
         <div class="mt-2">
           <button
@@ -221,7 +226,7 @@ const userPhone = function () {
           </p>
           <form class="mb-2">
             <div class="text-sm landing-4 font-normal">
-              {{ user?.current_user_name ?? '' }}
+              {{ $store.state.user.user?.current_user_name ?? '' }}
             </div>
             <button
               type="button"
@@ -256,7 +261,7 @@ const userPhone = function () {
               contenteditable="true"
               class="text-[13px] landing-[13px] text-[#007BE5]"
             >
-              {{ user?.current_user_email }}
+              {{ $store.state.user.user?.current_user_email }}
             </div>
             <!-- <button type="button" class="mt-2 text-base text-blue-600" @click="showEditemail = true">Изменить email</button> -->
           </div>
