@@ -103,7 +103,7 @@
               <span class="ml-1 text-black">{{ employees[task.uid_customer]?.name }}</span>
             </div>
           </div>
-          <!-- task available -->
+          <!-- task received -->
           <div v-show="(task.uid_customer === task.uid_performer) && (task.uid_customer !== user.current_user_uid)">
             <div class="border-[#FF912380] py-1 px-2 mb-2 border-2 rounded-[8px] inline-block">
               Задача в доступе
@@ -130,7 +130,7 @@
           </div>
           <!-- performer -->
           <div
-            v-show="(task.uid_customer !== task.uid_performer)"
+            v-show="(task.uid_customer !== task.uid_performer) && (task.uid_customer !== user.current_user_uid)"
             class="flex mb-2"
           >
             <span
@@ -460,7 +460,6 @@ export default {
     const showConfirm = false
     const showAllMessages = false
     const isChatVisible = false
-    const taskInAvailable = false
     const createChecklist = () => {
       checklistshow.value = true
     }
@@ -513,8 +512,7 @@ export default {
       inwork,
       canceled,
       improve,
-      repeat,
-      taskInAvailable
+      repeat
     }
   },
   mutations: {
