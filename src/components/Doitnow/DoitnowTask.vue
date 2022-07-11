@@ -94,7 +94,6 @@
               Заказчик:
             </span>
             <div
-              v-show="(task.uid_customer !== task.uid_performer) && (task.uid_customer !== user.current_user_uid)"
               class="flex"
             >
               <img
@@ -104,9 +103,34 @@
               <span class="ml-1 text-black">{{ employees[task.uid_customer]?.name }}</span>
             </div>
           </div>
+          <!-- task available -->
+          <div v-show="(task.uid_customer === task.uid_performer) && (task.uid_customer !== user.current_user_uid)">
+            <div class="border-[#FF912380] py-1 px-2 mb-2 border-2 rounded-[8px] inline-block">
+              Задача в доступе
+            </div>
+            <div
+              v-show="(task.uid_customer === task.uid_performer) && (task.uid_customer !== user.current_user_uid)"
+              class="flex mb-2"
+            >
+              <span
+                class="mr-2 w-[90px] shrink-0"
+              >
+                Задача от:
+              </span>
+              <div
+                class="flex"
+              >
+                <img
+                  :src="employees[task.uid_customer] ? employees[task.uid_customer]?.fotolink : ''"
+                  class="rounded-lg ml-1 h-[20px] w-[20px]"
+                >
+                <span class="ml-1 text-black">{{ employees[task.uid_customer]?.name }}</span>
+              </div>
+            </div>
+          </div>
           <!-- performer -->
           <div
-            v-show="(task.uid_customer !== task.uid_performer) && (task.uid_customer !== user.current_user_uid)"
+            v-show="(task.uid_customer !== task.uid_performer)"
             class="flex mb-2"
           >
             <span
@@ -115,7 +139,6 @@
               Исполнитель:
             </span>
             <div
-              v-show="(task.uid_customer !== task.uid_performer)"
               class="flex"
             >
               <img
@@ -229,11 +252,12 @@
     <!-- accept/redo/decline -->
     <div>
       <div
-        v-if="task.uid_customer === user.current_user_uid || task.uid_performer === user.current_user_uid"
+        v-if="task"
         class="flex flex-col min-w-[200px] items-end"
       >
         <!-- accept -->
         <button
+          v-if="task.uid_customer === user.current_user_uid || task.uid_performer === user.current_user_uid"
           class="flex py-0.5 items-center justify-center text-sm hover:bg-white bg-green-100 hover:bg-opacity-90 font-medium border-green-400 min-h-[40px] w-[181px] rounded-lg border hover:text-green-500 mb-2 hover:animate-fadeIn"
           @click="accept"
         >
@@ -251,6 +275,7 @@
         </button>
         <!-- redo -->
         <button
+          v-if="task.uid_customer === user.current_user_uid || task.uid_performer === user.current_user_uid"
           class="flex py-0.5 items-center justify-center text-sm bg-gray-100 w-[181px] hover:bg-red-200 hover:border hover:border-red-300 min-h-[40px] hover:bg-opacity-90 font-medium rounded-lg hover:text-red-500 mb-2 hover:animate-fadeIn"
           @click="reDo"
         >
@@ -268,6 +293,7 @@
         </button>
         <!-- decline -->
         <button
+          v-if="task.uid_customer === user.current_user_uid || task.uid_performer === user.current_user_uid"
           class="flex py-0.5 w-[181px] justify-center items-center text-sm bg-gray-100 hover:bg-gray-50 hover:border hover:border-gray-500 hover:bg-opacity-90 font-medium min-h-[40px] rounded-lg mb-2 hover:animate-fadeIn"
           @click="decline"
         >
@@ -281,7 +307,7 @@
           />
         </button>
         <PerformButton
-          v-if="task.status !== 3 && task.type !== 4 && task.uid_customer === user.current_user_uid"
+          v-if="task.status !== 3 && task.type !== 4 && (task.uid_customer === user.current_user_uid || task.uid_customer === task.uid_performer)"
           class="hover:animate-fadeIn hover:cursor-pointer"
           :task-type="task.type"
           :current-user-uid="user.current_user_uid"
@@ -289,6 +315,25 @@
           @changePerformer="onChangePerformer"
           @reAssign="onReAssignToUser"
         />
+        <!-- Change access -->
+        <button
+          v-if="task.status !== 3 && task.type !== 4 && task.uid_customer !== user.current_user_uid && task.uid_performer !== user.current_user_uid"
+          class="flex py-0.5 items-center justify-center text-sm bg-gray-100 w-[181px] hover:bg-red-200 hover:border hover:border-red-300 min-h-[40px] hover:bg-opacity-90 font-medium rounded-lg hover:text-red-500 mb-2 hover:animate-fadeIn"
+          @click="() => onChangeAccess(task.emails)"
+        >
+          <span
+            class="ml-8 w-[70px]"
+          >
+            Выйти из доступа
+          </span>
+          <Icon
+            :path="close.path"
+            :width="close.width"
+            :height="close.height"
+            :box="close.viewBox"
+            class="ml-8"
+          />
+        </button>
         <SetDate
           v-if="task.status !== 3 && task.type !== 4 && task.uid_customer === user.current_user_uid"
           class="hover:animate-fadeIn hover:cursor-pointer"
@@ -415,6 +460,7 @@ export default {
     const showConfirm = false
     const showAllMessages = false
     const isChatVisible = false
+    const taskInAvailable = false
     const createChecklist = () => {
       checklistshow.value = true
     }
@@ -467,7 +513,8 @@ export default {
       inwork,
       canceled,
       improve,
-      repeat
+      repeat,
+      taskInAvailable
     }
   },
   mutations: {
@@ -798,7 +845,10 @@ export default {
         })
     },
     onChangeAccess (checkEmails) {
-      const emails = checkEmails.join('..')
+      let emails = checkEmails
+      if (Array.isArray(checkEmails)) {
+        emails = checkEmails.join('..')
+      }
       const data = {
         uid: this.task.uid,
         value: emails
@@ -810,6 +860,7 @@ export default {
           }
           this.$emit('changeValue', data)
         })
+      this.nextTask()
     },
     onChangeProject (projectUid) {
       const data = {
