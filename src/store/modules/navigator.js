@@ -1,7 +1,6 @@
 // icons for navigator
 import axios from 'axios'
 import { notify } from 'notiwind'
-import { AUTH_LOGOUT } from '../actions/auth'
 import { PUSH_BOARD } from '../actions/boards'
 import { PUSH_COLOR, PUSH_MYCOLOR } from '../actions/colors'
 import { PUSH_DEPARTMENT } from '../actions/departments'
@@ -166,7 +165,6 @@ const actions = {
             },
             15000
           )
-          dispatch(AUTH_LOGOUT)
           reject(err)
         })
     })

@@ -36,7 +36,7 @@ const actions = {
             group: 'api',
             title: 'REST API Error, please make screenshot',
             action: LOCALIZATION_REQUEST,
-            text: err.response.data
+            text: err?.response?.data
           }, 15000)
           reject(err)
         })
@@ -50,7 +50,7 @@ const mutations = {
   },
   [LOCALIZATION_SUCCESS]: (state, resp) => {
     state.status = 'success'
-    state.localization = resp.data.rows
+    state.localization = resp?.data?.rows
     state.hasLoadedOnce = true
   },
   [LOCALIZATION_ERROR]: state => {
