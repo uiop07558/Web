@@ -9,6 +9,7 @@ import CardChatQuoteMessage from '@/components/CardProperties/CardChatQuoteMessa
 
 const emit = defineEmits('onQuote, onDeleteMessage', 'onDeleteFile')
 const props = defineProps({
+  key: String,
   messages: Array,
   currentUserUid: String,
   employees: Object,
@@ -80,13 +81,14 @@ const getMessageWeekDateString = (dateCreate) => {
   const year = (today.getFullYear() !== date.getFullYear()) ? date.getFullYear().toString() : ''
   return `${weekDay}, ${day} ${month} ${year}`
 }
+
 </script>
 
 <template>
   <div class="flex flex-col pb-[100px]">
     <div
-      v-for="(message, index) in messages"
-      :key="index"
+      v-for="(message, index,key) in messages"
+      :key="`${key}`"
     >
       <div
         v-if="isChangedDate(index)"
