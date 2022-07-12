@@ -14,6 +14,7 @@ import Overlay from '@/components/modals/Overlay.vue'
 import TasksListNew from '@/components/TasksListNew.vue'
 import MainSection from '@/components/MainSection.vue'
 import Projects from '@/components/Projects.vue'
+import Reglaments from '@/components/Reglaments/Reglaments.vue'
 import Boards from '@/components/Boards.vue'
 import BoardWithChildren from '@/components/Board/BoardWithChildren.vue'
 import ProjectWithChildren from '@/components/Projects/ProjectWithChildren.vue'
@@ -411,6 +412,10 @@ if (router.currentRoute.value.name === 'task' && router.currentRoute.value.param
     >
       <projects
         v-if="greedPath === 'new_private_projects'"
+        :items="greedSource"
+      />
+      <reglaments
+        v-if="greedPath === 'reglaments'"
         :items="greedSource"
       />
       <boards

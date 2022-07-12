@@ -381,7 +381,29 @@ const mutations = {
     resp.data.new_private_boards = newCommonBoards
 
     // Logic for reglaments
-    resp.data.reglaments = []
+    resp.data.reglaments = [
+      {
+        uid_parent: '00000000-0000-0000-0000-000000000000',
+        color: '#000000',
+        comment: '',
+        plugin: '',
+        collapsed: 0,
+        isclosed: 0,
+        order: 1,
+        group: 0,
+        show: 1,
+        favorite: 0,
+        quiet: 0,
+        email_creator: 'term@gmail.com',
+        members: [
+          'term@gmail.com',
+          'gepard@yandex.ru'
+        ],
+        uid: 'd3b1abe4-a626-4b64-92fb-04161c964b58',
+        name: 'Системная работа',
+        bold: 0
+      }
+    ]
 
     state.navigator = resp.data
   },
