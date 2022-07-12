@@ -182,6 +182,20 @@ const actions = {
         })
     })
   },
+  [TASK.GET_TASK_CHILDRENS]: ({ commit, dispatch }, uid) => {
+    return new Promise((resolve, reject) => {
+      const url = process.env.VUE_APP_LEADERTASK_API + 'api/v1/tasks/withparent?value=' + uid
+      axios({ url: url, method: 'GET' })
+        .then((resp) => {
+          console.log(resp.data)
+          resolve(resp)
+        })
+        .catch((err) => {
+          console.log(err)
+          reject(err)
+        })
+    })
+  },
   [TASK.SEARCH_TASK]: ({ commit, dispatch }, text) => {
     if (text !== '') {
       return new Promise((resolve, reject) => {
