@@ -91,7 +91,7 @@
           </div>
           <!-- customer -->
           <div
-            v-show="(task.uid_customer !== task.uid_performer || task.emails.includes(user.current_user_email)) && (task.uid_customer !== user.current_user_uid)"
+            v-show="task.type !== 1"
             class="flex mb-2"
           >
             <span
@@ -111,7 +111,7 @@
           </div>
           <!-- performer -->
           <div
-            v-show="(task.uid_customer !== task.uid_performer) && (task.uid_customer !== user.current_user_uid)"
+            v-show="(task.type !== 1) && (task.uid_performer !== task.uid_customer)"
             class="flex mb-2"
           >
             <span
