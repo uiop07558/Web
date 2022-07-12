@@ -36,7 +36,6 @@ const getMessageTimeString = (dateCreate) => {
         {{ props.message.msg }}
       </span>
       <p
-
         class="text-right font-[700] leading-[14px] text-[11px] self-end group-hover:hidden min-w-[30px]"
         style="color: rgba(0, 0, 0, 0.4);"
       >
