@@ -8,6 +8,7 @@ import axios from 'axios'
 import { notify } from 'notiwind'
 import { PUSH_COLOR } from '../actions/colors'
 import * as TASK from '../actions/tasks'
+import { visitChildren } from '@/store/helpers/functions'
 
 function arrayRemove (arr, value) {
   return arr.filter(function (ele) {
@@ -1411,6 +1412,7 @@ const actions = {
 
 const mutations = {
   [TASK.REMOVE_TAG_REQUEST]: (state, uid) => {
+    visitChildren([state.tags[uid]], value => (delete state.tags[value.uid]))
     delete state.tags[uid]
   },
   [TASK.PUSH_TAG]: (state, resp) => {
