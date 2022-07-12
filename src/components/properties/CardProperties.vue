@@ -371,6 +371,7 @@ const removeCard = () => {
 
     <!-- Card chat -->
     <card-chat
+      :key="`${Math.random()}`"
       :messages="cardMessages"
       :current-user-uid="user.current_user_uid"
       :employees="employees"
