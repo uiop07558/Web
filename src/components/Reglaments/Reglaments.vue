@@ -13,10 +13,7 @@
       @ok="showProjectsLimit = false"
     />
     <div>
-      <div
-        class="flex items-center w-full"
-        :class="{ 'justify-between': index == 0, 'mt-[28px]': index == 1 }"
-      >
+      <div class="flex justify-between w-full">
         <p class="font-['Roboto'] text-[#424242] text-[19px] leading-[22px] font-bold">
           Мои регламенты
         </p>
@@ -60,9 +57,9 @@
           v-for="project in items"
           :key="project.uid"
         >
-          <ProjectBlocItem
+          <ReglamentBlocItem
             :project="project"
-            @click.stop="gotoChildren(project)"
+            @click.stop="gotoReglamentContent(project)"
           />
         </template>
         <ListBlocAdd
@@ -80,7 +77,7 @@ import Icon from '@/components/Icon.vue'
 import BoardModalBoxRename from '@/components/Board/BoardModalBoxRename.vue'
 import ProjectModalBoxProjectsLimit from '@/components/ProjectModalBoxProjectsLimit.vue'
 import { setLocalStorageItem } from '@/store/helpers/functions'
-import ProjectBlocItem from '@/components/Projects/ProjectBlocItem.vue'
+import ReglamentBlocItem from '@/components/Projects/ProjectBlocItem.vue'
 import ListBlocAdd from '@/components/Common/ListBlocAdd.vue'
 import EmptyTasksListPics from '@/components/TasksList/EmptyTasksListPics'
 
@@ -94,7 +91,7 @@ export default {
   components: {
     Icon,
     BoardModalBoxRename,
-    ProjectBlocItem,
+    ReglamentBlocItem,
     ListBlocAdd,
     ProjectModalBoxProjectsLimit,
     EmptyTasksListPics
@@ -133,11 +130,11 @@ export default {
       this.$store.commit('basic', { key: 'isGridView', value: value })
       setLocalStorageItem('isGridView', value)
     },
-    gotoChildren (project) {
-      this.$store.dispatch(TASK.PROJECT_TASKS_REQUEST, project.uid)
+    gotoReglamentContent (project) {
+      // this.$store.dispatch(TASK.PROJECT_TASKS_REQUEST, project.uid)
       this.$store.commit('basic', {
-        key: 'taskListSource',
-        value: { uid: project.global_property_uid, param: project.uid }
+        key: 'reglamentSource',
+        value: { uid: '92413f6c-2ef3-476e-9429-e76d7818685d', param: project.uid }
       })
 
       this.$store.commit(TASK.CLEAN_UP_LOADED_TASKS)
@@ -146,14 +143,14 @@ export default {
         name: project.name,
         key: 'greedSource',
         uid: project.uid,
-        global_property_uid: project.global_property_uid,
-        greedPath: 'projects_children',
-        value: project.children
+        global_property_uid: '92413f6c-2ef3-476e-9429-e76d7818685d',
+        greedPath: 'reglament_content',
+        value: []
       }
 
       this.$store.commit('pushIntoNavStack', navElem)
       this.$store.commit('basic', { key: 'greedSource', value: project.children })
-      this.$store.commit('basic', { key: 'greedPath', value: 'projects_children' })
+      this.$store.commit('basic', { key: 'greedPath', value: 'reglament_content' })
     },
     uuidv4 () {
       return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, (c) =>
@@ -210,7 +207,7 @@ export default {
 
           this.$store.commit(PROJECT.PUSH_PROJECT, [project])
           this.$store.commit(NAVIGATOR.NAVIGATOR_PUSH_PROJECT, [project])
-          this.gotoChildren(project)
+          this.gotoReglamentContent(project)
         })
       }
     }

@@ -27,7 +27,8 @@ const actions = {
         'new_private_projects',
         'new_emps',
         'new_delegate',
-        'new_private_boards'
+        'new_private_boards',
+        'reglaments'
       ].includes(item.greedPath)
     ) {
       commit('basic', {

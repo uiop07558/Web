@@ -18,6 +18,7 @@ import Reglaments from '@/components/Reglaments/Reglaments.vue'
 import Boards from '@/components/Boards.vue'
 import BoardWithChildren from '@/components/Board/BoardWithChildren.vue'
 import ProjectWithChildren from '@/components/Projects/ProjectWithChildren.vue'
+import ReglamentContent from '@/components/Reglaments/ReglamentContent.vue'
 import Employees from '@/components/Employees.vue'
 import Tags from '@/components/Tags/Tags.vue'
 import Colors from '@/components/Colors.vue'
@@ -230,6 +231,7 @@ const getNavigator = () => {
         if (navStack.value.length && navStack.value.length > 0) {
           if (navStack.value[navStack.value.length - 1].key === 'greedSource') {
             const navStackUid = navStack.value[navStack.value.length - 1]?.value?.uid
+
             if (navStackUid === '2bad1413-a373-4926-8a3c-58677a680714') {
               store.commit('basic', { key: 'mainSectionState', value: 'greed' })
               store.commit('basic', { key: 'greedPath', value: 'dashboard' })
@@ -249,9 +251,10 @@ const getNavigator = () => {
               store.commit('basic', { key: 'greedPath', value: navStack.value[navStack.value.length - 1].greedPath })
               store.commit('basic', { key: 'mainSectionState', value: 'greed' })
             }
+
             // If last navElement is related to processed navigator instance with 'new_' prefix
             // then we pass entire object from storeNavigator
-            if (['new_private_projects', 'new_emps', 'new_delegate', 'new_private_boards'].includes(navStack.value[navStack.value.length - 1].greedPath)) {
+            if (['new_private_projects', 'new_emps', 'new_delegate', 'new_private_boards', 'reglaments'].includes(navStack.value[navStack.value.length - 1].greedPath)) {
               store.commit('basic', { key: navStack.value[navStack.value.length - 1].key, value: storeNavigator.value[navStack.value[navStack.value.length - 1].greedPath] })
 
             // if last visited navElemen is in nested in children, then we trying to find these children with visitChildren fucntion
@@ -445,6 +448,10 @@ if (router.currentRoute.value.name === 'task' && router.currentRoute.value.param
       />
       <BoardWithChildren
         v-if="greedPath === 'boards_children'"
+        :boards="greedSource"
+      />
+      <ReglamentContent
+        v-if="greedPath === 'reglament_content'"
         :boards="greedSource"
       />
       <employees
