@@ -15,7 +15,7 @@
     <div>
       <div class="flex justify-between w-full">
         <p class="font-['Roboto'] text-[#424242] text-[19px] leading-[22px] font-bold">
-          Мои регламенты
+          Регламенты
         </p>
         <div class="flex">
           <icon
@@ -63,7 +63,6 @@
           />
         </template>
         <ListBlocAdd
-          v-if="index == 0"
           @click.stop="clickAddProject"
         />
       </div>
