@@ -1,5 +1,4 @@
 import { notify } from 'notiwind'
-import { AUTH_LOGOUT } from '../actions/auth'
 import {
   CREATE_FILES_REQUEST,
   CREATE_FILE_REQUEST,
@@ -158,7 +157,6 @@ const actions = {
             },
             15000
           )
-          dispatch(AUTH_LOGOUT)
           reject(err)
         })
     })
@@ -184,7 +182,6 @@ const actions = {
             },
             15000
           )
-          dispatch(AUTH_LOGOUT)
           reject(err)
         })
     })

@@ -27,11 +27,20 @@ const month = pad2(chosenDate.getMonth() + 1)
 const day = pad2(chosenDate.getDate())
 const year = chosenDate.getFullYear()
 const formattedDate = day + '-' + month + '-' + year
+
 axios.defaults.headers.common.LocalDate = formattedDate
 
 if (token) {
   axios.defaults.headers.common.Authorization = token
 }
+
+// Add a response interceptor
+axios.interceptors.response.use((resp) => resp, function (error) {
+  const errorMessage = error?.response?.data.error
+  if (errorMessage.includes('invalid token') || errorMessage.includes('token expired')) {
+    store.dispatch('AUTH_REFRESH_TOKEN')
+  }
+})
 
 store.commit('basic', { key: 'isGridView', value: isGridView })
 

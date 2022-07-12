@@ -3,9 +3,9 @@
     v-if="status == 'loading'"
   />
   <div
+    v-if="status == 'success'"
     id="Board"
     class="h-full"
-    v-if="status == 'success'"
   >
     <BoardModalBoxDelete
       v-if="showDeleteCard"
@@ -462,7 +462,10 @@ export default {
       return ''
     },
     getColumnCards (column) {
-      if (this.showOnlyCardsWhereIAmResponsible) {
+      if (this.showOnlyCardsWhereIAmResponsible && this.showOnlyMyCreatedCards) {
+        const currentUserEmail = this.$store.state.user.user.current_user_email.toLowerCase()
+        return column.cards.filter(card => card.user.toLowerCase() === currentUserEmail && card.email_creator.toLowerCase() === currentUserEmail)
+      } else if (this.showOnlyCardsWhereIAmResponsible) {
         const currentUserEmail = this.$store.state.user.user.current_user_email.toLowerCase()
         return column.cards.filter(card => card.user.toLowerCase() === currentUserEmail)
       } else if (this.showOnlyMyCreatedCards) {

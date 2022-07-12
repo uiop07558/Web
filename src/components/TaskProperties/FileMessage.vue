@@ -15,7 +15,7 @@ const props = defineProps({
 const emit = defineEmits(['setLink'])
 
 const pics = ['jpg', 'png', 'jpeg', 'git', 'bmp', 'gif', 'PNG', 'JPG', 'JPEG', 'BMP', 'GIF']
-const movies = ['mov', 'mp4']
+const movies = ['mov', 'mp4', 'wmv', 'avi', 'avchd', 'mkv', 'webm', 'mpeg-2']
 const docs = ['doc', 'xls', 'xlsx', 'txt', 'pdf']
 const audio = ['mp3', 'wav', 'm4a']
 const isImageLoaded = ref(false)

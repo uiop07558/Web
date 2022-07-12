@@ -8,7 +8,8 @@ import {
   AUTH_REQUEST,
   AUTH_RESET,
   AUTH_SUCCESS,
-  AUTH_CHANGE_PASSWORD
+  AUTH_CHANGE_PASSWORD,
+  AUTH_REFRESH_TOKEN
 } from '../actions/auth'
 import { RESET_STATE_NAVIGATOR } from '../actions/navigator'
 import { RESET_STATE_PROJECT } from '../actions/projects'
@@ -88,7 +89,6 @@ const actions = {
       const url = process.env.VUE_APP_LEADERTASK_API + 'api/v1/users/password'
       axios({ url: url, data: password, method: 'PATCH' })
         .then((resp) => {
-          console.log(resp)
           setLocalStorageItem('user-token', resp.data.access_token)
           setLocalStorageItem('user-refresh-token', resp.data.refresh_token)
           axios.defaults.headers.common.Authorization = resp.data.access_token
@@ -125,6 +125,33 @@ const actions = {
       axios
         .get(url)
         .then((resp) => {
+          resolve(resp)
+        })
+        .catch((err) => {
+          commit(AUTH_ERROR, err)
+          notify(
+            {
+              group: 'api',
+              title: 'REST API Error, please make screenshot',
+              action: AUTH_LOGOUT,
+              text: err.response?.data ?? err
+            },
+            15000
+          )
+          reject(err)
+        })
+    })
+  },
+  [AUTH_REFRESH_TOKEN]: ({ commit }) => {
+    return new Promise((resolve, reject) => {
+      axios.defaults.headers.common.RefreshToken = localStorage.getItem('user-refresh-token')
+      const url = process.env.VUE_APP_LEADERTASK_API + 'https://web.leadertask.com/api/v1/tokens/refresh'
+      axios
+        .post(url)
+        .then((resp) => {
+          setLocalStorageItem('user-token', resp.data.access_token)
+          setLocalStorageItem('user-refresh-token', resp.data.refresh_token)
+          axios.defaults.headers.common.Authorization = resp.data.access_token
           resolve(resp)
         })
         .catch((err) => {

@@ -902,6 +902,7 @@ export default {
   },
   data () {
     return {
+      shouldAddTaskIntoList,
       close,
       showAllMessages: false,
       showFreeModalCheck: false,
@@ -1601,6 +1602,11 @@ export default {
       this.$store.dispatch(TASK.CHANGE_TASK_ACCESS, data).then(
         resp => {
           this.selectedTask.emails = emails
+          if (!this.shouldAddTaskIntoList(this.selectedTask)) {
+            // (!checkEmails.includes(this.user.current_user_email))
+            this.$store.commit(TASK.REMOVE_TASK, this.selectedTask.uid)
+            this.closeProperties()
+          }
         }
       )
     },
