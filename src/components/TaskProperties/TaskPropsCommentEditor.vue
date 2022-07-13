@@ -12,6 +12,7 @@
       @blur="changeComment($event)"
       @keyup="changeComment($event)"
       @focusout="removeEditComment($event)"
+      @keydown.esc="removeEditComment($event)"
       @paste="OnPaste_StripFormatting(this, $event);"
       v-html="getFixedCommentText()"
     />
@@ -20,7 +21,6 @@
 
 <script>
 import linkify from 'vue-linkify'
-
 export default {
   directives: {
     linkify
@@ -127,6 +127,8 @@ export default {
       // чтобы у нас в интерфейсе поменялось
       // потому что на changeComment он только
       // на сервер отправляет и всё
+      const text = this.getElementText(e.target)
+      this.currText = text
       this.$emit('endChangeComment', this.currText)
     },
     changeComment (e) {
@@ -134,7 +136,7 @@ export default {
       const text = this.getElementText(e.target)
       if (text === this.currText) return
       this.currText = text
-      this.$emit('changeComment', text)
+      this.$emit('changeComment', this.currText)
     }
   }
 }
@@ -144,7 +146,6 @@ export default {
 h2{
   font-size: 10px;
 }
-
 .description-content {
   width: 100%;
   font-size: 14px;
