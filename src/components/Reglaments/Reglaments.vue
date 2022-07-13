@@ -148,7 +148,7 @@ export default {
       }
 
       this.$store.commit('pushIntoNavStack', navElem)
-      this.$store.commit('basic', { key: 'greedSource', value: project.children })
+      this.$store.commit('basic', { key: 'greedSource', value: project })
       this.$store.commit('basic', { key: 'greedPath', value: 'reglament_content' })
     },
     uuidv4 () {

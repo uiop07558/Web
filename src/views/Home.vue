@@ -451,7 +451,7 @@ if (router.currentRoute.value.name === 'task' && router.currentRoute.value.param
       />
       <ReglamentContent
         v-if="greedPath === 'reglament_content'"
-        :boards="greedSource"
+        :reglament="greedSource"
       />
       <employees
         v-if="greedPath === 'new_emps'"
