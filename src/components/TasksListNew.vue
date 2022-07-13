@@ -355,7 +355,6 @@ export default {
   },
   data () {
     return {
-      test: 'hdashdsja',
       createTaskText: '',
       lastSelectedTaskUid: '',
       showConfirm: false,
