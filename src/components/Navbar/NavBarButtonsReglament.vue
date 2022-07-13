@@ -11,23 +11,10 @@
       <NavBarButtonIcon icon="menu" />
       <template #menu>
         <PopMenuItem
-          @click="clickCompletedTasks"
-        >
-          {{ showCompletedTasks ? 'Скрыть завершенные задачи' : 'Показать завершенные задачи' }}
-        </PopMenuItem>
-        <PopMenuDivider />
-        <PopMenuItem
           icon="edit"
           @click="clickEditProject"
         >
-          Свойства проекта
-        </PopMenuItem>
-        <PopMenuItem
-          v-if="canDelete"
-          icon="delete"
-          @click="clickDeleteProject"
-        >
-          Удалить проект
+          Свойства регламента
         </PopMenuItem>
       </template>
     </PopMenu>
@@ -38,7 +25,6 @@
 import NavBarButtonIcon from '@/components/Navbar/NavBarButtonIcon.vue'
 import PopMenu from '@/components/modals/PopMenu.vue'
 import PopMenuItem from '@/components/modals/PopMenuItem.vue'
-import PopMenuDivider from '@/components/modals/PopMenuDivider.vue'
 import BoardModalBoxDelete from '@/components/Board/BoardModalBoxDelete.vue'
 
 import { SELECT_PROJECT, REMOVE_PROJECT_REQUEST } from '@/store/actions/projects'
@@ -49,7 +35,6 @@ export default {
     NavBarButtonIcon,
     PopMenu,
     PopMenuItem,
-    PopMenuDivider,
     BoardModalBoxDelete
   },
   props: {
@@ -65,7 +50,28 @@ export default {
   emits: ['popNavBar', 'toggleCompletedTasks'],
   data () {
     return {
-      showDeleteProject: false
+      showDeleteProject: false,
+      fakeReglament: {
+        uid_parent: '00000000-0000-0000-0000-000000000000',
+        color: '#000000',
+        comment: '',
+        plugin: '',
+        collapsed: 0,
+        isclosed: 0,
+        order: 1,
+        group: 0,
+        show: 1,
+        favorite: 0,
+        quiet: 0,
+        email_creator: 'term@gmail.com',
+        members: [
+          'term@gmail.com',
+          'gepard@yandex.ru'
+        ],
+        uid: 'd3b1abe4-a626-4b64-92fb-04161c964b58',
+        name: 'Системная работа',
+        bold: 0
+      }
     }
   },
   computed: {
@@ -81,8 +87,8 @@ export default {
       if (!this.$store.state.isPropertiesMobileExpanded) {
         this.$store.dispatch('asidePropertiesToggle', true)
       }
-      this.$store.commit('basic', { key: 'propertiesState', value: 'project' })
-      this.$store.commit(SELECT_PROJECT, this.project)
+      this.$store.commit('basic', { key: 'propertiesState', value: 'reglament' })
+      this.$store.commit(SELECT_PROJECT, this.fakeReglament)
     },
     clickDeleteProject () {
       this.showDeleteProject = true

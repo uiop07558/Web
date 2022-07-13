@@ -24,7 +24,7 @@
         <PropsButtonMenu />
         <template #menu>
           <PopMenuItem @click="copyLinkToProject">
-            Копировать ссылку на проект
+            Копировать ссылку на регламент
           </PopMenuItem>
           <PopMenuItem
             v-if="isCanDelete"
@@ -38,7 +38,7 @@
             icon="delete"
             @click="showConfirmQuit = true"
           >
-            Покинуть проект
+            Покинуть регламент
           </PopMenuItem>
         </template>
       </PopMenu>
@@ -79,67 +79,10 @@
         />
       </div>
     </div>
-    <div
-      class="mt-[30px] mb-[8px] font-roboto text-[16px] leading-[19px] font-medium text-[#4c4c4d]"
-    >
-      Доступ
-    </div>
-    <PopMenu
-      v-if="isCanEdit && usersCanAddToAccess.length"
-      class="w-full"
-    >
-      <div
-        class="w-full h-[34px] gap-[5px] flex items-center text-[#4c4c4d] hover:text-[#4c4c4d]/75 cursor-pointer"
-      >
-        <svg
-          width="16"
-          height="16"
-          viewBox="0 0 16 16"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            d="M8.66824 7.3379L8.67295 3.28854C8.67295 3.111 8.60243 2.94074 8.47689 2.8152C8.35135 2.68967 8.18109 2.61914 8.00356 2.61914C7.82602 2.61914 7.65576 2.68967 7.53022 2.8152C7.40469 2.94074 7.33416 3.111 7.33416 3.28853L7.33888 7.3379L3.28951 7.33319C3.11198 7.33319 2.94171 7.40371 2.81618 7.52925C2.69064 7.65478 2.62012 7.82505 2.62012 8.00258C2.62012 8.18011 2.69064 8.35038 2.81618 8.47591C2.94171 8.60145 3.11198 8.67197 3.28951 8.67197L7.33888 8.66726L7.33416 12.7166C7.3338 12.8046 7.35087 12.8918 7.38438 12.9732C7.41789 13.0546 7.46719 13.1285 7.52942 13.1908C7.59165 13.253 7.66559 13.3023 7.74696 13.3358C7.82834 13.3693 7.91555 13.3864 8.00356 13.386C8.09156 13.3864 8.17877 13.3693 8.26015 13.3358C8.34153 13.3023 8.41546 13.253 8.47769 13.1908C8.53993 13.1285 8.58922 13.0546 8.62273 12.9732C8.65624 12.8918 8.67331 12.8046 8.67295 12.7166L8.66824 8.66726L12.7176 8.67197C12.8056 8.67233 12.8928 8.65527 12.9742 8.62176C13.0556 8.58824 13.1295 8.53895 13.1917 8.47672C13.254 8.41449 13.3033 8.34055 13.3368 8.25917C13.3703 8.17779 13.3874 8.09059 13.387 8.00258C13.3874 7.91457 13.3703 7.82736 13.3368 7.74599C13.3033 7.66461 13.254 7.59067 13.1917 7.52844C13.1295 7.46621 13.0556 7.41692 12.9742 7.3834C12.8928 7.34989 12.8056 7.33283 12.7176 7.33319L8.66824 7.3379Z"
-            fill="currentColor"
-          />
-        </svg>
-
-        <div
-          class="font-roboto text-[13px] leading-[15px] font-medium"
-        >
-          Добавить сотрудника
-        </div>
-      </div>
-      <template #menu>
-        <div class="max-h-[220px] overflow-y-auto w-[220px]">
-          <ProjectPropsMenuItemUser
-            v-for="user in usersCanAddToAccess"
-            :key="user.email"
-            :user-email="user.email"
-            @click="addProjectMember(user.email)"
-          />
-        </div>
-      </template>
-    </PopMenu>
-    <ProjectPropsUserButton
-      class="mt-[8px]"
-      :user-email="selectedProjectCreatorEmail"
-      status="Владелец"
-      disabled
-    />
-    <ProjectPropsUserButton
-      v-for="user in usersBoard"
-      :key="user.email"
-      :user-email="user.email"
-      :disabled="!isCanEdit"
-      @delete="deleteMember(user.email)"
-    />
   </div>
 </template>
 
 <script>
-import ProjectPropsUserButton from '@/components/Projects/ProjectPropsUserButton.vue'
-import ProjectPropsMenuItemUser from '@/components/Projects/ProjectPropsMenuItemUser.vue'
 import ModalBoxDelete from '@/components/Common/ModalBoxDelete.vue'
 import PropsColorBoxItem from '@/components/Common/PropsColorBoxItem.vue'
 import PopMenu from '@/components/modals/PopMenu.vue'
@@ -156,8 +99,6 @@ export default {
   components: {
     ModalBoxDelete,
     TaskPropsAccessLimitModalBox,
-    ProjectPropsUserButton,
-    ProjectPropsMenuItemUser,
     PropsColorBoxItem,
     PopMenu,
     PopMenuItem,
