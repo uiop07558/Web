@@ -63,7 +63,7 @@
           />
         </template>
         <ListBlocAdd
-          @click.stop="clickAddProject"
+          @click.stop="clickAddReglament"
         />
       </div>
     </div>
@@ -81,7 +81,6 @@ import ListBlocAdd from '@/components/Common/ListBlocAdd.vue'
 import EmptyTasksListPics from '@/components/TasksList/EmptyTasksListPics'
 
 import * as TASK from '@/store/actions/tasks'
-import * as PROJECT from '@/store/actions/projects'
 import * as NAVIGATOR from '@/store/actions/navigator'
 
 import gridView from '@/icons/grid-view.js'
@@ -159,7 +158,7 @@ export default {
         ).toString(16)
       )
     },
-    clickAddProject () {
+    clickAddReglament () {
       const user = this.$store.state.user.user
       // если лицензия истекла
       if (Object.keys(this.$store.state.projects.projects).length >= 10 && user.days_left <= 0) {
@@ -180,7 +179,7 @@ export default {
             0
           ) || 0
         const user = this.$store.state.user.user
-        const project = {
+        const reglament = {
           uid: this.uuidv4(),
           name: title,
           uid_parent: '00000000-0000-0000-0000-000000000000',
@@ -198,18 +197,8 @@ export default {
           children: [],
           bold: 0
         }
-        this.$store.dispatch(PROJECT.CREATE_PROJECT_REQUEST, project).then((res) => {
-          // заполняем недостающие параметры
-          project.global_property_uid = '431a3531-a77a-45c1-8035-f0bf75c32641'
-          project.order = res.data.order
-          project.color = '#A998B6'
-
-          this.$store.commit(PROJECT.PUSH_PROJECT, [project])
-          this.$store.commit(NAVIGATOR.NAVIGATOR_PUSH_PROJECT, [project])
-          // hardcode push in navigator
-          this.$store.state.greedSource.push(project)
-          this.gotoReglamentContent(project)
-        })
+        this.$store.commit(NAVIGATOR.NAVIGATOR_PUSH_REGLAMENT, reglament)
+        this.gotoReglamentContent(reglament)
       }
     }
   }

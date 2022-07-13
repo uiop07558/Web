@@ -10,6 +10,7 @@ import {
   NAVIGATOR_ERROR,
   NAVIGATOR_PUSH_BOARD,
   NAVIGATOR_PUSH_COLOR,
+  NAVIGATOR_PUSH_REGLAMENT,
   NAVIGATOR_PUSH_DEPARTAMENT,
   NAVIGATOR_PUSH_EMPLOYEE,
   NAVIGATOR_PUSH_PROJECT,
@@ -455,6 +456,9 @@ const mutations = {
         )
       })
     }
+  },
+  [NAVIGATOR_PUSH_REGLAMENT]: (state, reglament) => {
+    state.navigator.reglaments.push(reglament)
   },
   [NAVIGATOR_REMOVE_DEPARTAMENT]: (state, uidDepartment) => {
     // удаляем  из new_emps
