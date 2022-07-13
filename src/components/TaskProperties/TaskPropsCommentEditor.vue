@@ -80,21 +80,6 @@ export default {
       if (!this.canEdit) return
       if (this.isEditable) return
       this.isEditable = true
-      // this.$nextTick(function () {
-      //   const commentEditor = document.getElementById('taskPropsCommentEditor')
-      //   commentEditor.focus({ preventScroll: false })
-      //   const range = document.createRange()
-      //   // condition for removing console errors
-      //   if (this.comment.length !== 0) {
-      //     range.setStart(commentEditor, 1)
-      //     range.setEnd(commentEditor, 1)
-      //   } else {
-      //     range.setStart(commentEditor, 0)
-      //   }
-      //   const sel = document.getSelection()
-      //   sel.removeAllRanges()
-      //   sel.addRange(range)
-      // })
     },
     /**
      * @param {Element} el
