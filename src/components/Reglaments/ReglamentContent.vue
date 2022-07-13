@@ -9,22 +9,25 @@ export default {
     ListBlocAdd
   },
   props: {
-    reglament: Object
-  },
-  setup () {
+    reglament: {
+      type: Object,
+      default: () => ({})
+    }
   },
   data () {
     return {
-      text: null
+      text: ''
     }
   }
 }
 </script>
 <template>
   <QuillEditor
-    v-model="text"
+    v-model:content="text"
+    content-type="html"
     theme="snow"
     placeholder="Текст регламента..."
+    @click="show"
   />
   <ListBlocAdd
     @click.stop="clickAddProject"
