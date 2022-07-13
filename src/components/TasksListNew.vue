@@ -109,14 +109,12 @@
         >
           <!-- Name, Status -->
           <div
-            v-linkify:options="{ className: 'text-blue-600' }"
             class="flex gap-[6px] items-center w-full"
           >
             <div class="flex-none h-[20px] w-[20px] leading-[20px]">
               <TaskStatus
                 :task="props.node.info"
                 @changeStatus="onChangeStatus($event, props.node.info)"
-                @click.stop
               />
             </div>
 
