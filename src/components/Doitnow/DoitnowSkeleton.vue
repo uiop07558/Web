@@ -31,38 +31,6 @@
      <div class="flex py-0.5 items-center justify-center text-sm mt-2 bg-gray-100 hover:bg-opacity-90 font-medium  min-h-[45px] w-[181px] rounded-lg "></div>
    </div>
  </div>
-  <div class="bg-white py-6 px-5 mb-5 rounded-lg flex justify-between h-[450px] animate-pulse">
-    <div class="w-5/6 ">
-      <div class="flex">
-        <div class="pl-2 m-[12px] border-2 relative border-gray-300 rounded-md bg-white flex items-center justify-center cursor-pointer w-[20px] h-[20px]">
-          <span class="inline-flex justify-center items-center text-red-600" data-v-5784ed69-s="">
-            <svg viewBox="0 0 12 9" width="12" height="9" class="mr-2 inline-block">
-              <path fill="currentColor" fill-rule="evenodd" clip-rule="evenodd" d="M11.6471 2.12003L5.30532 8.63607C4.83473 9.12131 4.07283 9.12131 3.60224 8.63607L0.352941 5.26252C-0.117647 4.77728 -0.117647 3.99166 0.352941 3.50642C0.823529 3.02118 1.58543 3.02118 2.05602 3.50642L4.45378 6.00193L9.94398 0.363928C10.4146 -0.121309 11.1765 -0.121309 11.6471 0.363928C12.1176 0.849166 12.1176 1.63479 11.6471 2.12003Z">
-              </path>
-            </svg>
-          </span>
-        </div>
-        <hr :class="text" class="w-[80px]"></div>
-      <div class="grid grid-cols-2 grid-rows-3 max-w-[250px] mt-2">
-        <hr :class="text" class="w-[100px]">
-        <hr :class="text" class="w-[90px]">
-        <hr :class="text" class="w-[80px]">
-        <hr :class="text" class="w-[130px]">
-        <hr :class="text" class="w-[60px]">
-        <hr :class="text" class="w-[70px]">
-      </div>
-      <div class="mt-7">
-        <hr :class="text" class="w-[170px]"></div>
-      <div class="mt-32">
-        <hr  class="w-full"></div>
-      <div class="flex bg-gray-100 rounded-lg w-1/2 m-auto mt-[3%] w-1/2 h-[45px]">
-      </div>
-    </div>
-    <div class="flex flex-col min-w-[200px] items-end">
-      <div class="flex py-0.5 items-center justify-center text-sm hover:bg-white bg-green-100 hover:bg-opacity-90 font-medium  min-h-[45px] w-[181px] rounded-lg "></div>
-      <div class="flex py-0.5 items-center justify-center text-sm mt-2 bg-gray-100 hover:bg-opacity-90 font-medium  min-h-[45px] w-[181px] rounded-lg "></div>
-    </div>
-  </div>
 </template>
 
 <script>
