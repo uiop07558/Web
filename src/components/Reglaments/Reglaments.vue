@@ -5,7 +5,7 @@
       :show="showAddReglament"
       title="Создать регламент"
       @cancel="showAddReglament = false"
-      @save="onAddNewProject"
+      @save="onAddNewReglament"
     />
     <ProjectModalBoxProjectsLimit
       v-if="showProjectsLimit"
@@ -168,7 +168,7 @@ export default {
       }
       this.showAddReglament = true
     },
-    onAddNewProject (name) {
+    onAddNewReglament (name) {
       this.showAddReglament = false
       const title = name.trim()
       if (title) {
@@ -206,6 +206,8 @@ export default {
 
           this.$store.commit(PROJECT.PUSH_PROJECT, [project])
           this.$store.commit(NAVIGATOR.NAVIGATOR_PUSH_PROJECT, [project])
+          // hardcode push in navigator
+          this.$store.state.greedSource.push(project)
           this.gotoReglamentContent(project)
         })
       }
