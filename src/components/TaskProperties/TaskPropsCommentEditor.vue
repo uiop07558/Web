@@ -12,6 +12,7 @@
       @blur="changeComment($event)"
       @keyup="changeComment($event)"
       @focusout="removeEditComment($event)"
+      @keydown.esc="removeEditComment($event)"
       @paste="OnPaste_StripFormatting(this, $event);"
       v-html="getFixedCommentText()"
     />
@@ -20,7 +21,6 @@
 
 <script>
 import linkify from 'vue-linkify'
-
 export default {
   directives: {
     linkify
@@ -84,8 +84,13 @@ export default {
         const commentEditor = document.getElementById('taskPropsCommentEditor')
         commentEditor.focus({ preventScroll: false })
         const range = document.createRange()
-        range.setStart(commentEditor, 1)
-        range.setEnd(commentEditor, 1)
+        // condition for removing console errors
+        if (this.comment.length !== 0) {
+          range.setStart(commentEditor, 1)
+          range.setEnd(commentEditor, 1)
+        } else {
+          range.setStart(commentEditor, 0)
+        }
         const sel = document.getSelection()
         sel.removeAllRanges()
         sel.addRange(range)
@@ -100,15 +105,18 @@ export default {
       // в котором сейчас идет ввод через Selection
       if (typeof window.getSelection !== 'undefined') {
         const sel = window.getSelection()
-        const tempRange = sel.getRangeAt(0)
-        sel.removeAllRanges()
-        const range = document.createRange()
-        range.selectNodeContents(el)
-        sel.addRange(range)
-        const text = sel.toString()
-        sel.removeAllRanges()
-        sel.addRange(tempRange)
-        return text.trim()
+        // condition for removing console errors
+        if (sel && sel.rangeCount > 0) {
+          const tempRange = sel.getRangeAt(0)
+          sel.removeAllRanges()
+          const range = document.createRange()
+          range.selectNodeContents(el)
+          sel.addRange(range)
+          const text = sel.toString()
+          sel.removeAllRanges()
+          sel.addRange(tempRange)
+          return text.trim()
+        }
       }
       return el.innerText.trim()
     },
@@ -118,6 +126,8 @@ export default {
       // чтобы у нас в интерфейсе поменялось
       // потому что на changeComment он только
       // на сервер отправляет и всё
+      const text = this.getElementText(e.target)
+      this.currText = text
       this.$emit('endChangeComment', this.currText)
     },
     changeComment (e) {
@@ -125,7 +135,7 @@ export default {
       const text = this.getElementText(e.target)
       if (text === this.currText) return
       this.currText = text
-      this.$emit('changeComment', text)
+      this.$emit('changeComment', this.currText)
     }
   }
 }
@@ -135,7 +145,6 @@ export default {
 h2{
   font-size: 10px;
 }
-
 .description-content {
   width: 100%;
   font-size: 14px;
