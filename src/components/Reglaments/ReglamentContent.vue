@@ -1,10 +1,15 @@
 <script>
 import { QuillEditor } from '@vueup/vue-quill'
+import ListBlocAdd from '@/components/Common/ListBlocAdd.vue'
 import '@vueup/vue-quill/dist/vue-quill.snow.css'
 
 export default {
   components: {
-    QuillEditor
+    QuillEditor,
+    ListBlocAdd
+  },
+  props: {
+    reglament: Object
   },
   setup () {
   }
@@ -14,6 +19,9 @@ export default {
   <QuillEditor
     theme="snow"
     placeholder="Текст регламента..."
+  />
+  <ListBlocAdd
+    @click.stop="clickAddProject"
   />
 </template>
 

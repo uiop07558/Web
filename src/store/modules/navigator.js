@@ -394,6 +394,7 @@ const mutations = {
         show: 1,
         favorite: 0,
         quiet: 0,
+        text: 'Это текст регламента если что',
         email_creator: 'term@gmail.com',
         members: [
           'term@gmail.com',
@@ -401,6 +402,28 @@ const mutations = {
         ],
         uid: 'd3b1abe4-a626-4b64-92fb-04161c964b58',
         name: 'Системная работа',
+        bold: 0
+      },
+      {
+        uid_parent: '00000000-0000-0000-0000-000000000000',
+        color: '#EAEAEA',
+        comment: '',
+        plugin: '',
+        collapsed: 0,
+        isclosed: 0,
+        order: 1,
+        group: 0,
+        text: 'Это текст регламента если что который прикладной',
+        show: 1,
+        favorite: 0,
+        quiet: 0,
+        email_creator: 'term@gmail.com',
+        members: [
+          'term@gmail.com',
+          'gepard@yandex.ru'
+        ],
+        uid: 'd3b1abe4-a627-4b64-92fb-04161c964b58',
+        name: 'Прикладная работа',
         bold: 0
       }
     ]
