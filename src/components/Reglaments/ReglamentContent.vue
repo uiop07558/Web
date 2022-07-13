@@ -12,11 +12,17 @@ export default {
     reglament: Object
   },
   setup () {
+  },
+  data () {
+    return {
+      text: null
+    }
   }
 }
 </script>
 <template>
   <QuillEditor
+    v-model="text"
     theme="snow"
     placeholder="Текст регламента..."
   />
