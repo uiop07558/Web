@@ -377,6 +377,7 @@ const mutations = {
     })
 
     state.messages = state.messages.concat(state.files)
+    state.files = []
     state.messages = state.messages.concat(state.inspectorMessages)
     state.messages.sort((a, b) => {
       if (!a.file_name && !a.date_create.includes('Z')) {

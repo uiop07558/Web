@@ -109,6 +109,7 @@
         >
           <!-- Name, Status -->
           <div
+            v-linkify:options="{ className: 'text-blue-600' }"
             class="flex gap-[6px] items-center w-full"
           >
             <div class="flex-none h-[20px] w-[20px] leading-[20px]">
@@ -330,6 +331,7 @@ import fortomorrow from '@/icons/for-tomorrow.js'
 import copy from '@/icons/copy.js'
 import cut from '@/icons/cut.js'
 import bin from '@/icons/bin.js'
+import linkify from 'vue-linkify'
 /* /Icons */
 
 export default {
@@ -347,6 +349,9 @@ export default {
     contenteditable,
     TaskListActionHoverPanel,
     TaskListModalBoxLicenseLimit
+  },
+  directives: {
+    linkify
   },
   data () {
     return {
