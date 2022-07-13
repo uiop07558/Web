@@ -1,10 +1,10 @@
 <template>
   <div class="w-full">
     <BoardModalBoxRename
-      v-if="showAddProject"
-      :show="showAddProject"
-      title="Добавить проект"
-      @cancel="showAddProject = false"
+      v-if="showAddReglament"
+      :show="showAddReglament"
+      title="Создать регламент"
+      @cancel="showAddReglament = false"
       @save="onAddNewProject"
     />
     <ProjectModalBoxProjectsLimit
@@ -104,7 +104,7 @@ export default {
   data () {
     return {
       showProjectsLimit: false,
-      showAddProject: false,
+      showAddReglament: false,
       gridView,
       listView
     }
@@ -166,10 +166,10 @@ export default {
         this.showProjectsLimit = true
         return
       }
-      this.showAddProject = true
+      this.showAddReglament = true
     },
     onAddNewProject (name) {
-      this.showAddProject = false
+      this.showAddReglament = false
       const title = name.trim()
       if (title) {
         // добавляем новый проект и переходим в него
