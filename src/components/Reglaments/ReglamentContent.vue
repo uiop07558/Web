@@ -1,12 +1,14 @@
 <script>
 import { QuillEditor } from '@vueup/vue-quill'
 import ListBlocAdd from '@/components/Common/ListBlocAdd.vue'
+import ReglamentQuestion from './ReglamentQuestion.vue'
 import '@vueup/vue-quill/dist/vue-quill.snow.css'
 
 export default {
   components: {
     QuillEditor,
-    ListBlocAdd
+    ListBlocAdd,
+    ReglamentQuestion
   },
   props: {
     reglament: {
@@ -16,7 +18,16 @@ export default {
   },
   data () {
     return {
-      text: ''
+      text: '',
+      questions: [
+        { text: 'hello world 1', answers: [{ text: 'answer 1' }, { text: 'answer 2' }] },
+        { text: 'hello world 2' }
+      ]
+    }
+  },
+  methods: {
+    onAddQuestion () {
+      this.questions.push({ text: 'new question' })
     }
   }
 }
@@ -27,10 +38,20 @@ export default {
     content-type="html"
     theme="snow"
     placeholder="Текст регламента..."
-    @click="show"
+    class="max-h-72 mb-5"
   />
+  <template
+    v-for="(question , index) in questions"
+    :key="index"
+  >
+    <ReglamentQuestion
+      class="mb-2"
+      :question="question"
+    />
+  </template>
   <ListBlocAdd
-    @click.stop="clickAddProject"
+    class="mt-5"
+    @click.stop="onAddQuestion"
   />
 </template>
 
