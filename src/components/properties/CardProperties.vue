@@ -373,7 +373,7 @@ const removeCard = () => {
     <MessageSkeleton v-if="status=='loading'"/>
     <!-- Card chat -->
     <card-chat
-      v-if="status=='success'
+      v-if="status=='success'"
       :key="`${Math.random()}`"
       :messages="cardMessages"
       :current-user-uid="user.current_user_uid"
