@@ -7,12 +7,11 @@
       id="taskPropsCommentEditor"
       v-linkify:options="{ className: 'text-blue-600' }"
       class="font-[400] text-[14px] leading-[21px] text-[#4C4C4D]"
-      :contenteditable="isEditable"
+      :contenteditable="canEdit"
       :data-placeholder="placeholderComment()"
       @blur="changeComment($event)"
       @keyup="changeComment($event)"
       @focusout="removeEditComment($event)"
-      @keydown.esc="removeEditComment($event)"
       @paste="OnPaste_StripFormatting(this, $event);"
       v-html="getFixedCommentText()"
     />
@@ -21,6 +20,7 @@
 
 <script>
 import linkify from 'vue-linkify'
+
 export default {
   directives: {
     linkify
@@ -80,21 +80,21 @@ export default {
       if (!this.canEdit) return
       if (this.isEditable) return
       this.isEditable = true
-      this.$nextTick(function () {
-        const commentEditor = document.getElementById('taskPropsCommentEditor')
-        commentEditor.focus({ preventScroll: false })
-        const range = document.createRange()
-        // condition for removing console errors
-        if (this.comment.length !== 0) {
-          range.setStart(commentEditor, 1)
-          range.setEnd(commentEditor, 1)
-        } else {
-          range.setStart(commentEditor, 0)
-        }
-        const sel = document.getSelection()
-        sel.removeAllRanges()
-        sel.addRange(range)
-      })
+      // this.$nextTick(function () {
+      //   const commentEditor = document.getElementById('taskPropsCommentEditor')
+      //   commentEditor.focus({ preventScroll: false })
+      //   const range = document.createRange()
+      //   // condition for removing console errors
+      //   if (this.comment.length !== 0) {
+      //     range.setStart(commentEditor, 1)
+      //     range.setEnd(commentEditor, 1)
+      //   } else {
+      //     range.setStart(commentEditor, 0)
+      //   }
+      //   const sel = document.getSelection()
+      //   sel.removeAllRanges()
+      //   sel.addRange(range)
+      // })
     },
     /**
      * @param {Element} el
@@ -127,8 +127,6 @@ export default {
       // чтобы у нас в интерфейсе поменялось
       // потому что на changeComment он только
       // на сервер отправляет и всё
-      const text = this.getElementText(e.target)
-      this.currText = text
       this.$emit('endChangeComment', this.currText)
     },
     changeComment (e) {
@@ -136,7 +134,7 @@ export default {
       const text = this.getElementText(e.target)
       if (text === this.currText) return
       this.currText = text
-      this.$emit('changeComment', this.currText)
+      this.$emit('changeComment', text)
     }
   }
 }
@@ -146,6 +144,7 @@ export default {
 h2{
   font-size: 10px;
 }
+
 .description-content {
   width: 100%;
   font-size: 14px;
