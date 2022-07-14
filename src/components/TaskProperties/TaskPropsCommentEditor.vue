@@ -12,6 +12,7 @@
       @blur="changeComment($event)"
       @keyup="changeComment($event)"
       @focusout="removeEditComment($event)"
+      @keydown.esc="removeEditComment($event)"
       @paste="OnPaste_StripFormatting(this, $event);"
       v-html="getFixedCommentText()"
     />
