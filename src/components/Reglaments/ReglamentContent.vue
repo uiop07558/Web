@@ -49,7 +49,7 @@ export default {
   },
   methods: {
     onAddQuestion () {
-      this.questions.push({ text: 'new question' })
+      this.questions.push({ text: 'new question', answers: [{ text: 'test answer' }] })
     },
     isEdit () {
       this.isEditing = !this.isEditing
