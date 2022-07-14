@@ -1,14 +1,7 @@
 <template>
-  <BoardModalBoxDelete
-    v-if="showDeleteQuestion"
-    title="Удалить вопрос"
-    text="Вы действительно хотите удалить вопрос?"
-    @cancel="showDeleteQuestion = false"
-    @yes="onDeleteQuestion"
-  />
   <PopMenu>
     <div
-      class="hover:-m-px hover:border hover:rounded-sm cursor-pointer"
+      class="hover:-m-px hover:border hover:rounded-sm cursor-pointer invisible group-hover:visible"
     >
       <svg
         width="18"
@@ -28,7 +21,7 @@
     <template #menu>
       <PopMenuItem
         icon="delete"
-        @click="clickDeleteQuestion(question, $event)"
+        @click="$emit('deleteQuestion')"
       >
         Удалить
       </PopMenuItem>
@@ -39,26 +32,12 @@
 <script>
 import PopMenu from '@/components/modals/PopMenu.vue'
 import PopMenuItem from '@/components/modals/PopMenuItem.vue'
-import BoardModalBoxDelete from '@/components/Board/BoardModalBoxDelete.vue'
 export default {
   components: {
     PopMenu,
-    PopMenuItem,
-    BoardModalBoxDelete
+    PopMenuItem
   },
-  data () {
-    return {
-      showDeleteQuestion: false
-    }
-  },
-  methods: {
-    clickDeleteQuestion (question, e) {
-      this.showDeleteQuestion = true
-    },
-    onDeleteQuestion () {
-      this.showDeleteQuestion = false
-    }
-  }
+  emits: ['deleteQuestion']
 }
 </script>
 
