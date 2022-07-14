@@ -23,8 +23,8 @@ export default {
       text: '',
       isEditing: false,
       questions: [
-        { text: 'hello world 1', answers: [{ text: 'answer 1' }, { text: 'answer 2' }] },
-        { text: 'hello world 2' }
+        { text: 'hello world 1', uid: 'fake_uid', answers: [{ text: 'answer 1', uid: 'fake_uid' }, { text: 'answer 2', uid: 'fake_uid' }] },
+        { text: 'hello world 2', uid: 'fake_uid' }
       ]
     }
   },
@@ -45,6 +45,14 @@ export default {
   methods: {
     onAddQuestion () {
       this.questions.push({ text: 'new question', answers: [{ text: 'test answer' }] })
+    },
+    onDeleteQuestion () {
+      this.showDeleteQuestion = false
+      for (let i = 0; i < this.questions.length; i++) {
+        if (this.questions[i].uid === 'fake_uid') {
+          this.questions.splice(i, 1)
+        }
+      }
     },
     isEdit () {
       this.isEditing = !this.isEditing
@@ -90,6 +98,7 @@ export default {
     <ReglamentQuestion
       class="mb-2"
       :question="question"
+      @deleteQuestion="onDeleteQuestion"
     />
   </template>
   <ListBlocAdd
