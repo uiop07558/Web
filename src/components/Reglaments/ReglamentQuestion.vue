@@ -11,7 +11,10 @@ export default {
     BoardModalBoxDelete
   },
   props: {
-    question: Object
+    question: {
+      type: Object,
+      default: () => ({})
+    }
   },
   emits: ['deleteQuestion', 'deleteAnswer'],
   data () {
@@ -19,6 +22,11 @@ export default {
       answers: this?.question?.answers ?? [],
       showDeleteQuestion: false,
       showDeleteAnswer: false
+    }
+  },
+  computed: {
+    canEdit () {
+      return this.$store.state.greedSource.email_creator === this.$store.state.user.user.current_user_email
     }
   },
   methods: {
@@ -51,7 +59,7 @@ export default {
     @yes="deleteQuestion"
   />
   <div
-    class="bg-white p-3 rounded-[10px]"
+    class="bg-white p-3 rounded-[10px] mb-2"
   >
     <div class="px-1 flex justify-between items-start group">
       <div
@@ -78,6 +86,7 @@ export default {
       />
     </template>
     <ListBlocAdd
+      v-if="canEdit"
       class="mt-5"
       @click.stop="onAddAnswer"
     />

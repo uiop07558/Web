@@ -122,6 +122,9 @@ export default {
     navStack () {
       return this.$store.state.navbar.navStack
     },
+    user () {
+      return this.$store.state.user.user
+    },
     reglaments () {
       return this.navStack[0].items
     }
@@ -177,13 +180,12 @@ export default {
       this.showAddReglament = false
       const title = name.trim()
       if (title) {
-        const user = this.$store.state.user.user
         const reglament = {
           bold: 0,
           collapsed: 0,
           color: '',
           comment: '',
-          email_creator: user.current_user_email,
+          email_creator: this.user.current_user_email,
           favorite: 0,
           group: 0,
           isclosed: 0,
@@ -192,7 +194,7 @@ export default {
           plugin: '',
           quiet: 0,
           show: 1,
-          members: [user.current_user_email],
+          members: [this.user.current_user_email],
           text: '',
           uid: this.uuidv4(),
           uid_parent: ''
