@@ -2,13 +2,15 @@
 import { QuillEditor } from '@vueup/vue-quill'
 import ListBlocAdd from '@/components/Common/ListBlocAdd.vue'
 import ReglamentQuestion from './ReglamentQuestion.vue'
+import PopMenuItem from '@/components/modals/PopMenuItem.vue'
 import '@vueup/vue-quill/dist/vue-quill.snow.css'
 
 export default {
   components: {
     QuillEditor,
     ListBlocAdd,
-    ReglamentQuestion
+    ReglamentQuestion,
+    PopMenuItem
   },
   props: {
     reglament: {
@@ -19,26 +21,70 @@ export default {
   data () {
     return {
       text: '',
+      isEditing: false,
       questions: [
         { text: 'hello world 1', answers: [{ text: 'answer 1' }, { text: 'answer 2' }] },
         { text: 'hello world 2' }
       ]
     }
   },
+  computed: {
+    navStack () {
+      return this.$store.state.navbar.navStack
+    },
+    currentReglament () {
+      for (let i = 0; i < this.navStack[0].value.length; i++) {
+        if (this.navStack[0].value[i].uid === this.navStack[1].uid) {
+          return this.navStack[0].value[i]
+        }
+      }
+      return ''
+    },
+    canEdit () {
+      return this.currentReglament.email_creator === this.user.current_user_email
+    },
+    user () {
+      return this.$store.state.user.user
+    }
+  },
   methods: {
     onAddQuestion () {
       this.questions.push({ text: 'new question' })
+    },
+    isEdit () {
+      this.isEditing = !this.isEditing
     }
   }
 }
 </script>
 <template>
+  <div class="flex justify-end">
+    <PopMenuItem
+      class="bg-white"
+      icon="edit"
+      @click="isEdit"
+    >
+      {{ isEditing ? 'Завершить редактирование' : 'Редактировать' }}
+    </PopMenuItem>
+  </div>
   <QuillEditor
+    v-if="!isEditing"
     v-model:content="text"
     content-type="html"
     theme="snow"
+    :read-only="true"
+    :toolbar="['']"
     placeholder="Текст регламента..."
-    class="max-h-72 mb-5"
+    class="max-h-72 mb-5 bg-white"
+  />
+  <QuillEditor
+    v-if="isEditing"
+    v-model:content="text"
+    content-type="html"
+    theme="snow"
+    :toolbar="'full'"
+    placeholder="Текст регламента..."
+    class="max-h-72 mb-5 bg-white"
   />
   <template
     v-for="(question , index) in questions"
