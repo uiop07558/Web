@@ -5,6 +5,7 @@ import { PUSH_BOARD } from '../actions/boards'
 import { PUSH_COLOR, PUSH_MYCOLOR } from '../actions/colors'
 import { PUSH_DEPARTMENT } from '../actions/departments'
 import { PUSH_EMPLOYEE, PUSH_EMPLOYEE_BY_EMAIL } from '../actions/employees'
+import { REGLAMENTS_REQUEST } from '../actions/reglaments'
 import {
   NAVIGATOR_CHANGE_EMPLOYEE_DEPARTMENT,
   NAVIGATOR_ERROR,
@@ -74,6 +75,11 @@ const actions = {
       axios({ url: url, method: 'GET' })
         .then((resp) => {
           resp.rootState = rootState
+
+          // requesting reglaments from inspector's VPS
+          dispatch(REGLAMENTS_REQUEST, rootState.user.user.owner_email).then(respReglaments => {
+            resp.data.reglaments = { uid: 'fake-uid', items: respReglaments }
+          })
 
           commit(NAVIGATOR_SUCCESS, resp)
           if (resp.data.emps.items) {
@@ -381,57 +387,6 @@ const mutations = {
       items: resp.data.common_boards.items
     })
     resp.data.new_private_boards = newCommonBoards
-
-    // Logic for reglaments
-    resp.data.reglaments =
-    {
-      items: [{
-        uid_parent: '00000000-0000-0000-0000-000000000000',
-        color: '#000000',
-        comment: '',
-        plugin: '',
-        collapsed: 0,
-        isclosed: 0,
-        order: 1,
-        group: 0,
-        show: 1,
-        favorite: 0,
-        quiet: 0,
-        text: 'Это текст регламента если что',
-        email_creator: 'term@gmail.com',
-        members: [
-          'term@gmail.com',
-          'gepard@yandex.ru'
-        ],
-        uid: 'd3b1abe4-a626-4b64-92fb-04161c964b58',
-        name: 'Системная работа',
-        bold: 0
-      },
-      {
-        uid_parent: '00000000-0000-0000-0000-000000000000',
-        color: '#EAEAEA',
-        comment: '',
-        plugin: '',
-        collapsed: 0,
-        isclosed: 0,
-        order: 1,
-        group: 0,
-        text: 'Это текст регламента если что который прикладной',
-        show: 1,
-        favorite: 0,
-        quiet: 0,
-        email_creator: 'term@gmail.com',
-        members: [
-          'term@gmail.com',
-          'gepard@yandex.ru'
-        ],
-        uid: 'd3b1abe4-a627-4b64-92fb-04161c964b58',
-        name: 'Прикладная работа',
-        bold: 0
-      }],
-      name: 'Регламенты',
-      uid: '92413f6c-2ef3-476e-9429-e76d7818685d'
-    }
 
     state.navigator = resp.data
   },

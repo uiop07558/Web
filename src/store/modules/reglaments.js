@@ -1,8 +1,34 @@
 import * as REGLAMENTS from '../actions/reglaments'
+import axios from 'axios'
 
-const state = {}
+const state = {
+  reglaments: {}
+}
 
-const actions = {}
+const actions = {
+  [REGLAMENTS.REGLAMENTS_REQUEST]: ({ commit, dispatch }, organization) => {
+    return new Promise((resolve, reject) => {
+      const url = process.env.VUE_APP_INSPECTOR_API + 'reglaments?organization=' + organization
+      axios({ url: url, method: 'GET' })
+        .then(resp => {
+          resolve(resp)
+        }).catch(err => {
+          reject(err)
+        })
+    })
+  },
+  [REGLAMENTS.CREATE_REGLAMENT_REQUEST]: ({ commit, dispatch }, data) => {
+    return new Promise((resolve, reject) => {
+      const url = process.env.VUE_APP_INSPECTOR_API + 'reglaments'
+      axios({ url: url, method: 'POST', data: data })
+        .then(resp => {
+          resolve(resp)
+        }).catch(err => {
+          reject(err)
+        })
+    })
+  }
+}
 
 const mutations = {}
 

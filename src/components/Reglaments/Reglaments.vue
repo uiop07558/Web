@@ -82,6 +82,7 @@ import EmptyTasksListPics from '@/components/TasksList/EmptyTasksListPics'
 
 import * as TASK from '@/store/actions/tasks'
 import * as NAVIGATOR from '@/store/actions/navigator'
+import * as REGLAMENTS from '@/store/actions/reglaments'
 
 import gridView from '@/icons/grid-view.js'
 import listView from '@/icons/list-view.js'
@@ -180,23 +181,14 @@ export default {
         const user = this.$store.state.user.user
         const reglament = {
           bold: 0,
-          collapsed: 0,
           color: '',
-          comment: '',
+          organization: user.owner_email,
           email_creator: user.current_user_email,
-          favorite: 0,
-          group: 0,
-          isclosed: 0,
           name: title,
-          order: 1,
-          plugin: '',
-          quiet: 0,
-          show: 1,
-          members: [user.current_user_email],
-          text: '',
-          uid: this.uuidv4(),
-          uid_parent: ''
+          content: '',
+          uid: this.uuidv4()
         }
+        this.$store.dispatch(REGLAMENTS.CREATE_REGLAMENT_REQUEST, reglament)
         this.$store.commit(NAVIGATOR.NAVIGATOR_PUSH_REGLAMENT, reglament)
         this.gotoReglamentContent(reglament)
       }
