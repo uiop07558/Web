@@ -12,6 +12,7 @@
       @blur="changeComment($event)"
       @keyup="changeComment($event)"
       @focusout="removeEditComment($event)"
+      @keydown.esc="removeEditComment($event)"
       @paste="OnPaste_StripFormatting(this, $event);"
       v-html="getFixedCommentText()"
     />
@@ -76,10 +77,17 @@ export default {
       if (this.canEdit) return 'Добавить заметку...'
       return ''
     },
-    editComment () {
+    /**
+     * @param {Element} e
+     * @returns {String}
+     */
+    editComment (e) {
       if (!this.canEdit) return
       if (this.isEditable) return
       this.isEditable = true
+      this.$nextTick(function () {
+        this.getElementText(e.target)
+      })
     },
     /**
      * @param {Element} el
@@ -89,7 +97,7 @@ export default {
       // пытаемся достать текст из едита браузера
       // в котором сейчас идет ввод через Selection
       if (typeof window.getSelection !== 'undefined') {
-        const sel = window.getSelection()
+        const sel = document.getElementById('taskPropsCommentEditor')
         // condition for removing console errors
         if (sel && sel.rangeCount > 0) {
           const tempRange = sel.getRangeAt(0)
@@ -106,7 +114,7 @@ export default {
       return el.innerText.trim()
     },
 
-    removeEditComment (e) {
+    removeEditComment () {
       if (!this.canEdit) return
       this.isEditable = false
       // чтобы у нас в интерфейсе поменялось
