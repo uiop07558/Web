@@ -33,12 +33,7 @@ export default {
       return this.$store.state.navbar.navStack
     },
     currentReglament () {
-      for (let i = 0; i < this.navStack[0].value.length; i++) {
-        if (this.navStack[0].value[i].uid === this.navStack[1].uid) {
-          return this.navStack[0].value[i]
-        }
-      }
-      return ''
+      return this.$store.state.greedSource
     },
     canEdit () {
       return this.currentReglament.email_creator === this.user.current_user_email
@@ -49,7 +44,7 @@ export default {
   },
   methods: {
     onAddQuestion () {
-      this.questions.push({ text: 'new question', uid: 'fake_uid' })
+      this.questions.push({ text: 'new question', answers: [{ text: 'test answer' }] })
     },
     onDeleteQuestion () {
       this.showDeleteQuestion = false
@@ -66,7 +61,10 @@ export default {
 }
 </script>
 <template>
-  <div class="flex justify-end">
+  <div
+    v-if="canEdit"
+    class="flex justify-end mb-2"
+  >
     <PopMenuItem
       class="bg-white"
       icon="edit"
@@ -82,7 +80,6 @@ export default {
     theme="snow"
     :read-only="true"
     :toolbar="['']"
-    placeholder="Текст регламента..."
     class="max-h-72 mb-5 bg-white"
   />
   <QuillEditor

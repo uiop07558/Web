@@ -92,7 +92,7 @@ import PropsButtonMenu from '@/components/Common/PropsButtonMenu.vue'
 import TaskPropsAccessLimitModalBox from '@/components/properties/TaskPropsAccessLimitModalBox.vue'
 
 import * as PROJECT from '@/store/actions/projects'
-import { NAVIGATOR_REMOVE_PROJECT } from '@/store/actions/navigator'
+import { NAVIGATOR_REMOVE_PROJECT, NAVIGATOR_REMOVE_REGLAMENT } from '@/store/actions/navigator'
 import { copyText } from 'vue3-clipboard'
 
 export default {
@@ -153,8 +153,8 @@ export default {
     employeesByEmail () {
       return this.$store.state.employees.employeesByEmail
     },
-    selectedProject () {
-      return this.$store.state.projects.selectedProject
+    selectedReglament () {
+      return this.$store.state.greedSource
     },
     selectedProjectUid () {
       return this.selectedProject?.uid || ''
@@ -172,7 +172,7 @@ export default {
     },
     isCanDelete () {
       const user = this.$store.state.user.user
-      return this.selectedProjectCreatorEmail === user.current_user_email
+      return this.selectedReglament.email_creator === user.current_user_email
     },
     isCanEdit () {
       return this.isCanDelete
@@ -226,30 +226,19 @@ export default {
     removeProject () {
       this.showConfirm = false
 
-      this.$store
-        .dispatch(PROJECT.REMOVE_PROJECT_REQUEST, this.selectedProjectUid)
-        .then((resp) => {
-          console.log('removeProject', resp)
-          this.$store.dispatch('asidePropertiesToggle', false)
-          this.$store.commit(NAVIGATOR_REMOVE_PROJECT, this.selectedProject)
-          // выходим выше на один уровень навигации (надеемся что этот проект последний в стеке)
-          this.$store.dispatch('popNavStack')
-        })
+      this.$store.dispatch('asidePropertiesToggle', false)
+      this.$store.commit(NAVIGATOR_REMOVE_REGLAMENT, this.selectedReglament)
+      // выходим выше на один уровень навигации (надеемся что этот проект последний в стеке)
+      this.$store.dispatch('popNavStack')
     },
     quitProject () {
       this.showConfirmQuit = false
 
-      this.$store.dispatch(PROJECT.QUIT_PROJECT_REQUEST, {
-        uid: this.selectedProjectUid,
-        value: this.$store.state.user.user.current_user_email
-      })
-        .then((resp) => {
-          console.log('quitProject', resp)
-          this.$store.dispatch('asidePropertiesToggle', false)
-          this.$store.commit(NAVIGATOR_REMOVE_PROJECT, this.selectedProject)
-          // выходим выше на один уровень навигации (надеемся что этот проект последний в стеке)
-          this.$store.dispatch('popNavStack')
-        })
+      console.log(this.selectedProject)
+      this.$store.dispatch('asidePropertiesToggle', false)
+      this.$store.commit(NAVIGATOR_REMOVE_PROJECT, this.selectedProject)
+      // выходим выше на один уровень навигации (надеемся что этот проект последний в стеке)
+      this.$store.dispatch('popNavStack')
     },
     closeProperties () {
       this.$store.dispatch('asidePropertiesToggle', false)

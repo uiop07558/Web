@@ -418,7 +418,7 @@ if (router.currentRoute.value.name === 'task' && router.currentRoute.value.param
       />
       <reglaments
         v-if="greedPath === 'reglaments'"
-        :items="greedSource"
+        :items="greedSource.items"
       />
       <boards
         v-if="greedPath === 'new_private_boards'"
