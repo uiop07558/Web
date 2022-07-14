@@ -58,7 +58,10 @@ export default {
 }
 </script>
 <template>
-  <div class="flex justify-end">
+  <div
+    v-if="canEdit"
+    class="flex justify-end"
+  >
     <PopMenuItem
       class="bg-white"
       icon="edit"

@@ -54,7 +54,7 @@
         }"
       >
         <template
-          v-for="project in items"
+          v-for="project in items[0].items"
           :key="project.uid"
         >
           <ReglamentBlocItem
@@ -118,6 +118,12 @@ export default {
     },
     isEmpty () {
       return !this.items.length
+    },
+    navStack () {
+      return this.$store.state.navbar.navStack
+    },
+    reglaments () {
+      return this.navStack[0].items
     }
   },
   created () {
