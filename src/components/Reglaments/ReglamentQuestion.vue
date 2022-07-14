@@ -1,10 +1,12 @@
 <script>
 import ListBlocAdd from '@/components/Common/ListBlocAdd.vue'
 import ReglamentAnswer from './ReglamentAnswer.vue'
+import ReglamentQuestionPopMenuVue from './ReglamentQuestionPopMenu.vue'
 export default {
   components: {
     ReglamentAnswer,
-    ListBlocAdd
+    ListBlocAdd,
+    ReglamentQuestionPopMenuVue
   },
   props: {
     question: Object
@@ -26,14 +28,17 @@ export default {
   <div
     class="bg-white p-3 rounded-[10px]"
   >
-    <div
-      data-placeholder="Question name"
-      class="font-[500] text-[18px] my-3"
-      :contenteditable="true"
-      @blur="false"
-      @keyup="false"
-      v-html="question.text"
-    />
+    <div class="px-1 flex justify-between items-start">
+      <div
+        data-placeholder="Question name"
+        class="font-[500] text-[18px] my-3"
+        :contenteditable="true"
+        @blur="false"
+        @keyup="false"
+        v-html="question.text"
+      />
+      <ReglamentQuestionPopMenuVue />
+    </div>
     <template
       v-for="(answer, index) in answers"
       :key="index"
