@@ -24,7 +24,7 @@ export default {
   methods: {
     onAddAnswer () {
       console.log(this.question)
-      this.answers.push({ text: 'new answer' })
+      this.answers.push({ text: 'new answer', uid: 'fake_uid' })
     },
     onDeleteAnswer () {
       this.showDeleteAnswer = false

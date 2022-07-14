@@ -23,8 +23,8 @@ export default {
       text: '',
       isEditing: false,
       questions: [
-        { text: 'hello world 1', uid: 'fake_uid', answers: [{ text: 'answer 1', uid: 'fake_uid' }, { text: 'answer 2' }] },
-        { text: 'hello world 2' }
+        { text: 'hello world 1', uid: 'fake_uid', answers: [{ text: 'answer 1', uid: 'fake_uid' }, { text: 'answer 2', uid: 'fake_uid' }] },
+        { text: 'hello world 2', uid: 'fake_uid' }
       ]
     }
   },
@@ -49,7 +49,7 @@ export default {
   },
   methods: {
     onAddQuestion () {
-      this.questions.push({ text: 'new question' })
+      this.questions.push({ text: 'new question', uid: 'fake_uid' })
     },
     onDeleteQuestion () {
       this.showDeleteQuestion = false
