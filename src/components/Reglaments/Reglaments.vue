@@ -123,6 +123,9 @@ export default {
     navStack () {
       return this.$store.state.navbar.navStack
     },
+    user () {
+      return this.$store.state.user.user
+    },
     reglaments () {
       return this.navStack[0].items
     }
@@ -176,9 +179,9 @@ export default {
     },
     onAddNewReglament (name) {
       this.showAddReglament = false
+      const user = this.$store.state.user.user
       const title = name.trim()
       if (title) {
-        const user = this.$store.state.user.user
         const reglament = {
           bold: 0,
           color: '',
@@ -188,6 +191,7 @@ export default {
           content: '',
           uid: this.uuidv4()
         }
+
         this.$store.dispatch(REGLAMENTS.CREATE_REGLAMENT_REQUEST, reglament)
         this.$store.commit(NAVIGATOR.NAVIGATOR_PUSH_REGLAMENT, reglament)
         this.gotoReglamentContent(reglament)

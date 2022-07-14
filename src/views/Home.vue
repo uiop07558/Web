@@ -217,6 +217,9 @@ const getNavigator = () => {
   if (store.state.auth.token) {
     store.dispatch(NAVIGATOR_REQUEST)
       .then(() => {
+        store.dispatch('REGLAMENTS_REQUEST', store?.state?.user?.user?.owner_email).then(resp => {
+          storeNavigator.value.reglaments = { uid: 'fake-uid', items: resp.data }
+        })
         initWebSync()
         initInspectorSocket()
         if (router.currentRoute.value.name === 'project' && router.currentRoute.value.params.id) {
@@ -253,7 +256,7 @@ const getNavigator = () => {
 
             // If last navElement is related to processed navigator instance with 'new_' prefix
             // then we pass entire object from storeNavigator
-            if (['new_private_projects', 'new_emps', 'new_delegate', 'new_private_boards', 'reglaments'].includes(navStack.value[navStack.value.length - 1].greedPath)) {
+            if (['new_private_projects', 'new_emps', 'new_delegate', 'new_private_boards'].includes(navStack.value[navStack.value.length - 1].greedPath)) {
               store.commit('basic', { key: navStack.value[navStack.value.length - 1].key, value: storeNavigator.value[navStack.value[navStack.value.length - 1].greedPath] })
 
             // if last visited navElemen is in nested in children, then we trying to find these children with visitChildren fucntion
@@ -324,9 +327,9 @@ const getNavigator = () => {
                   }
                 })
               }
-            // colors
+            // colors and reglaments
             } else {
-              store.commit('basic', { key: navStack.value[navStack.value.length - 1].key, value: storeNavigator.value[navStack.value[navStack.value.length - 1].greedPath].items })
+              store.commit('basic', { key: navStack.value[navStack.value.length - 1].key, value: storeNavigator?.value[navStack.value[navStack.value.length - 1].greedPath]?.items })
             }
           }
         }
@@ -418,7 +421,7 @@ if (router.currentRoute.value.name === 'task' && router.currentRoute.value.param
       />
       <reglaments
         v-if="greedPath === 'reglaments'"
-        :items="greedSource.items"
+        :items="greedSource"
       />
       <boards
         v-if="greedPath === 'new_private_boards'"

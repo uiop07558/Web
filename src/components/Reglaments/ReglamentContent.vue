@@ -96,15 +96,17 @@ export default {
     :key="index"
   >
     <ReglamentQuestion
-      class="mb-2"
       :question="question"
       @deleteQuestion="onDeleteQuestion"
     />
   </template>
-  <ListBlocAdd
-    class="mt-5"
-    @click.stop="onAddQuestion"
-  />
+  <div class="flex w-full pb-5">
+    <ListBlocAdd
+      v-if="canEdit"
+      class="mt-5 w-full"
+      @click.stop="onAddQuestion"
+    />
+  </div>
 </template>
 
 <style scoped>

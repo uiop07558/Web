@@ -8,14 +8,14 @@
     <ModalBoxDelete
       v-if="showConfirm"
       title="Удалить проект"
-      :text="`Вы действительно хотите удалить проект ${selectedProjectName}?`"
+      :text="`Вы действительно хотите удалить проект ${selectedReglamentName}?`"
       @cancel="showConfirm = false"
       @yes="removeProject"
     />
     <ModalBoxDelete
       v-if="showConfirmQuit"
       title="Покинуть проект"
-      :text="`Вы действительно хотите покинуть проект ${selectedProjectName}? Обратно можно попасть, только если владелец проекта опять вас добавит.`"
+      :text="`Вы действительно хотите покинуть проект ${selectedReglamentName}? Обратно можно попасть, только если владелец проекта опять вас добавит.`"
       @cancel="showConfirmQuit = false"
       @yes="quitProject"
     />
@@ -50,7 +50,7 @@
       type="text"
       placeholder="Наименование"
       class="mt-[25px] p-0 font-roboto font-bold font-[18px] leading-[21px] text-[#424242] w-full border-none focus:ring-0 focus:outline-none"
-      @blur="changeProjectName"
+      @blur="changeReglamentName"
     >
     <div
       v-else
@@ -75,7 +75,7 @@
           :class="{ 'cursor-pointer': isCanEdit }"
           :color="clr.color"
           :selected="clr.selected"
-          @select="changeProjectColor"
+          @select="changeReglamentColor"
         />
       </div>
     </div>
@@ -136,7 +136,7 @@ export default {
         '#f5f547'
       ]
       // добавляем в конец выбранный цвет если его тут нет
-      const usedColor = this.selectedProjectColor.toLowerCase()
+      const usedColor = this.selectedReglamentColor.toLowerCase()
       if (!allColors.includes(usedColor)) {
         allColors.splice(allColors.length - 1, 1, usedColor)
       }
@@ -156,17 +156,17 @@ export default {
     selectedReglament () {
       return this.$store.state.greedSource
     },
-    selectedProjectUid () {
-      return this.selectedProject?.uid || ''
+    selectedReglamentUid () {
+      return this.selectedReglament?.uid || ''
     },
-    selectedProjectName () {
-      return this.selectedProject?.name || ''
+    selectedReglamentName () {
+      return this.selectedReglament?.name || ''
     },
     selectedProjectCreatorEmail () {
       return this.selectedProject?.email_creator || ''
     },
-    selectedProjectColor () {
-      const backColor = this.selectedProject?.color
+    selectedReglamentColor () {
+      const backColor = this.selectedReglament?.color
       if (backColor && backColor !== '#A998B6') return backColor
       return ''
     },
@@ -212,7 +212,7 @@ export default {
     }
   },
   watch: {
-    selectedProjectName: {
+    selectedReglamentName: {
       immediate: true,
       handler: function (val) {
         this.currName = val
@@ -243,30 +243,16 @@ export default {
     closeProperties () {
       this.$store.dispatch('asidePropertiesToggle', false)
     },
-    changeProjectName () {
+    changeReglamentName () {
       const title = this.currName.trim()
-      if (this.isCanEdit && title && this.selectedProjectName !== title) {
-        this.selectedProject.name = title
-        this.$store
-          .dispatch(PROJECT.CHANGE_PROJECT_NAME, {
-            projectUid: this.selectedProjectUid,
-            newProjectTitle: title
-          })
-          .then((resp) => {
-            console.log('changeProjectName', resp, title)
-          })
+      if (this.isCanEdit && title && this.selectedReglamentName !== title) {
+        this.selectedReglament.name = title
+        this.$store.state.greedSource.name = this.selectedReglament.name
       }
     },
-    changeProjectColor (color) {
-      if (this.isCanEdit && this.selectedProjectColor.toLowerCase() !== color) {
-        this.selectedProject.color = color || '#A998B6'
-        const data = {
-          projectUid: this.selectedProjectUid,
-          newProjectColor: color || '#A998B6'
-        }
-        this.$store.dispatch(PROJECT.CHANGE_PROJECT_COLOR, data).then((resp) => {
-          console.log('changeProjectColor', resp, color)
-        })
+    changeReglamentColor (color) {
+      if (this.isCanEdit && this.selectedReglamentColor.toLowerCase() !== color) {
+        this.$store.state.greedSource.color = color ?? '#A998B6'
       }
     },
     addProjectMember (userEmail) {
@@ -284,7 +270,7 @@ export default {
         users.push(userEmail)
         this.selectedProject.members = users
         const data = {
-          projectUid: this.selectedProjectUid,
+          projectUid: this.selectedReglamentUid,
           newProjectMembers: users
         }
         this.$store.dispatch(PROJECT.CHANGE_PROJECT_MEMBERS, data).then((resp) => {
@@ -300,7 +286,7 @@ export default {
         const users = this.selectedProject.members.filter((email) => email.toLowerCase() !== userEmail.toLowerCase())
         this.selectedProject.members = users
         const data = {
-          projectUid: this.selectedProjectUid,
+          projectUid: this.selectedReglamentUid,
           newProjectMembers: users
         }
         this.$store.dispatch(PROJECT.CHANGE_PROJECT_MEMBERS, data).then((resp) => {
@@ -310,7 +296,7 @@ export default {
     },
     copyLinkToProject () {
       copyText(
-        `${window.location.origin}/project/${this.selectedProjectUid}`,
+        `${window.location.origin}/project/${this.selectedReglamentUid}`,
         undefined,
         (error, event) => {
           if (error) {

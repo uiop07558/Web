@@ -76,9 +76,9 @@ const actions = {
         .then((resp) => {
           resp.rootState = rootState
 
-          // requesting reglaments from inspector's VPS
+          // requesting reglaments from inspector's VPS /
           dispatch(REGLAMENTS_REQUEST, rootState.user.user.owner_email).then(respReglaments => {
-            resp.data.reglaments = { uid: 'fake-uid', items: respReglaments }
+            resp.data.reglaments = { uid: 'fake-uid', items: respReglaments.data }
           })
 
           commit(NAVIGATOR_SUCCESS, resp)

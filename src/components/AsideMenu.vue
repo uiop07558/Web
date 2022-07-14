@@ -158,7 +158,7 @@ export default {
       } else {
         this.$store.commit('basic', { key: 'mainSectionState', value: 'greed' })
         this.$store.commit('basic', { key: 'greedPath', value: item.path })
-        if (item.path === 'new_private_projects' || item.path === 'new_emps' || item.path === 'new_delegate' || item.path === 'new_private_boards' || item.path === 'reglaments') {
+        if (item.path === 'new_private_projects' || item.path === 'new_emps' || item.path === 'new_delegate' || item.path === 'new_private_boards') {
           const navElem = {
             name: item.label,
             key: 'greedSource',
