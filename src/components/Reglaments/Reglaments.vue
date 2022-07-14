@@ -54,7 +54,7 @@
         }"
       >
         <template
-          v-for="project in items[0].items"
+          v-for="project in items"
           :key="project.uid"
         >
           <ReglamentBlocItem
@@ -177,31 +177,25 @@ export default {
       this.showAddReglament = false
       const title = name.trim()
       if (title) {
-        // добавляем новый проект и переходим в него
-        const maxOrder =
-          this.items[0]?.items?.reduce(
-            (maxOrder, child) =>
-              child.order > maxOrder ? child.order : maxOrder,
-            0
-          ) || 0
         const user = this.$store.state.user.user
         const reglament = {
-          uid: this.uuidv4(),
-          name: title,
-          uid_parent: '00000000-0000-0000-0000-000000000000',
-          email_creator: user.current_user_email,
-          order: maxOrder + 1,
-          comment: '',
-          plugin: '',
+          bold: 0,
           collapsed: 0,
-          isclosed: 0,
-          group: 0,
-          show: 1,
+          color: '',
+          comment: '',
+          email_creator: user.current_user_email,
           favorite: 0,
+          group: 0,
+          isclosed: 0,
+          name: title,
+          order: 1,
+          plugin: '',
           quiet: 0,
+          show: 1,
           members: [user.current_user_email],
-          children: [],
-          bold: 0
+          text: '',
+          uid: this.uuidv4(),
+          uid_parent: ''
         }
         this.$store.commit(NAVIGATOR.NAVIGATOR_PUSH_REGLAMENT, reglament)
         this.gotoReglamentContent(reglament)

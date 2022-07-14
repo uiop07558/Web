@@ -382,7 +382,8 @@ const mutations = {
     resp.data.new_private_boards = newCommonBoards
 
     // Logic for reglaments
-    resp.data.reglaments = [{
+    resp.data.reglaments =
+    {
       items: [{
         uid_parent: '00000000-0000-0000-0000-000000000000',
         color: '#000000',
@@ -429,7 +430,7 @@ const mutations = {
       }],
       name: 'Регламенты',
       uid: '92413f6c-2ef3-476e-9429-e76d7818685d'
-    }]
+    }
 
     state.navigator = resp.data
   },
@@ -460,7 +461,7 @@ const mutations = {
     }
   },
   [NAVIGATOR_PUSH_REGLAMENT]: (state, reglament) => {
-    state.navigator.reglaments.push(reglament)
+    state.navigator.reglaments.items.push(reglament)
   },
   [NAVIGATOR_REMOVE_DEPARTAMENT]: (state, uidDepartment) => {
     // удаляем  из new_emps

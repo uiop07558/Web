@@ -33,12 +33,7 @@ export default {
       return this.$store.state.navbar.navStack
     },
     currentReglament () {
-      for (let i = 0; i < this.navStack[0].value.length; i++) {
-        if (this.navStack[0].value[i].uid === this.navStack[1].uid) {
-          return this.navStack[0].value[i]
-        }
-      }
-      return ''
+      return this.$store.state.greedSource
     },
     canEdit () {
       return this.currentReglament.email_creator === this.user.current_user_email
@@ -60,7 +55,7 @@ export default {
 <template>
   <div
     v-if="canEdit"
-    class="flex justify-end"
+    class="flex justify-end mb-2"
   >
     <PopMenuItem
       class="bg-white"
@@ -77,7 +72,6 @@ export default {
     theme="snow"
     :read-only="true"
     :toolbar="['']"
-    placeholder="Текст регламента..."
     class="max-h-72 mb-5 bg-white"
   />
   <QuillEditor
