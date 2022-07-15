@@ -46,13 +46,17 @@ export default {
     isEditing (newval, oldval) {
       if (!newval) {
         setTimeout(() => {
-          document.querySelector('div.ql-toolbar').remove()
+          try {
+            document.querySelector('div.ql-toolbar').remove()
+          } catch (e) {}
         }, 50)
       }
     }
   },
   mounted () {
-    document.querySelector('div.ql-toolbar').remove()
+    try {
+      document.querySelector('div.ql-toolbar').remove()
+    } catch (e) {}
   },
   methods: {
     onAddQuestion () {
