@@ -54,7 +54,7 @@ export default {
   />
   <div
     class="border-[1px] hover:cursor-pointer border-[#eaeaea] p-2 px-2 flex justify-between items-start group rounded-[8px] mb-[5px]"
-    :class="({'border-[#d7f7e2] bg-[#e8faee]': rightAnswer }, {'bg-slate-200': selected})"
+    :class="{ 'border-[#d7f7e2] bg-[#e8faee]': rightAnswer, 'bg-slate-200': selected }"
     @click="onSelectAnswer"
   >
     <div
