@@ -36,7 +36,7 @@ export default {
       return this.$store.state.greedSource
     },
     canEdit () {
-      return this.currentReglament.email_creator === this.user.current_user_email
+      return this.currentReglament?.email_creator === this.user.current_user_email
     },
     user () {
       return this.$store.state.user.user
@@ -104,7 +104,7 @@ export default {
     </PopMenuItem>
   </div>
   <QuillEditor
-    v-if="!isEditing && text.length"
+    v-if="!isEditing && text?.length"
     v-model:content="text"
     content-type="html"
     :read-only="true"

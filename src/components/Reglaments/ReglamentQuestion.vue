@@ -29,7 +29,7 @@ export default {
   },
   computed: {
     canEdit () {
-      return this.$store.state.greedSource.email_creator === this.$store.state.user.user.current_user_email
+      return this.$store.state.greedSource?.email_creator === this.$store.state.user.user.current_user_email
     }
   },
   methods: {
