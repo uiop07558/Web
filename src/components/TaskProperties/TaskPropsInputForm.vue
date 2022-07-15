@@ -54,11 +54,6 @@ export default {
       this.taskMsg = ''
     }
   },
-  mounted: function () {
-    this.$nextTick(function () {
-      this.$refs.taskMsgEdit.addEventListener('paste', this.onPasteEvent, { once: true })
-    })
-  },
   methods: {
     readTask () {
       this.$emit('readTask')
@@ -76,7 +71,6 @@ export default {
     },
     onPasteEvent: function (e) {
       const items = (e.clipboardData || e.originalEvent.clipboardData).items
-      let loadFile = false
       for (const index in items) {
         const item = items[index]
         if (item.kind === 'file') {
@@ -87,7 +81,6 @@ export default {
             uid_task: this.task.uid,
             name: formData
           }
-          loadFile = true
           this.isloading = true
           this.$store.dispatch(FILES.CREATE_FILES_REQUEST, data)
             .then((resp) => {
@@ -97,31 +90,9 @@ export default {
                   this.selectedTask.status = 9
                 }
               }
-              this.$refs.taskMsgEdit.addEventListener('paste', this.onPasteEvent, { once: true })
             })
         }
       }
-      if (!loadFile) {
-        this.$refs.taskMsgEdit.addEventListener('paste', this.onPasteEvent, { once: true })
-      }
-    },
-    addNewLineTaskMsg: function () {
-      this.taskMsg += '\n'
-      this.$nextTick(function () {
-        this.onInputTaskMsg()
-        this.$refs.taskMsgEdit.scrollTo(0, this.$refs.taskmsgEdit.scrollHeight)
-      })
-    },
-    onInputTaskMsg: function () {
-      this.$refs.taskMsgEdit.style.height = '40px'
-      const defSendHeight = 105
-      const defEditHeight = 40
-      const defEditHeightMax = 100
-      const scrollHeight = this.$refs.taskMsgEdit.scrollHeight
-      const scrollHeightFix = scrollHeight < defEditHeight ? defEditHeight : scrollHeight > defEditHeightMax ? defEditHeightMax : scrollHeight
-      const sendHeight = defSendHeight + scrollHeightFix - defEditHeight
-      this.$refs.taskMsgEdit.style.height = scrollHeight + 'px'
-      document.documentElement.style.setProperty('--hex-parent-height', sendHeight + 'px')
     },
     sendTaskMsg: function (msg) {
       // this.showAllMessages = true
@@ -173,9 +144,6 @@ export default {
         })
       this.currentAnswerMessageUid = ''
       this.taskMsg = ''
-      this.$nextTick(function () {
-        this.onInputTaskMsg()
-      })
       this.readTask()
     },
     createTaskMsg: function () {

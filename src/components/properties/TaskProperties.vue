@@ -927,17 +927,7 @@ export default {
       this.showOnlyFiles = false
       this.showAllMessages = false
       this.currentAnswerMessageUid = ''
-      this.$nextTick(function () {
-        this.onInputTaskMsg()
-      })
     }
-  },
-  mounted: function () {
-    this.$nextTick(function () {
-      // Код, который будет запущен только после
-      // отображения всех представлений
-      this.$refs.taskMsgEdit.addEventListener('paste', this.onPasteEvent, { once: true })
-    })
   },
   methods: {
     closeProperties () {
@@ -1381,35 +1371,9 @@ export default {
       }
       this.currentAnswerMessageUid = ''
       this.taskMsg = ''
-      this.$nextTick(function () {
-        this.onInputTaskMsg()
-      })
-    },
-    onInputTaskMsg: function () {
-      // после этого рассчитает новый scrollHeight
-      this.$refs.taskMsgEdit.style.height = '40px'
-      //
-      const defAnswerHeight = this.currentAnswerMessageUid ? 36 + 8 : 0
-      const defSendHeight = 96
-      const defEditHeight = 40
-      const defEditHeightMax = 100
-      const scrollHeight = this.$refs.taskMsgEdit.scrollHeight
-      const scrollHeightFix = scrollHeight < defEditHeight ? defEditHeight : scrollHeight > defEditHeightMax ? defEditHeightMax : scrollHeight
-      const sendHeight = defSendHeight + scrollHeightFix + defAnswerHeight - defEditHeight
-      //
-      this.$refs.taskMsgEdit.style.height = scrollHeight + 'px'
-      document.documentElement.style.setProperty('--hex-parent-height', sendHeight + 'px')
-    },
-    addNewLineTaskMsg: function () {
-      this.taskMsg += '\n'
-      this.$nextTick(function () {
-        this.onInputTaskMsg()
-        this.$refs.taskMsgEdit.scrollTo(0, this.$refs.taskMsgEdit.scrollHeight)
-      })
     },
     onPasteEvent: function (e) {
       const items = (e.clipboardData || e.originalEvent.clipboardData).items
-      let loadFile = false
       for (const index in items) {
         const item = items[index]
         if (item.kind === 'file') {
@@ -1420,7 +1384,6 @@ export default {
             uid_task: this.selectedTask.uid,
             name: formData
           }
-          loadFile = true
           this.isloading = true
           this.$store.dispatch(CREATE_FILES_REQUEST, data).then(
             resp => {
@@ -1433,18 +1396,12 @@ export default {
                   }
                 }
               }
-              // загрузка завершена - подписываемся опять
-              this.$refs.taskMsgEdit.addEventListener('paste', this.onPasteEvent, { once: true })
             })
           setTimeout(() => {
             const elmnt = document.getElementById('content').lastElementChild
             elmnt.scrollIntoView({ behavior: 'smooth' })
           }, 100)
         }
-      }
-      if (!loadFile) {
-        // не вставка файла - подписываемся опять
-        this.$refs.taskMsgEdit.addEventListener('paste', this.onPasteEvent, { once: true })
       }
     },
     onReAssignToUser: function (userEmail) {
@@ -1574,9 +1531,6 @@ export default {
     },
     onAnswerMessage (uid) {
       this.currentAnswerMessageUid = uid
-      this.$nextTick(function () {
-        this.onInputTaskMsg()
-      })
     },
     onChangeChecklist (checklist) {
       const data = {
