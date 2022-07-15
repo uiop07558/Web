@@ -5,7 +5,6 @@ import { PUSH_BOARD } from '../actions/boards'
 import { PUSH_COLOR, PUSH_MYCOLOR } from '../actions/colors'
 import { PUSH_DEPARTMENT } from '../actions/departments'
 import { PUSH_EMPLOYEE, PUSH_EMPLOYEE_BY_EMAIL } from '../actions/employees'
-import { REGLAMENTS_REQUEST } from '../actions/reglaments'
 import {
   NAVIGATOR_CHANGE_EMPLOYEE_DEPARTMENT,
   NAVIGATOR_ERROR,
@@ -75,11 +74,6 @@ const actions = {
       axios({ url: url, method: 'GET' })
         .then((resp) => {
           resp.rootState = rootState
-
-          // requesting reglaments from inspector's VPS /
-          dispatch(REGLAMENTS_REQUEST, rootState.user.user.owner_email).then(respReglaments => {
-            resp.data.reglaments = { uid: 'fake-uid', items: respReglaments.data }
-          })
 
           commit(NAVIGATOR_SUCCESS, resp)
           if (resp.data.emps.items) {
