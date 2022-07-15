@@ -35,7 +35,7 @@ export default {
   methods: {
     onAddAnswer () {
       console.log(this.question)
-      this.answers.push({ text: 'new answer', uid: 'fake_uid' })
+      this.answers.push({ text: 'new answer', uid: this.uuidv4() })
     },
     onSelectAnswer (uid) {
       for (let i = 0; i < this.answers.length; i++) {
@@ -56,10 +56,10 @@ export default {
         ).toString(16)
       )
     },
-    onDeleteAnswer () {
+    onDeleteAnswer (uid) {
       this.showDeleteAnswer = false
       for (let i = 0; i < this.answers.length; i++) {
-        if (this.answers[i].uid === 'fake_uid') {
+        if (this.answers[i].uid === uid) {
           this.answers.splice(i, 1)
         }
       }
@@ -99,8 +99,8 @@ export default {
       />
     </div>
     <template
-      v-for="(answer, index) in answers"
-      :key="index"
+      v-for="(answer) in answers"
+      :key="answer.uid"
     >
       <ReglamentAnswer
         class="mb-1"
