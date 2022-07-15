@@ -7,7 +7,14 @@ export default {
     BoardModalBoxDelete
   },
   props: {
-    answer: Object
+    answer: {
+      type: Object,
+      default: () => ({})
+    },
+    isEditing: {
+      type: Boolean,
+      default: false
+    }
   },
   emits: ['deleteAnswer', 'setRightAnswer'],
   setup () {
@@ -49,6 +56,7 @@ export default {
       v-html="answer.text"
     />
     <ReglamentAnswerPopMenu
+      :is-editing="isEditing"
       @deleteAnswer="showDeleteAnswer = true"
       @setRightAnswer="rightAnswer = true"
     />

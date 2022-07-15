@@ -76,6 +76,7 @@ export default {
         v-html="question.text"
       />
       <ReglamentQuestionPopMenu
+        v-if="isEditing && canEdit"
         :question="question"
         @deleteQuestion="showDeleteQuestion = true"
       />
@@ -86,6 +87,7 @@ export default {
     >
       <ReglamentAnswer
         class="mb-1"
+        :is-editing="isEditing"
         :answer="answer"
         @deleteAnswer="onDeleteAnswer"
       />
