@@ -93,6 +93,7 @@ import TaskPropsAccessLimitModalBox from '@/components/properties/TaskPropsAcces
 
 import * as PROJECT from '@/store/actions/projects'
 import { NAVIGATOR_REMOVE_PROJECT, NAVIGATOR_REMOVE_REGLAMENT } from '@/store/actions/navigator'
+import { DELETE_REGLAMENT_REQUEST, UPDATE_REGLAMENT_REQUEST } from '@/store/actions/reglaments'
 import { copyText } from 'vue3-clipboard'
 
 export default {
@@ -226,10 +227,12 @@ export default {
     removeProject () {
       this.showConfirm = false
 
-      this.$store.dispatch('asidePropertiesToggle', false)
-      this.$store.commit(NAVIGATOR_REMOVE_REGLAMENT, this.selectedReglament)
-      // выходим выше на один уровень навигации (надеемся что этот проект последний в стеке)
-      this.$store.dispatch('popNavStack')
+      this.$store.dispatch(DELETE_REGLAMENT_REQUEST, this.selectedReglament.uid).then(() => {
+        this.$store.dispatch('asidePropertiesToggle', false)
+        this.$store.commit(NAVIGATOR_REMOVE_REGLAMENT, this.selectedReglament)
+        // выходим выше на один уровень навигации (надеемся что этот проект последний в стеке)
+        this.$store.dispatch('popNavStack')
+      })
     },
     quitProject () {
       this.showConfirmQuit = false
@@ -247,12 +250,17 @@ export default {
       const title = this.currName.trim()
       if (this.isCanEdit && title && this.selectedReglamentName !== title) {
         this.selectedReglament.name = title
-        this.$store.state.greedSource.name = this.selectedReglament.name
+        this.$store.dispatch(UPDATE_REGLAMENT_REQUEST, this.selectedReglament).then(() => {
+          this.$store.state.greedSource.name = this.selectedReglament.name
+        })
       }
     },
     changeReglamentColor (color) {
       if (this.isCanEdit && this.selectedReglamentColor.toLowerCase() !== color) {
-        this.$store.state.greedSource.color = color ?? '#A998B6'
+        this.selectedReglament.color = color ?? '#A998B6'
+        this.$store.dispatch(UPDATE_REGLAMENT_REQUEST, this.selectedReglament).then(() => {
+          this.$store.state.greedSource.color = color ?? '#A998B6'
+        })
       }
     },
     addProjectMember (userEmail) {
