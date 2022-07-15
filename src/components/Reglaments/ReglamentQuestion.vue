@@ -37,6 +37,25 @@ export default {
       console.log(this.question)
       this.answers.push({ text: 'new answer', uid: 'fake_uid' })
     },
+    onSelectAnswer (uid) {
+      for (let i = 0; i < this.answers.length; i++) {
+        if (this.answers[i].uid === uid) {
+          if (this.answers[i].selected) {
+            this.answers[i].selected = false
+            return
+          }
+          this.answers[i].selected = true
+        }
+      }
+    },
+    uuidv4 () {
+      return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, (c) =>
+        (
+          c ^
+          (crypto.getRandomValues(new Uint8Array(1))[0] & (15 >> (c / 4)))
+        ).toString(16)
+      )
+    },
     onDeleteAnswer () {
       this.showDeleteAnswer = false
       for (let i = 0; i < this.answers.length; i++) {
@@ -87,6 +106,7 @@ export default {
         class="mb-1"
         :is-editing="isEditing"
         :answer="answer"
+        @onSelectAnswer="onSelectAnswer"
         @deleteAnswer="onDeleteAnswer"
       />
     </template>

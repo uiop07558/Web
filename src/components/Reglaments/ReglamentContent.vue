@@ -23,8 +23,8 @@ export default {
       text: this.reglament?.content,
       isEditing: false,
       questions: [
-        { text: 'hello world 1', uid: 'fake_uid', answers: [{ text: 'answer 1', uid: 'fake_uid' }, { text: 'answer 2', uid: 'fake_uid' }] },
-        { text: 'hello world 2', uid: 'fake_uid' }
+        { text: 'hello world 1', uid: this.uuidv4(), answers: [{ text: 'answer 1', uid: this.uuidv4(), selected: false }, { text: 'answer 2', uid: this.uuidv4() }] },
+        { text: 'hello world 2', uid: this.uuidv4() }
       ]
     }
   },
@@ -62,13 +62,22 @@ export default {
     onAddQuestion () {
       this.questions.push({ text: 'new question', answers: [{ text: 'test answer' }] })
     },
-    onDeleteQuestion () {
+    onDeleteQuestion (uid) {
+      alert(uid)
       this.showDeleteQuestion = false
       for (let i = 0; i < this.questions.length; i++) {
-        if (this.questions[i].uid === 'fake_uid') {
+        if (this.questions[i].uid === uid) {
           this.questions.splice(i, 1)
         }
       }
+    },
+    uuidv4 () {
+      return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, (c) =>
+        (
+          c ^
+          (crypto.getRandomValues(new Uint8Array(1))[0] & (15 >> (c / 4)))
+        ).toString(16)
+      )
     },
     isEdit () {
       this.currentReglament.content = this.text

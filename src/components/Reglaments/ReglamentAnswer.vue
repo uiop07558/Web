@@ -16,7 +16,7 @@ export default {
       default: false
     }
   },
-  emits: ['deleteAnswer', 'setRightAnswer'],
+  emits: ['deleteAnswer', 'setRightAnswer', 'onSelectAnswer'],
   setup () {
 
   },
@@ -26,10 +26,19 @@ export default {
       rightAnswer: false
     }
   },
+  computed: {
+    selected () {
+      return this.answer.selected
+    }
+  },
   methods: {
     deleteAnswer () {
       this.showDeleteAnswer = false
       this.$emit('deleteAnswer', this.answer.uid)
+    },
+    onSelectAnswer () {
+      if (this.isEditing) return
+      this.$emit('onSelectAnswer', this.answer.uid)
     }
   }
 }
@@ -44,8 +53,9 @@ export default {
     @yes="deleteAnswer"
   />
   <div
-    class="border-[1px] border-[#eaeaea] p-2 px-2 flex justify-between items-start group rounded-[8px] mb-[5px]"
-    :class="{'border-[#d7f7e2] bg-[#e8faee]': rightAnswer}"
+    class="border-[1px] hover:cursor-pointer border-[#eaeaea] p-2 px-2 flex justify-between items-start group rounded-[8px] mb-[5px]"
+    :class="({'border-[#d7f7e2] bg-[#e8faee]': rightAnswer }, {'bg-slate-200': selected})"
+    @click="onSelectAnswer"
   >
     <div
       data-placeholder="Question name"
