@@ -17,9 +17,9 @@ const actions = {
         })
     })
   },
-  [QUESTION.CREATE_REGLAMENT_REQUEST]: ({ commit, dispatch }, data) => {
+  [QUESTION.CREATE_REGLAMENT_QUESTION_REQUEST]: ({ commit, dispatch }, data) => {
     return new Promise((resolve, reject) => {
-      const url = process.env.VUE_APP_INSPECTOR_API + 'reglamenQuestion'
+      const url = process.env.VUE_APP_INSPECTOR_API + 'reglamentQuestion'
       axios({ url: url, method: 'POST', data: data })
         .then(resp => {
           resolve(resp)
@@ -28,9 +28,9 @@ const actions = {
         })
     })
   },
-  [QUESTION.UPDATE_REGLAMENT_REQUEST]: ({ commit, dispatch }, data) => {
+  [QUESTION.UPDATE_REGLAMENT_QUESTION_REQUEST]: ({ commit, dispatch }, data) => {
     return new Promise((resolve, reject) => {
-      const url = process.env.VUE_APP_INSPECTOR_API + 'reglamenQuestion'
+      const url = process.env.VUE_APP_INSPECTOR_API + 'reglamentQuestion'
       axios({ url: url, method: 'PATCH', data: data })
         .then(resp => {
           resolve(resp)
@@ -39,9 +39,9 @@ const actions = {
         })
     })
   },
-  [QUESTION.DELETE_REGLAMENT_REQUEST]: ({ commit, dispatch }, uid) => {
+  [QUESTION.DELETE_REGLAMENT_QUESTION_REQUEST]: ({ commit, dispatch }, uid) => {
     return new Promise((resolve, reject) => {
-      const url = process.env.VUE_APP_INSPECTOR_API + 'reglamenQuestion?uid=' + uid
+      const url = process.env.VUE_APP_INSPECTOR_API + 'reglamentQuestion?uid=' + uid
       axios({ url: url, method: 'DELETE' })
         .then(resp => {
           resolve(resp)
