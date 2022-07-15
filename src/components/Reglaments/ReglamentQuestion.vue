@@ -68,7 +68,7 @@ export default {
       <div
         data-placeholder="Question name"
         class="font-[500] text-[18px] my-3"
-        :contenteditable="true"
+        :contenteditable="isEditing && canEdit"
         @blur="false"
         @keyup="false"
         v-html="question.text"
