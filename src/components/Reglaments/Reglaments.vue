@@ -181,6 +181,20 @@ export default {
       this.showAddReglament = false
       const user = this.$store.state.user.user
       const title = name.trim()
+      const contributors = [
+        {
+          'buharin.m@leadertask.com': {
+            question1: '142',
+            question2: '456'
+          }
+        },
+        {
+          'gashilov.d@leadertask.ru': {
+            question1: '444',
+            question2: '666'
+          }
+        }
+      ]
       if (title) {
         const reglament = {
           bold: 0,
@@ -188,6 +202,7 @@ export default {
           organization: user.owner_email,
           email_creator: user.current_user_email,
           name: title,
+          contributors: contributors,
           content: '',
           uid: this.uuidv4()
         }

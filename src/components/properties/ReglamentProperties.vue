@@ -19,6 +19,7 @@
       @cancel="showConfirmQuit = false"
       @yes="quitProject"
     />
+    <pre>{{ selectedReglament }}</pre>
     <div class="flex justify-between items-center">
       <PopMenu>
         <PropsButtonMenu />
@@ -78,6 +79,11 @@
           @select="changeReglamentColor"
         />
       </div>
+    </div>
+    <div
+      class="mt-[30px] mb-[8px] font-roboto text-[16px] leading-[19px] font-medium text-[#4c4c4d]"
+    >
+      Доступ
     </div>
   </div>
 </template>
