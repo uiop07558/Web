@@ -85,6 +85,17 @@
     >
       Доступ
     </div>
+    <div
+      v-for="contributor in contributors"
+      :key="contributor"
+      class="group w-full h-[34px] flex items-center"
+    >
+      <img
+        :src="employeesByEmail[contributor.email]?.fotolink"
+        class="flex-none border border-[#7e7e80] rounded-[4px] w-[20px] h-[20px] mr-[7px]"
+      >
+      <span class="grow font-roboto text-[13px] leading-[20px] font-medium text-[#4c4c4d] mr-[7px]">{{ employeesByEmail[contributor.email].name }}</span>
+    </div>
   </div>
 </template>
 
@@ -117,7 +128,19 @@ export default {
       showConfirm: false,
       showAccessLimit: false,
       showConfirmQuit: false,
-      currName: ''
+      currName: '',
+      contributors: [
+        {
+          email: 'buharin.m@leadertask.com',
+          question1: '142',
+          question2: '456'
+        },
+        {
+          email: 'gashilov.d@leadertask.ru',
+          question1: '444',
+          question2: '666'
+        }
+      ]
     }
   },
   computed: {
@@ -179,7 +202,7 @@ export default {
     },
     isCanDelete () {
       const user = this.$store.state.user.user
-      return this.selectedReglament.email_creator === user.current_user_email
+      return this.selectedReglament?.email_creator === user.current_user_email
     },
     isCanEdit () {
       return this.isCanDelete
