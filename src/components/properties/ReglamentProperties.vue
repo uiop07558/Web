@@ -7,15 +7,15 @@
     />
     <ModalBoxDelete
       v-if="showConfirm"
-      title="Удалить проект"
-      :text="`Вы действительно хотите удалить проект ${selectedReglamentName}?`"
+      title="Удалить регламент"
+      :text="`Вы действительно хотите удалить регламент ${selectedReglamentName}?`"
       @cancel="showConfirm = false"
       @yes="removeProject"
     />
     <ModalBoxDelete
       v-if="showConfirmQuit"
-      title="Покинуть проект"
-      :text="`Вы действительно хотите покинуть проект ${selectedReglamentName}? Обратно можно попасть, только если владелец проекта опять вас добавит.`"
+      title="Покинуть регламент"
+      :text="`Вы действительно хотите покинуть регламент ${selectedReglamentName}? Обратно можно попасть, только если владелец регламента опять вас добавит.`"
       @cancel="showConfirmQuit = false"
       @yes="quitProject"
     />
