@@ -20,13 +20,13 @@
     </div>
     <template #menu>
       <PopMenuItem
-        icon="delete"
+        icon="check"
         @click="$emit('setRightAnswer')"
       >
-        Пометить ответ как правильный
+        Отметить
       </PopMenuItem>
       <PopMenuItem
-        icon="delete"
+        icon="close"
         @click="$emit('resetRightAnswer')"
       >
         Cбросить
