@@ -75,14 +75,10 @@ export default {
       {{ isEditing ? 'Завершить редактирование' : 'Редактировать' }}
     </PopMenuItem>
   </div>
-  <QuillEditor
+  <div
     v-if="!isEditing"
-    v-model:content="text"
-    content-type="html"
-    theme="snow"
-    :read-only="true"
-    :toolbar="['']"
-    class="max-h-72 mb-5 bg-white"
+    class="max-h-72 mb-5 bg-white ql-container ql-snow p-2"
+    v-html="text"
   />
   <QuillEditor
     v-if="isEditing"
@@ -113,5 +109,4 @@ export default {
 </template>
 
 <style scoped>
-
 </style>

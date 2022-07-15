@@ -1,5 +1,4 @@
 <template>
-  <pre></pre>
   <PopMenu>
     <div
       class="cursor-pointer invisible group-hover:visible mt-[3px]"
