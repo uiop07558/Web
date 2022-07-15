@@ -42,6 +42,18 @@ export default {
       return this.$store.state.user.user
     }
   },
+  watch: {
+    isEditing (newval, oldval) {
+      if (!newval) {
+        setTimeout(() => {
+          document.querySelector('div.ql-toolbar').remove()
+        }, 50)
+      }
+    }
+  },
+  mounted () {
+    document.querySelector('div.ql-toolbar').remove()
+  },
   methods: {
     onAddQuestion () {
       this.questions.push({ text: 'new question', answers: [{ text: 'test answer' }] })
@@ -75,19 +87,20 @@ export default {
       {{ isEditing ? 'Завершить редактирование' : 'Редактировать' }}
     </PopMenuItem>
   </div>
-  <div
+  <QuillEditor
     v-if="!isEditing"
-    class="max-h-72 mb-5 bg-white ql-container ql-snow p-2"
-    v-html="text"
+    v-model:content="text"
+    content-type="html"
+    :read-only="true"
+    :toolbar="['']"
+    class="h-auto mb-5 bg-white"
   />
   <QuillEditor
     v-if="isEditing"
     v-model:content="text"
     content-type="html"
-    theme="snow"
     :toolbar="'full'"
-    placeholder="Текст регламента..."
-    class="max-h-72 mb-5 bg-white"
+    class="h-auto mb-5 bg-white"
   />
   <template
     v-for="(question , index) in questions"
