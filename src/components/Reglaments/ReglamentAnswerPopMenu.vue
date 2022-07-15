@@ -21,14 +21,14 @@
     <template #menu>
       <PopMenuItem
         v-if="!isEditing"
-        icon="delete"
+        icon="check"
         @click="$emit('setRightAnswer')"
       >
-        Пометить ответ как правильный
+        Отметить
       </PopMenuItem>
       <PopMenuItem
         v-if="!isEditing"
-        icon="delete"
+        icon="close"
         @click="$emit('resetRightAnswer')"
       >
         Cбросить
