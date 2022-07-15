@@ -2,8 +2,8 @@
   <div class="flex items-center gap-[10px]">
     <BoardModalBoxDelete
       v-if="showDeleteProject"
-      title="Удалить проект"
-      text="Вы действительно хотите удалить проект?"
+      title="Удалить регламент"
+      text="Вы действительно хотите удалить регламент?"
       @cancel="showDeleteProject = false"
       @yes="onDeleteProject"
     />

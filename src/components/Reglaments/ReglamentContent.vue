@@ -72,7 +72,6 @@ export default {
       this.questions.push(question)
     },
     onDeleteQuestion (uid) {
-      alert(uid)
       this.showDeleteQuestion = false
       for (let i = 0; i < this.questions.length; i++) {
         if (this.questions[i].uid === uid) {
@@ -84,6 +83,9 @@ export default {
       this.currentReglament.content = this.text
       this.$store.dispatch('UPDATE_REGLAMENT_REQUEST', this.currentReglament)
       this.isEditing = !this.isEditing
+    },
+    clickComplete () {
+      this.$store.dispatch('popNavStack')
     }
   }
 }
@@ -133,6 +135,18 @@ export default {
       @click.stop="onAddQuestion"
     />
   </div>
+  <div
+    v-if="!isEditing"
+    class="flex justify-end"
+  >
+    <button
+      class="flex items-end bg-[#FF912380] p-3 px-10 rounded-[8px] text-black text-sm mr-1 hover:bg-[#F5DEB3]"
+      @click="clickComplete"
+    >
+      Завершить
+    </button>
+  </div>
+  <div class="h-[20px]" />
 </template>
 
 <style scoped>
