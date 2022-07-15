@@ -1,12 +1,10 @@
 <script>
-import ListBlocAdd from '@/components/Common/ListBlocAdd.vue'
 import ReglamentAnswer from './ReglamentAnswer.vue'
 import ReglamentQuestionPopMenu from './ReglamentQuestionPopMenu.vue'
 import BoardModalBoxDelete from '@/components/Board/BoardModalBoxDelete.vue'
 export default {
   components: {
     ReglamentAnswer,
-    ListBlocAdd,
     ReglamentQuestionPopMenu,
     BoardModalBoxDelete
   },
@@ -92,11 +90,13 @@ export default {
         @deleteAnswer="onDeleteAnswer"
       />
     </template>
-    <ListBlocAdd
+    <button
       v-if="canEdit && isEditing"
-      class="mt-5"
+      class="ml-[5px] mt-2 font-[300] text-[14px] bg-[#F4F5F7] p-1 px-3 rounded-[5px] hover:cursor-pointer transition hover:opacity-[0.6]"
       @click.stop="onAddAnswer"
-    />
+    >
+      Добавить ответ
+    </button>
   </div>
 </template>
 
