@@ -161,7 +161,7 @@ export default {
         this.showMessagesLimit = true
         return
       }
-      const files = event.target.files
+      const files = event.target.files ? event.target.files : event.dataTransfer.files
       const formData = new FormData()
       for (let i = 0; i < files.length; i++) {
         const file = files[i]
