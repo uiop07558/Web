@@ -14,6 +14,10 @@ export default {
     question: {
       type: Object,
       default: () => ({})
+    },
+    isEditing: {
+      type: Boolean,
+      default: false
     }
   },
   emits: ['deleteQuestion', 'deleteAnswer', 'setRightAnswer'],
@@ -87,7 +91,7 @@ export default {
       />
     </template>
     <ListBlocAdd
-      v-if="canEdit"
+      v-if="canEdit && isEditing"
       class="mt-5"
       @click.stop="onAddAnswer"
     />
