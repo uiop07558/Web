@@ -56,6 +56,7 @@ export default {
       v-html="answer.text"
     />
     <ReglamentAnswerPopMenu
+      v-if="isEditing"
       :is-editing="isEditing"
       @deleteAnswer="showDeleteAnswer = true"
       @setRightAnswer="rightAnswer = true"

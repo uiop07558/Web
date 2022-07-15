@@ -1,4 +1,5 @@
 <template>
+  <pre></pre>
   <PopMenu>
     <div
       class="cursor-pointer invisible group-hover:visible mt-[3px]"
@@ -20,21 +21,21 @@
     </div>
     <template #menu>
       <PopMenuItem
-        v-if="!isEditing"
+        v-show="isEditing"
         icon="delete"
         @click="$emit('setRightAnswer')"
       >
         Пометить ответ как правильный
       </PopMenuItem>
       <PopMenuItem
-        v-if="!isEditing"
+        v-show="isEditing"
         icon="delete"
         @click="$emit('resetRightAnswer')"
       >
         Cбросить
       </PopMenuItem>
       <PopMenuItem
-        v-if="isEditing"
+        v-show="isEditing"
         icon="delete"
         @click="$emit('deleteAnswer')"
       >
