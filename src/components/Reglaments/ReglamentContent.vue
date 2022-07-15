@@ -98,13 +98,14 @@ export default {
     :key="index"
   >
     <ReglamentQuestion
+      :is-editing="isEditing"
       :question="question"
       @deleteQuestion="onDeleteQuestion"
     />
   </template>
   <div class="flex w-full pb-5">
     <ListBlocAdd
-      v-if="canEdit"
+      v-if="canEdit && isEditing"
       class="mt-5 w-full"
       @click.stop="onAddQuestion"
     />
