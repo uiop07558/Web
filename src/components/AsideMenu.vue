@@ -45,7 +45,8 @@ export default {
       warn,
       showFreeModal: false,
       modalOneActive: false,
-      lastVisitedDate: this.navStack && this.navStack.length && this.navStack[this.navStack.length - 1] && this.navStack[this.navStack.length - 1].uid && this.navStack[this.navStack.length - 1].uid === '901841d9-0016-491d-ad66-8ee42d2b496b' && this.navStack[this.navStack.length - 1].param ? new Date(this.navStack[this.navStack.length - 1].param) : new Date()
+      lastVisitedDate: this.navStack && this.navStack.length && this.navStack[this.navStack.length - 1] && this.navStack[this.navStack.length - 1].uid && this.navStack[this.navStack.length - 1].uid === '901841d9-0016-491d-ad66-8ee42d2b496b' && this.navStack[this.navStack.length - 1].param ? new Date(this.navStack[this.navStack.length - 1].param) : new Date(),
+      currentSettingsTab: 'account'
     }
   },
   computed: {
@@ -79,9 +80,6 @@ export default {
     storeNavigator () {
       return this.$store.state.navigator.navigator
     },
-    navig () {
-      return this.$store.state.navig
-    },
     getNavigatorLanguage () {
       return (navigator.languages && navigator.languages.length) ? navigator.languages[0] : navigator.userLanguage || navigator.language || navigator.browserLanguage || 'en'
     }
@@ -92,6 +90,9 @@ export default {
       this.$store.dispatch(AUTH_LOGOUT)
       this.$router.push('/login')
       if (this.isPropertiesMobileExpanded) { this.$store.dispatch('asidePropertiesToggle', false) }
+    },
+    changeSettingsTab (tabName) {
+      this.currentSettingsTab = tabName
     },
     dateToLabelFormat (calendarDate) {
       const day = calendarDate.getDate()
@@ -195,17 +196,11 @@ export default {
       this.$store.commit('basic', { key: 'mainSectionState', value: 'tasks' })
     },
     TitleName () {
-      if (this.navig === 0) return ('Аккаунт')
-      else if (this.navig === 1) return ('Тариф')
-      else if (this.navig === 2) return ('Основное')
-      else if (this.navig === 3) return ('Изменение пароля')
-      else if (this.navig === 4) return ('Карма')
-    },
-    accs () {
-      this.$store.commit('basic', { key: 'navig', value: 0 })
-    },
-    tarifs () {
-      this.$store.commit('basic', { key: 'navig', value: 1 })
+      if (this.currentSettingsTab === 'account') return ('Аккаунт')
+      else if (this.currentSettingsTab === 'tarif') return ('Тариф')
+      else if (this.currentSettingsTab === 'main') return ('Основное')
+      else if (this.currentSettingsTab === 'changePassword') return ('Изменение пароля')
+      else if (this.currentSettingsTab === 'karma') return ('Карма')
     }
   }
 }
@@ -216,32 +211,32 @@ export default {
   <modal-box
     v-model="modalOneActive"
     :title="TitleName()"
-    @acc="accs()"
-    @tarif="tarifs()"
+    @currentSettingsTab="changeSettingsTab"
   >
     <DoitnowLimit
       v-if="showFreeModal"
       @cancel="showFreeModal = false"
     />
     <acc-modal
-      v-if="navig === 0"
+      v-if="currentSettingsTab === 'account'"
+      @currentSettingsTab="changeSettingsTab ('tarif')"
       class="text-lg"
       @AccLogout="logout()"
     />
     <acc-tarif
-      v-if="navig === 1"
+      v-if="currentSettingsTab === 'tarif'"
       class="text-lg"
     />
     <acc-modal-pass
-      v-if="navig === 3"
+      v-if="currentSettingsTab === 'changePassword'"
       class="text-lg"
     />
     <acc-option
-      v-if="navig === 2"
+      v-if="currentSettingsTab === 'main'"
       class="text-lg"
     />
     <acc-karma
-      v-if="navig === 4"
+      v-if="currentSettingsTab === 'karma'"
       class="text-lg"
     />
   </modal-box>

@@ -26,8 +26,6 @@ export default createStore({
     greedPath: null,
     greedSource: null,
     taskListSource: null,
-
-    navig: 0,
     isGridView: true,
 
     /* Properties state: (project, task, color, tag, empmloyee) */
