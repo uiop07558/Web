@@ -88,7 +88,7 @@ export default {
     </PopMenuItem>
   </div>
   <QuillEditor
-    v-if="!isEditing"
+    v-if="!isEditing && text.length"
     v-model:content="text"
     content-type="html"
     :read-only="true"
