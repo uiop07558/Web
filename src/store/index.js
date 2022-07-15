@@ -14,6 +14,7 @@ import employees from './modules/employees'
 import departments from './modules/departments'
 import projects from './modules/projects'
 import reglaments from './modules/reglaments'
+import reglamentQuestions from './modules/reglament_questions'
 import boards from './modules/boards'
 import cards from './modules/cards'
 import colors from './modules/colors'
@@ -150,6 +151,7 @@ export default createStore({
     departments,
     projects,
     reglaments,
+    reglamentQuestions,
     boards,
     cards,
     colors,
