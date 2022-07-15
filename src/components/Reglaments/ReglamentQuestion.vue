@@ -90,7 +90,7 @@ export default {
         :contenteditable="isEditing && canEdit"
         @blur="false"
         @keyup="false"
-        v-html="question.text"
+        v-html="question.name"
       />
       <ReglamentQuestionPopMenu
         v-if="isEditing && canEdit"

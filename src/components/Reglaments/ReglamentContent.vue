@@ -23,8 +23,8 @@ export default {
       text: this.reglament?.content,
       isEditing: false,
       questions: [
-        { text: 'hello world 1', uid: this.uuidv4(), answers: [{ text: 'answer 1', uid: this.uuidv4(), selected: false }, { text: 'answer 2', uid: this.uuidv4() }] },
-        { text: 'hello world 2', uid: this.uuidv4() }
+        { name: 'hello world 1', uid: this.uuidv4(), answers: [{ text: 'answer 1', uid: this.uuidv4(), selected: false }, { text: 'answer 2', uid: this.uuidv4() }] },
+        { name: 'hello world 2', uid: this.uuidv4() }
       ]
     }
   },
@@ -68,8 +68,10 @@ export default {
       )
     },
     onAddQuestion () {
-      const question = { uid: this.uuidv4(), text: 'new question', uid_reglament: this.reglament.uid }
-      this.questions.push(question)
+      const question = { uid: this.uuidv4(), name: 'new question', uid_reglament: this.reglament.uid }
+      this.$store.dispatch('CREATE_REGLAMENT_QUESTION_REQUEST', question).then(() => {
+        this.questions.push(question)
+      })
     },
     onDeleteQuestion (uid) {
       this.showDeleteQuestion = false
