@@ -20,7 +20,7 @@ export default {
   },
   data () {
     return {
-      text: '',
+      text: this.reglament?.content,
       isEditing: false,
       questions: [
         { text: 'hello world 1', uid: 'fake_uid', answers: [{ text: 'answer 1', uid: 'fake_uid' }, { text: 'answer 2', uid: 'fake_uid' }] },
@@ -55,6 +55,8 @@ export default {
       }
     },
     isEdit () {
+      this.currentReglament.content = this.text
+      this.$store.dispatch('UPDATE_REGLAMENT_REQUEST', this.currentReglament)
       this.isEditing = !this.isEditing
     }
   }
