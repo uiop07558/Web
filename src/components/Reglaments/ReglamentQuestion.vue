@@ -16,12 +16,13 @@ export default {
       default: () => ({})
     }
   },
-  emits: ['deleteQuestion', 'deleteAnswer'],
+  emits: ['deleteQuestion', 'deleteAnswer', 'setRightAnswer'],
   data () {
     return {
       answers: this?.question?.answers ?? [],
       showDeleteQuestion: false,
-      showDeleteAnswer: false
+      showDeleteAnswer: false,
+      rightAnswer: false
     }
   },
   computed: {

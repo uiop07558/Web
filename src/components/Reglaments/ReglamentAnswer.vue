@@ -9,13 +9,14 @@ export default {
   props: {
     answer: Object
   },
-  emits: ['deleteAnswer'],
+  emits: ['deleteAnswer', 'setRightAnswer'],
   setup () {
 
   },
   data () {
     return {
-      showDeleteAnswer: false
+      showDeleteAnswer: false,
+      rightAnswer: false
     }
   },
   methods: {
@@ -35,7 +36,10 @@ export default {
     @cancel="showDeleteAnswer = false"
     @yes="deleteAnswer"
   />
-  <div class="border-b-[1px] border-[#eaeaea] p-1 px-1 flex justify-between items-start group">
+  <div
+    v-if="!rightAnswer"
+    class="border-[1px] border-[#eaeaea] p-2 px-2 flex justify-between items-start group rounded-[8px] mb-[5px]"
+  >
     <div
       data-placeholder="Question name"
       class="font-[300] text-[14px]"
@@ -46,6 +50,26 @@ export default {
     />
     <ReglamentAnswerPopMenu
       @deleteAnswer="showDeleteAnswer = true"
+      @setRightAnswer="rightAnswer = true"
+    />
+  </div>
+
+  <div
+    v-if="rightAnswer"
+    class="border-[1px] border-[#d7f7e2] bg-[#e8faee] p-2 px-2 flex justify-between items-start group rounded-[8px] mb-[5px]"
+  >
+    <div
+      data-placeholder="Question name"
+      class="font-[300] text-[14px]"
+      :contenteditable="true"
+      @blur="false"
+      @keyup="false"
+      v-html="answer.text"
+    />
+    <ReglamentAnswerPopMenu
+      @deleteAnswer="showDeleteAnswer = true"
+      @setRightAnswer="rightAnswer = true"
+      @resetRightAnswer="rightAnswer = false"
     />
   </div>
 </template>

@@ -1,11 +1,11 @@
 <template>
   <PopMenu>
     <div
-      class="hover:-m-px hover:border hover:rounded-sm cursor-pointer invisible group-hover:visible"
+      class="cursor-pointer invisible group-hover:visible mt-[13px]"
     >
       <svg
-        width="18"
-        height="18"
+        width="21"
+        height="21"
         viewBox="0 0 18 18"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
