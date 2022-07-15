@@ -1,11 +1,11 @@
 <template>
   <PopMenu>
     <div
-      class="hover:-m-px hover:border hover:rounded-sm cursor-pointer invisible group-hover:visible"
+      class="cursor-pointer invisible group-hover:visible mt-[3px]"
     >
       <svg
-        width="13"
-        height="13"
+        width="18"
+        height="18"
         viewBox="0 0 18 18"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
@@ -19,6 +19,18 @@
       </svg>
     </div>
     <template #menu>
+      <PopMenuItem
+        icon="delete"
+        @click="$emit('setRightAnswer')"
+      >
+        Пометить ответ как правильный
+      </PopMenuItem>
+      <PopMenuItem
+        icon="delete"
+        @click="$emit('resetRightAnswer')"
+      >
+        Cбросить
+      </PopMenuItem>
       <PopMenuItem
         icon="delete"
         @click="$emit('deleteAnswer')"
@@ -37,7 +49,7 @@ export default {
     PopMenu,
     PopMenuItem
   },
-  emits: ['deleteAnswer']
+  emits: ['deleteAnswer', 'setRightAnswer', 'resetRightAnswer']
 }
 
 </script>
