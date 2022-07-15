@@ -1,12 +1,12 @@
 <script setup>
-import { ref, computed } from 'vue'
-const emit = defineEmits(['update:modelValue', 'createCardMessage', 'createCardFile', 'onPaste'])
+import { ref, computed, nextTick } from 'vue'
+const emit = defineEmits(['update:modelValue', 'createCardMessage', 'createCardFile', 'onPaste', 'cantWriteMessages'])
 
 const props = defineProps({
   canAddFiles: Boolean,
   modelValue: String
 })
-
+const taskMsgEdit = ref(null)
 const drag = ref(false)
 const dragStartHandler = () => {
   drag.value = true
@@ -25,6 +25,31 @@ const computedValue = computed({
     emit('update:modelValue', value)
   }
 })
+
+const onInputTaskMsg = () => {
+  taskMsgEdit.value.style.height = '40px'
+  const scrollHeight = taskMsgEdit.value.scrollHeight
+  taskMsgEdit.value.style.height = scrollHeight + 'px'
+}
+
+const addNewLineTaskMsg = () => {
+  emit('update:modelValue', computedValue.value + '\n')
+  nextTick(() => {
+    onInputTaskMsg()
+    taskMsgEdit.value.scrollTo(0, taskMsgEdit.value.scrollHeight)
+  })
+}
+
+const createCardMessage = () => {
+  taskMsgEdit.value.style.height = ''
+  emit('createCardMessage', computedValue.value)
+}
+
+const cantWriteHandler = () => {
+  if (!props.canAddFiles) {
+    emit('cantWriteMessages')
+  }
+}
 </script>
 <template>
   <div
@@ -56,6 +81,7 @@ const computedValue = computed({
     <div
       v-else
       class="flex w-full"
+      @click="cantWriteHandler"
     >
       <div class="rounded-l-[10px] flex items-center justify-center bg-[#F4F5F7] pl-[15px]">
         <label
@@ -106,14 +132,16 @@ const computedValue = computed({
 
       <textarea
         id="card-message-textarea"
+        ref="taskMsgEdit"
         v-model="computedValue"
-        class="bg-[#F4F5F7] py-[10px] pr-[15px] pl-[10px] text-[#656566] w-full text-[14px] border-none focus:ring-0 scroll-style"
-        style="resize: none;"
+        class="max-h-[100px] resize-none bg-[#F4F5F7] py-[10px] pr-[15px] pl-[10px] text-[#656566] w-full text-[14px] border-none focus:ring-0 scroll-style"
         rows="1"
         type="text"
         placeholder="Напишите сообщение..."
+        @input="onInputTaskMsg"
         @paste="$emit('onPaste', $event)"
-        @keydown.enter.exact.prevent="$emit('createCardMessage', computedValue.value)"
+        @keydown.enter.exact.prevent="createCardMessage"
+        @keydown.enter.shift.exact.prevent="addNewLineTaskMsg"
       />
 
       <div
@@ -121,7 +149,7 @@ const computedValue = computed({
       >
         <div
           class="rounded-[8px] flex items-center justify-center min-w-[32px] min-h-[32px] bg-[#E0E1E3] hover:bg-white cursor-pointer"
-          @click="$emit('createCardMessage', computedValue.value)"
+          @click="createCardMessage"
         >
           <svg
             width="14"
