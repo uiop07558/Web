@@ -20,18 +20,21 @@
     </div>
     <template #menu>
       <PopMenuItem
+        v-if="!isEditing"
         icon="delete"
         @click="$emit('setRightAnswer')"
       >
         Пометить ответ как правильный
       </PopMenuItem>
       <PopMenuItem
+        v-if="!isEditing"
         icon="delete"
         @click="$emit('resetRightAnswer')"
       >
         Cбросить
       </PopMenuItem>
       <PopMenuItem
+        v-if="isEditing"
         icon="delete"
         @click="$emit('deleteAnswer')"
       >
@@ -48,6 +51,12 @@ export default {
   components: {
     PopMenu,
     PopMenuItem
+  },
+  props: {
+    isEditing: {
+      type: Boolean,
+      default: false
+    }
   },
   emits: ['deleteAnswer', 'setRightAnswer', 'resetRightAnswer']
 }
