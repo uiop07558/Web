@@ -699,7 +699,7 @@
       />
     </div>
   </div>
-  <div class="w-full">
+  <div class="w-full relative">
     <img
       v-if="isloading"
       src="/ajaxloader.gif"
@@ -742,14 +742,15 @@
         </div>
       </div>
     </div>
-    <card-message-input
-      v-if="true"
-      v-model="taskMsg"
-      :can-add-files="user.tarif !== 'free'"
-      @cantWriteMessages="showFreeModalChat = true"
-      @createCardMessage="sendTaskMsg()"
-      @createCardFile="createTaskFile($event)"
-    />
+    <div class="fixed bottom-0 w-[340px] bg-white pt-2 pb-5">
+      <card-message-input
+        v-model="taskMsg"
+        :can-add-files="user.tarif !== 'free'"
+        @cantWriteMessages="showFreeModalChat = true"
+        @createCardMessage="sendTaskMsg()"
+        @createCardFile="createTaskFile($event)"
+      />
+    </div>
   </div>
 </template>
 
