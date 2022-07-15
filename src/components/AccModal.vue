@@ -11,7 +11,7 @@ export default {
     ModalBox,
     BoardModalBoxRename
   },
-  emits: ['AccLogout'],
+  emits: ['AccLogout', 'currentSettingsTab'],
   data () {
     return {
       showEditname: false,
@@ -40,8 +40,8 @@ export default {
     }
   },
   methods: {
-    tarif () {
-      this.$store.commit('basic', { key: 'navig', value: 1 })
+    changeCurrentTab (tabName) {
+      this.$emit('currentSettingsTab', tabName)
     },
     logout () {
       this.$emit('AccLogout')
@@ -228,11 +228,11 @@ export default {
         </p>
         <div class="mt-2">
           <button
-            class="border-gray-400 font-normal border rounded-md p-2.5 text-gray-600 mt-2 text-sm landing-4"
+            class="font-normal text-sm landing-4"
             type="button"
-            @click="tarif()"
+            @click="changeCurrentTab ('tarif')"
           >
-            Управление тарифом
+            <p class="border border-gray-400 rounded-md p-2.5 text-gray-600 mt-2">Управление тарифом </p>
           </button>
         </div>
         <div class="mt-6">
