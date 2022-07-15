@@ -83,10 +83,12 @@ const actions = {
         })
     })
   },
-  [AUTH_CHANGE_PASSWORD]: ({ commit }, data) => {
-    console.log(data)
+  [AUTH_CHANGE_PASSWORD]: (
+    { commit },
+    data
+  ) => {
     return new Promise((resolve, reject) => {
-      commit(AUTH_CHANGE_PASSWORD)
+      // commit(AUTH_CHANGE_PASSWORD) unknown
       const url = process.env.VUE_APP_LEADERTASK_API + 'api/v1/users/password'
       axios({ url: url, data: data, method: 'PATCH' })
         .then((resp) => {
@@ -97,17 +99,18 @@ const actions = {
         })
         .catch((err) => {
           commit(AUTH_ERROR, err)
-          localStorage.removeItem('user-token')
-          notify(
-            {
-              group: 'api',
-              title: 'REST API Error, please make screenshot',
-              action: AUTH_CHANGE_PASSWORD,
-              text: err.response?.data ?? err
-            },
-            15000
-          )
-          reject(err)
+          reject(err.response.data)
+          if (err.response?.data?.error !== 'old_password invalid') {
+            notify(
+              {
+                group: 'api',
+                title: 'REST API Error, please make screenshot',
+                action: AUTH_CHANGE_PASSWORD,
+                text: err.response?.data ?? err
+              },
+              15000
+            )
+          }
         })
     })
   },
