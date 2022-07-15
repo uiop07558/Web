@@ -23,8 +23,8 @@ export default {
       text: this.reglament?.content,
       isEditing: false,
       questions: [
-        { text: 'hello world 1', uid: 'fake_uid', answers: [{ text: 'answer 1', uid: 'fake_uid' }, { text: 'answer 2', uid: 'fake_uid' }] },
-        { text: 'hello world 2', uid: 'fake_uid' }
+        { text: 'hello world 1', uid: this.uuidv4(), answers: [{ text: 'answer 1', uid: this.uuidv4(), selected: false }, { text: 'answer 2', uid: this.uuidv4() }] },
+        { text: 'hello world 2', uid: this.uuidv4() }
       ]
     }
   },
@@ -42,6 +42,22 @@ export default {
       return this.$store.state.user.user
     }
   },
+  watch: {
+    isEditing (newval, oldval) {
+      if (!newval) {
+        setTimeout(() => {
+          try {
+            document.querySelector('div.ql-toolbar').remove()
+          } catch (e) {}
+        }, 50)
+      }
+    }
+  },
+  mounted () {
+    try {
+      document.querySelector('div.ql-toolbar').remove()
+    } catch (e) {}
+  },
   methods: {
     uuidv4 () {
       return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, (c) =>
@@ -55,13 +71,22 @@ export default {
       const question = { uid: this.uuidv4(), text: 'new question', uid_reglament: this.reglament.uid }
       this.questions.push(question)
     },
-    onDeleteQuestion () {
+    onDeleteQuestion (uid) {
+      alert(uid)
       this.showDeleteQuestion = false
       for (let i = 0; i < this.questions.length; i++) {
-        if (this.questions[i].uid === 'fake_uid') {
+        if (this.questions[i].uid === uid) {
           this.questions.splice(i, 1)
         }
       }
+    },
+    uuidv4 () {
+      return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, (c) =>
+        (
+          c ^
+          (crypto.getRandomValues(new Uint8Array(1))[0] & (15 >> (c / 4)))
+        ).toString(16)
+      )
     },
     isEdit () {
       this.currentReglament.content = this.text
@@ -84,19 +109,20 @@ export default {
       {{ isEditing ? 'Завершить редактирование' : 'Редактировать' }}
     </PopMenuItem>
   </div>
-  <div
-    v-if="!isEditing"
-    class="max-h-72 mb-5 bg-white ql-container ql-snow p-2"
-    v-html="text"
+  <QuillEditor
+    v-if="!isEditing && text.length"
+    v-model:content="text"
+    content-type="html"
+    :read-only="true"
+    :toolbar="['']"
+    class="h-auto mb-5 bg-white"
   />
   <QuillEditor
     v-if="isEditing"
     v-model:content="text"
     content-type="html"
-    theme="snow"
     :toolbar="'full'"
-    placeholder="Текст регламента..."
-    class="max-h-72 mb-5 bg-white"
+    class="h-auto mb-5 bg-white"
   />
   <template
     v-for="(question , index) in questions"
