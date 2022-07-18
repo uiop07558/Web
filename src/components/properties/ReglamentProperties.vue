@@ -19,7 +19,6 @@
       @cancel="showConfirmQuit = false"
       @yes="quitProject"
     />
-    <pre>{{ selectedReglament }}</pre>
     <div class="flex justify-between items-center">
       <PopMenu>
         <PropsButtonMenu />
