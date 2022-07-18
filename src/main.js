@@ -35,13 +35,20 @@ if (token) {
 }
 
 // Add a response interceptor
-axios.interceptors.response.use((resp) => resp, function (error) {
-  const errorMessage = error?.response?.data.error
-  if (errorMessage.includes('invalid token') || errorMessage.includes('token expired')) {
-    store.dispatch('AUTH_REFRESH_TOKEN')
+axios.interceptors.response.use(
+  (resp) => resp,
+  function (error) {
+    console.log('axios.interceptors.response error', error)
+    const errorMessage = error?.response?.data.error
+    if (
+      errorMessage?.includes('invalid token') ||
+      errorMessage?.includes('token expired')
+    ) {
+      store.dispatch('AUTH_REFRESH_TOKEN')
+    }
+    return Promise.reject(error)
   }
-  return Promise.reject(error)
-})
+)
 
 store.commit('basic', { key: 'isGridView', value: isGridView })
 

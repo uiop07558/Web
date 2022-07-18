@@ -1,14 +1,15 @@
 import { REFRESH_FILES } from '@/store/actions/taskfiles'
 import {
+  REFRESH_CHAT_MESSAGES, REFRESH_INSPECTOR_MESSAGES,
   // MESSAGES_REQUEST,
   // INSPECTOR_MESSAGES_REQUEST,
   REFRESH_MESSAGES
 } from '@/store/actions/taskmessages'
+import { visitChildren } from '@/store/helpers/functions'
 import axios from 'axios'
 import { notify } from 'notiwind'
 import { PUSH_COLOR } from '../actions/colors'
 import * as TASK from '../actions/tasks'
-import { visitChildren } from '@/store/helpers/functions'
 
 function arrayRemove (arr, value) {
   return arr.filter(function (ele) {
@@ -795,6 +796,8 @@ const actions = {
     }
 
     commit(REFRESH_FILES)
+    commit(REFRESH_CHAT_MESSAGES)
+    commit(REFRESH_INSPECTOR_MESSAGES)
     commit(REFRESH_MESSAGES)
     commit(TASK.SELECT_TASK, data)
 

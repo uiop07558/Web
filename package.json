@@ -2,12 +2,9 @@
   "name": "leadertask-web",
   "version": "2.0.0",
   "scripts": {
-    "dev": "vite --host",
     "serve": "vue-cli-service serve --mode development",
     "serve-inspector": "vue-cli-service serve --mode inspector",
-    "serve:vite": "vite preview",
     "build": "vue-cli-service build",
-    "build:vite": "vite build",
     "lint": "vue-cli-service lint",
     "lint:fix": "vue-cli-service lint --fix"
   },

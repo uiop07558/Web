@@ -1,7 +1,7 @@
 <script setup>
 import { ref, nextTick, defineEmits } from 'vue'
 import { useStore } from 'vuex'
-import { GETFILES } from '@/store/actions/taskfiles'
+import { GET_FILE } from '@/store/actions/taskfiles'
 import ChatLoader from '@/components/CardProperties/ChatLoader.vue'
 import { writeCache } from '@/store/helpers/functions'
 // use the component
@@ -14,13 +14,25 @@ const props = defineProps({
 })
 const emit = defineEmits(['setLink'])
 
-const pics = ['jpg', 'png', 'jpeg', 'git', 'bmp', 'gif', 'PNG', 'JPG', 'JPEG', 'BMP', 'GIF']
+const pics = [
+  'jpg',
+  'png',
+  'jpeg',
+  'git',
+  'bmp',
+  'gif',
+  'PNG',
+  'JPG',
+  'JPEG',
+  'BMP',
+  'GIF'
+]
 const movies = ['mov', 'mp4', 'wmv', 'avi', 'avchd', 'mkv', 'webm', 'mpeg-2']
 const docs = ['doc', 'xls', 'xlsx', 'txt', 'pdf']
 const audio = ['mp3', 'wav', 'm4a']
 const isImageLoaded = ref(false)
 
-const b64toBlob = (base64) => fetch(base64).then(res => res.blob())
+const b64toBlob = (base64) => fetch(base64).then((res) => res.blob())
 
 const getImgUrl = (uid, extension, filename) => {
   // computed value triggered after template change
@@ -29,7 +41,7 @@ const getImgUrl = (uid, extension, filename) => {
   if (cachedImageBase64) {
     // we nee to wait until hidden messages will be drawn
     nextTick(() => {
-      b64toBlob(cachedImageBase64).then(blobImage => {
+      b64toBlob(cachedImageBase64).then((blobImage) => {
         const fileURL = window.URL.createObjectURL(blobImage)
         const myImage = new Image()
         myImage.src = cachedImageBase64
@@ -40,26 +52,33 @@ const getImgUrl = (uid, extension, filename) => {
       })
     })
   } else {
-    store.dispatch(GETFILES, uid).then(resp => {
-      writeCache(uid, new Blob([resp.data], { type: 'image/' + extension }))
-      const fileURL = window.URL.createObjectURL(new Blob([resp.data], { type: 'image/' + extension }))
-      const myImage = new Image()
-      myImage.src = fileURL
-      document.getElementById('img_' + uid).appendChild(myImage)
-      isImageLoaded.value = true
-      document.getElementById('img_' + uid).setAttribute('href', fileURL)
-      document.getElementById('img_' + uid).style.maxHeight = '100px'
-      return myImage
-    }).catch(
-      setTimeout(() => { // bug fix: https://beta.leadertask.ru/task/0fe60f4b-496c-4587-a6a4-6de2f66951d3
-        getImgUrl(uid, extension, filename)
-      }, 500)
-    )
+    store
+      .dispatch(GET_FILE, uid)
+      .then((resp) => {
+        writeCache(uid, new Blob([resp.data], { type: 'image/' + extension }))
+        const fileURL = window.URL.createObjectURL(
+          new Blob([resp.data], { type: 'image/' + extension })
+        )
+        const myImage = new Image()
+        myImage.src = fileURL
+        document.getElementById('img_' + uid).appendChild(myImage)
+        isImageLoaded.value = true
+        document.getElementById('img_' + uid).setAttribute('href', fileURL)
+        document.getElementById('img_' + uid).style.maxHeight = '100px'
+        return myImage
+      })
+      .catch(
+        setTimeout(() => {
+          // bug fix: https://beta.leadertask.ru/task/0fe60f4b-496c-4587-a6a4-6de2f66951d3
+          getImgUrl(uid, extension, filename)
+        }, 500)
+      )
   }
 }
 
 const getMovUrl = (uid, extension, filename) => {
-  const fileURL = window.location.href + 'taskfile/' + uid + '?type=video&format=' + extension
+  const fileURL =
+    window.location.href + 'taskfile/' + uid + '?type=video&format=' + extension
   nextTick(() => {
     document.getElementById('video_' + uid).setAttribute('href', fileURL)
   })
@@ -67,8 +86,10 @@ const getMovUrl = (uid, extension, filename) => {
 
 const getDocUrl = (uid, extension, filename) => {
   console.log('GETMOVEURL')
-  store.dispatch(GETFILES, uid).then(resp => {
-    const fileURL = window.URL.createObjectURL(new Blob([resp.data], { type: 'text/plain' }))
+  store.dispatch(GET_FILE, uid).then((resp) => {
+    const fileURL = window.URL.createObjectURL(
+      new Blob([resp.data], { type: 'text/plain' })
+    )
     emit('setLink', [fileURL, false])
     document.getElementById('doc_' + uid).setAttribute('href', fileURL)
     document.getElementById('doc_' + uid).setAttribute('download', filename)
@@ -77,8 +98,10 @@ const getDocUrl = (uid, extension, filename) => {
 }
 
 const getAudioUrl = (uid, extension, filename) => {
-  store.dispatch(GETFILES, uid).then(resp => {
-    const fileURL = window.URL.createObjectURL(new Blob([resp.data], { type: 'audio/' + extension }))
+  store.dispatch(GET_FILE, uid).then((resp) => {
+    const fileURL = window.URL.createObjectURL(
+      new Blob([resp.data], { type: 'audio/' + extension })
+    )
     emit('setLink', [fileURL, true])
     const myAudio = new Audio()
     myAudio.src = fileURL
@@ -91,7 +114,7 @@ const getAudioUrl = (uid, extension, filename) => {
 
 const getAnyUrl = (uid, extension, filename) => {
   console.log('GETANYURL')
-  store.dispatch(GETFILES, uid).then(resp => {
+  store.dispatch(GET_FILE, uid).then((resp) => {
     const fileURL = window.URL.createObjectURL(new Blob([resp.data]))
     emit('setLink', [fileURL, false])
     document.getElementById('any_' + uid).setAttribute('href', fileURL)
@@ -100,7 +123,6 @@ const getAnyUrl = (uid, extension, filename) => {
     return fileURL
   })
 }
-
 </script>
 
 <template>
@@ -111,10 +133,18 @@ const getAnyUrl = (uid, extension, filename) => {
   >
     <a
       :id="'img_' + props.file.uid"
-      :href="'https://web.leadertask.com/User/Files/GetFile?uid=' + props.file.uid"
+      :href="
+        'https://web.leadertask.com/User/Files/GetFile?uid=' + props.file.uid
+      "
       target="_blank"
     >
-      {{ getImgUrl(props.file.uid, props.file.file_name.split('.').pop(), props.file.file_name) }}
+      {{
+        getImgUrl(
+          props.file.uid,
+          props.file.file_name.split('.').pop(),
+          props.file.file_name
+        )
+      }}
       <ChatLoader
         v-if="!isImageLoaded"
         width="250px"
@@ -125,13 +155,19 @@ const getAnyUrl = (uid, extension, filename) => {
   </span>
 
   <!-- Movie -->
-  <span
-    v-if="movies.includes(props.file.file_name.split('.').pop())"
-  >
-    {{ getMovUrl(props.file.uid, props.file.file_name.split('.').pop(), props.file.file_name) }}
+  <span v-if="movies.includes(props.file.file_name.split('.').pop())">
+    {{
+      getMovUrl(
+        props.file.uid,
+        props.file.file_name.split('.').pop(),
+        props.file.file_name
+      )
+    }}
     <a
       :id="'video_' + props.file.uid"
-      :href="'https://web.leadertask.com/User/Files/GetFile?uid=' + props.file.uid"
+      :href="
+        'https://web.leadertask.com/User/Files/GetFile?uid=' + props.file.uid
+      "
       target="_blank"
     >
       <svg
@@ -160,7 +196,13 @@ const getAnyUrl = (uid, extension, filename) => {
       :id="'doc_' + props.file.uid"
       target="_blank"
       download
-      @click="getDocUrl(props.file.uid, props.file.file_name.split('.').pop(), props.file.file_name)"
+      @click="
+        getDocUrl(
+          props.file.uid,
+          props.file.file_name.split('.').pop(),
+          props.file.file_name
+        )
+      "
     >
       <svg
         v-if="props.file.file_name.split('.').pop() === 'pdf'"
@@ -196,10 +238,14 @@ const getAnyUrl = (uid, extension, filename) => {
   </span>
 
   <!-- Audio -->
-  <span
-    v-if="audio.includes(props.file.file_name.split('.').pop())"
-  >
-    {{ getAudioUrl(props.file.uid, props.file.file_name.split('.').pop(), props.file.file_name) }}
+  <span v-if="audio.includes(props.file.file_name.split('.').pop())">
+    {{
+      getAudioUrl(
+        props.file.uid,
+        props.file.file_name.split('.').pop(),
+        props.file.file_name
+      )
+    }}
     <audio
       :id="'audio_' + props.file.uid"
       ref="audioPlayer"
@@ -220,10 +266,21 @@ const getAnyUrl = (uid, extension, filename) => {
       :id="'any_' + props.file.uid"
       target="_blank"
       download
-      @click="getAnyUrl(props.file.uid, props.file.file_name.split('.').pop(), props.file.file_name)"
+      @click="
+        getAnyUrl(
+          props.file.uid,
+          props.file.file_name.split('.').pop(),
+          props.file.file_name
+        )
+      "
     >
       <svg
-        v-if="!docs.includes(props.file.file_name.split('.').pop()) && !audio.includes(props.file.file_name.split('.').pop()) && !movies.includes(props.file.file_name.split('.').pop()) && !pics.includes(props.file.file_name.split('.').pop())"
+        v-if="
+          !docs.includes(props.file.file_name.split('.').pop()) &&
+            !audio.includes(props.file.file_name.split('.').pop()) &&
+            !movies.includes(props.file.file_name.split('.').pop()) &&
+            !pics.includes(props.file.file_name.split('.').pop())
+        "
         width="22"
         height="27"
         viewBox="0 0 74 89"
