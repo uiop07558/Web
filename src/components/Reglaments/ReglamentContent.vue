@@ -69,10 +69,16 @@ export default {
         ).toString(16)
       )
     },
+    gotoNode (uid) {
+      this.$refs[uid][0].onFocus()
+    },
     onAddQuestion () {
       const question = { uid: this.uuidv4(), name: 'new question', uid_reglament: this.reglament.uid }
       this.$store.dispatch('CREATE_REGLAMENT_QUESTION_REQUEST', question).then(() => {
         this.questions.push(question)
+        this.$nextTick(() => {
+          this.gotoNode(question.uid)
+        })
       })
     },
     onDeleteQuestion (uid) {
@@ -91,7 +97,14 @@ export default {
       this.isEditing = !this.isEditing
     },
     clickComplete () {
-      this.$store.dispatch('popNavStack')
+      const data = {
+        uid_user: this.user.current_user_uid,
+        uid_reglament: this.reglament.uid,
+        answerJson: JSON.stringify(this.questions)
+      }
+      this.$store.dispatch('CRATE_USER_REGLAMENT_ANSWER', data).then(
+        this.$store.dispatch('popNavStack')
+      )
     }
   }
 }
@@ -129,9 +142,11 @@ export default {
     :key="index"
   >
     <ReglamentQuestion
+      :ref="question.uid"
       :is-editing="isEditing"
       :question="question"
       @deleteQuestion="onDeleteQuestion"
+      @addQuestion="onAddQuestion"
     />
   </template>
   <div class="flex w-full pb-5">
@@ -142,7 +157,7 @@ export default {
     />
   </div>
   <div
-    v-if="!isEditing"
+    v-if="!(isEditing || questions.length <= 0)"
     class="flex justify-end"
   >
     <button
