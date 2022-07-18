@@ -156,9 +156,9 @@ export default {
   >
     <div class="flex flex-col w-full">
       <div>
-        <!-- <p class="mb-[10px] mt-[10px]">
+        <p class="mb-[10px] mt-[10px]">
           Введите старый пароль
-        </p> -->
+        </p>
         <input
           v-model="oldPassword"
           type="text"
@@ -269,7 +269,9 @@ export default {
             type="button"
             @click="changeCurrentTab ('tarif')"
           >
-            <p class="border border-gray-400 rounded-md p-2.5 text-gray-600 mt-2">Управление тарифом </p>
+            <p class="border border-gray-400 rounded-md p-2.5 text-gray-600 mt-2">
+              Управление тарифом
+            </p>
           </button>
         </div>
         <div class="mt-6">
