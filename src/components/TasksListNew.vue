@@ -555,7 +555,9 @@ export default {
     },
     countChecklist (checklist) {
       const data = { done: 0, undone: 0 }
-      for (const line of checklist.split('\r\n\r\n')) {
+      // нормализуем перенос сторки (разные на windows и на mac)
+      const chlist = checklist.replaceAll('\r\n', '\n').replaceAll('\r', '\n').replaceAll('\n', '\r\n')
+      for (const line of chlist.split('\r\n\r\n')) {
         data.undone++
         if (+line.split('\r\n')[0] === 1) {
           data.done++
