@@ -7,7 +7,7 @@ import {
   FILES_REQUEST,
   FILES_SUCCESS,
   FILE_SUCCESS,
-  GETFILES,
+  GET_FILE,
   MERGE_FILES_WITH_MESSAGES,
   MYFILES,
   REFRESH_FILES,
@@ -22,6 +22,8 @@ import {
   MESSAGES_ERROR,
   MESSAGES_REQUEST,
   MESSAGES_SUCCESS,
+  REFRESH_CHAT_MESSAGES,
+  REFRESH_INSPECTOR_MESSAGES,
   REFRESH_MESSAGES,
   REMOVE_MESSAGE_LOCALLY
 } from '../actions/taskmessages'
@@ -31,6 +33,7 @@ import axios from 'axios'
 const state = {
   /* messages */
   messages: [],
+  chatMessages: [],
   inspectorMessages: [],
   status: '',
   hasLoadedOnce: false,
@@ -57,19 +60,16 @@ const actions = {
         taskUid
       axios({ url: url, method: 'GET', signal: fileAbortController.signal })
         .then((resp) => {
-          commit(REFRESH_FILES)
           commit(FILES_SUCCESS, resp)
           resolve(resp)
         })
         .catch((err) => {
-          commit(REFRESH_FILES)
           commit(FILES_ERROR)
           reject(err)
         })
     })
   },
-  //  GetFiles
-  [GETFILES]: ({ commit, dispatch }, uid) => {
+  [GET_FILE]: ({ commit, dispatch }, uid) => {
     return new Promise((resolve, reject) => {
       const url =
         process.env.VUE_APP_LEADERTASK_API + 'api/v1/tasksfiles/file?uid=' + uid
@@ -274,7 +274,7 @@ const mutations = {
   },
   [MESSAGES_SUCCESS]: (state, resp) => {
     state.status = 'success'
-    state.messages = resp.data.msgs
+    state.chatMessages = resp.data.msgs
     state.hasLoadedOnce = true
   },
   [INSPECTOR_MESSAGES_SUCCESS]: (state, resp) => {
@@ -286,9 +286,6 @@ const mutations = {
   [MESSAGES_ERROR]: (state) => {
     state.status = 'error'
     state.hasLoadedOnce = true
-  },
-  [REFRESH_MESSAGES]: (state) => {
-    state.messages = []
   },
   [CREATE_MESSAGE_REQUEST]: (state, data) => {
     // check if inspector message is already in chat messages
@@ -362,6 +359,15 @@ const mutations = {
     state.status = 'error'
     state.hasLoadedOnce = true
   },
+  [REFRESH_CHAT_MESSAGES]: (state) => {
+    state.chatMessages = []
+  },
+  [REFRESH_INSPECTOR_MESSAGES]: (state) => {
+    state.inspectorMessages = []
+  },
+  [REFRESH_MESSAGES]: (state) => {
+    state.messages = []
+  },
   [REFRESH_FILES]: (state) => {
     state.files = []
   },
@@ -375,16 +381,17 @@ const mutations = {
       item.msg = item.file_name
     })
 
-    state.messages = state.messages.concat(state.files)
-    state.files = []
-    state.messages = state.messages.concat(state.inspectorMessages)
+    state.messages = [
+      ...state.chatMessages,
+      ...state.files,
+      ...state.inspectorMessages
+    ]
+    state.messages.forEach((item) => {
+      if (!item.date_create.includes('Z')) {
+        item.date_create += 'Z'
+      }
+    })
     state.messages.sort((a, b) => {
-      if (!a.file_name && !a.date_create.includes('Z')) {
-        a.date_create += 'Z'
-      }
-      if (!b.file_name && !b.date_create.includes('Z')) {
-        b.date_create += 'Z'
-      }
       return new Date(a.date_create) - new Date(b.date_create)
     })
   },

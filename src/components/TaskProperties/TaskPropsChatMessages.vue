@@ -26,6 +26,7 @@
         <!-- Облачко с текстом -->
         <TaskPropsChatMessageText
           v-if="message.isMessage && !showOnlyFiles"
+          :print="print('TaskPropsChatMessageText', message)"
           :class="message.isMyMessage ? 'mr-2' : 'ml-2'"
           :is-my-message="message.isMyMessage"
           :deleted-status="message.deleted"
@@ -225,6 +226,9 @@ export default {
     }
   },
   methods: {
+    print (msg, val) {
+      val ? console.log(msg, val) : console.log(msg)
+    },
     readTask () {
       this.$emit('readTask')
     },
