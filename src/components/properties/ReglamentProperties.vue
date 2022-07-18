@@ -79,8 +79,8 @@
     </div>
     <ReglamentPropsUser
       v-for="contributor in contributors"
-      :key="contributor.email"
-      :contributor="contributor"
+      :key="contributor.uid_user"
+      :user-uid="contributor.uid_user"
     />
   </div>
 </template>
@@ -116,18 +116,7 @@ export default {
       showAccessLimit: false,
       showConfirmQuit: false,
       currName: '',
-      contributors: [
-        {
-          email: 'buharin.m@leadertask.com',
-          question1: '142',
-          question2: '456'
-        },
-        {
-          email: 'gashilov.d@leadertask.ru',
-          question1: '444',
-          question2: '666'
-        }
-      ]
+      contributors: []
     }
   },
   computed: {
@@ -212,6 +201,11 @@ export default {
         this.currName = val
       }
     }
+  },
+  mounted () {
+    this.$store.dispatch('GET_USERS_REGLAMENT_ANSWERS', this.selectedReglament.uid).then(resp => {
+      this.contributors = resp.data
+    })
   },
   methods: {
     removeReglament () {

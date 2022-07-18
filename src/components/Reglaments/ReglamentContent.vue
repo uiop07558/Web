@@ -97,7 +97,14 @@ export default {
       this.isEditing = !this.isEditing
     },
     clickComplete () {
-      this.$store.dispatch('popNavStack')
+      const data = {
+        uid_user: this.user.current_user_uid,
+        uid_reglament: this.reglament.uid,
+        answerJson: JSON.stringify(this.questions)
+      }
+      this.$store.dispatch('CRATE_USER_REGLAMENT_ANSWER', data).then(
+        this.$store.dispatch('popNavStack')
+      )
     }
   }
 }

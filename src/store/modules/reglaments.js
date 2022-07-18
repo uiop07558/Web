@@ -8,7 +8,7 @@ const state = {
 const actions = {
   [REGLAMENTS.REGLAMENT_REQUEST]: ({ commit, dispatch }, uidReglament) => {
     return new Promise((resolve, reject) => {
-      const url = process.env.VUE_APP_INSPECTOR_API + 'reglament?uid=' + uidReglament
+      const url = process.env.VUE_APP_INSPECTOR_API + 'reglament?uid_reglament=' + uidReglament
       axios({ url: url, method: 'GET' })
         .then(resp => {
           resolve(resp)
@@ -43,6 +43,28 @@ const actions = {
     return new Promise((resolve, reject) => {
       const url = process.env.VUE_APP_INSPECTOR_API + 'reglaments'
       axios({ url: url, method: 'PATCH', data: data })
+        .then(resp => {
+          resolve(resp)
+        }).catch(err => {
+          reject(err)
+        })
+    })
+  },
+  [REGLAMENTS.CRATE_USER_REGLAMENT_ANSWER]: ({ commit, dispatch }, data) => {
+    return new Promise((resolve, reject) => {
+      const url = process.env.VUE_APP_INSPECTOR_API + 'userReglamentAnswer'
+      axios({ url: url, method: 'POST', data: data })
+        .then(resp => {
+          resolve(resp)
+        }).catch(err => {
+          reject(err)
+        })
+    })
+  },
+  [REGLAMENTS.GET_USERS_REGLAMENT_ANSWERS]: ({ commit, dispatch }, uidReglament) => {
+    return new Promise((resolve, reject) => {
+      const url = process.env.VUE_APP_INSPECTOR_API + 'userReglamentAnswers?uid_reglament=' + uidReglament
+      axios({ url: url, method: 'GET' })
         .then(resp => {
           resolve(resp)
         }).catch(err => {
