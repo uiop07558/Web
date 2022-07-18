@@ -1,6 +1,6 @@
 <template>
   <div
-    class="w-full"
+    class="w-full pb-[28px]"
   >
     <BoardModalBoxRename
       v-if="showAddDep"
