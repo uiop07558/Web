@@ -139,6 +139,7 @@ export default {
       :is-editing="isEditing"
       :question="question"
       @deleteQuestion="onDeleteQuestion"
+      @addQuestion="onAddQuestion"
     />
   </template>
   <div class="flex w-full pb-5">

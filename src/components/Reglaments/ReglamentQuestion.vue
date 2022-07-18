@@ -19,7 +19,7 @@ export default {
       default: false
     }
   },
-  emits: ['deleteQuestion', 'deleteAnswer', 'setRightAnswer'],
+  emits: ['deleteQuestion', 'deleteAnswer', 'setRightAnswer', 'addQuestion'],
   expose: ['onFocus'],
   data () {
     return {
@@ -127,6 +127,7 @@ export default {
         :contenteditable="isEditing && canEdit"
         @blur="changeQuestionName($event)"
         @keyup="changeQuestionName($event)"
+        @keydown.enter.exact.prevent="$emit('addQuestion')"
         v-html="question.name"
       />
       <ReglamentQuestionPopMenu
