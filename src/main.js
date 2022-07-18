@@ -41,15 +41,13 @@ axios.interceptors.response.use((resp) => resp, function (error) {
   if (errorMessage.includes('invalid token') || errorMessage.includes('token expired')) {
     store.dispatch('AUTH_REFRESH_TOKEN')
   }
-  if (Promise.reject(error)) {
-    if (!avoidedErrorMessages.includes(errorMessage)) {
-      notify({
-        group: 'api',
-        title: 'REST API Error, please make screenshot',
-        action: '',
-        text: error.response?.data ?? error
-      }, 15000)
-    }
+  if (!avoidedErrorMessages.includes(errorMessage)) {
+    notify({
+      group: 'api',
+      title: 'REST API Error, please make screenshot',
+      action: '',
+      text: error.response?.data ?? error
+    }, 15000)
   }
   return Promise.reject(error)
 })
