@@ -7,11 +7,6 @@
       @cancel="showAddReglament = false"
       @save="onAddNewReglament"
     />
-    <ProjectModalBoxProjectsLimit
-      v-if="showProjectsLimit"
-      @cancel="showProjectsLimit = false"
-      @ok="showProjectsLimit = false"
-    />
     <div>
       <div class="flex justify-between w-full">
         <p class="font-['Roboto'] text-[#424242] text-[19px] leading-[22px] font-bold">
@@ -74,7 +69,6 @@
 <script>
 import Icon from '@/components/Icon.vue'
 import BoardModalBoxRename from '@/components/Board/BoardModalBoxRename.vue'
-import ProjectModalBoxProjectsLimit from '@/components/ProjectModalBoxProjectsLimit.vue'
 import { setLocalStorageItem } from '@/store/helpers/functions'
 import ReglamentBlocItem from '@/components/Projects/ProjectBlocItem.vue'
 import ListBlocAdd from '@/components/Common/ListBlocAdd.vue'
@@ -92,7 +86,6 @@ export default {
     BoardModalBoxRename,
     ReglamentBlocItem,
     ListBlocAdd,
-    ProjectModalBoxProjectsLimit,
     EmptyTasksListPics
   },
   props: {
@@ -103,7 +96,6 @@ export default {
   },
   data () {
     return {
-      showProjectsLimit: false,
       showAddReglament: false,
       gridView,
       listView
@@ -169,24 +161,17 @@ export default {
       )
     },
     clickAddReglament () {
-      const user = this.$store.state.user.user
-      // если лицензия истекла
-      if (Object.keys(this.$store.state.projects.projects).length >= 10 && user.days_left <= 0) {
-        this.showProjectsLimit = true
-        return
-      }
       this.showAddReglament = true
     },
     onAddNewReglament (name) {
       this.showAddReglament = false
-      const user = this.$store.state.user.user
       const title = name.trim()
       if (title) {
         const reglament = {
           bold: 0,
           color: '',
-          organization: user.owner_email,
-          email_creator: user.current_user_email,
+          organization: this.user.owner_email,
+          email_creator: this.user.current_user_email,
           name: title,
           content: '',
           uid: this.uuidv4()
