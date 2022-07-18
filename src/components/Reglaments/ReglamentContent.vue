@@ -140,7 +140,7 @@ export default {
     />
   </div>
   <div
-    v-if="!isEditing"
+    v-if="!(isEditing || questions.length <= 0)"
     class="flex justify-end"
   >
     <button
