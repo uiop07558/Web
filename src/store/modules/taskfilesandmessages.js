@@ -278,7 +278,6 @@ const mutations = {
     state.hasLoadedOnce = true
   },
   [INSPECTOR_MESSAGES_SUCCESS]: (state, resp) => {
-    console.log('inspectors resp ', resp.data)
     state.status = 'success'
     state.inspectorMessages = resp.data
     state.hasLoadedOnce = true

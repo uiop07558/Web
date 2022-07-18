@@ -42,7 +42,6 @@ export default {
   }),
   computed: {
     commentHtmlText () {
-      console.log('commentHtmlText', this.comment)
       return this.comment.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('\n', '<br/>')
     },
     placeholderComment () {
@@ -55,7 +54,6 @@ export default {
     comment: {
       immediate: true,
       handler: function (val) {
-        console.log('watch comment', this.comment)
         this.currText = val
       }
     }
