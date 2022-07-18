@@ -69,8 +69,7 @@
       class="mt-3 h-32 break-words"
       :comment="selectedCard?.comment"
       :can-edit="canEdit"
-      @endChangeComment="endChangeComment"
-      @blur="endChangeComment"
+      @changeComment="changeComment"
     />
     <!-- Chat skeleton -->
     <MessageSkeleton v-if="status=='loading'" />
@@ -256,9 +255,11 @@ export default {
       )
     },
 
-    endChangeComment (text) {
-      const data = { cardUid: this.selectedCard?.uid, comment: text }
+    changeComment (text) {
+      if (!this.selectedCard) return
+      const data = { cardUid: this.selectedCard.uid, comment: text }
       this.$store.dispatch(CHANGE_CARD_COMMENT, data)
+      this.selectedCard.comment = text
     },
 
     createCardFile (event) {
@@ -276,7 +277,6 @@ export default {
         uid_card: this.selectedCard?.uid,
         name: formData
       }
-      console.log(data)
       this.$store.dispatch(CREATE_FILES_REQUEST, data).then(() => {
         if (this.selectedCard) this.selectedCard.has_files = true
         this.scrollDown()
@@ -293,7 +293,6 @@ export default {
     },
 
     deleteCardFileMessage (uid) {
-      console.log('DLEETING FILE MESSAGE')
       this.$store.dispatch(DELETE_FILE_REQUEST, uid)
     },
 

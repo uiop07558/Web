@@ -1,6 +1,7 @@
 import { REFRESH_FILES } from '@/store/actions/taskfiles'
 import {
-  REFRESH_CHAT_MESSAGES, REFRESH_INSPECTOR_MESSAGES,
+  REFRESH_CHAT_MESSAGES,
+  REFRESH_INSPECTOR_MESSAGES,
   // MESSAGES_REQUEST,
   // INSPECTOR_MESSAGES_REQUEST,
   REFRESH_MESSAGES
@@ -9,6 +10,7 @@ import { visitChildren } from '@/store/helpers/functions'
 import axios from 'axios'
 import { notify } from 'notiwind'
 import { PUSH_COLOR } from '../actions/colors'
+import { NAVIGATOR_UPDATE_ASSIGNMENTS } from '../actions/navigator'
 import * as TASK from '../actions/tasks'
 
 function arrayRemove (arr, value) {
@@ -185,7 +187,10 @@ const actions = {
   },
   [TASK.GET_TASK_CHILDRENS]: ({ commit, dispatch }, uid) => {
     return new Promise((resolve, reject) => {
-      const url = process.env.VUE_APP_LEADERTASK_API + 'api/v1/tasks/withparent?value=' + uid
+      const url =
+        process.env.VUE_APP_LEADERTASK_API +
+        'api/v1/tasks/withparent?value=' +
+        uid
       axios({ url: url, method: 'GET' })
         .then((resp) => {
           console.log(resp.data)
@@ -378,9 +383,21 @@ const actions = {
         'api/v1/tasks/withdate?value=' +
         formattedDate
       Promise.all([
-        axios({ url: urlUnread, method: 'GET', signal: doitnowAbortController.signal }),
-        axios({ url: urlOverdue, method: 'GET', signal: doitnowAbortController.signal }),
-        axios({ url: urlToday, method: 'GET', signal: doitnowAbortController.signal })
+        axios({
+          url: urlUnread,
+          method: 'GET',
+          signal: doitnowAbortController.signal
+        }),
+        axios({
+          url: urlOverdue,
+          method: 'GET',
+          signal: doitnowAbortController.signal
+        }),
+        axios({
+          url: urlToday,
+          method: 'GET',
+          signal: doitnowAbortController.signal
+        })
       ])
         .then((respAll) => {
           const unreadTasks = [...respAll[0].data.tasks]
@@ -772,6 +789,9 @@ const actions = {
               commit(TASK.ADD_TASK, resp.data)
             }
           }
+          if (resp.data.type === 2) {
+            dispatch(NAVIGATOR_UPDATE_ASSIGNMENTS)
+          }
           resolve(resp)
         })
         .catch((err) => {
@@ -875,6 +895,9 @@ const actions = {
       })
         .then((resp) => {
           commit(TASK.UPDATE_TASK, resp.data.tasks[0])
+          if (resp.data.tasks[0].type === 2) {
+            dispatch(NAVIGATOR_UPDATE_ASSIGNMENTS)
+          }
           resolve(resp)
         })
         .catch((err) => {
@@ -900,6 +923,9 @@ const actions = {
       })
         .then((resp) => {
           commit(TASK.REMOVE_TASK, uid)
+          //
+          dispatch(NAVIGATOR_UPDATE_ASSIGNMENTS)
+          //
           resolve(resp)
         })
         .catch((err) => {
@@ -1027,6 +1053,8 @@ const actions = {
         method: 'PATCH'
       })
         .then((resp) => {
+          dispatch(NAVIGATOR_UPDATE_ASSIGNMENTS)
+          //
           resolve(resp)
         })
         .catch((err) => {
@@ -1056,6 +1084,8 @@ const actions = {
         method: 'PATCH'
       })
         .then((resp) => {
+          dispatch(NAVIGATOR_UPDATE_ASSIGNMENTS)
+          //
           resolve(resp)
         })
         .catch((err) => {
@@ -1429,7 +1459,7 @@ const actions = {
 
 const mutations = {
   [TASK.REMOVE_TAG_REQUEST]: (state, uid) => {
-    visitChildren([state.tags[uid]], value => (delete state.tags[value.uid]))
+    visitChildren([state.tags[uid]], (value) => delete state.tags[value.uid])
     delete state.tags[uid]
   },
   [TASK.PUSH_TAG]: (state, resp) => {

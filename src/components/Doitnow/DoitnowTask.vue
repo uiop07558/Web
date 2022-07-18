@@ -183,7 +183,6 @@
         class="mt-3"
         :comment="task.comment"
         :can-edit="task.uid_customer === user.current_user_uid"
-        @endChangeComment="endChangeComment"
         @changeComment="onChangeComment"
       />
       <Checklist
@@ -632,15 +631,13 @@ export default {
     pad2 (n) {
       return (n < 10 ? '0' : '') + n
     },
-    endChangeComment (text) {
-      this.$emit('changeValue', { comment: text })
-    },
     onChangeComment (text) {
       const data = {
         uid: this.task.uid,
         value: text
       }
       this.$store.dispatch(TASK.CHANGE_TASK_COMMENT, data)
+      this.$emit('changeValue', { comment: text })
     },
     _linkify (text) {
       return text.replace(/(lt?:\/\/[^\s]+)/g, '<a href="$1">$1</a>')
