@@ -16,7 +16,7 @@ export default {
       default: false
     }
   },
-  emits: ['deleteAnswer', 'setRightAnswer', 'onSelectAnswer'],
+  emits: ['deleteAnswer', 'setRightAnswer', 'onSelectAnswer', 'resetRightAnswer'],
   setup () {
 
   },
@@ -39,6 +39,13 @@ export default {
     onSelectAnswer () {
       if (this.isEditing) return
       this.$emit('onSelectAnswer', this.answer.uid)
+    },
+    setRightAnswer () {
+      this.rightAnswer = true
+      this.$emit('setRightAnswer', this.answer)
+    },
+    resetRightAnswer () {
+      this.rightAnswer = false
     }
   }
 }
@@ -68,9 +75,9 @@ export default {
     <ReglamentAnswerPopMenu
       v-if="isEditing"
       :is-editing="isEditing"
-      @deleteAnswer="showDeleteAnswer = true"
-      @setRightAnswer="rightAnswer = true"
-      @resetRightAnswer="rightAnswer = false"
+      @deleteAnswer="deleteAnswer"
+      @setRightAnswer="setRightAnswer"
+      @resetRightAnswer="showDeleteAnswer = true"
     />
   </div>
 </template>

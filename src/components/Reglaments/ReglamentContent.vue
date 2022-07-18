@@ -3,6 +3,7 @@ import { QuillEditor } from '@vueup/vue-quill'
 import ListBlocAdd from '@/components/Common/ListBlocAdd.vue'
 import ReglamentQuestion from './ReglamentQuestion.vue'
 import PopMenuItem from '@/components/modals/PopMenuItem.vue'
+
 import '@vueup/vue-quill/dist/vue-quill.snow.css'
 
 export default {
@@ -22,6 +23,7 @@ export default {
     return {
       text: this.reglament?.content,
       isEditing: false,
+      answers: [],
       questions: []
     }
   },
