@@ -323,6 +323,7 @@ const mutations = {
     state.status = 'loading'
   },
   [CARD.SELECT_CARD]: (state, card) => {
+    if (card) console.log('select card', card)
     state.selectedCard = card
   },
   [CARD.BOARD_CARDS_SUCCESS]: (state, resp) => {
