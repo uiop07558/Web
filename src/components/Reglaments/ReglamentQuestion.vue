@@ -86,6 +86,13 @@ export default {
     deleteQuestion () {
       this.showDeleteQuestion = false
       this.$emit('deleteQuestion', this.question.uid)
+    },
+    changeQuestionName (event) {
+      const data = {
+        uid: this.question.uid,
+        name: event.target.innerText
+      }
+      this.$store.dispatch('UPDATE_REGLAMENT_QUESTION_REQUEST', data)
     }
   }
 }
@@ -107,8 +114,8 @@ export default {
         data-placeholder="Question name"
         class="font-[500] text-[18px] my-3"
         :contenteditable="isEditing && canEdit"
-        @blur="false"
-        @keyup="false"
+        @blur="changeQuestionName($event)"
+        @keyup="changeQuestionName($event)"
         v-html="question.name"
       />
       <ReglamentQuestionPopMenu

@@ -23,11 +23,8 @@ export default {
     return {
       text: this.reglament?.content,
       isEditing: false,
-      questions: [
-        { name: 'hello world 1', uid: this.uuidv4(), answers: [{ name: 'answer 1', uid: this.uuidv4(), selected: false, is_right: false }] },
-        { name: 'hello world 2', uid: this.uuidv4() }
-      ],
-      answers: []
+      answers: [],
+      questions: []
     }
   },
   computed: {
@@ -56,6 +53,9 @@ export default {
     }
   },
   mounted () {
+    this.$store.dispatch('REGLAMENT_REQUEST', this.reglament.uid).then(resp => {
+      this.questions = [...resp.data]
+    })
     try {
       document.querySelector('div.ql-toolbar').remove()
     } catch (e) {}
@@ -76,12 +76,14 @@ export default {
       })
     },
     onDeleteQuestion (uid) {
-      this.showDeleteQuestion = false
-      for (let i = 0; i < this.questions.length; i++) {
-        if (this.questions[i].uid === uid) {
-          this.questions.splice(i, 1)
+      this.$store.dispatch('DELETE_REGLAMENT_QUESTION_REQUEST', uid).then(() => {
+        this.showDeleteQuestion = false
+        for (let i = 0; i < this.questions.length; i++) {
+          if (this.questions[i].uid === uid) {
+            this.questions.splice(i, 1)
+          }
         }
-      }
+      })
     },
     isEdit () {
       this.currentReglament.content = this.text
