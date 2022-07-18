@@ -74,12 +74,14 @@ export default {
       })
     },
     onDeleteQuestion (uid) {
-      this.showDeleteQuestion = false
-      for (let i = 0; i < this.questions.length; i++) {
-        if (this.questions[i].uid === uid) {
-          this.questions.splice(i, 1)
+      this.$store.dispatch('DELETE_REGLAMENT_QUESTION_REQUEST', uid).then(() => {
+        this.showDeleteQuestion = false
+        for (let i = 0; i < this.questions.length; i++) {
+          if (this.questions[i].uid === uid) {
+            this.questions.splice(i, 1)
+          }
         }
-      }
+      })
     },
     isEdit () {
       this.currentReglament.content = this.text
