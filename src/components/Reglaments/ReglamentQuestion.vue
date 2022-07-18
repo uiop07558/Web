@@ -1,5 +1,6 @@
 <script>
 import ReglamentAnswer from './ReglamentAnswer.vue'
+import * as ANSWER from '@/store/actions/reglament_answers.js'
 import ReglamentQuestionPopMenu from './ReglamentQuestionPopMenu.vue'
 import BoardModalBoxDelete from '@/components/Board/BoardModalBoxDelete.vue'
 export default {
@@ -34,8 +35,24 @@ export default {
   },
   methods: {
     onAddAnswer () {
-      console.log(this.question)
-      this.answers.push({ text: 'new answer', uid: this.uuidv4() })
+      const data = {
+        name: 'new answer',
+        uid: this.uuidv4(),
+        uid_question: this.question.uid,
+        is_right: false
+      }
+      this.$store.dispatch(ANSWER.CREATE_REGLAMENT_ANSWER_REQUEST, data)
+      this.answers.push(data)
+    },
+    setRightAnswer (answer) {
+      const data = {
+        uid: answer.uid,
+        uid_question: this.question.uid,
+        name: answer.name,
+        is_right: answer.is_right
+      }
+      this.$store.dispatch(ANSWER.UPDATE_REGLAMENT_ANSWER_REQUEST, data)
+      console.log(data)
     },
     onSelectAnswer (uid) {
       for (let i = 0; i < this.answers.length; i++) {
@@ -57,12 +74,14 @@ export default {
       )
     },
     onDeleteAnswer (uid) {
+      console.log(uid)
       this.showDeleteAnswer = false
       for (let i = 0; i < this.answers.length; i++) {
         if (this.answers[i].uid === uid) {
           this.answers.splice(i, 1)
         }
       }
+      this.$store.dispatch(ANSWER.DELETE_REGLAMENT_ANSWER_REQUEST, uid)
     },
     deleteQuestion () {
       this.showDeleteQuestion = false
@@ -106,6 +125,7 @@ export default {
         class="mb-1"
         :is-editing="isEditing"
         :answer="answer"
+        @set-right-answer="setRightAnswer"
         @onSelectAnswer="onSelectAnswer"
         @deleteAnswer="onDeleteAnswer"
       />
