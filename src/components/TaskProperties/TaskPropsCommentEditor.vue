@@ -8,13 +8,11 @@
       v-linkify:options="{ className: 'text-blue-600' }"
       class="font-[400] text-[14px] leading-[21px] text-[#4C4C4D]"
       :contenteditable="canEdit"
-      :data-placeholder="placeholderComment()"
+      :data-placeholder="placeholderComment"
       @blur="changeComment($event)"
-      @keyup="changeComment($event)"
-      @focusout="removeEditComment($event)"
-      @keydown.esc="removeEditComment($event)"
-      @paste="OnPaste_StripFormatting(this, $event);"
-      v-html="getFixedCommentText()"
+      @keydown.esc="changeComment($event)"
+      @paste="onPasteComment($event)"
+      v-html="commentHtmlText"
     />
   </div>
 </template>
@@ -36,22 +34,34 @@ export default {
       default: ''
     }
   },
-  emits: ['changeComment', 'endChangeComment'],
+  emits: ['changeComment'],
   data: () => ({
     isEditable: false,
     currText: '',
     onPaste_StripFormatting_IEPaste: false
   }),
+  computed: {
+    commentHtmlText () {
+      console.log('commentHtmlText', this.comment)
+      return this.comment.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('\n', '<br/>')
+    },
+    placeholderComment () {
+      if (this.canEdit) return 'Добавить заметку...'
+      return ''
+    }
+
+  },
   watch: {
     comment: {
       immediate: true,
       handler: function (val) {
+        console.log('watch comment', this.comment)
         this.currText = val
       }
     }
   },
   methods: {
-    OnPaste_StripFormatting (elem, e) {
+    onPasteComment (e) {
       let text = ''
       if (e.originalEvent && e.originalEvent.clipboardData && e.originalEvent.clipboardData.getData) {
         e.preventDefault()
@@ -69,13 +79,6 @@ export default {
         }
         this.onPaste_StripFormatting_IEPaste = false
       }
-    },
-    getFixedCommentText () {
-      return this.comment.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('\n', '<br/>')
-    },
-    placeholderComment () {
-      if (this.canEdit) return 'Добавить заметку...'
-      return ''
     },
     /**
      * @param {Element} e
@@ -113,20 +116,12 @@ export default {
       }
       return el.innerText.trim()
     },
-
-    removeEditComment () {
-      if (!this.canEdit) return
-      this.isEditable = false
-      // чтобы у нас в интерфейсе поменялось
-      // потому что на changeComment он только
-      // на сервер отправляет и всё
-      this.$emit('endChangeComment', this.currText)
-    },
     changeComment (e) {
       if (!this.canEdit) return
       const text = this.getElementText(e.target)
-      if (text === this.currText) return
-      this.currText = text
+      this.isEditable = false
+      if (text === this.comment) return
+      //
       this.$emit('changeComment', text)
     }
   }

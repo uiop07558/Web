@@ -667,7 +667,6 @@
         class="mt-3 h-32"
         :comment="selectedTask.comment ?? ''"
         :can-edit="canEditComment"
-        @endChangeComment="endChangeComment"
         @changeComment="onChangeComment"
       />
       <!-- Show all -->
@@ -1518,11 +1517,6 @@ export default {
         value: text
       }
       this.$store.dispatch(TASK.CHANGE_TASK_COMMENT, data)
-    },
-    endChangeComment: function (text) {
-      // чтобы у нас в интерфейсе поменялось
-      // потому что на changeComment он только
-      // на сервер отправляет и всё
       this.selectedTask.comment = text
     },
     gotoParentNode (uid) {
