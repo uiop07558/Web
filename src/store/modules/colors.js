@@ -1,5 +1,4 @@
 import axios from 'axios'
-import { notify } from 'notiwind'
 import {
   CREATE_COLOR_REQUEST,
   PUSH_COLOR,
@@ -27,15 +26,6 @@ const actions = {
           resolve(resp)
         })
         .catch((err) => {
-          notify(
-            {
-              group: 'api',
-              title: 'REST API Error, please make screenshot',
-              action: CREATE_COLOR_REQUEST,
-              text: err.response.data
-            },
-            30000
-          )
           reject(err)
         })
     })
@@ -48,15 +38,6 @@ const actions = {
           resolve(resp)
         })
         .catch((err) => {
-          notify(
-            {
-              group: 'api',
-              title: 'REST API Error, please make screenshot',
-              action: UPDATE_COLOR_REQUEST,
-              text: err.response?.data ?? err
-            },
-            30000
-          )
           reject(err)
         })
     })
@@ -70,15 +51,6 @@ const actions = {
           resolve(resp)
         })
         .catch((err) => {
-          notify(
-            {
-              group: 'api',
-              title: 'REST API Error, please make screenshot',
-              action: REMOVE_COLOR_REQUEST,
-              text: err.response?.data ?? err
-            },
-            10000
-          )
           reject(err)
         })
     })

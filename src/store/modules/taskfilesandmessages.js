@@ -1,4 +1,3 @@
-import { notify } from 'notiwind'
 import {
   CREATE_FILES_REQUEST,
   CREATE_FILE_REQUEST,
@@ -148,15 +147,6 @@ const actions = {
         })
         .catch((err) => {
           commit(MESSAGES_ERROR, err)
-          notify(
-            {
-              group: 'api',
-              title: 'REST API Error, please make screenshot',
-              action: MESSAGES_REQUEST,
-              text: err.response.data
-            },
-            15000
-          )
           reject(err)
         })
     })
@@ -173,15 +163,6 @@ const actions = {
         })
         .catch((err) => {
           commit(MESSAGES_ERROR, err)
-          notify(
-            {
-              group: 'api',
-              title: 'REST API Error, please make screenshot',
-              action: MESSAGES_REQUEST,
-              text: err.response.data
-            },
-            15000
-          )
           reject(err)
         })
     })
@@ -195,15 +176,6 @@ const actions = {
           commit(CREATE_MESSAGE_REQUEST, data)
         })
         .catch((err) => {
-          notify(
-            {
-              group: 'api',
-              title: 'REST API Error, please make screenshot',
-              action: CREATE_MESSAGE_REQUEST,
-              text: err.response.data
-            },
-            15000
-          )
           reject(err)
         })
     })
@@ -219,15 +191,6 @@ const actions = {
           commit(DELETE_MESSAGE_REQUEST, data)
         })
         .catch((err) => {
-          notify(
-            {
-              group: 'api',
-              title: 'REST API Error, please make screenshot',
-              action: DELETE_MESSAGE_REQUEST,
-              text: err.response?.data
-            },
-            15000
-          )
           reject(err)
         })
     })
@@ -242,15 +205,6 @@ const actions = {
           commit(DELETE_FILE_REQUEST, data)
         })
         .catch((err) => {
-          notify(
-            {
-              group: 'api',
-              title: 'REST API Error, please make screenshot',
-              action: DELETE_FILE_REQUEST,
-              text: err.response.data
-            },
-            15000
-          )
           reject(err)
         })
     })

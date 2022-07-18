@@ -7,7 +7,6 @@ import {
 } from '@/store/actions/taskmessages'
 import { visitChildren } from '@/store/helpers/functions'
 import axios from 'axios'
-import { notify } from 'notiwind'
 import { PUSH_COLOR } from '../actions/colors'
 import * as TASK from '../actions/tasks'
 
@@ -113,15 +112,6 @@ const actions = {
           resolve(resp)
         })
         .catch((err) => {
-          notify(
-            {
-              group: 'api',
-              title: 'REST API Error, please make screenshot',
-              action: TASK.TASKS_REQUEST,
-              text: err.response.data
-            },
-            15000
-          )
           commit(TASK.TASKS_ERROR, err)
           reject(err)
         })
@@ -137,15 +127,6 @@ const actions = {
           resolve(resp)
         })
         .catch((err) => {
-          notify(
-            {
-              group: 'api',
-              title: 'REST API Error, please make screenshot',
-              action: TASK.DAYS_WITH_TASKS,
-              text: err.response.data
-            },
-            15000
-          )
           commit(TASK.TASKS_ERROR, err)
           reject(err)
         })
@@ -169,15 +150,6 @@ const actions = {
           resolve(resp)
         })
         .catch((err) => {
-          notify(
-            {
-              group: 'api',
-              title: 'REST API Error, please make screenshot',
-              action: TASK.TASKS_REQUEST,
-              text: err.response.data
-            },
-            15000
-          )
           commit(TASK.TASKS_ERROR, err)
           reject(err)
         })
@@ -218,15 +190,6 @@ const actions = {
             resolve(resp)
           })
           .catch((err) => {
-            notify(
-              {
-                group: 'api',
-                title: 'REST API Error, please make screenshot',
-                action: TASK.SEARCH_TASK,
-                text: err.response.data
-              },
-              15000
-            )
             commit(TASK.TASKS_ERROR, err)
             reject(err)
           })
@@ -253,15 +216,6 @@ const actions = {
           resolve(resp)
         })
         .catch((err) => {
-          notify(
-            {
-              group: 'api',
-              title: 'REST API Error, please make screenshot',
-              action: TASK.SUBTASKS_REQUEST,
-              text: err.response.data
-            },
-            15000
-          )
           commit(TASK.TASKS_ERROR, err)
           reject(err)
         })
@@ -285,15 +239,6 @@ const actions = {
           resolve(resp)
         })
         .catch((err) => {
-          notify(
-            {
-              group: 'api',
-              title: 'REST API Error, please make screenshot',
-              action: TASK.OPENED_TASKS_REQUEST,
-              text: err.response.data
-            },
-            15000
-          )
           commit(TASK.TASKS_ERROR, err)
           reject(err)
         })
@@ -314,15 +259,6 @@ const actions = {
           resolve(resp)
         })
         .catch((err) => {
-          notify(
-            {
-              group: 'api',
-              title: 'REST API Error, please make screenshot',
-              action: TASK.UNSORTED_TASKS_REQUEST,
-              text: err.response.data
-            },
-            15000
-          )
           commit(TASK.TASKS_ERROR, err)
           reject(err)
         })
@@ -346,15 +282,6 @@ const actions = {
           resolve(resp)
         })
         .catch((err) => {
-          notify(
-            {
-              group: 'api',
-              title: 'REST API Error, please make screenshot',
-              action: TASK.OVERDUE_TASKS_REQUEST,
-              text: err.response.data
-            },
-            15000
-          )
           commit(TASK.TASKS_ERROR, err)
           reject(err)
         })
@@ -414,17 +341,6 @@ const actions = {
           resolve([unreadTasks, overdueTasks, todayTasks])
         })
         .catch((err) => {
-          if (err?.message !== 'canceled' && err?.response?.data) {
-            notify(
-              {
-                group: 'api',
-                title: 'REST API Error, please make screenshot',
-                action: TASK.DOITNOW_TASKS_REQUEST,
-                text: err?.response?.data
-              },
-              15000
-            )
-          }
           commit(TASK.TASKS_ERROR, err)
           reject(err)
         })
@@ -448,15 +364,6 @@ const actions = {
           resolve(resp)
         })
         .catch((err) => {
-          notify(
-            {
-              group: 'api',
-              title: 'REST API Error, please make screenshot',
-              action: TASK.UNREAD_TASKS_REQUEST,
-              text: err.response.data
-            },
-            15000
-          )
           commit(TASK.TASKS_ERROR, err)
           reject(err)
         })
@@ -480,15 +387,6 @@ const actions = {
           resolve(resp)
         })
         .catch((err) => {
-          notify(
-            {
-              group: 'api',
-              title: 'REST API Error, please make screenshot',
-              action: TASK.IN_WORK_TASKS_REQUEST,
-              text: err.response.data
-            },
-            15000
-          )
           commit(TASK.TASKS_ERROR, err)
           reject(err)
         })
@@ -512,15 +410,6 @@ const actions = {
           resolve(resp)
         })
         .catch((err) => {
-          notify(
-            {
-              group: 'api',
-              title: 'REST API Error, please make screenshot',
-              action: TASK.IN_FOCUS_TASKS_REQUEST,
-              text: err.response.data
-            },
-            15000
-          )
           commit(TASK.TASKS_ERROR, err)
           reject(err)
         })
@@ -541,15 +430,6 @@ const actions = {
           resolve(resp)
         })
         .catch((err) => {
-          notify(
-            {
-              group: 'api',
-              title: 'REST API Error, please make screenshot',
-              action: TASK.READY_FOR_COMPLITION_TASKS_REQUEST,
-              text: err.response.data
-            },
-            15000
-          )
           commit(TASK.TASKS_ERROR, err)
           reject(err)
         })
@@ -575,15 +455,6 @@ const actions = {
           resolve(resp)
         })
         .catch((err) => {
-          notify(
-            {
-              group: 'api',
-              title: 'REST API Error, please make screenshot',
-              action: TASK.DELEGATED_TASKS_REQUEST,
-              text: err.response.data
-            },
-            15000
-          )
           commit(TASK.TASKS_ERROR, err)
           reject(err)
         })
@@ -609,15 +480,6 @@ const actions = {
           resolve(resp)
         })
         .catch((err) => {
-          notify(
-            {
-              group: 'api',
-              title: 'REST API Error, please make screenshot',
-              action: TASK.DELEGATED_TO_USER_TASKS_REQUEST,
-              text: err.response.data
-            },
-            15000
-          )
           commit(TASK.TASKS_ERROR, err)
           reject(err)
         })
@@ -641,15 +503,6 @@ const actions = {
           resolve(resp)
         })
         .catch((err) => {
-          notify(
-            {
-              group: 'api',
-              title: 'REST API Error, please make screenshot',
-              action: TASK.PROJECT_TASKS_REQUEST,
-              text: err.response.data
-            },
-            15000
-          )
           commit(TASK.TASKS_ERROR, err)
           reject(err)
         })
@@ -673,15 +526,6 @@ const actions = {
           resolve(resp)
         })
         .catch((err) => {
-          notify(
-            {
-              group: 'api',
-              title: 'REST API Error, please make screenshot',
-              action: TASK.TAG_TASKS_REQUEST,
-              text: err.response.data
-            },
-            15000
-          )
           commit(TASK.TASKS_ERROR, err)
           reject(err)
         })
@@ -705,15 +549,6 @@ const actions = {
           resolve(resp)
         })
         .catch((err) => {
-          notify(
-            {
-              group: 'api',
-              title: 'REST API Error, please make screenshot',
-              action: TASK.COLOR_TASKS_REQUEST,
-              text: err.response.data
-            },
-            15000
-          )
           commit(TASK.TASKS_ERROR, err)
           reject(err)
         })
@@ -737,15 +572,6 @@ const actions = {
           resolve(resp)
         })
         .catch((err) => {
-          notify(
-            {
-              group: 'api',
-              title: 'REST API Error, please make screenshot',
-              action: TASK.EMPLOYEE_TASKS_REQUEST,
-              text: err.response.data
-            },
-            15000
-          )
           commit(TASK.TASKS_ERROR, err)
           reject(err)
         })
@@ -775,17 +601,6 @@ const actions = {
           resolve(resp)
         })
         .catch((err) => {
-          if (err.response?.data?.error !== 'limit. invalid license.') {
-            notify(
-              {
-                group: 'api',
-                title: 'REST API Error, please make screenshot',
-                action: TASK.CREATE_TASK,
-                text: err.response?.data
-              },
-              15000
-            )
-          }
           reject(err)
         })
     })
@@ -819,15 +634,6 @@ const actions = {
           resolve(resp)
         })
         .catch((err) => {
-          notify(
-            {
-              group: 'api',
-              title: 'REST API Error, please make screenshot',
-              action: TASK.CHANGE_TASK_READ,
-              text: err.response?.data ?? err
-            },
-            15000
-          )
           reject(err)
         })
     })
@@ -848,15 +654,6 @@ const actions = {
           resolve(resp)
         })
         .catch((err) => {
-          notify(
-            {
-              group: 'api',
-              title: 'REST API Error, please make screenshot',
-              action: TASK.CHANGE_TASK_NAME,
-              text: err.response.data
-            },
-            15000
-          )
           reject(err)
         })
     })
@@ -878,15 +675,6 @@ const actions = {
           resolve(resp)
         })
         .catch((err) => {
-          notify(
-            {
-              group: 'api',
-              title: 'REST API Error, please make screenshot',
-              action: TASK.CHANGE_TASK_STATUS,
-              text: err.response?.data
-            },
-            15000
-          )
           reject(err)
         })
     })
@@ -903,15 +691,6 @@ const actions = {
           resolve(resp)
         })
         .catch((err) => {
-          notify(
-            {
-              group: 'api',
-              title: 'REST API Error, please make screenshot',
-              action: TASK.REMOVE_TASK,
-              text: err.response?.data
-            },
-            15000
-          )
           reject(err)
         })
     })
@@ -948,15 +727,6 @@ const actions = {
           resolve(resp)
         })
         .catch((err) => {
-          notify(
-            {
-              group: 'api',
-              title: 'REST API Error, please make screenshot',
-              action: TASK.CHANGE_TASK_ACCESS,
-              text: err.response.data
-            },
-            15000
-          )
           reject(err)
         })
     })
@@ -979,15 +749,6 @@ const actions = {
           resolve(resp)
         })
         .catch((err) => {
-          notify(
-            {
-              group: 'api',
-              title: 'REST API Error, please make screenshot',
-              action: TASK.CHANGE_TASK_COLOR,
-              text: err.response.data
-            },
-            15000
-          )
           reject(err)
         })
     })
@@ -1001,15 +762,6 @@ const actions = {
           resolve(resp)
         })
         .catch((err) => {
-          notify(
-            {
-              group: 'api',
-              title: 'REST API Error, please make screenshot',
-              action: TASK.CHANGE_TASK_TAGS,
-              text: err.response.data
-            },
-            15000
-          )
           reject(err)
         })
     })
@@ -1030,15 +782,6 @@ const actions = {
           resolve(resp)
         })
         .catch((err) => {
-          notify(
-            {
-              group: 'api',
-              title: 'REST API Error, please make screenshot',
-              action: TASK.CHANGE_TASK_PERFORMER,
-              text: err.response.data
-            },
-            15000
-          )
           reject(err)
         })
     })
@@ -1059,15 +802,6 @@ const actions = {
           resolve(resp)
         })
         .catch((err) => {
-          notify(
-            {
-              group: 'api',
-              title: 'REST API Error, please make screenshot',
-              action: TASK.CHANGE_TASK_REDELEGATE,
-              text: err.response.data
-            },
-            15000
-          )
           reject(err)
         })
     })
@@ -1089,15 +823,6 @@ const actions = {
           resolve(resp)
         })
         .catch((err) => {
-          notify(
-            {
-              group: 'api',
-              title: 'REST API Error, please make screenshot',
-              action: TASK.CHANGE_TASK_FOCUS,
-              text: err.response.data
-            },
-            15000
-          )
           reject(err)
         })
     })
@@ -1120,15 +845,6 @@ const actions = {
           resolve(resp)
         })
         .catch((err) => {
-          notify(
-            {
-              group: 'api',
-              title: 'REST API Error, please make screenshot',
-              action: TASK.CHANGE_TASK_PROJECT,
-              text: err.response.data
-            },
-            15000
-          )
           reject(err)
         })
     })
@@ -1141,15 +857,6 @@ const actions = {
           resolve(resp)
         })
         .catch((err) => {
-          notify(
-            {
-              group: 'api',
-              title: 'REST API Error, please make screenshot',
-              action: TASK.CHANGE_TASK_CHECKLIST,
-              text: 'error while uploading checklist'
-            },
-            15000
-          )
           reject(err)
         })
     })
@@ -1170,15 +877,6 @@ const actions = {
           commit(TASK.CHANGE_TASK_COMMENT, data)
         })
         .catch((err) => {
-          notify(
-            {
-              group: 'api',
-              title: 'REST API Error, please make screenshot',
-              action: TASK.CHANGE_TASK_COMMENT,
-              text: err.response.data
-            },
-            15000
-          )
           reject(err)
         })
     })
@@ -1194,15 +892,6 @@ const actions = {
           resolve(dataSend)
         })
         .catch((err) => {
-          notify(
-            {
-              group: 'api',
-              title: 'REST API Error, please make screenshot',
-              action: TASK.CHANGE_TASK_DATE,
-              text: err.response.data
-            },
-            15000
-          )
           reject(err)
         })
     })
@@ -1226,15 +915,6 @@ const actions = {
           resolve(resp)
         })
         .catch((err) => {
-          notify(
-            {
-              group: 'api',
-              title: 'REST API Error, please make screenshot',
-              action: TASK.CHANGE_TASK_PARENT_AND_ORDER,
-              text: err.response.data
-            },
-            15000
-          )
           reject(err)
         })
     })
@@ -1248,15 +928,6 @@ const actions = {
           resolve(resp)
         })
         .catch((err) => {
-          notify(
-            {
-              group: 'api',
-              title: 'REST API Error, please make screenshot',
-              action: TASK.CREATE_TAG_REQUEST,
-              text: err.response.data
-            },
-            15000
-          )
           reject(err)
         })
     })
@@ -1270,15 +941,6 @@ const actions = {
           resolve(resp)
         })
         .catch((err) => {
-          notify(
-            {
-              group: 'api',
-              title: 'REST API Error, please make screenshot',
-              action: TASK.UPDATE_TAG_REQUEST,
-              text: err.response.data
-            },
-            15000
-          )
           reject(err)
         })
     })
@@ -1291,15 +953,6 @@ const actions = {
           resolve(resp)
         })
         .catch((err) => {
-          notify(
-            {
-              group: 'api',
-              title: 'REST API Error, please make screenshot',
-              action: TASK.REMOVE_TAG_REQUEST,
-              text: err.response.data
-            },
-            15000
-          )
           reject(err)
         })
     })
@@ -1316,15 +969,6 @@ const actions = {
           resolve(resp)
         })
         .catch((err) => {
-          notify(
-            {
-              group: 'api',
-              title: 'REST API Error, please make screenshot',
-              action: TASK.RESET_REPEAT_CHANGE,
-              text: err.response.data
-            },
-            15000
-          )
           reject(err)
         })
     })
@@ -1340,15 +984,6 @@ const actions = {
           resolve(resp)
         })
         .catch((err) => {
-          notify(
-            {
-              group: 'api',
-              title: 'REST API Error, please make screenshot',
-              action: TASK.EVERY_DAY_CHANGE,
-              text: err.response.data
-            },
-            15000
-          )
           reject(err)
         })
     })
@@ -1364,15 +999,6 @@ const actions = {
           resolve(resp)
         })
         .catch((err) => {
-          notify(
-            {
-              group: 'api',
-              title: 'REST API Error, please make screenshot',
-              action: TASK.EVERY_WEEK_CHANGE,
-              text: err.response.data
-            },
-            15000
-          )
           reject(err)
         })
     })
@@ -1388,15 +1014,6 @@ const actions = {
           resolve(resp)
         })
         .catch((err) => {
-          notify(
-            {
-              group: 'api',
-              title: 'REST API Error, please make screenshot',
-              action: TASK.EVERY_MONTH_CHANGE,
-              text: err.response.data
-            },
-            15000
-          )
           reject(err)
         })
     })
@@ -1412,15 +1029,6 @@ const actions = {
           resolve(resp)
         })
         .catch((err) => {
-          notify(
-            {
-              group: 'api',
-              title: 'REST API Error, please make screenshot',
-              action: TASK.EVERY_YEAR_CHANGE,
-              text: err.response.data
-            },
-            15000
-          )
           reject(err)
         })
     })

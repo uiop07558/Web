@@ -1,6 +1,5 @@
 import { setLocalStorageItem } from '@/store/helpers/functions'
 import axios from 'axios'
-import { notify } from 'notiwind'
 import {
   AUTH_ERROR,
   AUTH_LOGOUT,
@@ -41,15 +40,6 @@ const actions = {
         .catch((err) => {
           commit(AUTH_ERROR, err)
           localStorage.removeItem('user-token')
-          notify(
-            {
-              group: 'api',
-              title: 'REST API Error, please make screenshot',
-              action: AUTH_REQUEST,
-              text: err.response?.data ?? err
-            },
-            15000
-          )
           reject(err)
         })
     })
@@ -70,15 +60,6 @@ const actions = {
         .catch((err) => {
           commit(AUTH_ERROR, err)
           localStorage.removeItem('user-token')
-          notify(
-            {
-              group: 'api',
-              title: 'REST API Error, please make screenshot',
-              action: AUTH_REGISTER,
-              text: err.response?.data ?? err
-            },
-            15000
-          )
           reject(err)
         })
     })
@@ -99,18 +80,7 @@ const actions = {
         })
         .catch((err) => {
           commit(AUTH_ERROR, err)
-          reject(err.response.data)
-          if (err.response?.data?.error !== 'old_password invalid') {
-            notify(
-              {
-                group: 'api',
-                title: 'REST API Error, please make screenshot',
-                action: AUTH_CHANGE_PASSWORD,
-                text: err.response?.data ?? err
-              },
-              15000
-            )
-          }
+          reject(err.response?.data)
         })
     })
   },
@@ -133,15 +103,6 @@ const actions = {
         })
         .catch((err) => {
           commit(AUTH_ERROR, err)
-          notify(
-            {
-              group: 'api',
-              title: 'REST API Error, please make screenshot',
-              action: AUTH_LOGOUT,
-              text: err.response?.data ?? err
-            },
-            15000
-          )
           reject(err)
         })
     })
@@ -160,15 +121,6 @@ const actions = {
         })
         .catch((err) => {
           commit(AUTH_ERROR, err)
-          notify(
-            {
-              group: 'api',
-              title: 'REST API Error, please make screenshot',
-              action: AUTH_REFRESH_TOKEN,
-              text: err.response?.data ?? err
-            },
-            15000
-          )
           reject(err)
         })
     })

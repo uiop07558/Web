@@ -1,6 +1,5 @@
 // icons for navigator
 import axios from 'axios'
-import { notify } from 'notiwind'
 import { PUSH_BOARD } from '../actions/boards'
 import { PUSH_COLOR, PUSH_MYCOLOR } from '../actions/colors'
 import { PUSH_DEPARTMENT } from '../actions/departments'
@@ -156,15 +155,6 @@ const actions = {
         })
         .catch((err) => {
           commit(NAVIGATOR_ERROR, err)
-          notify(
-            {
-              group: 'api',
-              title: 'REST API Error, please make screenshot',
-              action: NAVIGATOR_REQUEST,
-              text: err.response?.data ?? err
-            },
-            15000
-          )
           reject(err)
         })
     })
@@ -178,15 +168,6 @@ const actions = {
           resolve(resp)
         })
         .catch((err) => {
-          notify(
-            {
-              group: 'api',
-              title: 'REST API Error, please make screenshot',
-              action: PATCH_SETTINGS,
-              text: err.response.data
-            },
-            15000
-          )
           reject(err)
         })
     })
