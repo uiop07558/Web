@@ -20,7 +20,7 @@ import {
   NAVIGATOR_REMOVE_EMPLOYEE, NAVIGATOR_REMOVE_PROJECT,
   NAVIGATOR_REMOVE_TAG,
   NAVIGATOR_REQUEST,
-  NAVIGATOR_SUCCESS, NAVIGATOR_UPDATE_ASSIGNMENTS, NAVIGATOR_UPDATE_EMPLOYEE, PATCH_SETTINGS,
+  NAVIGATOR_SUCCESS, NAVIGATOR_UPDATE_ASSIGNMENTS, NAVIGATOR_UPDATE_EMPLOYEE, NAVIGATOR_UPDATE_DEPARTMENT, PATCH_SETTINGS,
   PATCH_SETTINGS_SUCCESS,
   RESET_STATE_NAVIGATOR
 } from '../actions/navigator'
@@ -472,6 +472,19 @@ const mutations = {
       (dep) => dep.uid === uidDepartment
     )
     if (indexDeps !== -1) state.navigator.deps.items.splice(indexDeps, 1)
+  },
+  [NAVIGATOR_UPDATE_DEPARTMENT]: (state, department) => {
+    const indexEmps = state.navigator.new_emps.findIndex(
+      (emps) => emps.dep.uid === department.uid
+    )
+    if (indexEmps !== -1) {
+      state.navigator.new_emps[indexEmps].dep = department
+    }
+
+    const indexDeps = state.navigator.deps.items.findIndex(
+      (dep) => dep.uid === department.uid
+    )
+    if (indexDeps !== -1) state.navigator.deps.items[indexDeps] = department
   },
   [NAVIGATOR_CHANGE_EMPLOYEE_DEPARTMENT]: (state, data) => {
     const uidDepOld =
