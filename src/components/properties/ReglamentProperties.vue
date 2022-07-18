@@ -10,20 +10,13 @@
       title="Удалить регламент"
       :text="`Вы действительно хотите удалить регламент ${selectedReglamentName}?`"
       @cancel="showConfirm = false"
-      @yes="removeProject"
-    />
-    <ModalBoxDelete
-      v-if="showConfirmQuit"
-      title="Покинуть регламент"
-      :text="`Вы действительно хотите покинуть регламент ${selectedReglamentName}? Обратно можно попасть, только если владелец регламента опять вас добавит.`"
-      @cancel="showConfirmQuit = false"
-      @yes="quitProject"
+      @yes="removeReglament"
     />
     <div class="flex justify-between items-center">
       <PopMenu>
         <PropsButtonMenu />
         <template #menu>
-          <PopMenuItem @click="copyLinkToProject">
+          <PopMenuItem @click="copyLinkToReglament">
             Копировать ссылку на регламент
           </PopMenuItem>
           <PopMenuItem
@@ -82,19 +75,13 @@
     <div
       class="mt-[30px] mb-[8px] font-roboto text-[16px] leading-[19px] font-medium text-[#4c4c4d]"
     >
-      Доступ
+      Участники
     </div>
-    <div
+    <ReglamentPropsUser
       v-for="contributor in contributors"
-      :key="contributor"
-      class="group w-full h-[34px] flex items-center"
-    >
-      <img
-        :src="employeesByEmail[contributor.email]?.fotolink"
-        class="flex-none border border-[#7e7e80] rounded-[4px] w-[20px] h-[20px] mr-[7px]"
-      >
-      <span class="grow font-roboto text-[13px] leading-[20px] font-medium text-[#4c4c4d] mr-[7px]">{{ employeesByEmail[contributor.email].name }}</span>
-    </div>
+      :key="contributor.email"
+      :contributor="contributor"
+    />
   </div>
 </template>
 
@@ -106,9 +93,9 @@ import PopMenuItem from '@/components/modals/PopMenuItem.vue'
 import PropsButtonClose from '@/components/Common/PropsButtonClose.vue'
 import PropsButtonMenu from '@/components/Common/PropsButtonMenu.vue'
 import TaskPropsAccessLimitModalBox from '@/components/properties/TaskPropsAccessLimitModalBox.vue'
+import ReglamentPropsUser from '@/components/Reglaments/ReglamentPropsUser'
 
-import * as PROJECT from '@/store/actions/projects'
-import { NAVIGATOR_REMOVE_PROJECT, NAVIGATOR_REMOVE_REGLAMENT } from '@/store/actions/navigator'
+import { NAVIGATOR_REMOVE_REGLAMENT } from '@/store/actions/navigator'
 import { DELETE_REGLAMENT_REQUEST, UPDATE_REGLAMENT_REQUEST } from '@/store/actions/reglaments'
 import { copyText } from 'vue3-clipboard'
 
@@ -120,7 +107,8 @@ export default {
     PopMenu,
     PopMenuItem,
     PropsButtonClose,
-    PropsButtonMenu
+    PropsButtonMenu,
+    ReglamentPropsUser
   },
   data () {
     return {
@@ -182,8 +170,19 @@ export default {
     employeesByEmail () {
       return this.$store.state.employees.employeesByEmail
     },
+    user () {
+      return this.$store.state.user.user
+    },
+    reglaments () {
+      return this.$store.state.navigator.navigator.reglaments
+    },
     selectedReglament () {
-      return this.$store.state.greedSource
+      for (let i = 0; i < this.reglaments.items.length; i++) {
+        if (this.reglaments.items[i].uid === this.$store.state.navbar.navStack[this.$store.state.navbar.navStack.length - 1].uid) {
+          return this.reglaments.items[i]
+        }
+      }
+      return ''
     },
     selectedReglamentUid () {
       return this.selectedReglament?.uid || ''
@@ -200,44 +199,10 @@ export default {
       return ''
     },
     isCanDelete () {
-      const user = this.$store.state.user.user
-      return this.selectedReglament?.email_creator === user.current_user_email
+      return this.selectedReglament?.email_creator === this.user.current_user_email
     },
     isCanEdit () {
       return this.isCanDelete
-    },
-    usersBoard () {
-      const users = []
-      const members = this.selectedProject?.members || []
-      for (const userEmail of members) {
-        const emp = this.employeesByEmail[userEmail.toLowerCase()]
-        if (emp && emp?.email !== this.selectedProjectCreatorEmail) {
-          users.push({
-            uid: emp?.uid,
-            email: emp?.email
-          })
-        }
-      }
-      return users
-    },
-    selectedProjectMembers () {
-      return this.selectedProject?.members.reduce((acc, userEmail) => {
-        acc[userEmail.toLowerCase()] = userEmail
-        return acc
-      }, {}) || {}
-    },
-    usersCanAddToAccess () {
-      const users = []
-      const employees = Object.values(this.$store.state.employees.employees)
-      for (const emp of employees) {
-        if (this.selectedProjectMembers[emp.email.toLowerCase()] === undefined) {
-          users.push({
-            uid: emp.uid,
-            email: emp.email
-          })
-        }
-      }
-      return users
     }
   },
   watch: {
@@ -249,10 +214,7 @@ export default {
     }
   },
   methods: {
-    print (msg, param) {
-      console.log(msg, param)
-    },
-    removeProject () {
+    removeReglament () {
       this.showConfirm = false
 
       this.$store.dispatch(DELETE_REGLAMENT_REQUEST, this.selectedReglament.uid).then(() => {
@@ -261,15 +223,6 @@ export default {
         // выходим выше на один уровень навигации (надеемся что этот проект последний в стеке)
         this.$store.dispatch('popNavStack')
       })
-    },
-    quitProject () {
-      this.showConfirmQuit = false
-
-      console.log(this.selectedProject)
-      this.$store.dispatch('asidePropertiesToggle', false)
-      this.$store.commit(NAVIGATOR_REMOVE_PROJECT, this.selectedProject)
-      // выходим выше на один уровень навигации (надеемся что этот проект последний в стеке)
-      this.$store.dispatch('popNavStack')
     },
     closeProperties () {
       this.$store.dispatch('asidePropertiesToggle', false)
@@ -291,54 +244,15 @@ export default {
         })
       }
     },
-    addProjectMember (userEmail) {
-      const user = this.$store.state.user.user
-      // если лицензия истекла
-      if (user.days_left <= 0) {
-        this.showAccessLimit = true
-        return
-      }
-      if (
-        this.isCanEdit &&
-        this.selectedProjectMembers[userEmail.toLowerCase()] === undefined
-      ) {
-        const users = [...this.selectedProject.members]
-        users.push(userEmail)
-        this.selectedProject.members = users
-        const data = {
-          projectUid: this.selectedReglamentUid,
-          newProjectMembers: users
-        }
-        this.$store.dispatch(PROJECT.CHANGE_PROJECT_MEMBERS, data).then((resp) => {
-          console.log('changeProjectMembers', resp, users)
-        })
-      }
-    },
-    deleteMember (userEmail) {
-      if (
-        this.isCanEdit &&
-        this.selectedProjectMembers[userEmail.toLowerCase()] !== undefined
-      ) {
-        const users = this.selectedProject.members.filter((email) => email.toLowerCase() !== userEmail.toLowerCase())
-        this.selectedProject.members = users
-        const data = {
-          projectUid: this.selectedReglamentUid,
-          newProjectMembers: users
-        }
-        this.$store.dispatch(PROJECT.CHANGE_PROJECT_MEMBERS, data).then((resp) => {
-          console.log('changeProjectMembers', resp, users)
-        })
-      }
-    },
-    copyLinkToProject () {
+    copyLinkToReglament () {
       copyText(
-        `${window.location.origin}/project/${this.selectedReglamentUid}`,
+        `${window.location.origin}/reglaments/${this.selectedReglamentUid}`,
         undefined,
         (error, event) => {
           if (error) {
-            console.log('copyLinkToProject error', error)
+            console.log('copyLinkToReglament error', error)
           } else {
-            console.log('copyLinkToProject', event)
+            console.log('copyLinkToReglament', event)
           }
         }
       )
