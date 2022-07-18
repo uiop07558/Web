@@ -38,9 +38,9 @@ export default {
       if (this.isEditing) return
       this.$emit('onSelectAnswer', this.answer.uid)
     },
-    setRightAnswer () {
+    setRightAnswer (val) {
       this.rightAnswer = true
-      this.$emit('setRightAnswer', this.answer)
+      this.$emit('setRightAnswer', [this.answer, val])
     },
     resetRightAnswer () {
       this.rightAnswer = false
@@ -66,7 +66,6 @@ export default {
     @click="onSelectAnswer"
   >
     <div
-
       data-placeholder="Question name"
       class="font-[300] text-[14px]"
       :contenteditable="isEditing"
@@ -79,8 +78,8 @@ export default {
       v-if="isEditing"
       :is-editing="isEditing"
       @deleteAnswer="deleteAnswer"
-      @setRightAnswer="setRightAnswer"
-      @resetRightAnswer="showDeleteAnswer = true"
+      @setRightAnswer="setRightAnswer(true)"
+      @resetRightAnswer="setRightAnswer(false)"
     />
   </div>
 </template>

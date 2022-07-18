@@ -45,11 +45,12 @@ export default {
       this.answers.push(data)
     },
     setRightAnswer (answer) {
+      console.log(answer[0])
       const data = {
-        uid: answer.uid,
+        uid: answer[0].uid,
         uid_question: this.question.uid,
-        name: answer.name,
-        is_right: answer.is_right
+        name: answer[0].name,
+        is_right: answer[1]
       }
       this.$store.dispatch(ANSWER.UPDATE_REGLAMENT_ANSWER_REQUEST, data)
       console.log(data)
@@ -84,18 +85,14 @@ export default {
       this.$store.dispatch(ANSWER.DELETE_REGLAMENT_ANSWER_REQUEST, uid)
     },
     updateAnswerName (resp) {
+      console.log(resp)
       const data = {
         uid: resp[1].uid,
         uid_question: this.question.uid,
         name: resp[0],
         is_right: resp[1].is_right
       }
-      for (let i = 0; i < this.answers.length; i++) {
-        if (this.answers[i].uid === resp[1].uid) {
-          this.answers.name = resp[0]
-        }
-      }
-      this.$store.dispatch(ANSWER.CREATE_REGLAMENT_ANSWER_REQUEST, data)
+      this.$store.dispatch(ANSWER.UPDATE_REGLAMENT_ANSWER_REQUEST, data)
     },
     deleteQuestion () {
       this.showDeleteQuestion = false

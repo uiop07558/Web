@@ -54,7 +54,7 @@ export default {
   },
   mounted () {
     this.$store.dispatch('REGLAMENT_REQUEST', this.reglament.uid).then(resp => {
-      this.questions = [...resp.data]
+      this.questions = resp.data
     })
     try {
       document.querySelector('div.ql-toolbar').remove()
