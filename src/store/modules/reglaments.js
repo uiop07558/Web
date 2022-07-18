@@ -6,6 +6,17 @@ const state = {
 }
 
 const actions = {
+  [REGLAMENTS.REGLAMENT_REQUEST]: ({ commit, dispatch }, uidReglament) => {
+    return new Promise((resolve, reject) => {
+      const url = process.env.VUE_APP_INSPECTOR_API + 'reglament?uid=' + uidReglament
+      axios({ url: url, method: 'GET' })
+        .then(resp => {
+          resolve(resp)
+        }).catch(err => {
+          reject(err)
+        })
+    })
+  },
   [REGLAMENTS.REGLAMENTS_REQUEST]: ({ commit, dispatch }, organization) => {
     return new Promise((resolve, reject) => {
       const url = process.env.VUE_APP_INSPECTOR_API + 'reglaments?organization=' + organization

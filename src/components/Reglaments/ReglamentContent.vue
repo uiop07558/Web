@@ -22,10 +22,7 @@ export default {
     return {
       text: this.reglament?.content,
       isEditing: false,
-      questions: [
-        { name: 'hello world 1', uid: this.uuidv4(), answers: [{ text: 'answer 1', uid: this.uuidv4(), selected: false }, { text: 'answer 2', uid: this.uuidv4() }] },
-        { name: 'hello world 2', uid: this.uuidv4() }
-      ]
+      questions: []
     }
   },
   computed: {
@@ -54,6 +51,9 @@ export default {
     }
   },
   mounted () {
+    this.$store.dispatch('REGLAMENT_REQUEST', this.reglament.uid).then(resp => {
+      this.questions = [...resp.data]
+    })
     try {
       document.querySelector('div.ql-toolbar').remove()
     } catch (e) {}
