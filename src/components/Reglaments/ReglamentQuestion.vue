@@ -83,6 +83,20 @@ export default {
       }
       this.$store.dispatch(ANSWER.DELETE_REGLAMENT_ANSWER_REQUEST, uid)
     },
+    updateAnswerName (resp) {
+      const data = {
+        uid: resp[1].uid,
+        uid_question: this.question.uid,
+        name: resp[0],
+        is_right: resp[1].is_right
+      }
+      for (let i = 0; i < this.answers.length; i++) {
+        if (this.answers[i].uid === resp[1].uid) {
+          this.answers.name = resp[0]
+        }
+      }
+      this.$store.dispatch(ANSWER.CREATE_REGLAMENT_ANSWER_REQUEST, data)
+    },
     deleteQuestion () {
       this.showDeleteQuestion = false
       this.$emit('deleteQuestion', this.question.uid)
@@ -135,6 +149,7 @@ export default {
         @set-right-answer="setRightAnswer"
         @onSelectAnswer="onSelectAnswer"
         @deleteAnswer="onDeleteAnswer"
+        @update-answer-name="updateAnswerName"
       />
     </template>
     <button

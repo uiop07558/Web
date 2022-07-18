@@ -16,12 +16,10 @@ export default {
       default: false
     }
   },
-  emits: ['deleteAnswer', 'setRightAnswer', 'onSelectAnswer', 'resetRightAnswer'],
-  setup () {
-
-  },
+  emits: ['deleteAnswer', 'setRightAnswer', 'onSelectAnswer', 'resetRightAnswer', 'updateAnswerName'],
   data () {
     return {
+      name: '',
       showDeleteAnswer: false,
       rightAnswer: false
     }
@@ -46,6 +44,9 @@ export default {
     },
     resetRightAnswer () {
       this.rightAnswer = false
+    },
+    updateAnswerName (event) {
+      this.$emit('updateAnswerName', [event.target.innerText, this.answer])
     }
   }
 }
@@ -65,12 +66,14 @@ export default {
     @click="onSelectAnswer"
   >
     <div
+
       data-placeholder="Question name"
       class="font-[300] text-[14px]"
       :contenteditable="isEditing"
       @blur="false"
       @keyup="false"
-      v-html="answer.name"
+      @focusout="updateAnswerName"
+      v-text="answer.name"
     />
     <ReglamentAnswerPopMenu
       v-if="isEditing"
