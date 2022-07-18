@@ -118,25 +118,6 @@ const updateSettings = () => {
       <div class="flex mt-2">
         <div class="checkbox">
           <input
-            id="opt_5"
-            v-model="settings.nav_show_summary"
-            type="checkbox"
-            class="custom-checkbox-orange outline-none"
-            @change="updateSettings()"
-          >
-          <label
-            class="text-sm text-[#606061]"
-            for="opt_5"
-          >Показывать количество задач</label>
-        </div>
-        <!--   <a class="ml-2" v-if="settings.nav_show_summary === 1">Вкл.</a>
-                <a class="ml-2" v-if="settings.nav_show_summary === 0">Выкл.</a> -->
-      </div>
-    </div>
-    <div class="my-2 mt-[15px]">
-      <div class="flex mt-2">
-        <div class="checkbox">
-          <input
             id="sound"
             v-model="isNotificationSoundOn"
             type="checkbox"
