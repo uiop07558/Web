@@ -149,7 +149,7 @@ const actions = {
   [AUTH_REFRESH_TOKEN]: ({ commit }) => {
     return new Promise((resolve, reject) => {
       axios.defaults.headers.common.RefreshToken = localStorage.getItem('user-refresh-token')
-      const url = process.env.VUE_APP_LEADERTASK_API + 'https://web.leadertask.com/api/v1/tokens/refresh'
+      const url = process.env.VUE_APP_LEADERTASK_API + 'api/v1/tokens/refresh'
       axios
         .post(url)
         .then((resp) => {
@@ -164,7 +164,7 @@ const actions = {
             {
               group: 'api',
               title: 'REST API Error, please make screenshot',
-              action: AUTH_LOGOUT,
+              action: AUTH_REFRESH_TOKEN,
               text: err.response?.data ?? err
             },
             15000
