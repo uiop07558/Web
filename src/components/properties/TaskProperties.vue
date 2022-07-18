@@ -748,6 +748,7 @@
         @cantWriteMessages="showFreeModalChat = true"
         @createCardMessage="sendTaskMsg()"
         @createCardFile="createTaskFile($event)"
+        @onPaste="onPasteEvent"
       />
     </div>
   </div>
@@ -1396,8 +1397,8 @@ export default {
               }
             })
           setTimeout(() => {
-            const elmnt = document.getElementById('content').lastElementChild
-            elmnt.scrollIntoView({ behavior: 'smooth' })
+            const elmnt = document.getElementById('content')?.lastElementChild
+            elmnt?.scrollIntoView({ behavior: 'smooth' })
           }, 100)
         }
       }
