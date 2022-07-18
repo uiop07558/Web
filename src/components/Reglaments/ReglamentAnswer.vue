@@ -63,7 +63,7 @@ export default {
       :contenteditable="isEditing"
       @blur="false"
       @keyup="false"
-      v-html="answer.text"
+      v-html="answer.name"
     />
     <ReglamentAnswerPopMenu
       v-if="isEditing"
