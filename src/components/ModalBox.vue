@@ -38,7 +38,7 @@ export default {
     hasButton: Boolean
   },
 
-  emits: ['update:modelValue', 'cancel', 'acc', 'tarif', 'logout', 'confirm'],
+  emits: ['update:modelValue', 'cancel', 'logout', 'confirm', 'currentSettingsTab'],
 
   computed: {
     value: {
@@ -62,7 +62,9 @@ export default {
       this.value = false
       this.$emit(mode)
     },
-
+    changeCurrentTab (tabName) {
+      this.$emit('currentSettingsTab', tabName)
+    },
     logout () {
       return this.logoutAcc('logout')
     },
@@ -71,12 +73,6 @@ export default {
     },
     cancel () {
       return this.confirmCancel('cancel')
-    },
-    acc () {
-      return this.accSelect('acc')
-    },
-    tarif () {
-      return this.tarifSelect('tarif')
     }
   }
 }
@@ -95,8 +91,7 @@ export default {
       class="shadow-lg w-full md:w-4/5 lg:w-3/5 z-50  h-[85%]"
       @header-icon-click="cancel"
       @header-icon2-click="logout"
-      @acc="acc"
-      @tarif="tarif"
+      @tab="changeCurrentTab"
     >
       <div class="space-y-3 items-center">
         <h1

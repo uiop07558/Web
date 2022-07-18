@@ -91,7 +91,7 @@ export default {
   </p>
   <!-- <pre>{{ karmaList }}</pre> -->
   <br>
-  <div class="grid grid-cols-1 gap-4">
+  <div class="grid grid-cols-1 gap-4 p-5">
     <div class="grid grid-cols-1 ">
       <p class="text-center text-2xl font-bold">
         Графики
