@@ -20,6 +20,7 @@ export default {
     }
   },
   emits: ['deleteQuestion', 'deleteAnswer', 'setRightAnswer'],
+  expose: ['onFocus'],
   data () {
     return {
       answers: this?.question?.answers ?? [],
@@ -93,6 +94,15 @@ export default {
         name: event.target.innerText
       }
       this.$store.dispatch('UPDATE_REGLAMENT_QUESTION_REQUEST', data)
+    },
+    onFocus () {
+      this.$refs[this.question.uid + 'input'].focus()
+      const range = document.createRange()
+      const sel = document.getSelection()
+      range.setStart(this.$refs[this.question.uid + 'input'], 1)
+      range.collapse(true)
+      sel.removeAllRanges()
+      sel.addRange(range)
     }
   }
 }
@@ -111,6 +121,7 @@ export default {
   >
     <div class="px-1 flex justify-between items-start group">
       <div
+        :ref="question.uid + 'input'"
         data-placeholder="Question name"
         class="font-[500] text-[18px] my-3"
         :contenteditable="isEditing && canEdit"

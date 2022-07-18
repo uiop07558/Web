@@ -69,10 +69,16 @@ export default {
         ).toString(16)
       )
     },
+    gotoNode (uid) {
+      this.$refs[uid][0].onFocus()
+    },
     onAddQuestion () {
       const question = { uid: this.uuidv4(), name: 'new question', uid_reglament: this.reglament.uid }
       this.$store.dispatch('CREATE_REGLAMENT_QUESTION_REQUEST', question).then(() => {
         this.questions.push(question)
+        this.$nextTick(() => {
+          this.gotoNode(question.uid)
+        })
       })
     },
     onDeleteQuestion (uid) {
@@ -129,6 +135,7 @@ export default {
     :key="index"
   >
     <ReglamentQuestion
+      :ref="question.uid"
       :is-editing="isEditing"
       :question="question"
       @deleteQuestion="onDeleteQuestion"
