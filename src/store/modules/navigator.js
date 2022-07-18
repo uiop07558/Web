@@ -194,15 +194,6 @@ const actions = {
           resolve(resp)
         })
         .catch((err) => {
-          notify(
-            {
-              group: 'api',
-              title: 'REST API Error, please make screenshot',
-              action: NAVIGATOR_UPDATE_ASSIGNMENTS,
-              text: err.response?.data ?? err
-            },
-            15000
-          )
           reject(err)
         })
     })
