@@ -1,5 +1,5 @@
 import axios from 'axios'
-import Notifications from 'notiwind'
+import Notifications, { notify } from 'notiwind'
 import { createApp } from 'vue'
 import linkify from 'vue-linkify'
 import App from './App.vue'
@@ -35,20 +35,22 @@ if (token) {
 }
 
 // Add a response interceptor
-axios.interceptors.response.use(
-  (resp) => resp,
-  function (error) {
-    console.log('axios.interceptors.response error', error)
-    const errorMessage = error?.response?.data.error
-    if (
-      errorMessage?.includes('invalid token') ||
-      errorMessage?.includes('token expired')
-    ) {
-      store.dispatch('AUTH_REFRESH_TOKEN')
-    }
-    return Promise.reject(error)
+axios.interceptors.response.use((resp) => resp, function (error) {
+  const errorMessage = error?.response?.data.error
+  const avoidedErrorMessages = ['old_password invalid', "in user's org present employees", 'the employee is the director of the organization', 'the employee is already present in this organization', 'canceled', 'limit. invalid license.']
+  if (errorMessage.includes('invalid token') || errorMessage.includes('token expired')) {
+    store.dispatch('AUTH_REFRESH_TOKEN')
   }
-)
+  if (!avoidedErrorMessages.includes(errorMessage)) {
+    notify({
+      group: 'api',
+      title: 'REST API Error, please make screenshot',
+      action: '',
+      text: error.response?.data ?? error
+    }, 15000)
+  }
+  return Promise.reject(error)
+})
 
 store.commit('basic', { key: 'isGridView', value: isGridView })
 

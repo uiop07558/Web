@@ -1,5 +1,4 @@
 import axios from 'axios'
-import { notify } from 'notiwind'
 import * as BOARD from '../actions/boards'
 import { visitChildren } from '@/store/helpers/functions'
 
@@ -41,15 +40,6 @@ const actions = {
           resolve(resp)
         })
         .catch((err) => {
-          notify(
-            {
-              group: 'api',
-              title: 'REST API Error, please make screenshot',
-              action: BOARD.CREATE_BOARD_REQUEST,
-              text: err.response.data
-            },
-            15000
-          )
           reject(err)
         })
     })
@@ -62,15 +52,6 @@ const actions = {
           resolve(resp)
         })
         .catch((err) => {
-          notify(
-            {
-              group: 'api',
-              title: 'REST API Error, please make screenshot',
-              action: BOARD.UPDATE_BOARD_REQUEST,
-              text: err.response.data
-            },
-            15000
-          )
           reject(err)
         })
     })
@@ -84,15 +65,6 @@ const actions = {
           resolve(resp)
         })
         .catch((err) => {
-          notify(
-            {
-              group: 'api',
-              title: 'REST API Error, please make screenshot',
-              action: BOARD.REMOVE_BOARD_REQUEST,
-              text: err.response.data
-            },
-            15000
-          )
           reject(err)
         })
     })
@@ -110,15 +82,6 @@ const actions = {
           resolve(resp)
         })
         .catch((err) => {
-          notify(
-            {
-              group: 'api',
-              title: 'REST API Error, please make screenshot',
-              action: BOARD.REMOVE_BOARD_REQUEST,
-              text: err.response.data
-            },
-            15000
-          )
           reject(err)
         })
     })
@@ -244,15 +207,6 @@ const actions = {
           resolve(resp)
         })
         .catch((err) => {
-          notify(
-            {
-              group: 'api',
-              title: 'REST API Error, please make screenshot',
-              action: BOARD.DELETE_STAGE_BOARD_REQUEST,
-              text: err.response?.data ?? err.response
-            },
-            15000
-          )
           reject(err)
         })
     })
