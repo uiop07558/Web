@@ -1,6 +1,6 @@
 <template>
   <div
-    class="w-full"
+    class="w-full pb-[28px]"
   >
     <BoardModalBoxRename
       v-if="showAddDep"
@@ -175,7 +175,7 @@
       </div>
     </div>
     <div
-      v-if="isCanChangeDepartments"
+      v-if="isCanChangeDepartments && currUserWorkspaces > 1"
       class="flex items-center w-full my-[28px] text-[#7e7e80] hover:text-[#424242] cursor-pointer"
       @click.stop="clickAddDep"
     >
