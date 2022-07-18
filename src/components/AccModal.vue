@@ -60,6 +60,14 @@ export default {
       }
       this.$store.dispatch(USER_CHANGE_PHOTO, data)
     },
+    showPasswordModalBox () {
+      this.emptyNewPasses = false
+      this.emptyOldPass = false
+      this.invalidOldPassword = false
+      this.newPassError = false
+
+      this.showEditpassword = true
+    },
     changeUserPassword () {
       const oldPassword = this.oldPassword
       const newPassword = this.newPassword
@@ -327,7 +335,7 @@ export default {
               <button
                 type="button"
                 class="mt-2 text-[13px] landing-[13px] text-[#007BE5]"
-                @click="showEditpassword = true"
+                @click="showPasswordModalBox"
               >
                 Изменить пароль
               </button>
