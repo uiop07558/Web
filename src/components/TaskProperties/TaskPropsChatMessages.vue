@@ -26,7 +26,6 @@
         <!-- Облачко с текстом -->
         <TaskPropsChatMessageText
           v-if="message.isMessage && !showOnlyFiles"
-          :print="print('TaskPropsChatMessageText', message)"
           :class="message.isMyMessage ? 'mr-2' : 'ml-2'"
           :is-my-message="message.isMyMessage"
           :deleted-status="message.deleted"
