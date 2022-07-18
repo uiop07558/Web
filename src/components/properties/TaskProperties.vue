@@ -897,7 +897,6 @@ export default {
     uploadStarted () { return this.$store.state.taskfilesandmessages.uploadStarted },
     selectedTask () { return this.$store.state.tasks.selectedTask },
     isPropertiesMobileExpanded () { return this.$store.state.isPropertiesMobileExpanded },
-    taskMessagesAndFiles () { return this.$store.state.taskfilesandmessages.messages },
     user () { return this.$store.state.user.user },
     status () { return this.$store.state.taskfilesandmessages.status },
     tasks () { return this.$store.state.tasks.newtasks },
@@ -1349,7 +1348,7 @@ export default {
         this.$store.dispatch(CREATE_MESSAGE_REQUEST, data).then(
           resp => {
           // Answer last inspector message
-            const lastInspectorMessage = this.taskMessagesAndFiles.slice().reverse().find(message => message.uid_creator === 'inspector')
+            const lastInspectorMessage = [...this.taskMessages].reverse().find(message => message.uid_creator === 'inspector')
             if (lastInspectorMessage && this.selectedTask.uid_performer === this.user?.current_user_uid) {
               this.$store.dispatch(INSPECTOR.ANSWER_INSPECTOR_TASK, { id: lastInspectorMessage.id, answer: 1 }).then(() => {
                 lastInspectorMessage.performer_answer = 1
