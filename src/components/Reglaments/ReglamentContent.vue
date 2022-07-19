@@ -1,3 +1,67 @@
+<template>
+  <div
+    v-if="canEdit"
+    class="flex justify-end mb-2"
+  >
+    <PopMenuItem
+      class="bg-white"
+      icon="edit"
+      @click="isEdit"
+    >
+      {{ isEditing ? 'Завершить редактирование' : 'Редактировать' }}
+    </PopMenuItem>
+  </div>
+  <QuillEditor
+    v-if="!isEditing && text?.length"
+    v-model:content="text"
+    content-type="html"
+    :read-only="true"
+    :toolbar="['']"
+    class="h-auto mb-5 bg-white"
+  />
+  <QuillEditor
+    v-if="isEditing"
+    v-model:content="text"
+    content-type="html"
+    :toolbar="'full'"
+    class="h-auto mb-5 bg-white"
+  />
+  <template
+    v-for="(question , index) in questions"
+    :key="index"
+  >
+    <ReglamentQuestion
+      :ref="question.uid"
+      :is-editing="isEditing"
+      :question="question"
+      @deleteQuestion="onDeleteQuestion"
+      @deleteAnswer="deleteAnswer"
+      @addQuestion="onAddQuestion"
+      @pushAnswer="pushAnswer"
+      @selectAnswer="selectAnswer"
+      @setRightAnswer="setRightAnswer"
+    />
+  </template>
+  <div class="flex w-full pb-5">
+    <ListBlocAdd
+      v-if="canEdit && isEditing"
+      class="mt-5 w-full"
+      @click.stop="onAddQuestion"
+    />
+  </div>
+  <div
+    v-if="!(isEditing || questions.length <= 0)"
+    class="flex justify-end"
+  >
+    <button
+      class="flex items-end bg-[#FF912380] p-3 px-10 rounded-[8px] text-black text-sm mr-1 hover:bg-[#F5DEB3]"
+      @click="clickComplete"
+    >
+      Завершить
+    </button>
+  </div>
+  <div class="h-[20px]" />
+</template>
 <script>
 import { QuillEditor } from '@vueup/vue-quill'
 import ListBlocAdd from '@/components/Common/ListBlocAdd.vue'
@@ -23,7 +87,6 @@ export default {
     return {
       text: this.reglament?.content,
       isEditing: false,
-      answers: [],
       questions: []
     }
   },
@@ -72,6 +135,43 @@ export default {
     gotoNode (uid) {
       this.$refs[uid][0].onFocus()
     },
+    deleteAnswer (uid) {
+      for (let i = 0; this.questions.length; i++) {
+        for (let j = 0; this.questions[i].answers.length; j++) {
+          if (this.questions[i].answers[j].uid === uid) {
+            this.questions[i].answers[j].splice(j, 1)
+          }
+        }
+      }
+    },
+    pushAnswer (data) {
+      for (let i = 0; i < this.questions.length; i++) {
+        if (this.questions[i].uid === data.uid_question) {
+          this.questions[i].answers.push(data)
+          return
+        }
+      }
+    },
+    selectAnswer (data) {
+      for (let i = 0; i < this.questions.length; i++) {
+        for (let j = 0; j < this.questions[i].answers.length; j++) {
+          if (this.questions[i].answers[j].uid === data[0].uid) {
+            this.questions[i].answers[j].selected = data[1]
+            return
+          }
+        }
+      }
+    },
+    setRightAnswer (data) {
+      for (let i = 0; i < this.questions.length; i++) {
+        for (let j = 0; j < this.questions[i].answers.length; j++) {
+          if (this.questions[i].answers[j].uid === data.uid) {
+            this.questions[i].answers[j] = data
+            return
+          }
+        }
+      }
+    },
     onAddQuestion () {
       const question = { uid: this.uuidv4(), name: 'new question', uid_reglament: this.reglament.uid }
       this.$store.dispatch('CREATE_REGLAMENT_QUESTION_REQUEST', question).then(() => {
@@ -102,6 +202,7 @@ export default {
         uid_reglament: this.reglament.uid,
         answerJson: JSON.stringify(this.questions)
       }
+      console.log(this.questions)
       this.$store.dispatch('CRATE_USER_REGLAMENT_ANSWER', data).then(
         this.$store.dispatch('popNavStack')
       )
@@ -109,66 +210,5 @@ export default {
   }
 }
 </script>
-<template>
-  <div
-    v-if="canEdit"
-    class="flex justify-end mb-2"
-  >
-    <PopMenuItem
-      class="bg-white"
-      icon="edit"
-      @click="isEdit"
-    >
-      {{ isEditing ? 'Завершить редактирование' : 'Редактировать' }}
-    </PopMenuItem>
-  </div>
-  <QuillEditor
-    v-if="!isEditing && text?.length"
-    v-model:content="text"
-    content-type="html"
-    :read-only="true"
-    :toolbar="['']"
-    class="h-auto mb-5 bg-white"
-  />
-  <QuillEditor
-    v-if="isEditing"
-    v-model:content="text"
-    content-type="html"
-    :toolbar="'full'"
-    class="h-auto mb-5 bg-white"
-  />
-  <template
-    v-for="(question , index) in questions"
-    :key="index"
-  >
-    <ReglamentQuestion
-      :ref="question.uid"
-      :is-editing="isEditing"
-      :question="question"
-      @deleteQuestion="onDeleteQuestion"
-      @addQuestion="onAddQuestion"
-    />
-  </template>
-  <div class="flex w-full pb-5">
-    <ListBlocAdd
-      v-if="canEdit && isEditing"
-      class="mt-5 w-full"
-      @click.stop="onAddQuestion"
-    />
-  </div>
-  <div
-    v-if="!(isEditing || questions.length <= 0)"
-    class="flex justify-end"
-  >
-    <button
-      class="flex items-end bg-[#FF912380] p-3 px-10 rounded-[8px] text-black text-sm mr-1 hover:bg-[#F5DEB3]"
-      @click="clickComplete"
-    >
-      Завершить
-    </button>
-  </div>
-  <div class="h-[20px]" />
-</template>
-
 <style scoped>
 </style>
