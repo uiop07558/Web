@@ -197,8 +197,9 @@ export default {
       }
     },
     onAddQuestion () {
-      const question = { uid: this.uuidv4(), name: 'new question', uid_reglament: this.reglament.uid, answers: [] }
+      const question = { uid: this.uuidv4(), name: 'new question', uid_reglament: this.reglament.uid }
       this.$store.dispatch('CREATE_REGLAMENT_QUESTION_REQUEST', question).then(() => {
+        question.answers = []
         this.questions.push(question)
         this.$nextTick(() => {
           this.gotoNode(question.uid)
