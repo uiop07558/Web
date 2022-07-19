@@ -38,6 +38,7 @@
       @deleteQuestion="onDeleteQuestion"
       @deleteAnswer="deleteAnswer"
       @addQuestion="onAddQuestion"
+      @updateAnswerName="updateAnswerName"
       @pushAnswer="pushAnswer"
       @selectAnswer="selectAnswer"
       @setRightAnswer="setRightAnswer"
@@ -162,8 +163,20 @@ export default {
     pushAnswer (data) {
       for (let i = 0; i < this.questions.length; i++) {
         if (this.questions[i].uid === data.uid_question) {
+          if (!this.questions[i].answers) {
+            this.questions[i].answers = []
+          }
           this.questions[i].answers.push(data)
           return
+        }
+      }
+    },
+    updateAnswerName (data) {
+      for (let i = 0; i < this.questions.length; i++) {
+        for (let j = 0; j < this.questions[i].answers.length; j++) {
+          if (this.questions[i].answers[j].uid === data.uid) {
+            this.questions[i].answers[j] = data
+          }
         }
       }
     },
@@ -188,7 +201,7 @@ export default {
       }
     },
     onAddQuestion () {
-      const question = { uid: this.uuidv4(), name: 'new question', uid_reglament: this.reglament.uid, answers: [] }
+      const question = { uid: this.uuidv4(), name: 'new question', uid_reglament: this.reglament.uid }
       this.$store.dispatch('CREATE_REGLAMENT_QUESTION_REQUEST', question).then(() => {
         this.questions.push(question)
         this.$nextTick(() => {

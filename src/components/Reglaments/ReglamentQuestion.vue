@@ -19,7 +19,7 @@ export default {
       default: false
     }
   },
-  emits: ['deleteQuestion', 'deleteAnswer', 'setRightAnswer', 'addQuestion', 'pushAnswer', 'selectAnswer'],
+  emits: ['deleteQuestion', 'deleteAnswer', 'setRightAnswer', 'addQuestion', 'pushAnswer', 'selectAnswer', 'updateAnswerName'],
   expose: ['onFocus'],
   data () {
     return {
@@ -94,6 +94,7 @@ export default {
         name: resp[0],
         is_right: resp[1].is_right
       }
+      this.$emit('updateAnswerName', data)
       this.$store.dispatch(ANSWER.UPDATE_REGLAMENT_ANSWER_REQUEST, data)
     },
     deleteQuestion () {
