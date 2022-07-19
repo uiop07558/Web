@@ -162,11 +162,6 @@ export default {
     pushAnswer (data) {
       for (let i = 0; i < this.questions.length; i++) {
         if (this.questions[i].uid === data.uid_question) {
-          if (this.questions[i].answers) {
-            this.questions[i].answers.push(data)
-            return
-          }
-          this.questions[i].answers = []
           this.questions[i].answers.push(data)
           return
         }
@@ -193,7 +188,7 @@ export default {
       }
     },
     onAddQuestion () {
-      const question = { uid: this.uuidv4(), name: 'new question', uid_reglament: this.reglament.uid }
+      const question = { uid: this.uuidv4(), name: 'new question', uid_reglament: this.reglament.uid, answers: [] }
       this.$store.dispatch('CREATE_REGLAMENT_QUESTION_REQUEST', question).then(() => {
         this.questions.push(question)
         this.$nextTick(() => {
