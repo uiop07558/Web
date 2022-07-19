@@ -1,6 +1,6 @@
 <template>
   <div
-    v-if="canEdit"
+    v-if="canEdit && !showCompleteMessage"
     class="flex justify-end mb-2"
   >
     <PopMenuItem
@@ -31,7 +31,7 @@
     :key="index"
   >
     <ReglamentQuestion
-      v-if="isTesting || isEditing"
+      v-if="(isTesting || isEditing) && !showCompleteMessage"
       :ref="question.uid"
       :is-editing="isEditing"
       :question="question"
@@ -63,7 +63,7 @@
     </button>
   </div>
   <div
-    v-if="!isEditing && isTesting && questions.length > 0"
+    v-if="!isEditing && isTesting && questions.length > 0 && !showCompleteMessage"
     class="flex justify-end"
   >
     <button
@@ -73,12 +73,18 @@
       Завершить
     </button>
   </div>
+  <ReglamentCompleteMessage
+    v-if="showCompleteMessage"
+    :is-passed="isPassed"
+    @confirm="$store.dispatch('popNavStack')"
+  />
   <div class="h-[20px]" />
 </template>
 <script>
 import { QuillEditor } from '@vueup/vue-quill'
 import ListBlocAdd from '@/components/Common/ListBlocAdd.vue'
 import ReglamentQuestion from './ReglamentQuestion.vue'
+import ReglamentCompleteMessage from './ReglamentCompleteMessage.vue'
 import PopMenuItem from '@/components/modals/PopMenuItem.vue'
 
 import '@vueup/vue-quill/dist/vue-quill.snow.css'
@@ -88,6 +94,7 @@ export default {
     QuillEditor,
     ListBlocAdd,
     ReglamentQuestion,
+    ReglamentCompleteMessage,
     PopMenuItem
   },
   props: {
@@ -101,7 +108,9 @@ export default {
       text: this.reglament?.content,
       isEditing: false,
       questions: [],
-      isTesting: false
+      isTesting: false,
+      showCompleteMessage: false,
+      isPassed: 0
     }
   },
   computed: {
@@ -203,6 +212,7 @@ export default {
     onAddQuestion () {
       const question = { uid: this.uuidv4(), name: 'new question', uid_reglament: this.reglament.uid }
       this.$store.dispatch('CREATE_REGLAMENT_QUESTION_REQUEST', question).then(() => {
+        question.answers = []
         this.questions.push(question)
         this.$nextTick(() => {
           this.gotoNode(question.uid)
@@ -230,10 +240,11 @@ export default {
         uid_reglament: this.reglament.uid,
         answerJson: JSON.stringify(this.questions)
       }
-      console.log(this.questions)
-      this.$store.dispatch('CRATE_USER_REGLAMENT_ANSWER', data).then(
-        this.$store.dispatch('popNavStack')
-      )
+      this.$store.dispatch('CRATE_USER_REGLAMENT_ANSWER', data).then((resp) => {
+        this.showCompleteMessage = true
+        this.isPassed = resp.data.is_passed
+        // this.$store.dispatch('popNavStack')
+      })
     }
   }
 }
