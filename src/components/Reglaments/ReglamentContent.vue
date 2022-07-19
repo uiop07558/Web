@@ -243,7 +243,6 @@ export default {
       this.$store.dispatch('CRATE_USER_REGLAMENT_ANSWER', data).then((resp) => {
         this.showCompleteMessage = true
         this.isPassed = resp.data.is_passed
-        // this.$store.dispatch('popNavStack')
       })
     }
   }
