@@ -93,6 +93,16 @@ export default {
         }
       })
       return arr
+    },
+    favoriteProjects () {
+      const arr = []
+      const projects = this.$store.state.projects.projects
+      Object.keys(projects).forEach(key => {
+        if (projects[key].favorite === 1) {
+          arr.push(projects[key])
+        }
+      })
+      return arr
     }
   },
   methods: {
@@ -244,6 +254,37 @@ export default {
         key: 'greedPath',
         value: 'boards_children'
       })
+    },
+    goToProject (project) {
+      const path = 'new_private_projects'
+      const el = {
+        name: 'Проекты',
+        key: 'greedSource',
+        greedPath: path,
+        value: this.storeNavigator[path]
+      }
+      this.$store.commit('updateStackWithInitValue', el)
+
+      this.$store.dispatch(TASK.PROJECT_TASKS_REQUEST, project.uid)
+      this.$store.commit('basic', {
+        key: 'taskListSource',
+        value: { uid: project.global_property_uid, param: project.uid }
+      })
+
+      this.$store.commit(TASK.CLEAN_UP_LOADED_TASKS)
+
+      const navElem = {
+        name: project.name,
+        key: 'greedSource',
+        uid: project.uid,
+        global_property_uid: project.global_property_uid,
+        greedPath: 'projects_children',
+        value: project.children
+      }
+
+      this.$store.commit('pushIntoNavStack', navElem)
+      this.$store.commit('basic', { key: 'greedSource', value: project.children })
+      this.$store.commit('basic', { key: 'greedPath', value: 'projects_children' })
     }
   }
 }
@@ -393,8 +434,10 @@ export default {
           :key="`b-${index}`"
           :menu="menuGroup"
           :favorite-boards="favoriteBoards"
+          :favorite-projects="favoriteProjects"
           @menu-click="menuClick"
           @go-to-favorite-board="board => goToBoard(board)"
+          @go-to-favorite-project="proj => goToProject(proj)"
         />
       </template>
     </div>
