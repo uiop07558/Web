@@ -260,7 +260,7 @@ const getNavigator = () => {
 
                 // if last visited navElemen is in nested in children, then we trying to find these children with visitChildren fucntion
                 // from storeNavigator
-              } else if (['tags_children', 'projects_children', 'boards_children'].includes(navStack.value[navStack.value.length - 1].greedPath)) {
+              } else if (['tags_children', 'projects_children', 'boards_children', 'reglament_content'].includes(navStack.value[navStack.value.length - 1].greedPath)) {
                 if (navStack.value[navStack.value.length - 1].greedPath === 'tags_children') {
                 // nested lookup for tags
                   const action = UID_TO_ACTION[navStack.value[navStack.value.length - 1].global_property_uid]
@@ -326,8 +326,15 @@ const getNavigator = () => {
                     }
                   })
                 }
-                // colors and reglaments
+                if (navStack.value[navStack.value.length - 1].greedPath === 'reglament_content') {
+                  visitChildren(storeNavigator.value.reglaments.items, value => {
+                    if (value.uid === navStack.value[navStack.value.length - 1].uid) {
+                      store.commit('basic', { key: navStack.value[navStack.value.length - 1].key, value: value })
+                    }
+                  })
+                }
               } else {
+                // colors and reglaments
                 store.commit('basic', { key: navStack.value[navStack.value.length - 1].key, value: storeNavigator.value[navStack.value[navStack.value.length - 1].greedPath].items })
               }
             }
