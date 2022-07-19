@@ -18,6 +18,7 @@ import { mdiMenu } from '@mdi/js'
 
 import * as TASK from '@/store/actions/tasks'
 import { AUTH_LOGOUT } from '@/store/actions/auth'
+import * as CARD from '@/store/actions/cards'
 
 export default {
   components: {
@@ -82,6 +83,26 @@ export default {
     },
     getNavigatorLanguage () {
       return (navigator.languages && navigator.languages.length) ? navigator.languages[0] : navigator.userLanguage || navigator.language || navigator.browserLanguage || 'en'
+    },
+    favoriteBoards () {
+      const arr = []
+      const boards = this.$store.state.boards.boards
+      Object.keys(boards).forEach(key => {
+        if (boards[key].favorite === 1) {
+          arr.push(boards[key])
+        }
+      })
+      return arr
+    },
+    favoriteProjects () {
+      const arr = []
+      const projects = this.$store.state.projects.projects
+      Object.keys(projects).forEach(key => {
+        if (projects[key].favorite === 1) {
+          arr.push(projects[key])
+        }
+      })
+      return arr
     }
   },
   methods: {
@@ -200,6 +221,69 @@ export default {
       else if (this.currentSettingsTab === 'tarif') return ('Тариф')
       else if (this.currentSettingsTab === 'main') return ('Основное')
       else if (this.currentSettingsTab === 'karma') return ('Карма')
+    },
+    goToBoard (board) {
+      const path = 'new_private_boards'
+      const el = {
+        greedPath: path,
+        key: 'greedSource',
+        name: 'Доски',
+        value: this.storeNavigator[path]
+      }
+      this.$store.commit('updateStackWithInitValue', el)
+
+      this.$store.dispatch(CARD.BOARD_CARDS_REQUEST, board.uid)
+      this.$store.commit('basic', {
+        key: 'cardSource',
+        value: { uid: board.global_property_uid, param: board.uid }
+      })
+
+      const navElem = {
+        name: board.name,
+        key: 'greedSource',
+        uid: board.uid,
+        global_property_uid: board.global_property_uid,
+        greedPath: 'boards_children',
+        value: board.children
+      }
+
+      this.$store.commit('pushIntoNavStack', navElem)
+      this.$store.commit('basic', { key: 'greedSource', value: board.children })
+      this.$store.commit('basic', {
+        key: 'greedPath',
+        value: 'boards_children'
+      })
+    },
+    goToProject (project) {
+      const path = 'new_private_projects'
+      const el = {
+        name: 'Проекты',
+        key: 'greedSource',
+        greedPath: path,
+        value: this.storeNavigator[path]
+      }
+      this.$store.commit('updateStackWithInitValue', el)
+
+      this.$store.dispatch(TASK.PROJECT_TASKS_REQUEST, project.uid)
+      this.$store.commit('basic', {
+        key: 'taskListSource',
+        value: { uid: project.global_property_uid, param: project.uid }
+      })
+
+      this.$store.commit(TASK.CLEAN_UP_LOADED_TASKS)
+
+      const navElem = {
+        name: project.name,
+        key: 'greedSource',
+        uid: project.uid,
+        global_property_uid: project.global_property_uid,
+        greedPath: 'projects_children',
+        value: project.children
+      }
+
+      this.$store.commit('pushIntoNavStack', navElem)
+      this.$store.commit('basic', { key: 'greedSource', value: project.children })
+      this.$store.commit('basic', { key: 'greedPath', value: 'projects_children' })
     }
   }
 }
@@ -341,7 +425,11 @@ export default {
           v-else
           :key="`b-${index}`"
           :menu="menuGroup"
+          :favorite-boards="favoriteBoards"
+          :favorite-projects="favoriteProjects"
           @menu-click="menuClick"
+          @go-to-favorite-board="board => goToBoard(board)"
+          @go-to-favorite-project="proj => goToProject(proj)"
         />
       </template>
     </div>

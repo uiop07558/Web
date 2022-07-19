@@ -113,6 +113,28 @@ const actions = {
           reject(err)
         })
     })
+  },
+  [PROJECT.ADD_PROJECT_TO_FAVORITE]: ({ commit, dispatch }, data) => {
+    return new Promise((resolve, reject) => {
+      dispatch(PROJECT.UPDATE_PROJECT_REQUEST, { ...data, favorite: 1 })
+        .then((resp) => {
+          resolve(resp)
+        })
+        .catch((err) => {
+          reject(err)
+        })
+    })
+  },
+  [PROJECT.REMOVE_PROJECT_FROM_FAVORITE]: ({ commit, dispatch }, data) => {
+    return new Promise((resolve, reject) => {
+      dispatch(PROJECT.UPDATE_PROJECT_REQUEST, { ...data, favorite: 0 })
+        .then((resp) => {
+          resolve(resp)
+        })
+        .catch((err) => {
+          reject(err)
+        })
+    })
   }
 }
 
