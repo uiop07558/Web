@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, nextTick } from 'vue'
+import { ref, computed } from 'vue'
 const emit = defineEmits(['update:modelValue', 'createCardMessage', 'createCardFile', 'onPaste', 'cantWriteMessages'])
 
 const props = defineProps({
@@ -30,14 +30,6 @@ const onInputTaskMsg = () => {
   taskMsgEdit.value.style.height = '40px'
   const scrollHeight = taskMsgEdit.value.scrollHeight
   taskMsgEdit.value.style.height = scrollHeight + 'px'
-}
-
-const addNewLineTaskMsg = () => {
-  emit('update:modelValue', computedValue.value + '\n')
-  nextTick(() => {
-    onInputTaskMsg()
-    taskMsgEdit.value.scrollTo(0, taskMsgEdit.value.scrollHeight)
-  })
 }
 
 const createCardMessage = () => {
@@ -141,7 +133,6 @@ const cantWriteHandler = () => {
         @input="onInputTaskMsg"
         @paste="$emit('onPaste', $event)"
         @keydown.enter.exact.prevent="createCardMessage"
-        @keydown.enter.shift.exact.prevent="addNewLineTaskMsg"
       />
 
       <div
