@@ -39,14 +39,16 @@
       @blur="changeEmpName"
     >
     <div
+      v-if="selectedEmployeeEmail"
       class="mt-[30px] font-roboto text-[16px] leading-[19px] font-medium text-[#4c4c4d]"
     >
       Email
     </div>
     <div
+      v-if="selectedEmployeeEmail"
       class="mt-[15px] w-full font-roboto text-[15px] leading-[18px] text-[#606061] overflow-hidden text-ellipsis whitespace-nowrap"
     >
-      {{ selectedEmployee.email }}
+      {{ selectedEmployeeEmail }}
     </div>
     <div
       v-if="selectedEmployeePhone"
@@ -143,6 +145,12 @@ export default {
     selectedEmployeeName () {
       return this.selectedEmployee?.name || ''
     },
+    selectedEmployeeEmail () {
+      return this.selectedEmployee?.email || ''
+    },
+    selectedEmployeeType () {
+      return this.selectedEmployee?.type || -1
+    },
     selectedEmployeePhone () {
       const phone = this.selectedEmployee?.phone || ''
       const index = phone.lastIndexOf(' ("')
@@ -166,7 +174,7 @@ export default {
     },
     isSelectedEmployeeCurrentUser () {
       const user = this.$store.state.user.user
-      return user.current_user_uid === this.selectedEmployee.uid
+      return user.current_user_uid === this.selectedEmployee?.uid
     },
     isCanChangeDepartments () {
       const employees = this.$store.state.employees.employees
@@ -182,7 +190,7 @@ export default {
       // текущий пользователь админ
       // тот которого удаляем не суперадмин
       // тот которого удаляем не текущий пользователь
-      return userAdmin && this.selectedEmployee.type !== 1 && !this.isSelectedEmployeeCurrentUser
+      return userAdmin && this.selectedEmployeeType !== 1 && !this.isSelectedEmployeeCurrentUser
     },
     allDepartments () {
       const deps = Object.values(this.$store.state.departments.deps)
@@ -227,9 +235,9 @@ export default {
     },
     changeEmpName () {
       const title = this.currEmpName.trim()
-      if (title && this.selectedEmployee.name !== title) {
+      if (title && this.selectedEmployee?.name !== title) {
         this.$store.dispatch(EMPLOYEE.CHANGE_EMPLOYEE_NAME, {
-          email: this.selectedEmployee.email,
+          email: this.selectedEmployee?.email,
           name: title
         })
           .then((resp) => {
@@ -241,11 +249,11 @@ export default {
       const dep = this.allDepartments[index]
       if (this.selectedEmployee?.uid_dep !== dep.uid) {
         const data = {
-          uidDepartmentOld: this.selectedEmployee.uid_dep,
+          uidDepartmentOld: this.selectedEmployee?.uid_dep,
           uidDepartmentNew: dep.uid,
-          uidEmp: this.selectedEmployee.uid,
-          emailEmp: this.selectedEmployee.email,
-          depOld: this.$store.state.departments.deps[this.selectedEmployee.uid_dep],
+          uidEmp: this.selectedEmployee?.uid,
+          emailEmp: this.selectedEmployee?.email,
+          depOld: this.$store.state.departments.deps[this.selectedEmployee?.uid_dep],
           depNew: this.$store.state.departments.deps[dep.uid]
         }
         this.$store.dispatch(EMPLOYEE.CHANGE_EMPLOYEE_DEP, data)
