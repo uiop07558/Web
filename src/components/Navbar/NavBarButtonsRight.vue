@@ -5,7 +5,7 @@
   />
   <div class="flex gap-[10px] items-center px-3">
     <div
-      v-if="!showSearchBar"
+      v-if="!showSearchBar && lastGreedPath !== 'reglament_content' && lastGreedPath !== 'reglaments'"
       class="flex-none flex gap-[5px] p-[8px] cursor-pointer text-[#7e7e80] hover:text-[#7e7e80]/75"
       @click="onShowSearchBar"
     >
