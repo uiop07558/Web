@@ -17,6 +17,7 @@ export default {
     }
   },
   emits: ['deleteAnswer', 'setRightAnswer', 'onSelectAnswer', 'resetRightAnswer', 'updateAnswerName'],
+  expose: ['onFocus'],
   data () {
     return {
       name: '',
@@ -47,6 +48,15 @@ export default {
     },
     updateAnswerName (event) {
       this.$emit('updateAnswerName', [event.target.innerText, this.answer])
+    },
+    onFocus () {
+      this.$refs[this.answer.uid + 'input'].focus()
+      const range = document.createRange()
+      const sel = document.getSelection()
+      range.setStart(this.$refs[this.answer.uid + 'input'], 1)
+      range.collapse(true)
+      sel.removeAllRanges()
+      sel.addRange(range)
     }
   }
 }
@@ -66,6 +76,7 @@ export default {
     @click="onSelectAnswer"
   >
     <div
+      :ref="answer.uid + 'input'"
       data-placeholder="Question name"
       class="font-[300] text-[14px]"
       :contenteditable="isEditing"
