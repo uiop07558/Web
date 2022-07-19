@@ -1,28 +1,31 @@
-import { createRouter, createWebHistory } from 'vue-router'
 import store from '@/store'
+import CardFile from '@/views/CardFile'
 import Home from '@/views/Home'
 import TaskFile from '@/views/TaskFile'
-import CardFile from '@/views/CardFile'
+import { createRouter, createWebHistory } from 'vue-router'
 
 const ifNotAuthenticated = (to, from, next) => {
   if (!store.getters.isAuthenticated) {
     next()
+  } else {
+    next('/')
   }
-  next('/')
 }
 
 const ifAuthenticated = (to, from, next) => {
   if (store.getters.isAuthenticated) {
     next()
+  } else {
+    next('/login')
   }
-  next('/login')
 }
 
 const ifRouteNotExists = (to, from, next) => {
   if (store.getters.isAuthenticated) {
     next('/')
+  } else {
+    next('/login')
   }
-  next('/login')
 }
 
 const routes = [
