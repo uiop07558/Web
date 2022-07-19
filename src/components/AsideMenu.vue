@@ -18,6 +18,7 @@ import { mdiMenu } from '@mdi/js'
 
 import * as TASK from '@/store/actions/tasks'
 import { AUTH_LOGOUT } from '@/store/actions/auth'
+import * as CARD from '@/store/actions/cards'
 
 export default {
   components: {
@@ -82,6 +83,16 @@ export default {
     },
     getNavigatorLanguage () {
       return (navigator.languages && navigator.languages.length) ? navigator.languages[0] : navigator.userLanguage || navigator.language || navigator.browserLanguage || 'en'
+    },
+    favoriteBoards () {
+      const arr = []
+      const boards = this.$store.state.boards.boards
+      Object.keys(boards).forEach(key => {
+        if (boards[key].favorite === 1) {
+          arr.push(boards[key])
+        }
+      })
+      return arr
     }
   },
   methods: {
@@ -201,6 +212,38 @@ export default {
       else if (this.currentSettingsTab === 'main') return ('Основное')
       else if (this.currentSettingsTab === 'changePassword') return ('Изменение пароля')
       else if (this.currentSettingsTab === 'karma') return ('Карма')
+    },
+    goToBoard (board) {
+      const path = 'new_private_boards'
+      const el = {
+        greedPath: path,
+        key: 'greedSource',
+        name: 'Доски',
+        value: this.storeNavigator[path]
+      }
+      this.$store.commit('updateStackWithInitValue', el)
+
+      this.$store.dispatch(CARD.BOARD_CARDS_REQUEST, board.uid)
+      this.$store.commit('basic', {
+        key: 'cardSource',
+        value: { uid: board.global_property_uid, param: board.uid }
+      })
+
+      const navElem = {
+        name: board.name,
+        key: 'greedSource',
+        uid: board.uid,
+        global_property_uid: board.global_property_uid,
+        greedPath: 'boards_children',
+        value: board.children
+      }
+
+      this.$store.commit('pushIntoNavStack', navElem)
+      this.$store.commit('basic', { key: 'greedSource', value: board.children })
+      this.$store.commit('basic', {
+        key: 'greedPath',
+        value: 'boards_children'
+      })
     }
   }
 }
@@ -349,7 +392,9 @@ export default {
           v-else
           :key="`b-${index}`"
           :menu="menuGroup"
+          :favorite-boards="favoriteBoards"
           @menu-click="menuClick"
+          @go-to-favorite-board="board => goToBoard(board)"
         />
       </template>
     </div>
