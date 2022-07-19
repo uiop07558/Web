@@ -38,6 +38,7 @@
       @deleteQuestion="onDeleteQuestion"
       @deleteAnswer="deleteAnswer"
       @addQuestion="onAddQuestion"
+      @updateQuestionName="updateQuestionName"
       @updateAnswerName="updateAnswerName"
       @pushAnswer="pushAnswer"
       @selectAnswer="selectAnswer"
@@ -154,6 +155,14 @@ export default {
           (crypto.getRandomValues(new Uint8Array(1))[0] & (15 >> (c / 4)))
         ).toString(16)
       )
+    },
+    updateQuestionName (data) {
+      for (let i = 0; i < this.questions.length; i++) {
+        if (this.questions[i].uid === data.uid) {
+          this.questions[i].name = data.name
+          return
+        }
+      }
     },
     gotoNode (uid) {
       this.$refs[uid][0].onFocus()
