@@ -183,7 +183,6 @@
         class="mt-3"
         :comment="task.comment"
         :can-edit="task.uid_customer === user.current_user_uid"
-        @endChangeComment="endChangeComment"
         @changeComment="onChangeComment"
       />
       <Checklist
@@ -632,15 +631,13 @@ export default {
     pad2 (n) {
       return (n < 10 ? '0' : '') + n
     },
-    endChangeComment (text) {
-      this.$emit('changeValue', { comment: text })
-    },
     onChangeComment (text) {
       const data = {
         uid: this.task.uid,
         value: text
       }
       this.$store.dispatch(TASK.CHANGE_TASK_COMMENT, data)
+      this.$emit('changeValue', { comment: text })
     },
     _linkify (text) {
       return text.replace(/(lt?:\/\/[^\s]+)/g, '<a href="$1">$1</a>')
@@ -797,7 +794,9 @@ export default {
         done: 0,
         undone: 0
       }
-      for (const line of checklist.split('\r\n\r\n')) {
+      // нормализуем перенос строки (разные на windows и на mac)
+      const chlist = checklist.replaceAll('\r\n', '\n').replaceAll('\r', '\n').replaceAll('\n', '\r\n')
+      for (const line of chlist.split('\r\n\r\n')) {
         data.undone++
         if (+line.split('\r\n')[0] === 1) {
           data.done++

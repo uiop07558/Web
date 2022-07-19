@@ -225,6 +225,9 @@ export default {
     }
   },
   methods: {
+    print (msg, val) {
+      val ? console.log(msg, val) : console.log(msg)
+    },
     readTask () {
       this.$emit('readTask')
     },

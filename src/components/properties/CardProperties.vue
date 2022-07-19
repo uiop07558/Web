@@ -1,3 +1,110 @@
+<template>
+  <BoardModalBoxDelete
+    v-if="showDeleteCard"
+    title="Удалить карточку"
+    text="Вы действительно хотите удалить карточку?"
+    @cancel="showDeleteCard = false"
+    @yes="removeCard"
+  />
+  <CardMessagesModalBoxLimit
+    v-if="showMessagesLimit"
+    @cancel="showMessagesLimit = false"
+    @ok="showMessagesLimit = false"
+  />
+  <CardModalBoxBudget
+    v-if="showChangeCardBudget"
+    :value="selectedCard?.cost / 100"
+    :show="showChangeCardBudget"
+    title="Бюджет карточки"
+    @cancel="showChangeCardBudget = false"
+    @save="changeCardBudget"
+  />
+  <div class="relative min-h-full">
+    <div class="flex items-center justify-between mb-[10px]">
+      <card-options
+        :date-create="selectedCard?.date_create"
+        :can-edit="canEdit"
+        :creator="selectedCard?.uid_creator"
+        :show-files-only="showFilesOnly"
+        @clickRemoveButton="showDeleteCard = true"
+        @toggleShowOnlyFiles="showFilesOnly = !showFilesOnly"
+      />
+      <PropsButtonClose
+        @click="closeProperties"
+      />
+    </div>
+    <card-cover
+      :cover-color="
+        selectedCard?.cover_color === '#A998B6' ? '' : selectedCard?.cover_color
+      "
+      :cover-link="selectedCard?.cover_link"
+      :can-edit="canEdit"
+      @onChangeCardColor="changeCardColor"
+      @onChangeCardCover="changeCardCover"
+      @onChangeCardClearCover="changeCardClearCover"
+    />
+
+    <card-name
+      :card-name="selectedCard?.name"
+      :can-edit="canEdit"
+      @changeName="changeName"
+    />
+
+    <div class="flex justify-start mb-[25px] space-x-[4px]">
+      <card-responsible-user
+        :responsible="selectedCard?.user"
+        :employees-by-email="employeesByEmail"
+        :can-edit="canEdit"
+        @changeResponsible="changeResponsible"
+      />
+      <card-budget
+        :budget="selectedCard?.cost"
+        :can-edit="canEdit"
+        @click="showChangeCardBudget = true"
+        @onWipeBudget="changeCardBudget"
+      />
+    </div>
+
+    <TaskPropsCommentEditor
+      class="mt-3 h-32 break-words"
+      :comment="selectedCard?.comment"
+      :can-edit="canEdit"
+      @changeComment="changeComment"
+    />
+    <!-- Chat skeleton -->
+    <MessageSkeleton v-if="status=='loading'" />
+    <!-- Card chat -->
+    <card-chat
+      v-if="status=='success'"
+      :messages="cardMessages"
+      :current-user-uid="user.current_user_uid"
+      :employees="employees"
+      :show-files-only="showFilesOnly"
+      @onQuote="setCurrentQuote"
+      @onDeleteMessage="deleteCardMessage"
+      @onDeleteFile="deleteCardFileMessage"
+    />
+
+    <!-- Card chat input -->
+    <div class="flex flex-col fixed bottom-[0px] w-[340px] bg-white pt-2 pb-5">
+      <card-message-quote-under-input
+        v-if="currentQuote"
+        class="mb-[14px] mt-[19px]"
+        :quote-message="currentQuote"
+        :employee="employees[currentQuote.uid_creator]"
+        @onClearQuote="currentQuote = false"
+      />
+      <card-message-input
+        v-model="cardMessageInputValue"
+        :can-add-files="canAddFiles"
+        @createCardMessage="createCardMessage"
+        @createCardFile="createCardFile"
+        @onPaste="onPasteEvent"
+      />
+    </div>
+  </div>
+</template>
+
 <script>
 import {
   CREATE_MESSAGE_REQUEST,
@@ -25,14 +132,13 @@ import CardResponsibleUser from '@/components/CardProperties/CardResponsibleUser
 import CardOptions from '@/components/CardProperties/CardOptions.vue'
 import CardBudget from '@/components/CardProperties/CardBudget.vue'
 import CardMessageInput from '@/components/CardProperties/CardMessageInput.vue'
-import Icon from '@/components/Icon.vue'
-import close from '@/icons/close.js'
 import TaskPropsCommentEditor from '@/components/TaskProperties/TaskPropsCommentEditor.vue'
 import BoardModalBoxDelete from '@/components/Board/BoardModalBoxDelete.vue'
 import CardModalBoxBudget from '@/components/CardProperties/CardModalBoxBudget.vue'
 import CardMessageQuoteUnderInput from '@/components/CardProperties/CardMessageQuoteUnderInput.vue'
 import CardMessagesModalBoxLimit from '../CardProperties/CardMessagesModalBoxLimit.vue'
 import MessageSkeleton from '@/components/TaskProperties/MessageSkeleton.vue'
+import PropsButtonClose from '@/components/Common/PropsButtonClose.vue'
 
 export default {
   components: {
@@ -43,18 +149,16 @@ export default {
     CardOptions,
     CardBudget,
     CardMessageInput,
-    Icon,
     TaskPropsCommentEditor,
     BoardModalBoxDelete,
     CardModalBoxBudget,
     CardMessageQuoteUnderInput,
     CardMessagesModalBoxLimit,
-    MessageSkeleton
+    MessageSkeleton,
+    PropsButtonClose
   },
   data () {
     return {
-      close,
-
       showMessagesLimit: false,
       showChangeCardBudget: false,
       showFilesOnly: false,
@@ -151,9 +255,11 @@ export default {
       )
     },
 
-    endChangeComment (text) {
-      const data = { cardUid: this.selectedCard?.uid, comment: text }
+    changeComment (text) {
+      if (!this.selectedCard) return
+      const data = { cardUid: this.selectedCard.uid, comment: text }
       this.$store.dispatch(CHANGE_CARD_COMMENT, data)
+      this.selectedCard.comment = text
     },
 
     createCardFile (event) {
@@ -171,7 +277,6 @@ export default {
         uid_card: this.selectedCard?.uid,
         name: formData
       }
-      console.log(data)
       this.$store.dispatch(CREATE_FILES_REQUEST, data).then(() => {
         if (this.selectedCard) this.selectedCard.has_files = true
         this.scrollDown()
@@ -188,7 +293,6 @@ export default {
     },
 
     deleteCardFileMessage (uid) {
-      console.log('DLEETING FILE MESSAGE')
       this.$store.dispatch(DELETE_FILE_REQUEST, uid)
     },
 
@@ -309,117 +413,3 @@ export default {
 }
 
 </script>
-
-<template>
-  <BoardModalBoxDelete
-    v-if="showDeleteCard"
-    title="Удалить карточку"
-    text="Вы действительно хотите удалить карточку?"
-    @cancel="showDeleteCard = false"
-    @yes="removeCard"
-  />
-  <CardMessagesModalBoxLimit
-    v-if="showMessagesLimit"
-    @cancel="showMessagesLimit = false"
-    @ok="showMessagesLimit = false"
-  />
-  <CardModalBoxBudget
-    v-if="showChangeCardBudget"
-    :value="selectedCard?.cost / 100"
-    :show="showChangeCardBudget"
-    title="Бюджет карточки"
-    @cancel="showChangeCardBudget = false"
-    @save="changeCardBudget"
-  />
-  <div class="relative min-h-full">
-    <!-- Close icon -->
-    <Icon
-      :path="close.path"
-      class="text-[#7E7E80] dark:text-white cursor-pointer fixed top-[26px] right-[25px]"
-      :box="close.viewBox"
-      :width="close.width"
-      :height="close.height"
-      @click="closeProperties"
-    />
-    <div class="flex items-center justify-between mb-[10px]">
-      <card-options
-        :date-create="selectedCard?.date_create"
-        :can-edit="canEdit"
-        :creator="selectedCard?.uid_creator"
-        :show-files-only="showFilesOnly"
-        @clickRemoveButton="showDeleteCard = true"
-        @toggleShowOnlyFiles="showFilesOnly = !showFilesOnly"
-      />
-    </div>
-    <card-cover
-      :cover-color="
-        selectedCard?.cover_color === '#A998B6' ? '' : selectedCard?.cover_color
-      "
-      :cover-link="selectedCard?.cover_link"
-      :can-edit="canEdit"
-      @onChangeCardColor="changeCardColor"
-      @onChangeCardCover="changeCardCover"
-      @onChangeCardClearCover="changeCardClearCover"
-    />
-
-    <card-name
-      :card-name="selectedCard?.name"
-      :can-edit="canEdit"
-      @changeName="changeName"
-    />
-
-    <div class="flex justify-start mb-[25px] space-x-[4px]">
-      <card-responsible-user
-        :responsible="selectedCard?.user"
-        :employees-by-email="employeesByEmail"
-        :can-edit="canEdit"
-        @changeResponsible="changeResponsible"
-      />
-      <card-budget
-        :budget="selectedCard?.cost"
-        :can-edit="canEdit"
-        @click="showChangeCardBudget = true"
-        @onWipeBudget="changeCardBudget"
-      />
-    </div>
-
-    <TaskPropsCommentEditor
-      class="mt-3 h-32 break-words"
-      :comment="selectedCard?.comment"
-      :can-edit="canEdit"
-      @endChangeComment="endChangeComment"
-      @blur="endChangeComment"
-    />
-    <!-- Chat skeleton -->
-    <MessageSkeleton v-if="status=='loading'" />
-    <!-- Card chat -->
-    <card-chat
-      v-if="status=='success'"
-      :messages="cardMessages"
-      :current-user-uid="user.current_user_uid"
-      :employees="employees"
-      :show-files-only="showFilesOnly"
-      @onQuote="setCurrentQuote"
-      @onDeleteMessage="deleteCardMessage"
-      @onDeleteFile="deleteCardFileMessage"
-    />
-
-    <!-- Card chat input -->
-    <div class="flex flex-col fixed bottom-[0px] w-[340px] bg-white pt-2 pb-5">
-      <card-message-quote-under-input
-        v-if="currentQuote"
-        class="mb-[14px] mt-[19px]"
-        :quote-message="currentQuote"
-        :employee="employees[currentQuote.uid_creator]"
-        @onClearQuote="currentQuote = false"
-      />
-      <card-message-input
-        v-model="cardMessageInputValue"
-        :can-add-files="canAddFiles"
-        @createCardMessage="createCardMessage"
-        @createCardFile="createCardFile"
-        @onPaste="onPasteEvent"
-      />
-    </div>
-  </div>
-</template>

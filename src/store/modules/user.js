@@ -1,5 +1,4 @@
 import axios from 'axios'
-import { notify } from 'notiwind'
 import {
   USER_CHANGE_PHONE,
   USER_CHANGE_PHOTO,
@@ -27,15 +26,6 @@ const actions = {
           resolve(resp)
         })
         .catch((err) => {
-          notify(
-            {
-              group: 'api',
-              title: 'REST API Error, please make screenshot',
-              action: USER_REQUEST,
-              text: err.response.data
-            },
-            15000
-          )
           commit(USER_ERROR, err)
           reject(err)
         })
@@ -57,15 +47,6 @@ const actions = {
           })
         })
         .catch((err) => {
-          notify(
-            {
-              group: 'api',
-              title: 'REST API Error, please make screenshot',
-              action: USER_CHANGE_PHOTO,
-              text: '123'
-            },
-            15000
-          )
           reject(err)
         })
     })
@@ -83,15 +64,6 @@ const actions = {
           resolve(resp)
         })
         .catch((err) => {
-          notify(
-            {
-              group: 'api',
-              title: 'REST API Error, please make screenshot',
-              action: USER_CHANGE_PHONE,
-              text: '123'
-            },
-            15000
-          )
           reject(err)
         })
     })

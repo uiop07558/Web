@@ -667,7 +667,6 @@
         class="mt-3 h-32"
         :comment="selectedTask.comment ?? ''"
         :can-edit="canEditComment"
-        @endChangeComment="endChangeComment"
         @changeComment="onChangeComment"
       />
       <!-- Show all -->
@@ -749,6 +748,7 @@
         @cantWriteMessages="showFreeModalChat = true"
         @createCardMessage="sendTaskMsg()"
         @createCardFile="createTaskFile($event)"
+        @onPaste="onPasteEvent"
       />
     </div>
   </div>
@@ -897,7 +897,6 @@ export default {
     uploadStarted () { return this.$store.state.taskfilesandmessages.uploadStarted },
     selectedTask () { return this.$store.state.tasks.selectedTask },
     isPropertiesMobileExpanded () { return this.$store.state.isPropertiesMobileExpanded },
-    taskMessagesAndFiles () { return this.$store.state.taskfilesandmessages.messages },
     user () { return this.$store.state.user.user },
     status () { return this.$store.state.taskfilesandmessages.status },
     tasks () { return this.$store.state.tasks.newtasks },
@@ -926,7 +925,6 @@ export default {
     selectedTask (newval, oldval) {
       this.showOnlyFiles = false
       this.showAllMessages = false
-      this.currentAnswerMessageUid = ''
     }
   },
   methods: {
@@ -1350,7 +1348,7 @@ export default {
         this.$store.dispatch(CREATE_MESSAGE_REQUEST, data).then(
           resp => {
           // Answer last inspector message
-            const lastInspectorMessage = this.taskMessagesAndFiles.slice().reverse().find(message => message.uid_creator === 'inspector')
+            const lastInspectorMessage = [...this.taskMessages].reverse().find(message => message.uid_creator === 'inspector')
             if (lastInspectorMessage && this.selectedTask.uid_performer === this.user?.current_user_uid) {
               this.$store.dispatch(INSPECTOR.ANSWER_INSPECTOR_TASK, { id: lastInspectorMessage.id, answer: 1 }).then(() => {
                 lastInspectorMessage.performer_answer = 1
@@ -1398,8 +1396,8 @@ export default {
               }
             })
           setTimeout(() => {
-            const elmnt = document.getElementById('content').lastElementChild
-            elmnt.scrollIntoView({ behavior: 'smooth' })
+            const elmnt = document.getElementById('content')?.lastElementChild
+            elmnt?.scrollIntoView({ behavior: 'smooth' })
           }, 100)
         }
       }
@@ -1519,11 +1517,6 @@ export default {
         value: text
       }
       this.$store.dispatch(TASK.CHANGE_TASK_COMMENT, data)
-    },
-    endChangeComment: function (text) {
-      // чтобы у нас в интерфейсе поменялось
-      // потому что на changeComment он только
-      // на сервер отправляет и всё
       this.selectedTask.comment = text
     },
     gotoParentNode (uid) {

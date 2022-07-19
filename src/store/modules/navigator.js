@@ -1,6 +1,5 @@
 // icons for navigator
 import axios from 'axios'
-import { notify } from 'notiwind'
 import { PUSH_BOARD } from '../actions/boards'
 import { PUSH_COLOR, PUSH_MYCOLOR } from '../actions/colors'
 import { PUSH_DEPARTMENT } from '../actions/departments'
@@ -19,13 +18,10 @@ import {
   NAVIGATOR_REMOVE_BOARD,
   NAVIGATOR_REMOVE_COLOR,
   NAVIGATOR_REMOVE_DEPARTAMENT,
-  NAVIGATOR_REMOVE_EMPLOYEE,
-  NAVIGATOR_UPDATE_EMPLOYEE,
-  NAVIGATOR_REMOVE_PROJECT,
+  NAVIGATOR_REMOVE_EMPLOYEE, NAVIGATOR_REMOVE_PROJECT,
   NAVIGATOR_REMOVE_TAG,
   NAVIGATOR_REQUEST,
-  NAVIGATOR_SUCCESS,
-  PATCH_SETTINGS,
+  NAVIGATOR_SUCCESS, NAVIGATOR_UPDATE_ASSIGNMENTS, NAVIGATOR_UPDATE_EMPLOYEE, NAVIGATOR_UPDATE_DEPARTMENT, PATCH_SETTINGS,
   PATCH_SETTINGS_SUCCESS,
   RESET_STATE_NAVIGATOR
 } from '../actions/navigator'
@@ -158,15 +154,6 @@ const actions = {
         })
         .catch((err) => {
           commit(NAVIGATOR_ERROR, err)
-          notify(
-            {
-              group: 'api',
-              title: 'REST API Error, please make screenshot',
-              action: NAVIGATOR_REQUEST,
-              text: err.response?.data ?? err
-            },
-            15000
-          )
           reject(err)
         })
     })
@@ -180,15 +167,6 @@ const actions = {
           resolve(resp)
         })
         .catch((err) => {
-          notify(
-            {
-              group: 'api',
-              title: 'REST API Error, please make screenshot',
-              action: PATCH_SETTINGS,
-              text: err.response.data
-            },
-            15000
-          )
           reject(err)
         })
     })
@@ -197,6 +175,30 @@ const actions = {
     commit(NAVIGATOR_UPDATE_EMPLOYEE, employee)
     commit(PUSH_EMPLOYEE, employee)
     commit(PUSH_EMPLOYEE_BY_EMAIL, employee)
+  },
+  [NAVIGATOR_UPDATE_ASSIGNMENTS]: ({ commit }) => {
+    return new Promise((resolve, reject) => {
+      const url =
+        process.env.VUE_APP_LEADERTASK_API + 'api/v1/navigator/assignments'
+      axios({ url: url, method: 'GET' })
+        .then((resp) => {
+          if (resp.data.delegate_iam) {
+            for (const dm of resp.data.delegate_iam.items) {
+              dm.parentID = resp.data.delegate_iam.uid
+            }
+          }
+          if (resp.data.delegate_to_me) {
+            for (const dt of resp.data.delegate_to_me.items) {
+              dt.parentID = resp.data.delegate_to_me.uid
+            }
+          }
+          commit(NAVIGATOR_UPDATE_ASSIGNMENTS, resp)
+          resolve(resp)
+        })
+        .catch((err) => {
+          reject(err)
+        })
+    })
   }
 }
 
@@ -384,6 +386,20 @@ const mutations = {
 
     state.navigator = resp.data
   },
+  [NAVIGATOR_UPDATE_ASSIGNMENTS]: (state, resp) => {
+    const newAssignments = []
+    newAssignments.push({
+      dep: 'Поручено мной',
+      items: resp.data.delegate_iam.items
+    })
+    newAssignments.push({
+      dep: 'Поручено мне',
+      items: resp.data.delegate_to_me.items
+    })
+    state.navigator.delegate_iam = resp.data.delegate_iam
+    state.navigator.delegate_to_me = resp.data.delegate_to_me
+    state.navigator.new_delegate = newAssignments
+  },
   [NAVIGATOR_PUSH_DEPARTAMENT]: (state, departaments) => {
     for (const departament of departaments) {
       if (
@@ -440,6 +456,19 @@ const mutations = {
       (dep) => dep.uid === uidDepartment
     )
     if (indexDeps !== -1) state.navigator.deps.items.splice(indexDeps, 1)
+  },
+  [NAVIGATOR_UPDATE_DEPARTMENT]: (state, department) => {
+    const indexEmps = state.navigator.new_emps.findIndex(
+      (emps) => emps.dep.uid === department.uid
+    )
+    if (indexEmps !== -1) {
+      state.navigator.new_emps[indexEmps].dep = department
+    }
+
+    const indexDeps = state.navigator.deps.items.findIndex(
+      (dep) => dep.uid === department.uid
+    )
+    if (indexDeps !== -1) state.navigator.deps.items[indexDeps] = department
   },
   [NAVIGATOR_CHANGE_EMPLOYEE_DEPARTMENT]: (state, data) => {
     const uidDepOld =
