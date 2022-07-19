@@ -19,11 +19,10 @@ export default {
       default: false
     }
   },
-  emits: ['deleteQuestion', 'deleteAnswer', 'setRightAnswer', 'addQuestion'],
+  emits: ['deleteQuestion', 'deleteAnswer', 'setRightAnswer', 'addQuestion', 'pushAnswer', 'selectAnswer'],
   expose: ['onFocus'],
   data () {
     return {
-      answers: this?.question?.answers ?? [],
       showDeleteQuestion: false,
       showDeleteAnswer: false,
       rightAnswer: false
@@ -46,7 +45,7 @@ export default {
         is_right: false
       }
       this.$store.dispatch(ANSWER.CREATE_REGLAMENT_ANSWER_REQUEST, data)
-      this.answers.push(data)
+      this.$emit('pushAnswer', data)
       this.$nextTick(() => {
         this.gotoNode(data.uid)
       })
@@ -60,16 +59,18 @@ export default {
         is_right: answer[1]
       }
       this.$store.dispatch(ANSWER.UPDATE_REGLAMENT_ANSWER_REQUEST, data)
-      console.log(data)
+      this.$emit('setRightAnswer', data)
     },
     onSelectAnswer (uid) {
-      for (let i = 0; i < this.answers.length; i++) {
-        if (this.answers[i].uid === uid) {
-          if (this.answers[i].selected) {
-            this.answers[i].selected = false
+      for (let i = 0; i < this.question.answers.length; i++) {
+        if (this.question.answers[i].uid === uid) {
+          if (this.question.answers[i].selected) {
+            this.$emit('selectAnswer', [this.question.answers[i], false])
             return
           }
-          this.answers[i].selected = true
+          console.log(this.question)
+          this.$emit('selectAnswer', [this.question.answers[i], true])
+          return
         }
       }
     },
@@ -82,13 +83,7 @@ export default {
       )
     },
     onDeleteAnswer (uid) {
-      console.log(uid)
-      this.showDeleteAnswer = false
-      for (let i = 0; i < this.answers.length; i++) {
-        if (this.answers[i].uid === uid) {
-          this.answers.splice(i, 1)
-        }
-      }
+      this.$emit('deleteAnswer', uid)
       this.$store.dispatch(ANSWER.DELETE_REGLAMENT_ANSWER_REQUEST, uid)
     },
     updateAnswerName (resp) {
@@ -154,7 +149,7 @@ export default {
       />
     </div>
     <template
-      v-for="(answer) in answers"
+      v-for="(answer) in question.answers"
       :key="answer.uid"
     >
       <ReglamentAnswer
