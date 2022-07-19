@@ -136,10 +136,12 @@ export default {
       this.$refs[uid][0].onFocus()
     },
     deleteAnswer (uid) {
-      for (let i = 0; this.questions.length; i++) {
-        for (let j = 0; this.questions[i].answers.length; j++) {
+      console.log(uid)
+      for (let i = 0; i < this.questions.length; i++) {
+        for (let j = 0; j < this.questions[i].answers.length; j++) {
           if (this.questions[i].answers[j].uid === uid) {
-            this.questions[i].answers[j].splice(j, 1)
+            this.questions[i].answers.splice(j, 1)
+            return
           }
         }
       }
