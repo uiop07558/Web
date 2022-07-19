@@ -27,7 +27,7 @@ const month = pad2(chosenDate.getMonth() + 1)
 const day = pad2(chosenDate.getDate())
 const year = chosenDate.getFullYear()
 const formattedDate = day + '-' + month + '-' + year
-
+let isRefreshNow = false
 axios.defaults.headers.common.LocalDate = formattedDate
 
 if (token) {
@@ -35,22 +35,57 @@ if (token) {
 }
 
 // Add a response interceptor
-axios.interceptors.response.use((resp) => resp, function (error) {
-  const errorMessage = error?.response?.data.error
-  const avoidedErrorMessages = ['old_password invalid', "in user's org present employees", 'the employee is the director of the organization', 'the employee is already present in this organization', 'canceled', 'limit. invalid license.']
-  if (errorMessage.includes('invalid token') || errorMessage.includes('token expired')) {
-    store.dispatch('AUTH_REFRESH_TOKEN')
+axios.interceptors.response.use(
+  (resp) => resp,
+  function (error) {
+    const errorMessage = error?.response?.data.error || error?.message
+    const avoidedErrorMessages = [
+      'old_password invalid',
+      "in user's org present employees",
+      'the employee is the director of the organization',
+      'the employee is already present in this organization',
+      'limit. invalid license.',
+      'Request failed with status code 404'
+    ]
+    if (errorMessage) {
+      if (errorMessage === 'canceled') return
+      //
+      if (
+        errorMessage.includes('invalid token') ||
+        errorMessage.includes('token expired')
+      ) {
+        if (isRefreshNow) {
+          return
+        }
+        isRefreshNow = true
+        store
+          .dispatch('AUTH_REFRESH_TOKEN')
+          .then(() => {
+            window.location.reload()
+          })
+          .catch(() => {
+            store.dispatch('AUTH_LOGOUT')
+          })
+          .finally(() => {
+            isRefreshNow = false
+          })
+        return
+      }
+      if (!avoidedErrorMessages.includes(errorMessage)) {
+        notify(
+          {
+            group: 'api',
+            title: 'REST API Error, please make screenshot',
+            action: '',
+            text: errorMessage
+          },
+          15000
+        )
+      }
+    }
+    return Promise.reject(error)
   }
-  if (!avoidedErrorMessages.includes(errorMessage)) {
-    notify({
-      group: 'api',
-      title: 'REST API Error, please make screenshot',
-      action: '',
-      text: error.response?.data ?? error
-    }, 15000)
-  }
-  return Promise.reject(error)
-})
+)
 
 store.commit('basic', { key: 'isGridView', value: isGridView })
 

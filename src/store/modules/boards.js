@@ -267,6 +267,28 @@ const actions = {
           reject(err)
         })
     })
+  },
+  [BOARD.ADD_BOARD_TO_FAVORITE]: ({ commit, dispatch }, data) => {
+    return new Promise((resolve, reject) => {
+      dispatch(BOARD.UPDATE_BOARD_REQUEST, { ...data, favorite: 1 })
+        .then((resp) => {
+          resolve(resp)
+        })
+        .catch((err) => {
+          reject(err)
+        })
+    })
+  },
+  [BOARD.REMOVE_BOARD_FROM_FAVORITE]: ({ commit, dispatch }, data) => {
+    return new Promise((resolve, reject) => {
+      dispatch(BOARD.UPDATE_BOARD_REQUEST, { ...data, favorite: 0 })
+        .then((resp) => {
+          resolve(resp)
+        })
+        .catch((err) => {
+          reject(err)
+        })
+    })
   }
 }
 

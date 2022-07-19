@@ -57,6 +57,7 @@
         @blur="onBlurSearchInput"
       >
       <svg
+        v-if="searchText"
         width="16"
         height="16"
         viewBox="0 0 16 16"
@@ -345,7 +346,7 @@ export default {
           this.$store.commit('basic', { key: 'mainSectionState', value: 'tasks' })
           this.$store.commit('basic', { key: 'taskListSource', value: navElem.value })
           this.$store.dispatch(TASK.SEARCH_TASK, this.searchText).then((resp) => {
-            console.log('Search Taks', resp)
+            console.log('Search Tasks', resp)
           })
         } else {
           notify(

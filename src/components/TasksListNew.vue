@@ -90,7 +90,7 @@
 
     <!-- vue3-treeview -->
     <div
-      v-if="status == 'success'"
+      v-if="status == 'success' && Object.keys(storeTasks).length"
       class="overflow-y-auto pt-[4px] px-px min-h-[300px] w-full"
     >
       <tree

@@ -62,17 +62,16 @@ const getImgUrl = (uid, extension, filename) => {
         const myImage = new Image()
         myImage.src = fileURL
         document.getElementById('img_' + uid).appendChild(myImage)
-        isImageLoaded.value = true
         document.getElementById('img_' + uid).setAttribute('href', fileURL)
         document.getElementById('img_' + uid).style.maxHeight = '100px'
-        return myImage
+        isImageLoaded.value = true
       })
-      .catch(
+      .catch((e) => {
         setTimeout(() => {
           // bug fix: https://beta.leadertask.ru/task/0fe60f4b-496c-4587-a6a4-6de2f66951d3
           getImgUrl(uid, extension, filename)
         }, 500)
-      )
+      })
   }
 }
 
