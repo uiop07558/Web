@@ -77,7 +77,7 @@
   <ReglamentCompleteMessage
     v-if="showCompleteMessage"
     :is-passed="isPassed"
-    @confirm="$store.dispatch('popNavStack')"
+    @confirm="confirm"
   />
   <div class="h-[20px]" />
 </template>
@@ -155,6 +155,10 @@ export default {
           (crypto.getRandomValues(new Uint8Array(1))[0] & (15 >> (c / 4)))
         ).toString(16)
       )
+    },
+    confirm () {
+      this.$store.dispatch('popNavStack')
+      this.$store.dispatch('asidePropertiesToggle', false)
     },
     updateQuestionName (data) {
       for (let i = 0; i < this.questions.length; i++) {
