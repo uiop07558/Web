@@ -44,7 +44,8 @@ axios.interceptors.response.use(
       "in user's org present employees",
       'the employee is the director of the organization',
       'the employee is already present in this organization',
-      'limit. invalid license.'
+      'limit. invalid license.',
+      'Request failed with status code 404'
     ]
     if (errorMessage) {
       if (errorMessage === 'canceled') return
@@ -76,7 +77,7 @@ axios.interceptors.response.use(
             group: 'api',
             title: 'REST API Error, please make screenshot',
             action: '',
-            text: error.response?.data ?? error
+            text: errorMessage
           },
           15000
         )
