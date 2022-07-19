@@ -4,7 +4,7 @@
     class="flex justify-end mb-2"
   >
     <PopMenuItem
-      class="bg-white"
+      class="bg-white mr-1"
       icon="edit"
       @click="isEdit"
     >
@@ -31,7 +31,7 @@
     :key="index"
   >
     <ReglamentQuestion
-      v-if="isTesting"
+      v-if="isTesting || isEditing"
       :ref="question.uid"
       :is-editing="isEditing"
       :question="question"
@@ -51,7 +51,7 @@
     />
   </div>
   <div
-    v-if="!isEditing && !isTesting"
+    v-if="!isEditing && !isTesting && questions.length > 0"
     class="flex justify-end"
   >
     <button
@@ -62,7 +62,7 @@
     </button>
   </div>
   <div
-    v-if="!isEditing && isTesting"
+    v-if="!isEditing && isTesting && questions.length > 0"
     class="flex justify-end"
   >
     <button
