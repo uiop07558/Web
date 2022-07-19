@@ -302,6 +302,9 @@ export default {
         this.showMessagesLimit = true
         return
       }
+      if (this.cardMessageInputValue <= 0) {
+        return
+      }
       let msgcard = this.cardMessageInputValue
       msgcard = msgcard.trim()
       msgcard = msgcard.replaceAll('&', '&amp;')
