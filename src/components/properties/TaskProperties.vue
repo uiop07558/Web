@@ -816,6 +816,7 @@ export default {
     return {
       shouldAddTaskIntoList,
       close,
+      isloading: false,
       showAllMessages: false,
       showFreeModalCheck: false,
       showFreeModalRepeat: false,
