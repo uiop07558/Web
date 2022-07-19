@@ -20,7 +20,7 @@
             Копировать ссылку на регламент
           </PopMenuItem>
           <PopMenuItem
-            v-if="isCanDelete && canEdit"
+            v-if="isCanDelete"
             icon="delete"
             @click="showConfirm = true"
           >
@@ -120,9 +120,6 @@ export default {
     }
   },
   computed: {
-    canEdit () {
-      return this.$store.state.greedSource?.email_creator === this.$store.state.user.user.current_user_email
-    },
     defaultColors () {
       const allColors = [
         '',
