@@ -140,7 +140,6 @@ export default {
         class="font-[500] text-[18px] my-3"
         :contenteditable="isEditing && canEdit"
         @blur="changeQuestionName($event)"
-        @keyup="changeQuestionName($event)"
         @keydown.enter.exact.prevent="$emit('addQuestion')"
         v-html="question.name"
       />
