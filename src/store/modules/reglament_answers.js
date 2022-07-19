@@ -20,6 +20,9 @@ const actions = {
   [ANSWER.UPDATE_REGLAMENT_ANSWER_REQUEST]: ({ commit, dispatch }, data) => {
     return new Promise((resolve, reject) => {
       const url = process.env.VUE_APP_INSPECTOR_API + 'reglamentAnswer'
+      if (data.name.length <= 0) {
+        data.name = 'Новый ответ'
+      }
       axios({ url: url, method: 'PATCH', data: data })
         .then(resp => {
           resolve(resp)
