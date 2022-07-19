@@ -19,7 +19,7 @@ export default {
       default: false
     }
   },
-  emits: ['deleteQuestion', 'deleteAnswer', 'setRightAnswer', 'addQuestion', 'pushAnswer', 'selectAnswer', 'updateAnswerName'],
+  emits: ['deleteQuestion', 'deleteAnswer', 'setRightAnswer', 'addQuestion', 'pushAnswer', 'selectAnswer', 'updateAnswerName', 'updateQuestionName'],
   expose: ['onFocus'],
   data () {
     return {
@@ -106,6 +106,7 @@ export default {
         uid: this.question.uid,
         name: event.target.innerText
       }
+      this.$emit('updateQuestionName', data)
       this.$store.dispatch('UPDATE_REGLAMENT_QUESTION_REQUEST', data)
     },
     onFocus () {
