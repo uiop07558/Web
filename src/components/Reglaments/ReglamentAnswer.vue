@@ -16,7 +16,8 @@ export default {
       default: false
     }
   },
-  emits: ['deleteAnswer', 'setRightAnswer', 'onSelectAnswer', 'resetRightAnswer', 'updateAnswerName'],
+  emits: ['addAnswer', 'deleteAnswer', 'setRightAnswer', 'onSelectAnswer', 'resetRightAnswer', 'updateAnswerName'],
+  expose: ['onFocus'],
   data () {
     return {
       name: '',
@@ -47,6 +48,15 @@ export default {
     },
     updateAnswerName (event) {
       this.$emit('updateAnswerName', [event.target.innerText, this.answer])
+    },
+    onFocus () {
+      this.$refs[this.answer.uid + 'input'].focus()
+      const range = document.createRange()
+      const sel = document.getSelection()
+      range.setStart(this.$refs[this.answer.uid + 'input'], 1)
+      range.collapse(true)
+      sel.removeAllRanges()
+      sel.addRange(range)
     }
   }
 }
@@ -66,11 +76,13 @@ export default {
     @click="onSelectAnswer"
   >
     <div
-      data-placeholder="Question name"
+      :ref="answer.uid + 'input'"
+      data-placeholder="Answer name"
       class="font-[300] text-[14px]"
       :contenteditable="isEditing"
       @blur="false"
       @keyup="false"
+      @keydown.enter.exact.prevent="$emit('addAnswer')"
       @focusout="updateAnswerName"
       v-text="answer.name"
     />

@@ -34,6 +34,9 @@ export default {
     }
   },
   methods: {
+    gotoNode (uid) {
+      this.$refs[uid][0].onFocus()
+    },
     onAddAnswer () {
       const data = {
         name: 'new answer',
@@ -43,6 +46,9 @@ export default {
       }
       this.$store.dispatch(ANSWER.CREATE_REGLAMENT_ANSWER_REQUEST, data)
       this.$emit('pushAnswer', data)
+      this.$nextTick(() => {
+        this.gotoNode(data.uid)
+      })
     },
     setRightAnswer (answer) {
       console.log(answer[0])
@@ -147,11 +153,13 @@ export default {
       :key="answer.uid"
     >
       <ReglamentAnswer
+        :ref="answer.uid"
         class="mb-1"
         :is-editing="isEditing"
         :answer="answer"
         @set-right-answer="setRightAnswer"
         @onSelectAnswer="onSelectAnswer"
+        @addAnswer="onAddAnswer"
         @deleteAnswer="onDeleteAnswer"
         @update-answer-name="updateAnswerName"
       />
