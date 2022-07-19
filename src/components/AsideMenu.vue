@@ -220,7 +220,6 @@ export default {
       if (this.currentSettingsTab === 'account') return ('Аккаунт')
       else if (this.currentSettingsTab === 'tarif') return ('Тариф')
       else if (this.currentSettingsTab === 'main') return ('Основное')
-      else if (this.currentSettingsTab === 'changePassword') return ('Изменение пароля')
       else if (this.currentSettingsTab === 'karma') return ('Карма')
     },
     goToBoard (board) {
@@ -303,16 +302,12 @@ export default {
     />
     <acc-modal
       v-if="currentSettingsTab === 'account'"
-      @currentSettingsTab="changeSettingsTab ('tarif')"
       class="text-lg"
+      @currentSettingsTab="changeSettingsTab ('tarif')"
       @AccLogout="logout()"
     />
     <acc-tarif
       v-if="currentSettingsTab === 'tarif'"
-      class="text-lg"
-    />
-    <acc-modal-pass
-      v-if="currentSettingsTab === 'changePassword'"
       class="text-lg"
     />
     <acc-option
@@ -392,8 +387,6 @@ export default {
         days="-1"
         color="#CCC"
         week-from-end="6"
-        from-page="fromPage"
-        to-page="toPage"
         is-expanded
         :locale="getNavigatorLanguage"
         :masks="{ weekdays: 'WWW' }"
@@ -404,7 +397,6 @@ export default {
         in-next-month="true"
         in-month="true"
         in-prev-month="true"
-        select-attribute="dates"
         @dayclick="onDayClick"
       />
     </div>

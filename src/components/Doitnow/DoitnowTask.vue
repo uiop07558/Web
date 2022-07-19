@@ -329,8 +329,6 @@
 </template>
 
 <script>
-// import TaskListIconLabel from '@/components/TasksList/TaskListIconLabel.vue'
-// import TaskListTagLabel from '@/components/TasksList/TaskListTagLabel.vue'
 import { copyText } from 'vue3-clipboard'
 import contenteditable from 'vue-contenteditable'
 import linkify from 'vue-linkify'
@@ -379,8 +377,6 @@ import repeat from '@/icons/repeat.js'
 
 export default {
   components: {
-    // TaskListIconLabel,
-    // TaskListTagLabel,
     Icon,
     SetDate,
     TaskPropsChatMessages,
@@ -942,7 +938,6 @@ export default {
       this.$store.dispatch(TASK.CHANGE_TASK_REDELEGATE, data)
         .then(
           resp => {
-            console.log(resp.data)
             this.$store.commit(TASK.SUBTASKS_REQUEST, resp.data)
           }
         )

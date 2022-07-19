@@ -165,11 +165,9 @@ const actions = {
         uid
       axios({ url: url, method: 'GET' })
         .then((resp) => {
-          console.log(resp.data)
           resolve(resp)
         })
         .catch((err) => {
-          console.log(err)
           reject(err)
         })
     })
@@ -1086,7 +1084,6 @@ const mutations = {
   },
   [TASK.REMOVE_TASK_FROM_LEAVES]: (state, uid) => {
     for (let i = 0; i < state.newConfig.leaves.length; i++) {
-      console.log(state.newConfig.leaves)
       if (uid === state.newConfig.leaves[i]) {
         state.newConfig.leaves.splice(i, 1)
       }

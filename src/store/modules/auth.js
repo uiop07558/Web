@@ -1,14 +1,11 @@
 import { setLocalStorageItem } from '@/store/helpers/functions'
 import axios from 'axios'
 import {
-  AUTH_ERROR,
-  AUTH_LOGOUT,
-  AUTH_REGISTER,
+  AUTH_CHANGE_PASSWORD, AUTH_ERROR,
+  AUTH_LOGOUT, AUTH_REFRESH_TOKEN, AUTH_REGISTER,
   AUTH_REQUEST,
   AUTH_RESET,
-  AUTH_SUCCESS,
-  AUTH_CHANGE_PASSWORD,
-  AUTH_REFRESH_TOKEN
+  AUTH_SUCCESS
 } from '../actions/auth'
 import { RESET_STATE_NAVIGATOR } from '../actions/navigator'
 import { RESET_STATE_PROJECT } from '../actions/projects'
@@ -50,7 +47,6 @@ const actions = {
       const uri = process.env.VUE_APP_LEADERTASK_API + 'api/v1/users/new'
       axios({ url: uri, data: user, method: 'POST' })
         .then((resp) => {
-          console.log(resp)
           setLocalStorageItem('user-token', resp.data.access_token)
           setLocalStorageItem('user-refresh-token', resp.data.refresh_token)
           axios.defaults.headers.common.Authorization = resp.data.access_token
@@ -64,10 +60,7 @@ const actions = {
         })
     })
   },
-  [AUTH_CHANGE_PASSWORD]: (
-    { commit },
-    data
-  ) => {
+  [AUTH_CHANGE_PASSWORD]: ({ commit }, data) => {
     return new Promise((resolve, reject) => {
       // commit(AUTH_CHANGE_PASSWORD) unknown
       const url = process.env.VUE_APP_LEADERTASK_API + 'api/v1/users/password'
@@ -109,7 +102,8 @@ const actions = {
   },
   [AUTH_REFRESH_TOKEN]: ({ commit }) => {
     return new Promise((resolve, reject) => {
-      axios.defaults.headers.common.RefreshToken = localStorage.getItem('user-refresh-token')
+      axios.defaults.headers.common.RefreshToken =
+        localStorage.getItem('user-refresh-token')
       const url = process.env.VUE_APP_LEADERTASK_API + 'api/v1/tokens/refresh'
       axios
         .post(url)

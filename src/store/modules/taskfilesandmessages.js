@@ -90,7 +90,6 @@ const actions = {
         'api/v1/tasksfiles/several?uid_task=' +
         data.uid_task
       commit(TOGGLE_UPLOAD_STATUS)
-      console.log(data)
       axios({
         url: url,
         method: 'POST',
@@ -259,7 +258,7 @@ const mutations = {
   },
   [FILES_SUCCESS]: (state, resp) => {
     state.status = 'success'
-    state.files = resp.data.files
+    state.files = resp?.data?.files || []
     state.hasLoadedOnce = true
   },
   [FILE_SUCCESS]: (state, resp) => {
