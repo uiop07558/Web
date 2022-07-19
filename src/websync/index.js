@@ -36,14 +36,14 @@ export default function initWebSync () {
   )
   client.connect({
     onSuccess: function (e) {
-      console.log('Websync connected success!')
+      console.log('websync connected success!')
     },
     onFailure: function (e) {
-      console.log('Websync could not connect: ' + e.getException().message)
+      console.log('websync could not connect: ' + e.getException().message)
     },
     onStreamFailure: function (e) {
       console.log(
-        'Websync network problems: ' +
+        'websync network problems: ' +
           e.getException().message +
           (e.getRetry() ? ' Will' : ' Will not') +
           ' reconnect.'

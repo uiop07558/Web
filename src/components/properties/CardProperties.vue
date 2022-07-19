@@ -383,7 +383,6 @@ export default {
         cardUid: this.selectedCard?.uid,
         file: formData
       }
-      console.log(data)
       this.$store.dispatch(CHANGE_CARD_COVER, data).then((resp) => {
         if (this.selectedCard) {
           this.selectedCard.cover_color = resp.data.card.cover_color

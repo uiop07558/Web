@@ -90,7 +90,6 @@ const actions = {
         'api/v1/tasksfiles/several?uid_task=' +
         data.uid_task
       commit(TOGGLE_UPLOAD_STATUS)
-      console.log(data)
       axios({
         url: url,
         method: 'POST',

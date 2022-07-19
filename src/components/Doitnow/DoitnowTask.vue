@@ -942,7 +942,6 @@ export default {
       this.$store.dispatch(TASK.CHANGE_TASK_REDELEGATE, data)
         .then(
           resp => {
-            console.log(resp.data)
             this.$store.commit(TASK.SUBTASKS_REQUEST, resp.data)
           }
         )

@@ -30,7 +30,6 @@ const updateSettings = () => {
     cal_work_week: settings.value.cal_work_week === true ? 1 : 0,
     compact_mode: settings.value.compact_mode === true ? 1 : 0
   }
-  console.log(data)
   store.dispatch(PATCH_SETTINGS, data).then(resp => {
   })
 }
