@@ -12,7 +12,7 @@
     </PopMenuItem>
   </div>
   <QuillEditor
-    v-if="!isEditing && text?.length"
+    v-if="!isEditing && text?.length && !isTesting"
     v-model:content="text"
     content-type="html"
     :read-only="true"
@@ -31,6 +31,7 @@
     :key="index"
   >
     <ReglamentQuestion
+      v-if="isTesting"
       :ref="question.uid"
       :is-editing="isEditing"
       :question="question"
@@ -50,7 +51,18 @@
     />
   </div>
   <div
-    v-if="!(isEditing || questions.length <= 0)"
+    v-if="!isEditing && !isTesting"
+    class="flex justify-end"
+  >
+    <button
+      class="flex items-end bg-[#FF912380] p-3 px-10 rounded-[8px] text-black text-sm mr-1 hover:bg-[#F5DEB3]"
+      @click="isTesting = true"
+    >
+      Пройти тест
+    </button>
+  </div>
+  <div
+    v-if="!isEditing && isTesting"
     class="flex justify-end"
   >
     <button
@@ -87,7 +99,8 @@ export default {
     return {
       text: this.reglament?.content,
       isEditing: false,
-      questions: []
+      questions: [],
+      isTesting: false
     }
   },
   computed: {
