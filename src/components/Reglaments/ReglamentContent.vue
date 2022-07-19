@@ -162,6 +162,11 @@ export default {
     pushAnswer (data) {
       for (let i = 0; i < this.questions.length; i++) {
         if (this.questions[i].uid === data.uid_question) {
+          if (this.questions[i].answers) {
+            this.questions[i].answers.push(data)
+            return
+          }
+          this.questions[i].answers = []
           this.questions[i].answers.push(data)
           return
         }
