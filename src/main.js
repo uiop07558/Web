@@ -38,42 +38,49 @@ if (token) {
 axios.interceptors.response.use(
   (resp) => resp,
   function (error) {
-    const errorMessage = error?.response?.data.error
+    const errorMessage = error?.response?.data.error || error?.message
     const avoidedErrorMessages = [
       'old_password invalid',
       "in user's org present employees",
       'the employee is the director of the organization',
       'the employee is already present in this organization',
-      'canceled',
       'limit. invalid license.'
     ]
-    if (
-      errorMessage.includes('invalid token') ||
-      errorMessage.includes('token expired')
-    ) {
-      if (isRefreshNow) {
+    if (errorMessage) {
+      if (errorMessage === 'canceled') return
+      //
+      if (
+        errorMessage.includes('invalid token') ||
+        errorMessage.includes('token expired')
+      ) {
+        if (isRefreshNow) {
+          return
+        }
+        isRefreshNow = true
+        store
+          .dispatch('AUTH_REFRESH_TOKEN')
+          .then(() => {
+            window.location.reload()
+          })
+          .catch(() => {
+            store.dispatch('AUTH_LOGOUT')
+          })
+          .finally(() => {
+            isRefreshNow = false
+          })
         return
       }
-      isRefreshNow = true
-      store.dispatch('AUTH_REFRESH_TOKEN').then(() => {
-        window.location.reload()
-      }).catch(() => {
-        store.dispatch('AUTH_LOGOUT')
-      }).finally(() => {
-        isRefreshNow = false
-      })
-      return
-    }
-    if (!avoidedErrorMessages.includes(errorMessage)) {
-      notify(
-        {
-          group: 'api',
-          title: 'REST API Error, please make screenshot',
-          action: '',
-          text: error.response?.data ?? error
-        },
-        15000
-      )
+      if (!avoidedErrorMessages.includes(errorMessage)) {
+        notify(
+          {
+            group: 'api',
+            title: 'REST API Error, please make screenshot',
+            action: '',
+            text: error.response?.data ?? error
+          },
+          15000
+        )
+      }
     }
     return Promise.reject(error)
   }

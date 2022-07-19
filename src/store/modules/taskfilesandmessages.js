@@ -258,7 +258,7 @@ const mutations = {
   },
   [FILES_SUCCESS]: (state, resp) => {
     state.status = 'success'
-    state.files = resp.data.files
+    state.files = resp?.data?.files || []
     state.hasLoadedOnce = true
   },
   [FILE_SUCCESS]: (state, resp) => {
