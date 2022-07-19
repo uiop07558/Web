@@ -16,7 +16,7 @@ export default {
       default: false
     }
   },
-  emits: ['deleteAnswer', 'setRightAnswer', 'onSelectAnswer', 'resetRightAnswer', 'updateAnswerName'],
+  emits: ['addAnswer', 'deleteAnswer', 'setRightAnswer', 'onSelectAnswer', 'resetRightAnswer', 'updateAnswerName'],
   expose: ['onFocus'],
   data () {
     return {
@@ -77,11 +77,12 @@ export default {
   >
     <div
       :ref="answer.uid + 'input'"
-      data-placeholder="Question name"
+      data-placeholder="Answer name"
       class="font-[300] text-[14px]"
       :contenteditable="isEditing"
       @blur="false"
       @keyup="false"
+      @keydown.enter.exact.prevent="$emit('addAnswer')"
       @focusout="updateAnswerName"
       v-text="answer.name"
     />

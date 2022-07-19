@@ -164,6 +164,7 @@ export default {
         :answer="answer"
         @set-right-answer="setRightAnswer"
         @onSelectAnswer="onSelectAnswer"
+        @addAnswer="onAddAnswer"
         @deleteAnswer="onDeleteAnswer"
         @update-answer-name="updateAnswerName"
       />
