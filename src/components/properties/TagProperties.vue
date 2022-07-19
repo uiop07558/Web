@@ -136,7 +136,6 @@ export default {
     },
     isCanDelete () {
       const user = this.$store.state.user.user
-      console.log(this.selectedTag)
       return this.selectedTag.email_creator === user.current_user_email
     },
     isCanEdit () {
@@ -207,7 +206,6 @@ export default {
       }
     },
     changeTagColor (color) {
-      console.log(this.selectedTag)
       if (this.selectedTagUid) {
         if (this.selectedTagColor.toLowerCase() !== color) {
           this.selectedTag.back_color = color || '#A998B6'
@@ -235,7 +233,6 @@ export default {
           this.selectedTag.back_color = color || '#A998B6'
           this.$store.dispatch(UPDATE_TAG_REQUEST, this.selectedTag)
             .then((resp) => {
-              console.log(this.$store.state.greedSource)
               console.log('changeTagColor', resp, color)
             })
         }

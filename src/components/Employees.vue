@@ -300,7 +300,7 @@ export default {
       return this.$store.state.user.user
     },
     currUserWorkspaces () {
-      return this.items[0].items.length
+      return this.items.reduce((sum, current) => sum + current.items.length, 0)
     },
     isGridView () {
       return this.$store.state.isGridView

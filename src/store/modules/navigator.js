@@ -45,7 +45,6 @@ const getDefaultState = () => {
 function getAllMembersByDepartmentUID (emps, departmentUID) {
   const employeesStuck = []
   for (const employee of emps) {
-    console.log('employee', employee, employee.uid_dep)
     if (employee.uid_dep === departmentUID) {
       employeesStuck.push(employee)
     }
@@ -357,7 +356,6 @@ const mutations = {
 
     // Merge emps to deps like new private projects
     const dataEmps = [...resp.data.emps?.items, ...resp.data.invites?.items]
-    console.log('dataEmps', dataEmps)
     const newEmps = []
     newEmps.push({
       dep: { uid: '', name: 'Вне отдела' },
@@ -553,7 +551,6 @@ const mutations = {
         // adding projects recursively to subarrays
         visitChildren(state.navigator.tags.items, (value) => {
           if (value.uid === tag.uid_parent) {
-            console.log(value)
             value.children.push(tag)
           }
         })

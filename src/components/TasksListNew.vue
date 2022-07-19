@@ -821,7 +821,6 @@ export default {
         _isEditable: true,
         _justCreated: true
       }
-      console.log(parent)
       this.$store.dispatch(TASK.SELECT_TASK, newSubtask)
       this.$store.dispatch(TASK.ADD_SUBTASK, newSubtask)
         .then(() => {
