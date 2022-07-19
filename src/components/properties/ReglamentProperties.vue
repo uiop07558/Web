@@ -75,7 +75,7 @@
     <div
       class="mt-[30px] mb-[8px] font-roboto text-[16px] leading-[19px] font-medium text-[#4c4c4d]"
     >
-      Участники
+      Сотрудники, прошедшие регламент
     </div>
     <ReglamentPropsUser
       v-for="contributor in contributors"
