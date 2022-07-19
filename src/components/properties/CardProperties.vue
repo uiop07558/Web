@@ -302,6 +302,11 @@ export default {
         this.showMessagesLimit = true
         return
       }
+      let msgcard = this.cardMessageInputValue
+      msgcard = msgcard.trim()
+      msgcard = msgcard.replaceAll('&', '&amp;')
+      msgcard = msgcard.replaceAll('>', '&gt;')
+      msgcard = msgcard.replaceAll('<', '&lt;')
       const uid = this.uuidv4()
       const data = {
         uid_card: this.selectedCard?.uid,
@@ -310,8 +315,8 @@ export default {
         date_create: new Date().toISOString(),
         uid_creator: this.user.current_user_uid,
         uid_quote: this.currentQuote?.uid ?? '',
-        text: this.cardMessageInputValue,
-        msg: this.cardMessageInputValue,
+        text: msgcard,
+        msg: msgcard,
         order: 0,
         deleted: 0
       }
