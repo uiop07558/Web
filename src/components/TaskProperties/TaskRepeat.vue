@@ -540,6 +540,7 @@ export default {
     return {
       ActiveSelect: this.selectedTask?.SeriesMonthType,
       ActiveYartype: this.selectedTask?.SeriesYearType,
+
       SeriesType: this.selectedTask?.SeriesType,
       SeriesAfterCount: this.selectedTask?.SeriesAfterCount,
       SeriesAfterType: this.selectedTask?.SeriesAfterType,
@@ -563,6 +564,12 @@ export default {
       SeriesYearMonthDay: this.selectedTask?.SeriesYearMonthDay,
       SeriesYearWeekType: this.selectedTask?.SeriesYearWeekType,
       SeriesYearDayOfWeek: this.selectedTask?.SeriesYearDayOfWeek,
+
+      noRepeat: false,
+      everyDayRepeat: false,
+      everyWeekRepeat: false,
+      everyMonthRepeat: false,
+      everyYearRepeat: false,
 
       months: [
         'Января',

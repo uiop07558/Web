@@ -360,11 +360,6 @@ export default {
       timeStartActive: false,
       checklistshow: false,
       checklistSavedNow: false,
-      noRepeat: false,
-      everyDayRepeat: false,
-      everyWeekRepeat: false,
-      everyMonthRepeat: false,
-      everyYearRepeat: false,
       isEditable: false,
       isEditableTaskName: false,
       showOnlyFiles: false,
@@ -374,19 +369,7 @@ export default {
       taskMsg: '',
       files: [], // replace this with const in function createTaskFiles
 
-      months: ['Января', 'Февраля', 'Марта', 'Апреля', 'Мая', 'Июня', 'Июля', 'Августа', 'Сентября', 'Октября', 'Ноября', 'Декабря'],
-      days: ['', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота', 'Воскресенье'],
       day: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'],
-      firstcount: ['последний', 'первый', 'второй', 'третий', 'четвертый', 'последний'],
-      myOptions: [
-        { id: 'mon', text: 'Пн' },
-        { id: 'tue', text: 'Вт' },
-        { id: 'wed', text: 'Ср' },
-        { id: 'thu', text: 'Чт' },
-        { id: 'fri', text: 'Пт' },
-        { id: 'sat', text: 'Сб' },
-        { id: 'sun', text: 'Вс' }
-      ],
 
       range: {
         start: this.selectedTask?.term_customer === '' ? new Date() : new Date(this.selectedTask?.customer_date_begin),
