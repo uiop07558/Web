@@ -16,10 +16,15 @@ import {
   NAVIGATOR_REMOVE_BOARD,
   NAVIGATOR_REMOVE_COLOR,
   NAVIGATOR_REMOVE_DEPARTAMENT,
-  NAVIGATOR_REMOVE_EMPLOYEE, NAVIGATOR_REMOVE_PROJECT,
+  NAVIGATOR_REMOVE_EMPLOYEE,
+  NAVIGATOR_REMOVE_PROJECT,
   NAVIGATOR_REMOVE_TAG,
   NAVIGATOR_REQUEST,
-  NAVIGATOR_SUCCESS, NAVIGATOR_UPDATE_ASSIGNMENTS, NAVIGATOR_UPDATE_EMPLOYEE, NAVIGATOR_UPDATE_DEPARTMENT, PATCH_SETTINGS,
+  NAVIGATOR_SUCCESS,
+  NAVIGATOR_UPDATE_ASSIGNMENTS,
+  NAVIGATOR_UPDATE_DEPARTMENT,
+  NAVIGATOR_UPDATE_EMPLOYEE,
+  PATCH_SETTINGS,
   PATCH_SETTINGS_SUCCESS,
   RESET_STATE_NAVIGATOR
 } from '../actions/navigator'
@@ -39,7 +44,8 @@ const getDefaultState = () => {
 
 function getAllMembersByDepartmentUID (emps, departmentUID) {
   const employeesStuck = []
-  for (const employee of emps.items) {
+  for (const employee of emps) {
+    console.log('employee', employee, employee.uid_dep)
     if (employee.uid_dep === departmentUID) {
       employeesStuck.push(employee)
     }
@@ -69,14 +75,6 @@ const actions = {
         .then((resp) => {
           resp.rootState = rootState
 
-          commit(NAVIGATOR_SUCCESS, resp)
-          if (resp.data.emps.items) {
-            for (const employee of resp.data.emps.items) {
-              employee.parentID = resp.data.emps.uid
-              commit(PUSH_EMPLOYEE, employee)
-              commit(PUSH_EMPLOYEE_BY_EMAIL, employee)
-            }
-          }
           if (resp.data.delegate_iam) {
             for (const dm of resp.data.delegate_iam.items) {
               dm.parentID = resp.data.delegate_iam.uid
@@ -87,6 +85,24 @@ const actions = {
               dt.parentID = resp.data.delegate_to_me.uid
             }
           }
+          if (resp.data.invites) {
+            for (const dt of resp.data.invites.items) {
+              if (!dt.uid_dep) {
+                dt.uid_dep = '00000000-0000-0000-0000-000000000000'
+              }
+              dt.type = 4
+              commit(PUSH_EMPLOYEE, dt)
+              commit(PUSH_EMPLOYEE_BY_EMAIL, dt)
+            }
+          }
+          if (resp.data.emps.items) {
+            for (const employee of resp.data.emps.items) {
+              employee.parentID = resp.data.emps.uid
+              commit(PUSH_EMPLOYEE, employee)
+              commit(PUSH_EMPLOYEE_BY_EMAIL, employee)
+            }
+          }
+          commit(NAVIGATOR_SUCCESS, resp)
           // TODO: we are doing the same thing 3 times, DRY
           // process colors in shared vuex storage
           if (resp.data.colors.items) {
@@ -340,18 +356,20 @@ const mutations = {
     resp.data.new_delegate = newAssignments
 
     // Merge emps to deps like new private projects
+    const dataEmps = [...resp.data.emps?.items, ...resp.data.invites?.items]
+    console.log('dataEmps', dataEmps)
     const newEmps = []
     newEmps.push({
       dep: { uid: '', name: 'Вне отдела' },
       items: getAllMembersByDepartmentUID(
-        resp.data.emps,
+        dataEmps,
         '00000000-0000-0000-0000-000000000000'
       )
     })
     for (const department of resp.data.deps.items) {
       const dep = {
         dep: department,
-        items: getAllMembersByDepartmentUID(resp.data.emps, department.uid)
+        items: getAllMembersByDepartmentUID(dataEmps, department.uid)
       }
       newEmps.push(dep)
     }
@@ -418,7 +436,7 @@ const mutations = {
       state.navigator.new_emps.push({
         dep: departament,
         items: getAllMembersByDepartmentUID(
-          state.navigator.emps,
+          state.navigator.emps.items,
           departament.uid
         )
       })
