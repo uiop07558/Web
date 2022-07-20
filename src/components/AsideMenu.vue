@@ -302,21 +302,17 @@ export default {
     />
     <acc-modal
       v-if="currentSettingsTab === 'account'"
-      class="text-lg"
       @currentSettingsTab="changeSettingsTab ('tarif')"
       @AccLogout="logout()"
     />
     <acc-tarif
       v-if="currentSettingsTab === 'tarif'"
-      class="text-lg"
     />
     <acc-option
       v-if="currentSettingsTab === 'main'"
-      class="text-lg"
     />
     <acc-karma
       v-if="currentSettingsTab === 'karma'"
-      class="text-lg"
     />
   </modal-box>
   <!-- /Profile modal -->
