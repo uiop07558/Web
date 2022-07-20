@@ -198,14 +198,12 @@ export default {
     selectedReglamentName: {
       immediate: true,
       handler: function (val) {
+        this.$store.dispatch('GET_USERS_REGLAMENT_ANSWERS', this.selectedReglament.uid).then(resp => {
+          this.contributors = resp.data
+        })
         this.currName = val
       }
     }
-  },
-  mounted () {
-    this.$store.dispatch('GET_USERS_REGLAMENT_ANSWERS', this.selectedReglament.uid).then(resp => {
-      this.contributors = resp.data
-    })
   },
   methods: {
     removeReglament () {
