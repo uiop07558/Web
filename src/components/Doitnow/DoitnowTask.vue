@@ -736,7 +736,7 @@ export default {
       this.$store.dispatch(MSG.DELETE_MESSAGE_REQUEST, { uid: uid })
         .then((resp) => {
           this.$store.state.tasks.selectedTask.has_msgs = true
-          this.$store.state.taskfilesandmessages.messages.find(message => message.uid_msg) ? this.$store.state.taskfilesandmessages.messages.find(message => message.uid_msg === uid).deleted = 1 : this.$store.state.taskfilesandmessages.messages.find(message => message.uid === uid).deleted = 1
+          this.$store.state.taskfilesandmessages.messages.find(message => message.uid === uid).deleted = 1
         })
     },
     editTaskName (task) {
@@ -987,7 +987,7 @@ export default {
       const data = {
         uid_task: this.task.uid,
         uid_creator: this.user.current_user_uid,
-        uid_msg: this.uuidv4(),
+        uid: this.uuidv4(),
         date_create: dateCreate,
         deleted: 0,
         text: msg,

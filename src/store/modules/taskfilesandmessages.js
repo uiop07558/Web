@@ -181,13 +181,11 @@ const actions = {
   },
   [DELETE_MESSAGE_REQUEST]: ({ commit, dispatch }, data) => {
     return new Promise((resolve, reject) => {
-      commit(MESSAGES_REQUEST)
       const url =
         process.env.VUE_APP_LEADERTASK_API + 'api/v1/tasksmsgs?uid=' + data.uid
       axios({ url: url, method: 'DELETE' })
         .then((resp) => {
           resolve(resp)
-          commit(DELETE_MESSAGE_REQUEST, data)
         })
         .catch((err) => {
           reject(err)
@@ -245,10 +243,6 @@ const mutations = {
       return
     }
     state.messages.push(data)
-  },
-  [DELETE_MESSAGE_REQUEST]: (state, data) => {
-    //  state.messages.splice(state.messages.indexOf(data), 1)
-    //  state.messages = data
   },
   [DELETE_FILE_REQUEST]: (state, data) => {
     state.messages.splice(state.messages.indexOf(data), 1)

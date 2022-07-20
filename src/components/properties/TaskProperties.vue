@@ -525,8 +525,8 @@ export default {
     deleteTaskMsg (uid) {
       this.$store.dispatch(DELETE_MESSAGE_REQUEST, { uid: uid }).then(
         resp => {
-          this.selectedTask.has_msgs = true
-          this.taskMessages.find(message => message.uid_msg) ? this.taskMessages.find(message => message.uid_msg === uid).deleted = 1 : this.taskMessages.find(message => message.uid === uid).deleted = 1
+          const message = this.taskMessages.find(message => message.uid === uid)
+          if (message) message.deleted = 1
         })
     },
     deleteFiles (uid) {
@@ -645,7 +645,6 @@ export default {
         uid_task: this.selectedTask.uid,
         uid: uid,
         uid_creator: this.user?.current_user_uid,
-        uid_msg: uid,
         date_create: new Date().toISOString(),
         deleted: 0,
         uid_quote: this.currentAnswerMessageUid,

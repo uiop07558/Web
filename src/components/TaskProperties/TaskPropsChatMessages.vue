@@ -36,8 +36,8 @@
           :creator-name="employees[message.uid_creator]?.name ?? '???'"
           :message="message.msg"
           :time="getMessageTimeString(message.date_create)"
-          @answer="answerMessage(message.uid_msg ? message.uid_msg : message.uid)"
-          @deleted="deleteTaskMsg(message.uid_msg ? message.uid_msg : message.uid)"
+          @answer="answerMessage(message.uid)"
+          @deleted="deleteTaskMsg(message.uid)"
         />
 
         <!-- Сообщение от инспектора -->
