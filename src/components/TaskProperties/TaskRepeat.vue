@@ -455,16 +455,16 @@
           v-else
         >Ежедневно: Каждый {{ selectedTask.SeriesAfterCount }} день.</span></span><span
           v-else-if="selectedTask.SeriesAfterType === 2"
-        ><span v-if="selectedTask.SeriesAfterCount === 1">Ежедневно: </span><span
+        ><span v-if="selectedTask.SeriesAfterCount === 1">Еженедельно </span><span
           v-else
-        >Каждый {{ selectedTask.SeriesAfterCount }} неделю.</span></span><span
+        >Каждую {{ selectedTask.SeriesAfterCount }} неделю.</span></span><span
           v-else-if="selectedTask.SeriesAfterType === 3"
-        ><span v-if="selectedTask.SeriesAfterCount === 1">Ежедневно: </span><span
+        ><span v-if="selectedTask.SeriesAfterCount === 1">Ежемесячно </span><span
           v-else
         >Ежедневно: Каждый
           {{ selectedTask.SeriesAfterCount }} месяц.</span></span><span
           v-else-if="selectedTask.SeriesAfterType === 4"
-        ><span v-if="selectedTask.SeriesAfterCount === 1">Ежедневно: </span><span
+        ><span v-if="selectedTask.SeriesAfterCount === 1">Ежегодно </span><span
           v-else
         >Каждый {{ selectedTask.SeriesAfterCount }} год.</span></span>
         </span>
@@ -545,7 +545,7 @@ export default {
       SeriesType: this.selectedTask?.SeriesType,
       SeriesAfterCount: this.selectedTask?.SeriesAfterCount ?? 1,
       SeriesAfterType: this.selectedTask?.SeriesAfterType ?? 1,
-      SeriesWeekCount: this.selectedTask?.SeriesWeekCount,
+      SeriesWeekCount: this.selectedTask?.SeriesWeekCount ?? 1,
       SeriesMonthType:
         this.selectedTask?.SeriesMonthType === 1
           ? this.selectedTask?.SeriesMonthType
