@@ -54,6 +54,7 @@
                   <input
                     ref="SeriesAfterCount"
                     v-model="SeriesAfterCount"
+                    min="1"
                     type="number"
                     class="form-control form-control-select-repeat"
                     name="repeateveryday"
@@ -118,7 +119,7 @@
                   <div
                     v-for="opt in myOptions"
                     :key="opt"
-                    :value="opt"
+                    :value="opt.id"
                     class="form_checkbox_btn-custom"
                   >
                     <input
@@ -450,7 +451,7 @@
           v-if="selectedTask.SeriesAfterType === 1"
         ><span
           v-if="selectedTask.SeriesAfterCount === 1"
-        >Ежедневно: Каждый 1 день.</span><span
+        >Ежедневно: Каждый день.</span><span
           v-else
         >Ежедневно: Каждый {{ selectedTask.SeriesAfterCount }} день.</span></span><span
           v-else-if="selectedTask.SeriesAfterType === 2"
@@ -542,8 +543,8 @@ export default {
       ActiveYartype: this.selectedTask?.SeriesYearType,
 
       SeriesType: this.selectedTask?.SeriesType,
-      SeriesAfterCount: this.selectedTask?.SeriesAfterCount,
-      SeriesAfterType: this.selectedTask?.SeriesAfterType,
+      SeriesAfterCount: this.selectedTask?.SeriesAfterCount ?? 1,
+      SeriesAfterType: this.selectedTask?.SeriesAfterType ?? 1,
       SeriesWeekCount: this.selectedTask?.SeriesWeekCount,
       SeriesMonthType:
         this.selectedTask?.SeriesMonthType === 1
