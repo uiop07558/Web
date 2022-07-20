@@ -4,7 +4,7 @@
   >
     <div
       v-for="(message, index) in messages"
-      :key="message.uid"
+      :key="message.uid || message.uid_msg"
       class="message"
     >
       <div
@@ -213,15 +213,14 @@ export default {
       return this.$store.state.taskfilesandmessages.uploadStarted
     },
     messages () {
-      const messages = this.taskMessages.map((message) => ({
+      return this.taskMessages.map((message) => ({
         ...message,
         isFile: !!message.uid_file,
         isMessage: !message.uid_file && message.uid_creator !== 'inspector',
         isInspectorMessage: message.uid_creator === 'inspector',
         isMyMessage: message.uid_creator === this.currentUserUid,
         shouldShowInspectorButtons: message?.performer_answer == null && ![1, 5, 7, 8].includes(this.task.status) && (this.selectedTask.uid_performer === this.currentUserUid)
-      }))
-      return messages
+      })).reverse()
     }
   },
   methods: {

@@ -205,6 +205,11 @@
       >
         ПОКАЗАТЬ ВСЕ
       </p> -->
+        <!-- input -->
+        <TaskPropsInputForm
+          :task="task"
+          @readTask="readTask"
+        />
         <!-- chat -->
         <TaskPropsChatMessages
           v-if="taskMessages?.length"
@@ -220,11 +225,6 @@
           @onPasteEvent="onPasteEvent"
           @deleteFiles="deleteFiles"
           @deleteTaskMsg="deleteTaskMsg"
-          @readTask="readTask"
-        />
-        <!-- input -->
-        <TaskPropsInputForm
-          :task="task"
           @readTask="readTask"
         />
       </div>
