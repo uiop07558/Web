@@ -413,6 +413,7 @@ export default {
     selectedTask (newval, oldval) {
       this.showOnlyFiles = false
       this.showAllMessages = false
+      this.taskMsg = ''
     }
   },
   methods: {

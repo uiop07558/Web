@@ -186,6 +186,7 @@ export default {
   watch: {
     selectedCard (oldValue, newValue) {
       this.currentQuote = false
+      this.cardMessageInputValue = ''
     }
   },
   methods: {
