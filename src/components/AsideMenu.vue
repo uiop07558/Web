@@ -10,6 +10,7 @@ import AccTarif from '@/components/AccTarif.vue'
 import AsideMenuList from '@/components/AsideMenuList.vue'
 import AccOption from '@/components/AccOption.vue'
 import AccKarma from '@/components/AccKarma.vue'
+import AccImport from '@/components/AccImport.vue'
 import 'v-calendar/dist/style.css'
 import { UID_TO_ACTION } from '@/store/helpers/functions'
 
@@ -31,7 +32,8 @@ export default {
     AccTarif,
     AsideMenuList,
     AccOption,
-    AccKarma
+    AccKarma,
+    AccImport
   },
   props: {
     menu: {
@@ -201,6 +203,7 @@ export default {
       else if (this.currentSettingsTab === 'main') return ('Основное')
       else if (this.currentSettingsTab === 'changePassword') return ('Изменение пароля')
       else if (this.currentSettingsTab === 'karma') return ('Карма')
+      else if (this.currentSettingsTab === 'import') return ('Импорт')
     }
   }
 }
@@ -219,8 +222,8 @@ export default {
     />
     <acc-modal
       v-if="currentSettingsTab === 'account'"
-      @currentSettingsTab="changeSettingsTab ('tarif')"
       class="text-lg"
+      @currentSettingsTab="changeSettingsTab ('tarif')"
       @AccLogout="logout()"
     />
     <acc-tarif
@@ -237,6 +240,10 @@ export default {
     />
     <acc-karma
       v-if="currentSettingsTab === 'karma'"
+      class="text-lg"
+    />
+    <acc-import
+      v-if="currentSettingsTab === 'import'"
       class="text-lg"
     />
   </modal-box>
