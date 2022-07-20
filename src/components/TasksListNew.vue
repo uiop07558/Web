@@ -679,8 +679,8 @@ export default {
           // выделяем добавленную задачу
           // и отображаем её свойства
             this.nodeSelected({ id: data.uid, info: resp.data })
-            if (this.navStack && this.navStack[this.navStack.length - 1].uid === '901841d9-0016-491d-ad66-8ee42d2b496b') {
-              this.$store.commit('addDot', new Date(this.navStack[this.navStack.length - 1].param))
+            if (this.navStack && this.navStack[this.navStack.length - 1].value.uid === '901841d9-0016-491d-ad66-8ee42d2b496b') {
+              this.$store.commit('addDot', new Date(data.date_begin))
             }
             document.getElementById('task').firstElementChild.focus({ preventScroll: false })
             setTimeout(() => {

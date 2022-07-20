@@ -53,7 +53,7 @@
       :colors="colors"
       :tags="tags"
       :user="user"
-      :task-messages="taskMessages"
+      :task-messages="taskMessages.slice().reverse()"
       :employees="employees"
       :projects="projects"
       @clickTask="onClickTask"

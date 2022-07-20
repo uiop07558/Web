@@ -223,6 +223,7 @@ export default {
       else if (this.currentSettingsTab === 'karma') return ('Карма')
     },
     goToBoard (board) {
+      this.$store.commit('basic', { key: 'mainSectionState', value: 'greed' })
       const path = 'new_private_boards'
       const el = {
         greedPath: path,
@@ -255,6 +256,7 @@ export default {
       })
     },
     goToProject (project) {
+      this.$store.commit('basic', { key: 'mainSectionState', value: 'greed' })
       const path = 'new_private_projects'
       const el = {
         name: 'Проекты',

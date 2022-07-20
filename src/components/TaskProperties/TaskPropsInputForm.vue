@@ -139,8 +139,6 @@ export default {
             }
           }
           this.selectedTask.msg = decodeURIComponent(this.taskMsg)
-          const wrapperElement = document.getElementById('content').lastElementChild
-          wrapperElement.scrollIntoView({ behavior: 'smooth' })
         })
       this.currentAnswerMessageUid = ''
       this.taskMsg = ''
@@ -175,8 +173,6 @@ export default {
           }
           this.$store.commit(TASK.MSG_EQUAL, this.task, decodeURIComponent(this.taskMsg))
           this.infoComplete = true
-          const wrapperElement = document.getElementById('content').lastElementChild
-          wrapperElement.scrollIntoView({ behavior: 'smooth' })
         })
       this.taskMsg = ''
     },
@@ -216,10 +212,6 @@ export default {
           }
         })
       this.infoComplete = true
-      setTimeout(() => {
-        const elem = document.getElementById('content').lastElementChild
-        elem.scrollIntoView({ behavior: 'smooth' })
-      }, 100)
       this.$store.commit(FILES.REFRESH_FILES)
     }
   }
