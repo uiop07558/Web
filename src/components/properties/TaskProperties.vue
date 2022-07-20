@@ -321,6 +321,7 @@ import ChatLimit from '@/components/properties/ChatLimit'
 import PerformerLimit from '@/components/TaskProperties/PerformerLimit'
 import CardMessageInput from '@/components/CardProperties/CardMessageInput'
 import TaskRepeat from '@/components/TaskProperties/TaskRepeat'
+import { computed } from 'vue'
 
 export default {
   components: {
@@ -717,7 +718,20 @@ export default {
         this.selectedTask.date_end = end
 
         if (!shouldAddTaskIntoList(this.selectedTask)) {
-          this.$store.commit(TASK.REMOVE_TASK, taskUid)
+          this.$store.dispatch(TASK.REMOVE_TASK, taskUid)
+            .then(() => {
+              this.$store.dispatch(TASK.DAYS_WITH_TASKS)
+                .then(() => {
+                  const calendarDates = computed(() => this.$store.state.calendar[1].dates)
+                  const daysWithTasks = computed(() => this.$store.state.tasks.daysWithTasks)
+                  for (let i = 0; i < calendarDates.value.length; i++) {
+                    const date = calendarDates.value[i].getDate() + '-' + (calendarDates.value[i].getMonth() + 1) + '-' + calendarDates.value[i].getFullYear()
+                    if (!daysWithTasks.value.includes(date)) {
+                      this.$store.state.calendar[1].dates.splice(this.$store.state.calendar[1].dates.indexOf(calendarDates.value[i]), 1)
+                    }
+                  }
+                })
+            })
           this.$store.dispatch('asidePropertiesToggle', false)
         }
       })
