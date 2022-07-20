@@ -90,7 +90,6 @@ const actions = {
         'api/v1/tasksfiles/several?uid_task=' +
         data.uid_task
       commit(TOGGLE_UPLOAD_STATUS)
-      console.log(data)
       axios({
         url: url,
         method: 'POST',
@@ -182,13 +181,11 @@ const actions = {
   },
   [DELETE_MESSAGE_REQUEST]: ({ commit, dispatch }, data) => {
     return new Promise((resolve, reject) => {
-      commit(MESSAGES_REQUEST)
       const url =
         process.env.VUE_APP_LEADERTASK_API + 'api/v1/tasksmsgs?uid=' + data.uid
       axios({ url: url, method: 'DELETE' })
         .then((resp) => {
           resolve(resp)
-          commit(DELETE_MESSAGE_REQUEST, data)
         })
         .catch((err) => {
           reject(err)
@@ -247,10 +244,6 @@ const mutations = {
     }
     state.messages.push(data)
   },
-  [DELETE_MESSAGE_REQUEST]: (state, data) => {
-    //  state.messages.splice(state.messages.indexOf(data), 1)
-    //  state.messages = data
-  },
   [DELETE_FILE_REQUEST]: (state, data) => {
     state.messages.splice(state.messages.indexOf(data), 1)
   },
@@ -259,7 +252,7 @@ const mutations = {
   },
   [FILES_SUCCESS]: (state, resp) => {
     state.status = 'success'
-    state.files = resp.data.files
+    state.files = resp?.data?.files || []
     state.hasLoadedOnce = true
   },
   [FILE_SUCCESS]: (state, resp) => {

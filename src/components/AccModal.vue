@@ -304,7 +304,7 @@ export default {
             </p>
             <form class="mb-2">
               <div class="text-sm landing-4 font-normal">
-                {{ userPhone(phone) }}
+                {{ userPhone() }}
               </div>
               <button
                 type="button"

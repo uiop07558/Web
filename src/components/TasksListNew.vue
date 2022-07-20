@@ -90,7 +90,7 @@
 
     <!-- vue3-treeview -->
     <div
-      v-if="status == 'success'"
+      v-if="status == 'success' && Object.keys(storeTasks).length"
       class="overflow-y-auto pt-[4px] px-px min-h-[300px] w-full"
     >
       <tree
@@ -124,8 +124,7 @@
                 v-model="props.node.info.name"
                 tag="div"
                 class="taskName p-0 ring-0 outline-none w-[calc(100%-26px)] overflow-x-clip break-words cursor-default"
-                :contenteditable="props.node.info._isEditable"
-                placeholder="Введите название задачи"
+                :contenteditable="false"
                 :no-nl="true"
                 :no-html="true"
                 :class="{ 'uppercase': !props.node.info._isEditable && colors[props.node.info.uid_marker] && colors[props.node.info.uid_marker].uppercase, 'text-gray-500': props.node.info.status == 1 || props.node.info.status == 7, 'line-through': props.node.info.status == 1 || props.node.info.status == 7, 'font-extrabold': props.node.info.readed == 0 }"
@@ -174,7 +173,7 @@
                 v-if="props.node.info.uid_customer != '00000000-0000-0000-0000-000000000000' && employees[props.node.info.uid_customer] && props.node.info.uid_customer != currentUserUid"
                 :text="employees[props.node.info.uid_customer].name"
                 :color-bg-class="{ 'border-red-500': currentUserEmail == props.node.info.email_performer, 'bg-gray-400': currentUserEmail != props.node.info.email_performer, 'bg-opacity-50': props.node.info.status == 1 || props.node.info.status == 7, 'bg-red-500': currentUserEmail == props.node.info.email_performer }"
-                icon-height="15"
+                :icon-height="15"
                 :image="employees[props.node.info.uid_customer] ? employees[props.node.info.uid_customer].fotolink : ''"
                 class="h-[22px]"
               />
@@ -196,7 +195,7 @@
                 text="Просрочено"
                 color-text-class="text-red-600"
                 color-bg-class="bg-red-300 opacity-70"
-                icon-height="15"
+                :icon-height="15"
                 class="h-[22px]"
               />
               <!-- Tags -->
@@ -272,7 +271,7 @@
               :id="`hover-panel-${props.node.id}`"
               class="absolute right-[8px] top-[calc(50%-18px)] invisible group-hover:visible"
               :is-my-task="props.node.info.uid_customer == currentUserUid"
-              :can-paste="Object.keys(copiedTasks).length"
+              :can-paste="!!Object.keys(copiedTasks).length"
               @click.stop
               @addSubtask="addSubtask(props.node.info)"
               @changeFocus="changeFocus(props.node.info)"
@@ -680,8 +679,8 @@ export default {
           // выделяем добавленную задачу
           // и отображаем её свойства
             this.nodeSelected({ id: data.uid, info: resp.data })
-            if (this.navStack && this.navStack[this.navStack.length - 1].uid === '901841d9-0016-491d-ad66-8ee42d2b496b') {
-              this.$store.commit('addDot', new Date(this.navStack[this.navStack.length - 1].param))
+            if (this.navStack && this.navStack[this.navStack.length - 1].value.uid === '901841d9-0016-491d-ad66-8ee42d2b496b') {
+              this.$store.commit('addDot', new Date(data.date_begin))
             }
             document.getElementById('task').firstElementChild.focus({ preventScroll: false })
             setTimeout(() => {
@@ -821,7 +820,6 @@ export default {
         _isEditable: true,
         _justCreated: true
       }
-      console.log(parent)
       this.$store.dispatch(TASK.SELECT_TASK, newSubtask)
       this.$store.dispatch(TASK.ADD_SUBTASK, newSubtask)
         .then(() => {

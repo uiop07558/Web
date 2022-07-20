@@ -2,8 +2,8 @@
   <div class="flex items-center gap-[10px]">
     <BoardModalBoxDelete
       v-if="showDeleteProject"
-      title="Удалить проект"
-      text="Вы действительно хотите удалить проект?"
+      title="Удалить регламент"
+      text="Вы действительно хотите удалить регламент?"
       @cancel="showDeleteProject = false"
       @yes="onDeleteProject"
     />
@@ -11,28 +11,10 @@
       <NavBarButtonIcon icon="menu" />
       <template #menu>
         <PopMenuItem
-          @click="clickCompletedTasks"
-        >
-          {{ showCompletedTasks ? 'Скрыть завершенные задачи' : 'Показать завершенные задачи' }}
-        </PopMenuItem>
-        <PopMenuDivider />
-        <PopMenuItem
           icon="edit"
           @click="clickEditProject"
         >
-          Свойства проекта
-        </PopMenuItem>
-        <PopMenuItem
-          v-if="canDelete"
-          icon="delete"
-          @click="clickDeleteProject"
-        >
-          Удалить проект
-        </PopMenuItem>
-        <PopMenuItem
-          @click="favoriteToggle"
-        >
-          {{ !isFavorite ? 'Добавить в избранное' : 'Удалить из избранного' }}
+          Свойства регламента
         </PopMenuItem>
       </template>
     </PopMenu>
@@ -43,15 +25,9 @@
 import NavBarButtonIcon from '@/components/Navbar/NavBarButtonIcon.vue'
 import PopMenu from '@/components/modals/PopMenu.vue'
 import PopMenuItem from '@/components/modals/PopMenuItem.vue'
-import PopMenuDivider from '@/components/modals/PopMenuDivider.vue'
 import BoardModalBoxDelete from '@/components/Board/BoardModalBoxDelete.vue'
 
-import {
-  ADD_PROJECT_TO_FAVORITE,
-  REMOVE_PROJECT_FROM_FAVORITE,
-  REMOVE_PROJECT_REQUEST,
-  SELECT_PROJECT
-} from '@/store/actions/projects'
+import { SELECT_PROJECT, REMOVE_PROJECT_REQUEST } from '@/store/actions/projects'
 import { NAVIGATOR_REMOVE_PROJECT } from '@/store/actions/navigator'
 
 export default {
@@ -59,7 +35,6 @@ export default {
     NavBarButtonIcon,
     PopMenu,
     PopMenuItem,
-    PopMenuDivider,
     BoardModalBoxDelete
   },
   props: {
@@ -75,7 +50,28 @@ export default {
   emits: ['popNavBar', 'toggleCompletedTasks'],
   data () {
     return {
-      showDeleteProject: false
+      showDeleteProject: false,
+      fakeReglament: {
+        uid_parent: '00000000-0000-0000-0000-000000000000',
+        color: '#000000',
+        comment: '',
+        plugin: '',
+        collapsed: 0,
+        isclosed: 0,
+        order: 1,
+        group: 0,
+        show: 1,
+        favorite: 0,
+        quiet: 0,
+        email_creator: 'term@gmail.com',
+        members: [
+          'term@gmail.com',
+          'gepard@yandex.ru'
+        ],
+        uid: 'd3b1abe4-a626-4b64-92fb-04161c964b58',
+        name: 'Системная работа',
+        bold: 0
+      }
     }
   },
   computed: {
@@ -84,9 +80,6 @@ export default {
     },
     canDelete () {
       return this.project?.email_creator === this.$store.state.user?.user?.current_user_email
-    },
-    isFavorite () {
-      return this.project?.favorite
     }
   },
   methods: {
@@ -94,8 +87,8 @@ export default {
       if (!this.$store.state.isPropertiesMobileExpanded) {
         this.$store.dispatch('asidePropertiesToggle', true)
       }
-      this.$store.commit('basic', { key: 'propertiesState', value: 'project' })
-      this.$store.commit(SELECT_PROJECT, this.project)
+      this.$store.commit('basic', { key: 'propertiesState', value: 'reglament' })
+      this.$store.commit(SELECT_PROJECT, this.fakeReglament)
     },
     clickDeleteProject () {
       this.showDeleteProject = true
@@ -117,19 +110,6 @@ export default {
     },
     clickCompletedTasks () {
       this.$emit('toggleCompletedTasks')
-    },
-    favoriteToggle () {
-      if (!this.isFavorite) {
-        this.$store.dispatch(ADD_PROJECT_TO_FAVORITE, this.project)
-          .then(res => {
-            this.project.favorite = res.data.favorite
-          })
-      } else {
-        this.$store.dispatch(REMOVE_PROJECT_FROM_FAVORITE, this.project)
-          .then(res => {
-            this.project.favorite = res.data.favorite
-          })
-      }
     }
   }
 }

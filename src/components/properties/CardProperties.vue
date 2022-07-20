@@ -186,6 +186,7 @@ export default {
   watch: {
     selectedCard (oldValue, newValue) {
       this.currentQuote = false
+      this.cardMessageInputValue = ''
     }
   },
   methods: {
@@ -231,6 +232,9 @@ export default {
 
     changeName (arg) {
       const data = { cardUid: this.selectedCard?.uid, name: arg.target.innerText }
+      if (data.name === '') {
+        data.name = 'Карточка без названия'
+      }
       this.$store.dispatch(CHANGE_CARD_NAME, data)
     },
 
@@ -302,16 +306,23 @@ export default {
         this.showMessagesLimit = true
         return
       }
+      if (this.cardMessageInputValue <= 0) {
+        return
+      }
+      let msgcard = this.cardMessageInputValue
+      msgcard = msgcard.trim()
+      msgcard = msgcard.replaceAll('&', '&amp;')
+      msgcard = msgcard.replaceAll('>', '&gt;')
+      msgcard = msgcard.replaceAll('<', '&lt;')
       const uid = this.uuidv4()
       const data = {
         uid_card: this.selectedCard?.uid,
-        uid_msg: uid,
         uid: uid,
         date_create: new Date().toISOString(),
         uid_creator: this.user.current_user_uid,
         uid_quote: this.currentQuote?.uid ?? '',
-        text: this.cardMessageInputValue,
-        msg: this.cardMessageInputValue,
+        text: msgcard,
+        msg: msgcard,
         order: 0,
         deleted: 0
       }
@@ -383,7 +394,6 @@ export default {
         cardUid: this.selectedCard?.uid,
         file: formData
       }
-      console.log(data)
       this.$store.dispatch(CHANGE_CARD_COVER, data).then((resp) => {
         if (this.selectedCard) {
           this.selectedCard.cover_color = resp.data.card.cover_color

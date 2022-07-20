@@ -40,7 +40,6 @@ const actions = {
         method: 'PATCH'
       })
         .then((resp) => {
-          console.log(resp)
           dispatch(USER_REQUEST).then((resp) => {
             commit(USER_CHANGE_PHOTO)
             resolve(resp)
@@ -73,7 +72,6 @@ const actions = {
 const mutations = {
   [USER_CHANGE_PHOTO]: (state, data) => {
     state.user.foto_link = state.user.foto_link + '&Z=' + Date.now()
-    console.log(state.user.foto_link)
   },
   [USER_REQUEST]: (state) => {
     state.status = 'loading'

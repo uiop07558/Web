@@ -28,10 +28,7 @@
       />
     </div>
     <div class="mt-5">
-      <TasksListNew
-        :store-tasks="storeTasks"
-        :new-config="newConfig"
-      />
+      <TasksListNew />
     </div>
   </div>
 </template>
@@ -78,9 +75,6 @@ export default {
     canAddChild () {
       const user = this.$store.state.user.user
       return this.currentProject?.email_creator === user.current_user_email
-    },
-    storeTasks () {
-      return this.$store.state.tasks.newtasks
     }
   },
   methods: {

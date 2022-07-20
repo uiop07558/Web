@@ -13,6 +13,9 @@ import cardfilesandmessages from './modules/cardfilesandmessages'
 import employees from './modules/employees'
 import departments from './modules/departments'
 import projects from './modules/projects'
+import reglaments from './modules/reglaments'
+import reglamentAnswers from './modules/reglament_answers'
+import reglamentQuestions from './modules/reglament_questions'
 import boards from './modules/boards'
 import cards from './modules/cards'
 import colors from './modules/colors'
@@ -146,6 +149,9 @@ export default createStore({
     employees,
     departments,
     projects,
+    reglaments,
+    reglamentQuestions,
+    reglamentAnswers,
     boards,
     cards,
     colors,

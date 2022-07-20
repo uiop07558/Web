@@ -113,7 +113,7 @@ export default {
       const data = {
         uid_task: this.selectedTask.uid,
         uid_creator: this.cusers.current_user_uid,
-        uid_msg: this.uuidv4(),
+        uid: this.uuidv4(),
         date_create: new Date().toISOString(),
         deleted: 0,
         uid_quote: this.currentAnswerMessageUid,
@@ -139,8 +139,6 @@ export default {
             }
           }
           this.selectedTask.msg = decodeURIComponent(this.taskMsg)
-          const wrapperElement = document.getElementById('content').lastElementChild
-          wrapperElement.scrollIntoView({ behavior: 'smooth' })
         })
       this.currentAnswerMessageUid = ''
       this.taskMsg = ''
@@ -159,7 +157,7 @@ export default {
       const data = {
         uid_task: this.task.uid,
         uid_creator: this.user.current_user_uid,
-        uid_msg: this.uuidv4(),
+        uid: this.uuidv4(),
         date_create: dateCreate,
         text: this.taskMsg,
         msg: this.taskMsg
@@ -175,8 +173,6 @@ export default {
           }
           this.$store.commit(TASK.MSG_EQUAL, this.task, decodeURIComponent(this.taskMsg))
           this.infoComplete = true
-          const wrapperElement = document.getElementById('content').lastElementChild
-          wrapperElement.scrollIntoView({ behavior: 'smooth' })
         })
       this.taskMsg = ''
     },
@@ -216,10 +212,6 @@ export default {
           }
         })
       this.infoComplete = true
-      setTimeout(() => {
-        const elem = document.getElementById('content').lastElementChild
-        elem.scrollIntoView({ behavior: 'smooth' })
-      }, 100)
       this.$store.commit(FILES.REFRESH_FILES)
     }
   }

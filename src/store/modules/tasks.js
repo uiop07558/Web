@@ -165,11 +165,9 @@ const actions = {
         uid
       axios({ url: url, method: 'GET' })
         .then((resp) => {
-          console.log(resp.data)
           resolve(resp)
         })
         .catch((err) => {
-          console.log(err)
           reject(err)
         })
     })
@@ -660,9 +658,6 @@ const actions = {
   },
   [TASK.CHANGE_TASK_NAME]: ({ commit, dispatch }, data) => {
     return new Promise((resolve, reject) => {
-      if (data.value === '') {
-        data.value = 'Task name'
-      }
       const url =
         process.env.VUE_APP_LEADERTASK_API + 'api/v1/task/name?uid=' + data.uid
       axios({
@@ -1086,7 +1081,6 @@ const mutations = {
   },
   [TASK.REMOVE_TASK_FROM_LEAVES]: (state, uid) => {
     for (let i = 0; i < state.newConfig.leaves.length; i++) {
-      console.log(state.newConfig.leaves)
       if (uid === state.newConfig.leaves[i]) {
         state.newConfig.leaves.splice(i, 1)
       }

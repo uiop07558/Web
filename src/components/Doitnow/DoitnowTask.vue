@@ -205,6 +205,11 @@
       >
         ПОКАЗАТЬ ВСЕ
       </p> -->
+        <!-- input -->
+        <TaskPropsInputForm
+          :task="task"
+          @readTask="readTask"
+        />
         <!-- chat -->
         <TaskPropsChatMessages
           v-if="taskMessages?.length"
@@ -220,11 +225,6 @@
           @onPasteEvent="onPasteEvent"
           @deleteFiles="deleteFiles"
           @deleteTaskMsg="deleteTaskMsg"
-          @readTask="readTask"
-        />
-        <!-- input -->
-        <TaskPropsInputForm
-          :task="task"
           @readTask="readTask"
         />
       </div>
@@ -329,8 +329,6 @@
 </template>
 
 <script>
-// import TaskListIconLabel from '@/components/TasksList/TaskListIconLabel.vue'
-// import TaskListTagLabel from '@/components/TasksList/TaskListTagLabel.vue'
 import { copyText } from 'vue3-clipboard'
 import contenteditable from 'vue-contenteditable'
 import linkify from 'vue-linkify'
@@ -379,8 +377,6 @@ import repeat from '@/icons/repeat.js'
 
 export default {
   components: {
-    // TaskListIconLabel,
-    // TaskListTagLabel,
     Icon,
     SetDate,
     TaskPropsChatMessages,
@@ -740,7 +736,7 @@ export default {
       this.$store.dispatch(MSG.DELETE_MESSAGE_REQUEST, { uid: uid })
         .then((resp) => {
           this.$store.state.tasks.selectedTask.has_msgs = true
-          this.$store.state.taskfilesandmessages.messages.find(message => message.uid_msg) ? this.$store.state.taskfilesandmessages.messages.find(message => message.uid_msg === uid).deleted = 1 : this.$store.state.taskfilesandmessages.messages.find(message => message.uid === uid).deleted = 1
+          this.$store.state.taskfilesandmessages.messages.find(message => message.uid === uid).deleted = 1
         })
     },
     editTaskName (task) {
@@ -942,7 +938,6 @@ export default {
       this.$store.dispatch(TASK.CHANGE_TASK_REDELEGATE, data)
         .then(
           resp => {
-            console.log(resp.data)
             this.$store.commit(TASK.SUBTASKS_REQUEST, resp.data)
           }
         )
@@ -992,7 +987,7 @@ export default {
       const data = {
         uid_task: this.task.uid,
         uid_creator: this.user.current_user_uid,
-        uid_msg: this.uuidv4(),
+        uid: this.uuidv4(),
         date_create: dateCreate,
         deleted: 0,
         text: msg,
