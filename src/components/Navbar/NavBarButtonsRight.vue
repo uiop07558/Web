@@ -5,7 +5,7 @@
   />
   <div class="flex gap-[10px] items-center px-3">
     <div
-      v-if="!showSearchBar"
+      v-if="!showSearchBar && lastGreedPath !== 'reglament_content' && lastGreedPath !== 'reglaments'"
       class="flex-none flex gap-[5px] p-[8px] cursor-pointer text-[#7e7e80] hover:text-[#7e7e80]/75"
       @click="onShowSearchBar"
     >
@@ -80,6 +80,11 @@
       :board-uid="lastNavStackUid"
       @popNavBar="popNavBar"
     />
+    <NavBarButtonsReglament
+      v-if="lastGreedPath === 'reglament_content'"
+      :project-uid="lastNavStackUid"
+      @popNavBar="popNavBar"
+    />
     <NavBarButtonsProject
       v-if="lastGreedPath === 'projects_children'"
       :project-uid="lastNavStackUid"
@@ -118,6 +123,7 @@ import { notify } from 'notiwind'
 
 import NavBarButtonsBoard from '@/components/Navbar/NavBarButtonsBoard.vue'
 import NavBarButtonsProject from '@/components/Navbar/NavBarButtonsProject.vue'
+import NavBarButtonsReglament from '@/components/Navbar/NavBarButtonsReglament.vue'
 import NavBarButtonsColor from '@/components/Navbar/NavBarButtonsColor.vue'
 import NavbarSearchLimit from '@/components/Navbar/NavbarSearchLimit'
 import NavBarButtonsTag from '@/components/Navbar/NavBarButtonsTag.vue'
@@ -127,6 +133,7 @@ export default {
   components: {
     NavBarButtonsBoard,
     NavBarButtonsProject,
+    NavBarButtonsReglament,
     NavBarButtonsColor,
     NavBarButtonsTag,
     NavbarSearchLimit,

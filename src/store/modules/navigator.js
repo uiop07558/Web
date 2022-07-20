@@ -9,6 +9,8 @@ import {
   NAVIGATOR_ERROR,
   NAVIGATOR_PUSH_BOARD,
   NAVIGATOR_PUSH_COLOR,
+  NAVIGATOR_PUSH_REGLAMENT,
+  NAVIGATOR_REMOVE_REGLAMENT,
   NAVIGATOR_PUSH_DEPARTAMENT,
   NAVIGATOR_PUSH_EMPLOYEE,
   NAVIGATOR_PUSH_PROJECT,
@@ -225,22 +227,7 @@ const mutations = {
 
     console.log('navigator ', resp)
 
-    // Push statickly tasks to menu array from state
     state.memu = []
-    // state.menu.push('separator')
-    // state.menu.push([
-    //   {
-    //     label: 'Рабочий стол',
-    //     uid: '2bad1413-a373-4926-8a3c-58677a680714',
-    //     bold: 0,
-    //     icon: desktop.path,
-    //     width: desktop.width,
-    //     height: desktop.height,
-    //     iconBox: desktop.viewBox,
-    //     type: 'uid',
-    //     iconBackgroundClass: 'bg-white-500'
-    //   }
-    // ])
     state.menu.push([
       {
         label: 'Очередь',
@@ -294,6 +281,20 @@ const mutations = {
         height: 30,
         type: 'greed',
         path: 'new_private_projects',
+        iconBackgroundClass: 'bg-amber-500'
+      }
+    ])
+    state.menu.push([
+      {
+        label: 'Регламенты',
+        uid: '92413f6c-2ef3-476e-9429-e76d7818685d', // reglaments uuid
+        bold: false,
+        icon: 'M23.8818 9.48613V8.39669C23.8818 7.38613 23.0651 6.56289 22.0625 6.56289H14.565L14.3401 6.18824C14.2031 5.97134 13.9635 5.83331 13.7092 5.83331H8.15332C7.15073 5.83331 6.33398 6.65655 6.33398 7.66712V21.4995C6.33398 22.5101 7.15073 23.3333 8.15332 23.3333H23.6813C24.6839 23.3333 25.5006 22.5101 25.5006 21.4995V11.3101C25.5055 10.3636 24.7915 9.58472 23.8818 9.48613ZM7.81097 7.66712C7.81097 7.47486 7.96748 7.31712 8.15821 7.31712H13.2983L15.2937 10.6002C15.4258 10.8171 15.6654 10.9551 15.9246 10.9551H23.6911C23.8818 10.9551 24.0383 11.1129 24.0383 11.3051V21.4995C24.0383 21.6918 23.8818 21.8495 23.6911 21.8495H8.15332C7.96259 21.8495 7.80608 21.6918 7.80608 21.4995V7.66712H7.81097ZM22.4048 9.47134H16.3306L15.4649 8.04669H22.0576C22.2483 8.04669 22.4048 8.20444 22.4048 8.39669V9.47134Z',
+        iconBox: '0 0 30 30',
+        width: 30,
+        height: 30,
+        type: 'greed',
+        path: 'reglaments',
         iconBackgroundClass: 'bg-amber-500'
       }
     ])
@@ -372,6 +373,7 @@ const mutations = {
       newEmps.push(dep)
     }
     resp.data.new_emps = newEmps
+
     // Merge common projects and private projects into my own data structure
     // Array of objects where object is { dep: 'Dependency name', items: items }
     const itemsInProjectView = []
@@ -438,6 +440,16 @@ const mutations = {
           departament.uid
         )
       })
+    }
+  },
+  [NAVIGATOR_PUSH_REGLAMENT]: (state, reglament) => {
+    state.navigator.reglaments.items.push(reglament)
+  },
+  [NAVIGATOR_REMOVE_REGLAMENT]: (state, reglament) => {
+    for (let i = 0; i < state.navigator.reglaments.items.length; i++) {
+      if (state.navigator.reglaments.items[i].uid === reglament.uid) {
+        state.navigator.reglaments.items.splice(i, 1)
+      }
     }
   },
   [NAVIGATOR_REMOVE_DEPARTAMENT]: (state, uidDepartment) => {
