@@ -1,6 +1,6 @@
 <script setup>
-import { ref, computed } from 'vue'
-const emit = defineEmits(['update:modelValue', 'createCardMessage', 'createCardFile', 'onPaste', 'cantWriteMessages'])
+import { ref, computed, watch, nextTick } from 'vue'
+const emit = defineEmits(['update:modelValue', 'createCardMessage', 'createCardFile', 'onPaste', 'cantWriteMessages', 'changeHeight'])
 
 const props = defineProps({
   canAddFiles: Boolean,
@@ -26,10 +26,26 @@ const computedValue = computed({
   }
 })
 
+watch(() => props.modelValue, () => {
+  nextTick(() => {
+    onInputTaskMsg()
+  })
+})
+
 const onInputTaskMsg = () => {
+  const oldHeight = taskMsgEdit.value.style.height
   taskMsgEdit.value.style.height = '40px'
   const scrollHeight = taskMsgEdit.value.scrollHeight
   taskMsgEdit.value.style.height = scrollHeight + 'px'
+  if (oldHeight !== taskMsgEdit.value.style.height) {
+    // у нас стоит max-h-[100px] - по этому делаем проверку
+    // больше этого значения не раздвинется
+    if (scrollHeight > 100) {
+      emit('changeHeight', 100)
+    } else {
+      emit('changeHeight', scrollHeight)
+    }
+  }
 }
 
 const createCardMessage = () => {
