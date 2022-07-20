@@ -513,6 +513,9 @@ export default {
         uid: this.selectedTask.uid,
         value: event.target.innerText
       }
+      if (data.value.length <= 0) {
+        data.value = 'Задача без названия'
+      }
       this.$store.dispatch(TASK.CHANGE_TASK_NAME, data)
     },
     handleInput () {

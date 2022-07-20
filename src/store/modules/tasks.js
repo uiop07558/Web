@@ -658,9 +658,6 @@ const actions = {
   },
   [TASK.CHANGE_TASK_NAME]: ({ commit, dispatch }, data) => {
     return new Promise((resolve, reject) => {
-      if (data.value === '') {
-        data.value = 'Task name'
-      }
       const url =
         process.env.VUE_APP_LEADERTASK_API + 'api/v1/task/name?uid=' + data.uid
       axios({
