@@ -481,13 +481,13 @@ export default {
 
 .calendar-nav-custom .vc-day-content:focus
 {
-  @apply bg-transparent !important;
+  @apply bg-[#ff9123]/70 !important;
 }
 
 .calendar-nav-custom .vc-highlight,
 .calendar-nav-custom .vc-highlight:focus
 {
-  @apply bg-[#ff9123]/40;
+  @apply bg-[#ff9123]/50;
 }
 
 .calendar-nav-custom .vc-day-content,

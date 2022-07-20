@@ -1,7 +1,7 @@
 <template>
   <Popper
     class="popper-repeat"
-    :disabled="selectedTask.type !== 1 && selectedTask.type!== 2"
+    :disabled="selectedTask.type !== 1 && selectedTask.type !== 2"
     arrow
     trigger="hover"
     placement="bottom"
@@ -54,6 +54,7 @@
                   <input
                     ref="SeriesAfterCount"
                     v-model="SeriesAfterCount"
+                    min="1"
                     type="number"
                     class="form-control form-control-select-repeat"
                     name="repeateveryday"
@@ -450,20 +451,20 @@
           v-if="selectedTask.SeriesAfterType === 1"
         ><span
           v-if="selectedTask.SeriesAfterCount === 1"
-        >Ежедневно: Каждый 1 день.</span><span
+        >Ежедневно: Каждый день.</span><span
           v-else
         >Ежедневно: Каждый {{ selectedTask.SeriesAfterCount }} день.</span></span><span
           v-else-if="selectedTask.SeriesAfterType === 2"
-        ><span v-if="selectedTask.SeriesAfterCount === 1">Ежедневно: </span><span
+        ><span v-if="selectedTask.SeriesAfterCount === 1">Еженедельно </span><span
           v-else
-        >Каждый {{ selectedTask.SeriesAfterCount }} неделю.</span></span><span
+        >Каждую {{ selectedTask.SeriesAfterCount }} неделю.</span></span><span
           v-else-if="selectedTask.SeriesAfterType === 3"
-        ><span v-if="selectedTask.SeriesAfterCount === 1">Ежедневно: </span><span
+        ><span v-if="selectedTask.SeriesAfterCount === 1">Ежемесячно </span><span
           v-else
         >Ежедневно: Каждый
           {{ selectedTask.SeriesAfterCount }} месяц.</span></span><span
           v-else-if="selectedTask.SeriesAfterType === 4"
-        ><span v-if="selectedTask.SeriesAfterCount === 1">Ежедневно: </span><span
+        ><span v-if="selectedTask.SeriesAfterCount === 1">Ежегодно </span><span
           v-else
         >Каждый {{ selectedTask.SeriesAfterCount }} год.</span></span>
         </span>
@@ -542,9 +543,9 @@ export default {
       ActiveYartype: this.selectedTask?.SeriesYearType,
 
       SeriesType: this.selectedTask?.SeriesType,
-      SeriesAfterCount: this.selectedTask?.SeriesAfterCount,
-      SeriesAfterType: this.selectedTask?.SeriesAfterType,
-      SeriesWeekCount: this.selectedTask?.SeriesWeekCount,
+      SeriesAfterCount: this.selectedTask?.SeriesAfterCount ?? 1,
+      SeriesAfterType: this.selectedTask?.SeriesAfterType ?? 1,
+      SeriesWeekCount: this.selectedTask?.SeriesWeekCount ?? 1,
       SeriesMonthType:
         this.selectedTask?.SeriesMonthType === 1
           ? this.selectedTask?.SeriesMonthType
@@ -729,7 +730,6 @@ export default {
           uid: this.selectedTask.uid
         }
         this.$store.dispatch(TASK.RESET_REPEAT_CHANGE, data).then((resp) => {
-          this.selectedTask.SeriesType = 0
           this.selectedTask.SeriesType = 0
           this.selectedTask.SeriesAfterType = 0
           this.selectedTask.SeriesAfterCount = 0
