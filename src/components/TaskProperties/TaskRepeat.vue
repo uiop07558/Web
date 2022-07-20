@@ -1,7 +1,7 @@
 <template>
   <Popper
     class="popper-repeat"
-    :disabled="selectedTask.type !== 1 && selectedTask.type!== 2"
+    :disabled="selectedTask.type !== 1 && selectedTask.type !== 2"
     arrow
     trigger="hover"
     placement="bottom"
@@ -118,7 +118,7 @@
                   <div
                     v-for="opt in myOptions"
                     :key="opt"
-                    :value="opt.id"
+                    :value="opt"
                     class="form_checkbox_btn-custom"
                   >
                     <input
@@ -729,7 +729,6 @@ export default {
           uid: this.selectedTask.uid
         }
         this.$store.dispatch(TASK.RESET_REPEAT_CHANGE, data).then((resp) => {
-          this.selectedTask.SeriesType = 0
           this.selectedTask.SeriesType = 0
           this.selectedTask.SeriesAfterType = 0
           this.selectedTask.SeriesAfterCount = 0
