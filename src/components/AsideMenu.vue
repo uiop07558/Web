@@ -129,7 +129,6 @@ export default {
       if (this.isPropertiesMobileExpanded) {
         this.$store.dispatch('asidePropertiesToggle', false)
       }
-      console.log('item -->', item)
 
       // do it now
       if (item.uid === '2cf6b167-6506-4b05-bc34-70a8d88e3b25') {
