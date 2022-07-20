@@ -8,7 +8,7 @@
       icon="edit"
       @click="isEdit"
     >
-      {{ isEditing ? 'Завершить редактирование' : 'Редактировать' }}
+      {{ editButtonText }}
     </PopMenuItem>
   </div>
   <QuillEditor
@@ -110,6 +110,7 @@ export default {
       isEditing: false,
       questions: [],
       isTesting: false,
+      saveContentStatus: 1, // 1 - is saved, 2 error, 0 request processing
       showCompleteMessage: false,
       isPassed: 0
     }
@@ -126,6 +127,18 @@ export default {
     },
     user () {
       return this.$store.state.user.user
+    },
+    editButtonText () {
+      if (this.isEditing && this.saveContentStatus === 1) {
+        return 'Завершить редактирование'
+      } else if (!this.isEditing && this.saveContentStatus === 1) {
+        return 'Редактировать'
+      } else if (this.saveContentStatus === 2) {
+        return 'Ошибка сохранения регламента'
+      } else if (this.saveContentStatus === 0) {
+        return 'Сохраняется'
+      }
+      return 'Сохраняется'
     }
   },
   watch: {
@@ -244,8 +257,17 @@ export default {
     },
     isEdit () {
       this.currentReglament.content = this.text
-      this.$store.dispatch('UPDATE_REGLAMENT_REQUEST', this.currentReglament)
-      this.isEditing = !this.isEditing
+      if (this.isEditing) {
+        this.saveContentStatus = 0
+        this.$store.dispatch('UPDATE_REGLAMENT_REQUEST', this.currentReglament).then(() => {
+          this.isEditing = !this.isEditing
+          this.saveContentStatus = 1
+        }).catch(() => {
+          this.saveContentStatus = 2
+        })
+      } else {
+        this.isEditing = !this.isEditing
+      }
     },
     clickComplete () {
       const data = {
