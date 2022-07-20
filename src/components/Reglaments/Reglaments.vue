@@ -177,9 +177,10 @@ export default {
           uid: this.uuidv4()
         }
 
-        this.$store.dispatch(REGLAMENTS.CREATE_REGLAMENT_REQUEST, reglament)
-        this.$store.commit(NAVIGATOR.NAVIGATOR_PUSH_REGLAMENT, reglament)
-        this.gotoReglamentContent(reglament)
+        this.$store.dispatch(REGLAMENTS.CREATE_REGLAMENT_REQUEST, reglament).then(() => {
+          this.$store.commit(NAVIGATOR.NAVIGATOR_PUSH_REGLAMENT, reglament)
+          this.gotoReglamentContent(reglament)
+        })
       }
     }
   }
