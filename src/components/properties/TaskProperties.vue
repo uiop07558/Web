@@ -200,7 +200,6 @@
       />
       <!-- Comment -->
       <TaskPropsCommentEditor
-        class="mt-3 h-32"
         :comment="selectedTask.comment ?? ''"
         :can-edit="canEditComment"
         @changeComment="onChangeComment"
@@ -221,7 +220,6 @@
       <TaskPropsChatMessages
         v-if="taskMessages?.length && status=='success'"
         id="content"
-        class="mt-3 h-3/6"
         :task-messages="taskMessages"
         :current-user-uid="user?.current_user_uid"
         :show-all-messages="showAllMessages"
@@ -237,16 +235,17 @@
   <div class="w-full relative">
     <img
       v-if="isloading"
+      class="mt-[8px] h-[40px]"
       src="/ajaxloader.gif"
     >
     <div
       v-if="currentAnswerMessageUid"
-      class="quote-request border-l-2 border-[#7E7E80] mt-2 h-9"
+      class="quote-request border-l-2 border-[#7E7E80] mt-[8px] h-[40px]"
     >
       <div class="flex flex-row items-center">
-        <div class="grow width100without20">
+        <div class="grow w-[calc(100%-20px)]">
           <div
-            class="mx-1"
+            class="mx-[4px]"
           >
             <p class="text-[11px] leading-[16px] overflow-hidden text-black text-ellipsis whitespace-nowrap">
               {{ messageQuoteUser }}
@@ -257,10 +256,11 @@
           </div>
         </div>
         <div
-          class="flex-none p-0.5 relative bottom-2"
+          class="flex-none"
           @click="onAnswerMessage('')"
         >
           <svg
+            class="m-[2px]"
             width="18"
             height="18"
             viewBox="0 0 18 18"
@@ -277,16 +277,16 @@
         </div>
       </div>
     </div>
-    <div class="fixed bottom-0 w-[340px] bg-white pt-2 pb-5">
-      <card-message-input
-        v-model="taskMsg"
-        :can-add-files="user.tarif !== 'free'"
-        @cantWriteMessages="showFreeModalChat = true"
-        @createCardMessage="sendTaskMsg()"
-        @createCardFile="createTaskFile($event)"
-        @onPaste="onPasteEvent"
-      />
-    </div>
+    <CardMessageInput
+      v-model="taskMsg"
+      class="mt-[16px]"
+      :can-add-files="user.tarif !== 'free'"
+      @cantWriteMessages="showFreeModalChat = true"
+      @createCardMessage="sendTaskMsg"
+      @createCardFile="createTaskFile"
+      @onPaste="onPasteEvent"
+      @changeHeight="onChangeChatInputHeight"
+    />
   </div>
 </template>
 
@@ -377,10 +377,12 @@ export default {
         end: this.selectedTask?.term_customer === '' ? new Date() : new Date(this.selectedTask?.customer_date_end)
       },
       timeStart: this.selectedTask?.term_customer === '' ? '' : new Date(this.selectedTask?.customer_date_begin).toLocaleTimeString(),
-      timeEnd: this.selectedTask?.term_customer === '' ? '' : new Date(this.selectedTask?.customer_date_end).toLocaleTimeString()
+      timeEnd: this.selectedTask?.term_customer === '' ? '' : new Date(this.selectedTask?.customer_date_end).toLocaleTimeString(),
+      sendChatEditHeight: 44
     }
   },
   computed: {
+    employees () { return this.$store.state.employees.employees },
     taskMessages () { return this.$store.state.taskfilesandmessages.messages },
     uploadStarted () { return this.$store.state.taskfilesandmessages.uploadStarted },
     selectedTask () { return this.$store.state.tasks.selectedTask },
@@ -407,13 +409,34 @@ export default {
     },
     canEditChecklist () { return (this.selectedTask.type === 1 || this.selectedTask.type === 2) && this.user.tarif !== 'free' },
     canCheckChecklist () { return (this.canEditChecklist || this.selectedTask.type === 3) && this.user.tarif !== 'free' },
-    canEditComment () { return (this.selectedTask.type === 1 || this.selectedTask.type === 2) }
+    canEditComment () { return (this.selectedTask.type === 1 || this.selectedTask.type === 2) },
+    messageQuoteUser () {
+      if (!this.currentAnswerMessageUid) return ''
+      const quotedMessage = this.taskMessages.find(message => message.uid === this.currentAnswerMessageUid)
+      if (!quotedMessage) return ''
+      return this.employees[quotedMessage.uid_creator]?.name ?? '???'
+    },
+    messageQuoteString () {
+      if (!this.currentAnswerMessageUid) return ''
+      const quotedMessage = this.taskMessages.find(message => message.uid === this.currentAnswerMessageUid)
+      if (!quotedMessage) return ''
+      let msg = quotedMessage.msg.trim()
+      msg = msg.replaceAll('&amp;', '&')
+      msg = msg.replaceAll('&lt;', '<')
+      msg = msg.replaceAll('&gt;', '>')
+      return msg
+    }
   },
   watch: {
     selectedTask (newval, oldval) {
       this.showOnlyFiles = false
       this.showAllMessages = false
+      this.currentAnswerMessageUid = ''
       this.taskMsg = ''
+      // пересчитываем высоту плашки отправки сообщения
+      this.$nextTick(function () {
+        this.onInputTaskMsg()
+      })
     }
   },
   methods: {
@@ -591,7 +614,30 @@ export default {
     print (value) {
       console.log(value)
     },
-    sendTaskMsg: function (msg) {
+    onChangeChatInputHeight (height) {
+      if (this.sendChatEditHeight !== height) {
+        this.sendChatEditHeight = height
+        // пересчитываем высоту плашки отправки сообщения
+        this.$nextTick(function () {
+          this.onInputTaskMsg()
+        })
+      }
+    },
+    onInputTaskMsg () {
+      // по идее чтобы не зашивать магические числа
+      // можно получать соотвествующие элементы из DOM
+      // и брать высоту из низ
+      const defAnswerHeight = this.currentAnswerMessageUid ? 40 + 8 : 0
+      const defFileLoadingHeight = this.isloading ? 40 + 8 : 0
+      const defHexParentHeight = 96
+      //
+      const sendHeightAddConst = defHexParentHeight - 44
+      //
+      const sendHeight = sendHeightAddConst + this.sendChatEditHeight + defFileLoadingHeight + defAnswerHeight
+      //
+      document.documentElement.style.setProperty('--hex-parent-height', sendHeight + 'px')
+    },
+    sendTaskMsg (msg) {
       let msgtask = msg || this.taskMsg
       msgtask = msgtask.trim()
       msgtask = msgtask.replaceAll('&', '&amp;')
@@ -634,8 +680,12 @@ export default {
       }
       this.currentAnswerMessageUid = ''
       this.taskMsg = ''
+      // пересчитываем высоту плашки отправки сообщения
+      this.$nextTick(function () {
+        this.onInputTaskMsg()
+      })
     },
-    onPasteEvent: function (e) {
+    onPasteEvent (e) {
       const items = (e.clipboardData || e.originalEvent.clipboardData).items
       for (const index in items) {
         const item = items[index]
@@ -647,10 +697,9 @@ export default {
             uid_task: this.selectedTask.uid,
             name: formData
           }
-          this.isloading = true
+          this.setFileLoading(true)
           this.$store.dispatch(CREATE_FILES_REQUEST, data).then(
             resp => {
-              this.isloading = false
               // ставим статус "на доработку" когда прикладываем файл
               if (this.selectedTask.type === 2 || this.selectedTask.type === 3) {
                 if ([1, 5, 7, 8].includes(this.selectedTask.status)) {
@@ -659,11 +708,14 @@ export default {
                   }
                 }
               }
-            })
-          setTimeout(() => {
-            const elmnt = document.getElementById('content')?.lastElementChild
-            elmnt?.scrollIntoView({ behavior: 'smooth' })
-          }, 100)
+              // прокручиваем до файла
+              setTimeout(() => {
+                const elmnt = document.getElementById('content')?.lastElementChild
+                elmnt?.scrollIntoView({ behavior: 'smooth' })
+              }, 100)
+            }).finally(() => {
+            this.setFileLoading(false)
+          })
         }
       }
     },
@@ -789,6 +841,17 @@ export default {
     },
     onAnswerMessage (uid) {
       this.currentAnswerMessageUid = uid
+      // пересчитываем высоту плашки отправки сообщения
+      this.$nextTick(function () {
+        this.onInputTaskMsg()
+      })
+    },
+    setFileLoading (loading) {
+      this.isloading = loading
+      // пересчитываем высоту плашки отправки сообщения
+      this.$nextTick(function () {
+        this.onInputTaskMsg()
+      })
     },
     onChangeChecklist (checklist) {
       const data = {
@@ -1162,9 +1225,6 @@ export default {
   opacity: 0;
   height: 0;
   padding: 0;
-}
-.width100without20 {
-  width: calc(100% - 20px);
 }
 .droptarget {
   float: left;
