@@ -220,7 +220,7 @@ export default {
         isInspectorMessage: message.uid_creator === 'inspector',
         isMyMessage: message.uid_creator === this.currentUserUid,
         shouldShowInspectorButtons: message?.performer_answer == null && ![1, 5, 7, 8].includes(this.task.status) && (this.selectedTask.uid_performer === this.currentUserUid)
-      })).reverse()
+      }))
     }
   },
   methods: {
