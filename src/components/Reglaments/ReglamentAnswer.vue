@@ -71,14 +71,15 @@ export default {
     @yes="deleteAnswer"
   />
   <div
-    class="border-[1px] hover:cursor-pointer border-[#eaeaea] p-2 px-2 flex justify-between items-start group rounded-[8px] mb-[5px]"
-    :class="{ 'border-[#d7f7e2] bg-[#e8faee]': ((rightAnswer || answer.is_right) && isEditing), 'bg-slate-200': selected }"
+    class="border-[1px] border-[#eaeaea] p-2 px-2 flex justify-between items-start group rounded-[8px] mb-[5px]"
+    :class="{ 'border-[#d7f7e2] bg-[#e8faee]': ((rightAnswer || answer.is_right) && isEditing), 'bg-slate-200': selected, 'cursor-pointer': !isEditing }"
     @click="onSelectAnswer"
   >
     <div
       :ref="answer.uid + 'input'"
       placeholder="Текст ответа"
       class="font-[300] text-[14px] min-w-[10px] min-h-[10px]"
+      :class="{'cursor-editing': isEditing}"
       :contenteditable="isEditing"
       @blur="false"
       @keyup="false"
