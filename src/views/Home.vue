@@ -42,8 +42,6 @@ const greedSource = computed(() => store.state.greedSource)
 const isAsideLgActive = computed(() => store.state.isAsideLgActive)
 const isFileRedirect = computed(() => (router.currentRoute.value.name === 'taskfile' || router.currentRoute.value.name === 'cardfile') && router.currentRoute.value.params.id)
 const menu = computed(() => store.state.navigator.menu)
-const storeTasks = computed(() => store.state.tasks.newtasks)
-const newConfig = computed(() => store.state.tasks.newConfig)
 const navStack = computed(() => store.state.navbar.navStack)
 const storeNavigator = computed(() => store.state.navigator.navigator)
 const isPropertiesMobileExpanded = computed(() => store.state.isPropertiesMobileExpanded)
@@ -399,8 +397,6 @@ if (router.currentRoute.value.name === 'task' && router.currentRoute.value.param
     <InspectorNotification v-if="!isFileRedirect" />
     <TasksListNew
       v-if="mainSectionState === 'tasks'"
-      :store-tasks="storeTasks"
-      :new-config="newConfig"
     />
     <!-- Greed section -->
     <div
