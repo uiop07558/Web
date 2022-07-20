@@ -317,7 +317,6 @@ export default {
       const uid = this.uuidv4()
       const data = {
         uid_card: this.selectedCard?.uid,
-        uid_msg: uid,
         uid: uid,
         date_create: new Date().toISOString(),
         uid_creator: this.user.current_user_uid,
