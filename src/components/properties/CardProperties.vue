@@ -186,6 +186,7 @@ export default {
   watch: {
     selectedCard (oldValue, newValue) {
       this.currentQuote = false
+      this.cardMessageInputValue = ''
     }
   },
   methods: {
@@ -231,6 +232,9 @@ export default {
 
     changeName (arg) {
       const data = { cardUid: this.selectedCard?.uid, name: arg.target.innerText }
+      if (data.name === '') {
+        data.name = 'Карточка без названия'
+      }
       this.$store.dispatch(CHANGE_CARD_NAME, data)
     },
 
