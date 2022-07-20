@@ -40,7 +40,7 @@ export default {
       this.$emit('onSelectAnswer', this.answer.uid)
     },
     setRightAnswer (val) {
-      this.rightAnswer = true
+      this.rightAnswer = val
       this.$emit('setRightAnswer', [this.answer, val])
     },
     resetRightAnswer () {
