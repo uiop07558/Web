@@ -39,7 +39,7 @@ export default {
     },
     onAddAnswer () {
       const data = {
-        name: 'new answer',
+        name: '',
         uid: this.uuidv4(),
         uid_question: this.question.uid,
         is_right: false
@@ -136,8 +136,8 @@ export default {
     <div class="px-1 flex justify-between items-start group">
       <div
         :ref="question.uid + 'input'"
-        data-placeholder="Question name"
-        class="font-[500] text-[18px] my-3"
+        placeholder="Текст вопроса"
+        class="font-[500] text-[18px] my-3 min-w-[10px] min-h-[10px]"
         :contenteditable="isEditing && canEdit"
         @blur="changeQuestionName($event)"
         @keydown.enter.exact.prevent="$emit('addQuestion')"
@@ -176,4 +176,12 @@ export default {
 </template>
 
 <style>
+[placeholder]:empty::before {
+    content: attr(placeholder);
+    color: #555;
+}
+
+[placeholder]:empty:focus::before {
+    content: "";
+}
 </style>

@@ -77,8 +77,8 @@ export default {
   >
     <div
       :ref="answer.uid + 'input'"
-      data-placeholder="Answer name"
-      class="font-[300] text-[14px]"
+      placeholder="Текст ответа"
+      class="font-[300] text-[14px] min-w-[10px] min-h-[10px]"
       :contenteditable="isEditing"
       @blur="false"
       @keyup="false"
@@ -97,5 +97,12 @@ export default {
 </template>
 
 <style scoped>
+[placeholder]:empty::before {
+    content: attr(placeholder);
+    color: #555;
+}
 
+[placeholder]:empty:focus::before {
+    content: "";
+}
 </style>

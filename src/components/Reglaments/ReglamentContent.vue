@@ -223,7 +223,7 @@ export default {
       }
     },
     onAddQuestion () {
-      const question = { uid: this.uuidv4(), name: 'new question', uid_reglament: this.reglament.uid }
+      const question = { uid: this.uuidv4(), name: '', uid_reglament: this.reglament.uid }
       this.$store.dispatch('CREATE_REGLAMENT_QUESTION_REQUEST', question).then(() => {
         question.answers = []
         this.questions.push(question)
