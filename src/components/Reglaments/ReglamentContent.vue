@@ -11,6 +11,7 @@
       {{ editButtonText }}
     </PopMenuItem>
   </div>
+  <ReglamentInfo />
   <QuillEditor
     v-if="!isEditing && text?.length && !isTesting"
     v-model:content="text"
@@ -100,6 +101,7 @@
 import { QuillEditor } from '@vueup/vue-quill'
 
 import ReglamentWrong from '@/components/Reglaments/ReglamentWrong.vue'
+import ReglamentInfo from '@/components/Reglaments/ReglamentInfo.vue'
 import ListBlocAdd from '@/components/Common/ListBlocAdd.vue'
 import ReglamentQuestion from './ReglamentQuestion.vue'
 import ReglamentCompleteMessage from './ReglamentCompleteMessage.vue'
@@ -112,6 +114,7 @@ export default {
     QuillEditor,
     ListBlocAdd,
     ReglamentQuestion,
+    ReglamentInfo,
     ReglamentCompleteMessage,
     ReglamentWrong,
     PopMenuItem
