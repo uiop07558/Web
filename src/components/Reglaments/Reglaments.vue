@@ -52,6 +52,7 @@
           v-for="reglament in items"
           :key="reglament.uid"
         >
+          <pre>{{ reglament }}</pre>
           <ReglamentBlocItem
             :reglament="reglament"
             @click.stop="gotoReglamentContent(reglament)"
