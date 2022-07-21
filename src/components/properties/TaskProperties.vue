@@ -387,6 +387,7 @@ export default {
     taskMessages () { return this.$store.state.taskfilesandmessages.messages },
     uploadStarted () { return this.$store.state.taskfilesandmessages.uploadStarted },
     selectedTask () { return this.$store.state.tasks.selectedTask },
+    selectedTaskUid () { return this.$store.state.tasks.selectedTask?.uid || '' },
     isPropertiesMobileExpanded () { return this.$store.state.isPropertiesMobileExpanded },
     user () { return this.$store.state.user.user },
     status () { return this.$store.state.taskfilesandmessages.status },
@@ -403,8 +404,8 @@ export default {
     },
     modalBoxDeleteText () {
       let text = 'Вы действительно хотите удалить задачу?'
-      if (this.tasks[this.selectedTask.uid]?.children?.length > 0) {
-        text = 'Вы действительно хотите удалить задачу с подзадачами в количестве: ' + this.tasks[this.selectedTask.uid]?.children?.length + '?'
+      if (this.tasks[this.selectedTaskUid]?.children?.length > 0) {
+        text = 'Вы действительно хотите удалить задачу с подзадачами в количестве: ' + this.tasks[this.selectedTaskUid]?.children?.length + '?'
       }
       return text
     },
@@ -429,7 +430,7 @@ export default {
     }
   },
   watch: {
-    selectedTask (newval, oldval) {
+    selectedTaskUid (newval, oldval) {
       this.showOnlyFiles = false
       this.showAllMessages = false
       this.currentAnswerMessageUid = ''
@@ -466,7 +467,7 @@ export default {
         formData.append('files[' + i + ']', file)
       }
       const data = {
-        uid_task: this.selectedTask.uid,
+        uid_task: this.selectedTaskUid,
         name: formData
       }
 
@@ -507,7 +508,7 @@ export default {
         this.$store.dispatch('asidePropertiesToggle', false)
       }
       const data = {
-        uid: this.selectedTask.uid
+        uid: this.selectedTaskUid
       }
       this.$store.dispatch(TASK.REMOVE_TASK, data.uid)
         .then(() => {
@@ -535,7 +536,7 @@ export default {
     },
     changeName (event) {
       const data = {
-        uid: this.selectedTask.uid,
+        uid: this.selectedTaskUid,
         value: event.target.innerText.trim()
       }
       if (data.value.length <= 0) {
@@ -549,7 +550,7 @@ export default {
       const starttime = new Date(this.range.start).getFullYear() + '-' + (this.pad2(new Date(this.range.start).getMonth() + 1)) + '-' + this.pad2(new Date(this.range.start).getDate()) + timestart
       const startend = new Date(this.range.end).getFullYear() + '-' + (this.pad2(new Date(this.range.start).getMonth() + 1)) + '-' + this.pad2(new Date(this.range.end).getDate()) + timeend
       const data = {
-        uid_task: this.selectedTask.uid,
+        uid_task: this.selectedTaskUid,
         str_date_begin: starttime,
         str_date_end: startend,
         reset: 0
@@ -564,7 +565,7 @@ export default {
         })
     },
     copyurl (e) {
-      copyText(`${window.location.origin}/task/${this.selectedTask.uid}`, undefined, (error, event) => {
+      copyText(`${window.location.origin}/task/${this.selectedTaskUid}`, undefined, (error, event) => {
         console.log(error, event)
       })
     },
@@ -584,7 +585,7 @@ export default {
       const message = event.target.innerText.trim()
       this.setCursorPosition(event.target.id, 0, 100)
       const data = {
-        uid: this.selectedTask.uid,
+        uid: this.selectedTaskUid,
         value: message
       }
       this.$store.dispatch(TASK.CHANGE_TASK_COMMENT, data)
@@ -646,7 +647,7 @@ export default {
       msgtask = msgtask.replaceAll('>', '&gt;')
       const uid = this.uuidv4()
       const data = {
-        uid_task: this.selectedTask.uid,
+        uid_task: this.selectedTaskUid,
         uid: uid,
         uid_msg: uid,
         uid_creator: this.user?.current_user_uid,
@@ -695,7 +696,7 @@ export default {
           const formData = new FormData()
           formData.append('files', blob)
           const data = {
-            uid_task: this.selectedTask.uid,
+            uid_task: this.selectedTaskUid,
             name: formData
           }
           this.setFileLoading(true)
@@ -722,7 +723,7 @@ export default {
     },
     onReAssignToUser: function (userEmail) {
       const data = {
-        uid: this.selectedTask.uid,
+        uid: this.selectedTaskUid,
         value: userEmail
       }
       this.$store.dispatch(TASK.CHANGE_TASK_REDELEGATE, data).then(
@@ -737,9 +738,9 @@ export default {
       }
     },
     onChangePerformer: function (userEmail) {
-      const taskUid = this.selectedTask.uid
+      const taskUid = this.selectedTaskUid
       const data = {
-        uid: this.selectedTask.uid,
+        uid: taskUid,
         value: userEmail
       }
       this.$store.dispatch(TASK.CHANGE_TASK_PERFORMER, data).then(
@@ -760,9 +761,9 @@ export default {
       }
     },
     onChangeDates: function (begin, end) {
-      const taskUid = this.selectedTask.uid
+      const taskUid = this.selectedTaskUid
       const data = {
-        uid_task: this.selectedTask.uid,
+        uid_task: taskUid,
         str_date_begin: begin,
         str_date_end: end,
         reset: 0
@@ -795,7 +796,7 @@ export default {
     onChangeAccess: function (checkEmails) {
       const emails = checkEmails.join('..')
       const data = {
-        uid: this.selectedTask.uid,
+        uid: this.selectedTaskUid,
         value: emails
       }
       this.$store.dispatch(TASK.CHANGE_TASK_ACCESS, data).then(
@@ -803,7 +804,7 @@ export default {
           this.selectedTask.emails = emails
           if (!this.shouldAddTaskIntoList(this.selectedTask)) {
             // (!checkEmails.includes(this.user.current_user_email))
-            this.$store.commit(TASK.REMOVE_TASK, this.selectedTask.uid)
+            this.$store.commit(TASK.REMOVE_TASK, this.selectedTaskUid)
             this.closeProperties()
           }
         }
@@ -811,7 +812,7 @@ export default {
     },
     onChangeProject: function (projectUid) {
       const data = {
-        uid: this.selectedTask.uid,
+        uid: this.selectedTaskUid,
         value: projectUid
       }
       this.$store.dispatch(TASK.CHANGE_TASK_PROJECT, data).then(
@@ -822,7 +823,7 @@ export default {
     },
     onChangeTags: function (tags) {
       const data = {
-        uid: this.selectedTask.uid,
+        uid: this.selectedTaskUid,
         tags: tags
       }
       this.$store.dispatch(TASK.CHANGE_TASK_TAGS, data).then(
@@ -833,7 +834,7 @@ export default {
     },
     onChangeColor: function (colorUid) {
       const data = {
-        uid: this.selectedTask.uid,
+        uid: this.selectedTaskUid,
         value: colorUid
       }
       this.$store.dispatch(TASK.CHANGE_TASK_COLOR, data).then(
@@ -844,7 +845,7 @@ export default {
     },
     onChangeComment: function (text) {
       const data = {
-        uid: this.selectedTask.uid,
+        uid: this.selectedTaskUid,
         value: text
       }
       this.$store.dispatch(TASK.CHANGE_TASK_COMMENT, data)
@@ -869,7 +870,7 @@ export default {
     },
     onChangeChecklist (checklist) {
       const data = {
-        uid_task: this.selectedTask.uid,
+        uid_task: this.selectedTaskUid,
         checklist: checklist
       }
       this.checklistSavedNow = true

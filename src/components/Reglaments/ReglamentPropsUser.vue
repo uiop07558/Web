@@ -1,5 +1,5 @@
 <template>
-  <div class="group w-full h-[34px] flex items-center">
+  <div class="group w-full h-[34px] flex items-center border-[2px] px-2 mb-1 rounded">
     <img
       :src="employees[userUid]?.fotolink"
       class="flex-none border border-[#7e7e80] rounded-[4px] w-[20px] h-[20px] mr-[7px]"

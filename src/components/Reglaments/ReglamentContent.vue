@@ -11,6 +11,9 @@
       {{ editButtonText }}
     </PopMenuItem>
   </div>
+  <ReglamentInfo
+    v-if="!isEditing && !isTesting"
+  />
   <QuillEditor
     v-if="!isEditing && text?.length && !isTesting"
     v-model:content="text"
@@ -74,6 +77,21 @@
       Завершить
     </button>
   </div>
+  <div
+    v-if="showCompleteMessage"
+    class="bg-white p-3 rounded-[10px] mb-2 font-[500] text-[20px] text-center my-3 min-w-[10px] min-h-[10px]"
+  >
+    Вы неправильно ответили на следующие вопросы:
+  </div>
+  <template
+    v-for="question in questions"
+    :key="question.uid"
+  >
+    <ReglamentWrong
+      v-if="showCompleteMessage"
+      :question="question"
+    />
+  </template>
   <ReglamentCompleteMessage
     v-if="showCompleteMessage"
     :is-passed="isPassed"
@@ -83,6 +101,9 @@
 </template>
 <script>
 import { QuillEditor } from '@vueup/vue-quill'
+
+import ReglamentWrong from '@/components/Reglaments/ReglamentWrong.vue'
+import ReglamentInfo from '@/components/Reglaments/ReglamentInfo.vue'
 import ListBlocAdd from '@/components/Common/ListBlocAdd.vue'
 import ReglamentQuestion from './ReglamentQuestion.vue'
 import ReglamentCompleteMessage from './ReglamentCompleteMessage.vue'
@@ -95,7 +116,9 @@ export default {
     QuillEditor,
     ListBlocAdd,
     ReglamentQuestion,
+    ReglamentInfo,
     ReglamentCompleteMessage,
+    ReglamentWrong,
     PopMenuItem
   },
   props: {
@@ -238,12 +261,29 @@ export default {
       }
     },
     onAddQuestion () {
-      const question = { uid: this.uuidv4(), name: '', uid_reglament: this.reglament.uid }
+      const question = {
+        uid: this.uuidv4(),
+        name: '',
+        uid_reglament: this.reglament.uid
+      }
       this.$store.dispatch('CREATE_REGLAMENT_QUESTION_REQUEST', question).then(() => {
-        question.answers = []
-        this.questions.push(question)
+        const questionToPush = {
+          uid: question.uid,
+          name: question.name,
+          uid_reglament: question.uid_reglament,
+          answers: [
+            {
+              uid: this.uuidv4(),
+              uid_question: question.uid,
+              name: 'Новый вопрос',
+              is_right: 0
+            }
+          ]
+        }
+
+        this.questions.push(questionToPush)
         this.$nextTick(() => {
-          this.gotoNode(question.uid)
+          this.gotoNode(questionToPush.uid)
         })
       })
     },
@@ -277,6 +317,7 @@ export default {
         uid_reglament: this.reglament.uid,
         answerJson: JSON.stringify(this.questions)
       }
+      console.log(this.questions)
       this.$store.dispatch('CRATE_USER_REGLAMENT_ANSWER', data).then((resp) => {
         this.showCompleteMessage = true
         this.isPassed = resp.data.is_passed
