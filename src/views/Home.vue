@@ -335,7 +335,11 @@ const initNavStackGreedView = () => {
 
 const getNavigator = () => {
   if (store.state.auth.token) {
-    store.dispatch('REGLAMENTS_REQUEST', store?.state?.user?.user?.owner_email).then(resp => {
+    const data = {
+      organization: store?.state?.user?.user?.owner_email,
+      user_uid: store?.state?.user?.user?.current_user_uid
+    }
+    store.dispatch('REGLAMENTS_REQUEST', data).then(resp => {
       store.dispatch(NAVIGATOR_REQUEST).then(() => {
         storeNavigator.value.reglaments = { uid: 'fake-uid', items: resp.data }
         initWebSync()
