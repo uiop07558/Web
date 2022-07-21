@@ -34,7 +34,7 @@ const isImageLoaded = ref(false)
 
 const b64toBlob = (base64) => fetch(base64).then((res) => res.blob())
 
-const getImgUrl = (uid, extension, filename) => {
+const getImgUrl = (uid, extension, filename, counter) => {
   // computed value triggered after template change
   if (isImageLoaded.value) return
   const cachedImageBase64 = localStorage.getItem(uid)
@@ -81,10 +81,10 @@ const getImgUrl = (uid, extension, filename) => {
         isImageLoaded.value = true
       })
       .catch((e) => {
-        if (e?.message === 'Request failed with status code 404') {
+        if (e?.message === 'Request failed with status code 404' && counter < 10) {
           setTimeout(() => {
           // bug fix: https://beta.leadertask.ru/task/0fe60f4b-496c-4587-a6a4-6de2f66951d3
-            getImgUrl(uid, extension, filename)
+            getImgUrl(uid, extension, filename, counter + 1)
           }, 500)
         }
       })
@@ -95,7 +95,8 @@ onMounted(() => {
   getImgUrl(
     props.file.uid,
     props.file.file_name.split('.').pop(),
-    props.file.file_name
+    props.file.file_name,
+    0
   )
 })
 
