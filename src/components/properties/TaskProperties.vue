@@ -536,7 +536,7 @@ export default {
     changeName (event) {
       const data = {
         uid: this.selectedTask.uid,
-        value: event.target.innerText
+        value: event.target.innerText.trim()
       }
       if (data.value.length <= 0) {
         data.value = 'Задача без названия'
