@@ -1,5 +1,5 @@
 <script setup>
-import { ref, nextTick, defineEmits } from 'vue'
+import { ref, nextTick, defineEmits, onMounted } from 'vue'
 import { useStore } from 'vuex'
 import { GET_FILE } from '@/store/actions/taskfiles'
 import ChatLoader from '@/components/CardProperties/ChatLoader.vue'
@@ -42,6 +42,13 @@ const getImgUrl = (uid, extension, filename) => {
     // we nee to wait until hidden messages will be drawn
     nextTick(() => {
       b64toBlob(cachedImageBase64).then((blobImage) => {
+        // убираем дублирование при обновлении текущей задачи
+        // если процесс в фоне (получается что запускается одновременно два и более)
+        if (document.getElementById('img_' + uid)?.getElementsByTagName('img')?.length) {
+          isImageLoaded.value = true
+          return
+        }
+        //
         const fileURL = window.URL.createObjectURL(blobImage)
         const myImage = new Image()
         myImage.src = cachedImageBase64
@@ -55,6 +62,13 @@ const getImgUrl = (uid, extension, filename) => {
     store
       .dispatch(GET_FILE, uid)
       .then((resp) => {
+        // убираем дублирование при обновлении текущей задачи
+        // если процесс в фоне (получается что запускается одновременно два и более)
+        if (document.getElementById('img_' + uid)?.getElementsByTagName('img')?.length) {
+          isImageLoaded.value = true
+          return
+        }
+        //
         writeCache(uid, new Blob([resp.data], { type: 'image/' + extension }))
         const fileURL = window.URL.createObjectURL(
           new Blob([resp.data], { type: 'image/' + extension })
@@ -67,13 +81,23 @@ const getImgUrl = (uid, extension, filename) => {
         isImageLoaded.value = true
       })
       .catch((e) => {
-        setTimeout(() => {
+        if (e?.message === 'Request failed with status code 404') {
+          setTimeout(() => {
           // bug fix: https://beta.leadertask.ru/task/0fe60f4b-496c-4587-a6a4-6de2f66951d3
-          getImgUrl(uid, extension, filename)
-        }, 500)
+            getImgUrl(uid, extension, filename)
+          }, 500)
+        }
       })
   }
 }
+
+onMounted(() => {
+  getImgUrl(
+    props.file.uid,
+    props.file.file_name.split('.').pop(),
+    props.file.file_name
+  )
+})
 
 const getMovUrl = (uid, extension, filename) => {
   const fileURL =
@@ -84,7 +108,6 @@ const getMovUrl = (uid, extension, filename) => {
 }
 
 const getDocUrl = (uid, extension, filename) => {
-  console.log('GETMOVEURL')
   store.dispatch(GET_FILE, uid).then((resp) => {
     const fileURL = window.URL.createObjectURL(
       new Blob([resp.data], { type: 'text/plain' })
@@ -112,7 +135,6 @@ const getAudioUrl = (uid, extension, filename) => {
 }
 
 const getAnyUrl = (uid, extension, filename) => {
-  console.log('GETANYURL')
   store.dispatch(GET_FILE, uid).then((resp) => {
     const fileURL = window.URL.createObjectURL(new Blob([resp.data]))
     emit('setLink', [fileURL, false])
@@ -137,13 +159,6 @@ const getAnyUrl = (uid, extension, filename) => {
       "
       target="_blank"
     >
-      {{
-        getImgUrl(
-          props.file.uid,
-          props.file.file_name.split('.').pop(),
-          props.file.file_name
-        )
-      }}
       <ChatLoader
         v-if="!isImageLoaded"
         width="250px"
