@@ -648,6 +648,7 @@ export default {
       const data = {
         uid_task: this.selectedTask.uid,
         uid: uid,
+        uid_msg: uid,
         uid_creator: this.user?.current_user_uid,
         date_create: new Date().toISOString(),
         deleted: 0,
