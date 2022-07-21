@@ -157,7 +157,9 @@ export default {
       this.questions = resp.data
     })
     try {
-      document.querySelector('div.ql-toolbar').remove()
+      if (!this.isEditing) {
+        document.querySelector('div.ql-toolbar').remove()
+      }
     } catch (e) {}
   },
   methods: {
