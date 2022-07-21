@@ -1,5 +1,5 @@
 <template>
-  <div :class="container">
+  <div class="animate-pulse grid">
     <div class="flex flex-row w-full text-dark px-[16px] mt-[22px] h-[32px] items-center">
       <hr class="block h-[32px] bg-neutral-300  mt-1 mb-1 rounded-[10px] w-[32px] mr-2">
       <hr class="block h-[15px] bg-neutral-200  mt-1 mb-1 rounded-[10px] w-[50%]">
@@ -47,16 +47,3 @@
     </div>
   </div>
 </template>
-
-<script>
-export default {
-  data: () => ({
-    text: 'block h-[10px] bg-neutral-300  mt-1 mb-1.5 rounded-[10px]',
-    nick: 'block h-[10px] bg-neutral-300  mt-4  rounded-[10px]',
-    tags: 'mt-2 rounded-[4px] mr-1 h-[30px] bg-gray-100',
-    container: 'animate-pulse grid',
-    messageOut: 'min-w-[70%] max-w-[70%] mt-2 flex flex-col bg-[#F4F5F7] rounded-tl-[12px] rounded-tr-[12px] rounded-bl-[12px] rounded-br-[0px] float-right',
-    messageIn: 'min-w-[70%] max-w-[70%] mt-2 flex flex-col bg-[#FCEBEB] rounded-tl-[12px] rounded-tr-[12px] rounded-br-[12px] rounded-bl-[0px] float-left'
-  })
-}
-</script>
