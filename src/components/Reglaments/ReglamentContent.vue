@@ -12,7 +12,8 @@
     </PopMenuItem>
   </div>
   <ReglamentInfo
-    v-if="!isEditing && !isTesting"
+    v-if="!isTesting"
+    :is-editing="isEditing"
   />
   <QuillEditor
     v-if="!isEditing && text?.length && !isTesting"
@@ -29,6 +30,12 @@
     :toolbar="'full'"
     class="h-auto mb-5 bg-white"
   />
+  <div
+    v-if="isEditing"
+    class="flex font-['Roboto'] text-[#7E7E80] dark:bg-gray-700 dark:text-gray-100 rounded-lg text-[13px] font-medium"
+  >
+    В тесте будут представлены следующие вопросы:
+  </div>
   <template
     v-for="(question , index) in questions"
     :key="index"
@@ -78,8 +85,8 @@
     </button>
   </div>
   <div
-    v-if="showCompleteMessage"
-    class="bg-white p-3 rounded-[10px] mb-2 font-[500] text-[20px] text-center my-3 min-w-[10px] min-h-[10px]"
+    v-if="showCompleteMessage && !isPassed"
+    class="py-3 rounded-[10px] mb-2 font-[500] text-[20px] my-3 min-w-[10px] min-h-[10px]"
   >
     Вы неправильно ответили на следующие вопросы:
   </div>

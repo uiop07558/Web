@@ -3,7 +3,7 @@
     <ModalBoxDelete
       v-if="showConfirm"
       title="Удалить регламент"
-      :text="`Вы действительно хотите удалить регламент ${selectedReglamentName}?`"
+      :text="`Вы действительно хотите удалить регламент ${currentReglament.name}?`"
       @cancel="showConfirm = false"
       @yes="removeReglament"
     />
@@ -71,9 +71,9 @@ export default {
     removeReglament () {
       this.showConfirm = false
 
-      this.$store.dispatch(DELETE_REGLAMENT_REQUEST, this.selectedReglament.uid).then(() => {
+      this.$store.dispatch(DELETE_REGLAMENT_REQUEST, this.currentReglament.uid).then(() => {
         this.$store.dispatch('asidePropertiesToggle', false)
-        this.$store.commit(NAVIGATOR_REMOVE_REGLAMENT, this.selectedReglament)
+        this.$store.commit(NAVIGATOR_REMOVE_REGLAMENT, this.currentReglament)
         this.$store.dispatch('popNavStack')
       })
     },
