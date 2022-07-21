@@ -231,7 +231,7 @@ export default {
     },
 
     changeName (arg) {
-      const data = { cardUid: this.selectedCard?.uid, name: arg.target.innerText }
+      const data = { cardUid: this.selectedCard?.uid, name: arg.target.innerText.trim() }
       if (data.name === '') {
         data.name = 'Карточка без названия'
       }
