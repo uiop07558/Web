@@ -26,7 +26,7 @@ export default {
         if (this.question.answers[i].is_right) {
           right++
         }
-        if (this.question.answers[i].selected) {
+        if (this.question.answers[i].selected && this.question.answers[i].is_right) {
           selected++
         }
       }
