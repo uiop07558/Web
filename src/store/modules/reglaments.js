@@ -17,9 +17,9 @@ const actions = {
         })
     })
   },
-  [REGLAMENTS.REGLAMENTS_REQUEST]: ({ commit, dispatch }, organization) => {
+  [REGLAMENTS.REGLAMENTS_REQUEST]: ({ commit, dispatch }, data) => {
     return new Promise((resolve, reject) => {
-      const url = process.env.VUE_APP_INSPECTOR_API + 'reglaments?organization=' + organization
+      const url = process.env.VUE_APP_INSPECTOR_API + 'reglaments?organization=' + data.organization + '&user_uid=' + data.user_uid
       axios({ url: url, method: 'GET' })
         .then(resp => {
           resolve(resp)
