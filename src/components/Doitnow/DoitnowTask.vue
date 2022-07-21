@@ -983,11 +983,13 @@ export default {
       const seconds = this.pad2(date.getUTCSeconds())
       const dateCreate = year + '-' + month + '-' + day + 'T' + hours + ':' + minutes + ':' + seconds
       const msgtask = this._linkify(msg)
+      const uid = this.uuidv4()
 
       const data = {
         uid_task: this.task.uid,
         uid_creator: this.user.current_user_uid,
-        uid: this.uuidv4(),
+        uid: uid,
+        uid_msg: uid,
         date_create: dateCreate,
         deleted: 0,
         text: msg,
