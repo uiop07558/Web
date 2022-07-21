@@ -4,6 +4,7 @@
     class="flex justify-end mb-2"
   >
     <PopMenuItem
+      v-if="!isTesting"
       class="bg-white mr-1"
       icon="edit"
       @click="isEdit"
@@ -11,6 +12,10 @@
       {{ editButtonText }}
     </PopMenuItem>
   </div>
+  <ReglamentInfo
+    v-if="!isTesting"
+    :is-editing="isEditing"
+  />
   <QuillEditor
     v-if="!isEditing && text?.length && !isTesting"
     v-model:content="text"
@@ -26,6 +31,12 @@
     :toolbar="'full'"
     class="h-auto mb-5 bg-white"
   />
+  <div
+    v-if="isEditing"
+    class="flex font-['Roboto'] text-[#7E7E80] dark:bg-gray-700 dark:text-gray-100 rounded-lg text-[13px] font-medium"
+  >
+    В тесте будут представлены следующие вопросы:
+  </div>
   <template
     v-for="(question , index) in questions"
     :key="index"
@@ -57,6 +68,7 @@
     class="flex justify-end"
   >
     <button
+      v-if="!isPassed"
       class="flex items-end bg-[#FF912380] p-3 px-10 rounded-[8px] text-black text-sm mr-1 hover:bg-[#F5DEB3]"
       @click="isTesting = true"
     >
@@ -74,6 +86,21 @@
       Завершить
     </button>
   </div>
+  <div
+    v-if="showCompleteMessage && !isPassed"
+    class="py-3 rounded-[10px] mb-2 font-[500] text-[20px] my-3 min-w-[10px] min-h-[10px]"
+  >
+    Вы неправильно ответили на следующие вопросы:
+  </div>
+  <template
+    v-for="question in questions"
+    :key="question.uid"
+  >
+    <ReglamentWrong
+      v-if="showCompleteMessage"
+      :question="question"
+    />
+  </template>
   <ReglamentCompleteMessage
     v-if="showCompleteMessage"
     :is-passed="isPassed"
@@ -83,6 +110,9 @@
 </template>
 <script>
 import { QuillEditor } from '@vueup/vue-quill'
+
+import ReglamentWrong from '@/components/Reglaments/ReglamentWrong.vue'
+import ReglamentInfo from '@/components/Reglaments/ReglamentInfo.vue'
 import ListBlocAdd from '@/components/Common/ListBlocAdd.vue'
 import ReglamentQuestion from './ReglamentQuestion.vue'
 import ReglamentCompleteMessage from './ReglamentCompleteMessage.vue'
@@ -95,7 +125,9 @@ export default {
     QuillEditor,
     ListBlocAdd,
     ReglamentQuestion,
+    ReglamentInfo,
     ReglamentCompleteMessage,
+    ReglamentWrong,
     PopMenuItem
   },
   props: {
@@ -238,12 +270,29 @@ export default {
       }
     },
     onAddQuestion () {
-      const question = { uid: this.uuidv4(), name: '', uid_reglament: this.reglament.uid }
+      const question = {
+        uid: this.uuidv4(),
+        name: '',
+        uid_reglament: this.reglament.uid
+      }
       this.$store.dispatch('CREATE_REGLAMENT_QUESTION_REQUEST', question).then(() => {
-        question.answers = []
-        this.questions.push(question)
+        const questionToPush = {
+          uid: question.uid,
+          name: question.name,
+          uid_reglament: question.uid_reglament,
+          answers: [
+            {
+              uid: this.uuidv4(),
+              uid_question: question.uid,
+              name: 'Новый вопрос',
+              is_right: 0
+            }
+          ]
+        }
+
+        this.questions.push(questionToPush)
         this.$nextTick(() => {
-          this.gotoNode(question.uid)
+          this.gotoNode(questionToPush.uid)
         })
       })
     },
@@ -277,6 +326,7 @@ export default {
         uid_reglament: this.reglament.uid,
         answerJson: JSON.stringify(this.questions)
       }
+      console.log(this.questions)
       this.$store.dispatch('CRATE_USER_REGLAMENT_ANSWER', data).then((resp) => {
         this.showCompleteMessage = true
         this.isPassed = resp.data.is_passed

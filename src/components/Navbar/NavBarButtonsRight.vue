@@ -82,7 +82,7 @@
     />
     <NavBarButtonsReglament
       v-if="lastGreedPath === 'reglament_content'"
-      :project-uid="lastNavStackUid"
+      :reglament-uid="lastNavStackUid"
       @popNavBar="popNavBar"
     />
     <NavBarButtonsProject
