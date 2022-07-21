@@ -318,6 +318,7 @@ export default {
       const data = {
         uid_card: this.selectedCard?.uid,
         uid: uid,
+        uid_msg: uid,
         date_create: new Date().toISOString(),
         uid_creator: this.user.current_user_uid,
         uid_quote: this.currentQuote?.uid ?? '',
