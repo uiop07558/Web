@@ -11,7 +11,9 @@
       {{ editButtonText }}
     </PopMenuItem>
   </div>
-  <ReglamentInfo />
+  <ReglamentInfo
+    v-if="!isEditing && !isTesting"
+  />
   <QuillEditor
     v-if="!isEditing && text?.length && !isTesting"
     v-model:content="text"

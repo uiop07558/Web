@@ -12,12 +12,12 @@
       v-model="currName"
       type="text"
       placeholder="Наименование"
-      class="mt-[25px] p-0 font-roboto font-bold font-[18px] leading-[21px] text-[#424242] w-full border-none focus:ring-0 focus:outline-none"
+      class="mt-[10px] p-0 font-roboto font-bold font-[18px] leading-[21px] text-[#424242] w-full border-none focus:ring-0 focus:outline-none"
       @blur="changeReglamentName"
     >
     <div
       v-else
-      class="mt-[25px] w-full font-roboto font-bold font-[18px] leading-[21px] text-[#424242] overflow-hidden text-ellipsis whitespace-nowrap"
+      class="mt-[10px] w-full font-roboto font-bold font-[18px] leading-[21px] text-[#424242] overflow-hidden text-ellipsis whitespace-nowrap"
     >
       {{ currName }}
     </div>
@@ -32,6 +32,7 @@
       </div>
     </div>
     <div
+      v-if="contributors.length"
       class="mt-[30px] mb-[8px] font-roboto text-[16px] leading-[19px] font-medium text-[#4c4c4d]"
     >
       Сотрудники, прошедшие регламент
