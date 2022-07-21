@@ -338,7 +338,7 @@ import Popper from 'vue3-popper'
 import SetDate from '@/components/Doitnow/SetDate.vue'
 import Checklist from '@/components/Doitnow/Checklist.vue'
 import TaskPropsChatMessages from '@/components/TaskProperties/TaskPropsChatMessages.vue'
-import TaskPropsInputForm from '@/components/TaskProperties/TaskPropsInputForm'
+import TaskPropsInputForm from '@/components/TaskProperties/TaskPropsInputForm.vue'
 import TaskStatus from '@/components/TasksList/TaskStatus.vue'
 import Icon from '@/components/Icon.vue'
 
