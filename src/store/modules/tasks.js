@@ -616,6 +616,7 @@ const actions = {
           if (resp.data.type === 2) {
             dispatch(NAVIGATOR_UPDATE_ASSIGNMENTS)
           }
+          console.log(resp)
           resolve(resp)
         })
         .catch((err) => {

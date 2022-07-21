@@ -223,9 +223,7 @@ export default {
       else if (this.currentSettingsTab === 'tarif') return ('Тариф')
       else if (this.currentSettingsTab === 'main') return ('Основное')
       else if (this.currentSettingsTab === 'karma') return ('Карма')
-<<<<<<< HEAD
       else if (this.currentSettingsTab === 'import') return ('Импорт')
-=======
     },
     goToBoard (board) {
       this.$store.commit('basic', { key: 'mainSectionState', value: 'greed' })
@@ -291,7 +289,6 @@ export default {
       this.$store.commit('pushIntoNavStack', navElem)
       this.$store.commit('basic', { key: 'greedSource', value: project.children })
       this.$store.commit('basic', { key: 'greedPath', value: 'projects_children' })
->>>>>>> 790e44a859c8b20ee2e6f9ad576206a2d2c4d4af
     }
   }
 }
@@ -310,10 +307,6 @@ export default {
     />
     <acc-modal
       v-if="currentSettingsTab === 'account'"
-<<<<<<< HEAD
-      class="text-lg"
-=======
->>>>>>> 790e44a859c8b20ee2e6f9ad576206a2d2c4d4af
       @currentSettingsTab="changeSettingsTab ('tarif')"
       @AccLogout="logout()"
     />
