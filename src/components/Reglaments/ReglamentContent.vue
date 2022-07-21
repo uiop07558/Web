@@ -107,7 +107,7 @@ export default {
   data () {
     return {
       text: this.reglament?.content,
-      isEditing: false,
+      isEditing: this.$store.state.greedSource.email_creator === this.$store.state.user.user.current_user_email,
       questions: [],
       isTesting: false,
       saveContentStatus: 1, // 1 - is saved, 2 error, 0 request processing
