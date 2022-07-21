@@ -256,12 +256,29 @@ export default {
       }
     },
     onAddQuestion () {
-      const question = { uid: this.uuidv4(), name: '', uid_reglament: this.reglament.uid }
+      const question = {
+        uid: this.uuidv4(),
+        name: '',
+        uid_reglament: this.reglament.uid
+      }
       this.$store.dispatch('CREATE_REGLAMENT_QUESTION_REQUEST', question).then(() => {
-        question.answers = []
-        this.questions.push(question)
+        const questionToPush = {
+          uid: question.uid,
+          name: question.name,
+          uid_reglament: question.uid_reglament,
+          answers: [
+            {
+              uid: this.uuidv4(),
+              uid_question: question.uid,
+              name: 'Новый вопрос',
+              is_right: 0
+            }
+          ]
+        }
+
+        this.questions.push(questionToPush)
         this.$nextTick(() => {
-          this.gotoNode(question.uid)
+          this.gotoNode(questionToPush.uid)
         })
       })
     },
