@@ -310,11 +310,44 @@ export default {
       }
     },
     selectAnswer (data) {
+      let rightAnswers = 0
+      // считаем кол-во правильных ответов в вопросе и решаем, что будем делать дальше
       for (let i = 0; i < this.questions.length; i++) {
-        for (let j = 0; j < this.questions[i].answers.length; j++) {
-          if (this.questions[i].answers[j].uid === data[0].uid) {
-            this.questions[i].answers[j].selected = data[1]
-            return
+        // ищем вопрос, который мы выбрали, а потом проверяем считаем ответы
+        if (this.questions[i].uid === data[0].uid_question) {
+          for (let j = 0; j < this.questions[i].answers.length; j++) {
+            if (this.questions[i].answers[j].is_right) {
+              rightAnswers++
+            }
+          }
+        }
+      }
+      // запускаем логику для одного вопроса
+      if (rightAnswers === 1) {
+        for (let i = 0; i < this.questions.length; i++) {
+          if (this.questions[i].uid === data[0].uid_question) {
+            for (let j = 0; j < this.questions[i].answers.length; j++) {
+              // убираем selected с предыдущего вопроса
+              if (this.questions[i].answers[j].selected && (this.questions[i].answers[j].uid !== data[0].uid)) {
+                this.questions[i].answers[j].selected = false
+              }
+              // ставим selected новому вопросу
+              if (!this.questions[i].answers[j].selected && (this.questions[i].answers[j].uid === data[0].uid)) {
+                this.questions[i].answers[j].selected = true
+              } else {
+                this.questions[i].answers[j].selected = false
+              }
+            }
+          }
+        }
+      } else {
+        // выделяет/развыделяет множество ответов
+        for (let i = 0; i < this.questions.length; i++) {
+          for (let j = 0; j < this.questions[i].answers.length; j++) {
+            if (this.questions[i].answers[j].uid === data[0].uid) {
+              this.questions[i].answers[j].selected = data[1]
+              return
+            }
           }
         }
       }
