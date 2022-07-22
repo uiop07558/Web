@@ -1,15 +1,23 @@
 <template>
   <div
     v-if="canEdit && !showCompleteMessage"
-    class="flex justify-end mb-2"
+    class="flex flex-col mb-2 self-end"
   >
     <PopMenuItem
       v-if="!isTesting"
-      class="bg-white mr-1"
+      class="bg-white w-[400px] mb-2 mr-1 self-end"
       icon="edit"
       @click="isEdit"
     >
       {{ editButtonText }}
+    </PopMenuItem>
+    <PopMenuItem
+      v-if="!isTesting && isEditing"
+      class="bg-white w-[400px] mr-1 self-end"
+      :icon="shouldClear ? 'check' : 'uncheck'"
+      @click="shouldClear = true"
+    >
+      Очистить сотрудников, прошедших регламент
     </PopMenuItem>
   </div>
   <ReglamentInfo
@@ -68,7 +76,7 @@
     class="flex justify-end"
   >
     <button
-      v-if="!isPassed"
+      v-if="reglament.is_passed !== 1"
       class="flex items-end bg-[#FF912380] p-3 px-10 rounded-[8px] text-black text-sm mr-1 hover:bg-[#F5DEB3]"
       @click="startTheReglament"
     >
@@ -110,6 +118,7 @@
 </template>
 <script>
 import { QuillEditor } from '@vueup/vue-quill'
+import * as REGLAMENTS from '@/store/actions/reglaments.js'
 
 import ReglamentWrong from '@/components/Reglaments/ReglamentWrong.vue'
 import ReglamentInfo from '@/components/Reglaments/ReglamentInfo.vue'
@@ -144,7 +153,8 @@ export default {
       isTesting: false,
       saveContentStatus: 1, // 1 - is saved, 2 error, 0 request processing
       showCompleteMessage: false,
-      isPassed: 0
+      isPassed: 0,
+      shouldClear: false
     }
   },
   computed: {
@@ -311,6 +321,10 @@ export default {
       if (this.isEditing) {
         this.saveContentStatus = 0
         this.$store.dispatch('UPDATE_REGLAMENT_REQUEST', this.currentReglament).then(() => {
+          if (this.shouldClear) {
+            this.$store.dispatch(REGLAMENTS.DELETE_USERS_REGLAMENT_ANSWERS, this.currentReglament.uid)
+            this.shouldClear = false
+          }
           this.isEditing = !this.isEditing
           this.saveContentStatus = 1
         }).catch(() => {
@@ -328,6 +342,9 @@ export default {
       }
       console.log(this.questions)
       this.$store.dispatch('CRATE_USER_REGLAMENT_ANSWER', data).then((resp) => {
+        const reglament = { ...this.reglament }
+        reglament.is_passed = resp.data.is_passed
+        this.$store.commit('NAVIGATOR_UPDATE_REGLAMENT', reglament)
         this.showCompleteMessage = true
         this.isPassed = resp.data.is_passed
       })

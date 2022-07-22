@@ -118,7 +118,6 @@ export default {
       return this.$store.state.isPropertiesMobileExpanded
     },
     isEmpty () {
-      console.log('reglaments', this.items)
       return !this.items.length
     },
     user () {
