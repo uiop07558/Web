@@ -799,6 +799,9 @@ export default {
         uid: this.selectedTaskUid,
         value: emails
       }
+      if (!emails.includes(this.user.current_user_email) && this.selectedTask.uid_parent) {
+        this.selectedTask.uid_parent = ''
+      }
       this.$store.dispatch(TASK.CHANGE_TASK_ACCESS, data).then(
         resp => {
           this.selectedTask.emails = emails
