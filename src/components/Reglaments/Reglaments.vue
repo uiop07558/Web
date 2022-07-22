@@ -7,12 +7,21 @@
       @cancel="showAddReglament = false"
       @save="onAddNewReglament"
     />
-    <div>
-      <div class="flex justify-between w-full">
+    <div
+      v-for="(value, index) in reglaments"
+      :key="index"
+    >
+      <div
+        class="flex w-full"
+        :class="{ 'justify-between': index == 0, 'mt-[28px]': index == 1 }"
+      >
         <p class="font-['Roboto'] text-[#424242] text-[19px] leading-[22px] font-bold">
-          Регламенты
+          {{ value.dep }}
         </p>
-        <div class="flex">
+        <div
+          v-if="index == 0"
+          class="flex"
+        >
           <icon
             :path="listView.path"
             :width="listView.width"
@@ -40,16 +49,14 @@
         </div>
       </div>
       <div
-        class="grid gap-2 mt-3"
+        class="grid gap-2 mt-3 grid-cols-1"
         :class="{
           'md:grid-cols-2 lg:grid-cols-4': isGridView,
-          'grid-cols-1': !isGridView,
-          'grid-cols-1': isPropertiesMobileExpanded && !isGridView,
           'lg:grid-cols-2': isPropertiesMobileExpanded && isGridView
         }"
       >
         <template
-          v-for="reglament in items"
+          v-for="reglament in value.items"
           :key="reglament.uid"
         >
           <ReglamentBlocItem
@@ -58,6 +65,7 @@
           />
         </template>
         <ListBlocAdd
+          v-if="index == 0"
           @click.stop="clickAddReglament"
         />
       </div>
@@ -110,16 +118,28 @@ export default {
       return this.$store.state.isPropertiesMobileExpanded
     },
     isEmpty () {
+      console.log('reglaments', this.items)
       return !this.items.length
-    },
-    navStack () {
-      return this.$store.state.navbar.navStack
     },
     user () {
       return this.$store.state.user.user
     },
     reglaments () {
-      return this.navStack[0].items
+      const currentUserEmail = this.user.current_user_email.toLowerCase()
+      const reglaments = []
+      const myItems = this.items.filter(reglament => reglament.email_creator.toLowerCase() === currentUserEmail)
+      const otherItems = this.items.filter(reglament => reglament.email_creator.toLowerCase() !== currentUserEmail)
+      reglaments.push({
+        dep: 'Мои регламенты',
+        items: myItems
+      })
+      if (otherItems.length) {
+        reglaments.push({
+          dep: 'Другие регламенты',
+          items: otherItems
+        })
+      }
+      return reglaments
     }
   },
   created () {
