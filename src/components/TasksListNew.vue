@@ -256,6 +256,7 @@
                 :icon-box="msgs.viewBox"
                 icon-height="15"
                 class="h-[22px]"
+                :icon-class="{ 'text-blue-600': props.node.info.is_inspectable }"
               />
               <!-- Comment -->
               <TaskListIconLabel
@@ -360,6 +361,7 @@ export default {
     return {
       createTaskText: '',
       lastSelectedTaskUid: '',
+      lastSelectedTask: {},
       showConfirm: false,
       showTasksLimit: false,
       showFreeModal: false,
@@ -502,6 +504,11 @@ export default {
           this.stop = false
         })
       })
+    },
+    lastSelectedTask (newTask, prevTask) {
+      if (newTask.uid !== prevTask.uid && prevTask.name === '') {
+        this.removeTask(prevTask.uid)
+      }
     }
   },
   mounted () {
@@ -736,7 +743,7 @@ export default {
     },
     clearTaskFocus (task) {
       if (task.name === '') {
-        this.removeTask(task.uid)
+        // this.removeTask(task.uid)
       } else if (task.name !== '' && !task.enterPress) {
         this.updateTask(event, task)
       }
@@ -830,6 +837,7 @@ export default {
             this.gotoNode(newSubtask.uid)
           }, 200)
         })
+      this.lastSelectedTask = newSubtask
     },
     copyTask (task) {
       const copiedTask = { ...task }
@@ -844,6 +852,7 @@ export default {
       this.$store.commit(TASK.COPY_TASK, copiedTask)
     },
     nodeSelected (arg) {
+      this.lastSelectedTask = arg.info
       if (!this.isPropertiesMobileExpanded && arg.info.name) {
         this.$store.dispatch('asidePropertiesToggle', true)
       }

@@ -83,9 +83,6 @@ export default {
     menuToggleMobile () {
       this.$store.dispatch('asideMobileToggle')
     },
-    menuOpenLg () {
-      this.$store.dispatch('asideLgToggle', true)
-    },
     clickOnGridCard (item, index) {
       this.$store.dispatch('gotoNavStackItem', index)
     },
@@ -154,10 +151,10 @@ export default {
       </nav-bar-item>
       <nav-bar-item
         type="hidden lg:flex xl:hidden"
-        @click.prevent="menuOpenLg"
+        @click.prevent="menuToggleMobile"
       >
         <icon
-          :path="mdiMenu"
+          :path="menuToggleMobileIcon"
           size="24"
         />
       </nav-bar-item>

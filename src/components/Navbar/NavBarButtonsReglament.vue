@@ -64,7 +64,7 @@ export default {
       return this.$store.state.user.user
     },
     canEdit () {
-      return this.currentReglament.email_creator === this.user.current_user_email
+      return this.currentReglament?.email_creator === this.user.current_user_email
     }
   },
   methods: {

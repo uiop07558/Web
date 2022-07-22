@@ -1,6 +1,6 @@
 <template>
   <div
-    v-if="showQuestion()"
+    v-if="showQuestion"
     class="bg-white p-3 rounded-[10px] mb-2"
   >
     <div class="px-1 flex justify-between items-center group">
@@ -18,6 +18,19 @@ export default {
       default: ''
     }
   },
+  computed: {
+    showQuestion () {
+      let shouldShow = 0
+      for (let i = 0; i < this.question.answers.length; i++) {
+        if (this.question.answers[i].is_right && this.question.answers[i].selected) {
+          shouldShow++
+        }
+        if (!this.question.answers[i].is_right && this.question.answers[i].selected) {
+          shouldShow = -1
+          return shouldShow
+        }
+      }
+      return shouldShow
   methods: {
     showQuestion () {
       let selected = 0
