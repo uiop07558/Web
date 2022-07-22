@@ -1,10 +1,12 @@
 <script>
 import { CREATE_TASK } from '@/store/actions/tasks'
+import { CREATE_PROJECT_REQUEST } from '@/store/actions/projects'
 
 export default {
   data () {
     return {
-      fileString: ''
+      fileString: '',
+      projects: {}
     }
   },
   computed: {
@@ -27,9 +29,9 @@ export default {
         this.parseFile()
       }
     },
-    async parseFile () {
+    parseFile () {
       const rows = this.fileString.split('\n')
-      for (let i = 1; i++; i < (rows.length - 1)) {
+      for (let i = 1; i < (rows.length - 1); i++) {
         let modifiedRow = []
         modifiedRow = rows[i].split(';')
 
@@ -45,8 +47,42 @@ export default {
           comment: '',
           _addToList: true
         }
+
+        if (modifiedRow[15] !== '') {
+          if (!this.projects[modifiedRow[15]]) {
+            this.addProject(modifiedRow[15])
+          }
+          task.uid_project = this.projects[modifiedRow[15]]
+          console.log(this.projects)
+        }
+
+        console.log(task)
         this.$store.dispatch(CREATE_TASK, task)
       }
+    },
+    addProject (name) {
+      const project = {
+        uid_parent: '00000000-0000-0000-0000-000000000000',
+        color: '#A998B6',
+        comment: '',
+        plugin: '',
+        collapsed: 0,
+        isclosed: 0,
+        order: 0,
+        group: 0,
+        show: 1,
+        favorite: 0,
+        quiet: 0,
+        email_creator: this.user.current_user_email,
+        members: [
+          ''
+        ],
+        uid: this.uuidv4(),
+        name: name,
+        bold: 0
+      }
+      this.$store.dispatch(CREATE_PROJECT_REQUEST, project)
+      this.projects[name] = project.uid
     },
     uuidv4 () {
       return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, (c) =>
