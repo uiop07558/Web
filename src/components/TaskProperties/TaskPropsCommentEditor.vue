@@ -7,7 +7,7 @@
       id="taskPropsCommentEditor"
       v-linkify:options="{ className: 'text-blue-600' }"
       class="font-[400] text-[14px] leading-[21px] text-[#4C4C4D]"
-      :contenteditable="canEdit"
+      :contenteditable="isEditable"
       :data-placeholder="placeholderComment"
       @blur="changeComment($event)"
       @keydown.esc="changeComment($event)"
@@ -87,7 +87,7 @@ export default {
       if (this.isEditable) return
       this.isEditable = true
       this.$nextTick(function () {
-        this.getElementText(e.target)
+        document.getElementById('taskPropsCommentEditor').focus()
       })
     },
     /**
