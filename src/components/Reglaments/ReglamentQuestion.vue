@@ -204,5 +204,6 @@ export default {
 
 [placeholder]:empty:focus::before {
     content: "";
+    margin-bottom: 20px;
 }
 </style>
