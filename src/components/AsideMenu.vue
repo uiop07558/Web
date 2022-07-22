@@ -221,6 +221,10 @@ export default {
       else if (this.currentSettingsTab === 'karma') return ('Карма')
     },
     goToBoard (board) {
+      if (this.isPropertiesMobileExpanded) {
+        this.$store.dispatch('asidePropertiesToggle', false)
+      }
+
       this.$store.commit('basic', { key: 'mainSectionState', value: 'greed' })
       const path = 'new_private_boards'
       const el = {
@@ -254,6 +258,10 @@ export default {
       })
     },
     goToProject (project) {
+      if (this.isPropertiesMobileExpanded) {
+        this.$store.dispatch('asidePropertiesToggle', false)
+      }
+
       this.$store.commit('basic', { key: 'mainSectionState', value: 'greed' })
       const path = 'new_private_projects'
       const el = {

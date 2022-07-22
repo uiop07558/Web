@@ -23,6 +23,7 @@ const actions = {
       axios({ url: url, method: 'POST', data: data })
         .then((resp) => {
           commit(PUSH_MYCOLOR, [resp.data])
+          commit(PUSH_COLOR, [resp.data])
           resolve(resp)
         })
         .catch((err) => {
