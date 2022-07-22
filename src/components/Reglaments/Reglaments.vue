@@ -196,6 +196,7 @@ export default {
         }
 
         this.$store.dispatch(REGLAMENTS.CREATE_REGLAMENT_REQUEST, reglament).then(() => {
+          reglament.needStartEdit = true
           this.$store.commit(NAVIGATOR.NAVIGATOR_PUSH_REGLAMENT, reglament)
           this.gotoReglamentContent(reglament)
         })
