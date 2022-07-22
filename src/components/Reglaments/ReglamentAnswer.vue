@@ -53,7 +53,7 @@ export default {
       this.$refs[this.answer.uid + 'input'].focus()
       const range = document.createRange()
       const sel = document.getSelection()
-      range.setStart(this.$refs[this.answer.uid + 'input'], 1)
+      range.setStart(this.$refs[this.answer.uid + 'input'], 0)
       range.collapse(true)
       sel.removeAllRanges()
       sel.addRange(range)
@@ -101,9 +101,5 @@ export default {
 [placeholder]:empty::before {
     content: attr(placeholder);
     color: #555;
-}
-
-[placeholder]:empty:focus::before {
-    content: "";
 }
 </style>
