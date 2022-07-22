@@ -284,7 +284,7 @@ export default {
             {
               uid: this.uuidv4(),
               uid_question: question.uid,
-              name: 'Новый вопрос',
+              name: '',
               is_right: 0
             }
           ]
