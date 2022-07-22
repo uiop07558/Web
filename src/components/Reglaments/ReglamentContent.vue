@@ -70,7 +70,7 @@
     <button
       v-if="!isPassed"
       class="flex items-end bg-[#FF912380] p-3 px-10 rounded-[8px] text-black text-sm mr-1 hover:bg-[#F5DEB3]"
-      @click="isTesting = true"
+      @click="startTheReglament"
     >
       Пройти тест
     </button>
@@ -331,6 +331,10 @@ export default {
         this.showCompleteMessage = true
         this.isPassed = resp.data.is_passed
       })
+    },
+    startTheReglament () {
+      this.isTesting = true
+      window.scrollTo(0, 0)
     }
   }
 }
