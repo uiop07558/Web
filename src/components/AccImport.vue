@@ -1,22 +1,34 @@
 <script>
 import { CREATE_TASK } from '@/store/actions/tasks'
 import { CREATE_PROJECT_REQUEST } from '@/store/actions/projects'
+import ModalBox from '@/components/modals/ModalBox.vue'
 
 export default {
+  components: {
+    ModalBox
+  },
   data () {
     return {
       fileString: '',
       bitrixProjectUid: null,
-      projects: {}
+      projects: {},
+      showProgress: false,
+      currentAction: '',
+      progressIterations: 0,
+      progressIterationsTotal: 0
     }
   },
   computed: {
     user () {
       return this.$store.state.user.user
+    },
+    progressPercents () {
+      return (this.progressIterations / this.progressIterationsTotal) * 100
     }
   },
   methods: {
     readFile (e) {
+      this.showProgress = true
       const files = e.target.files
       if (!files.length) {
         return
@@ -34,9 +46,23 @@ export default {
       this.addBitrixProject()
 
       const lines = this.fileString.split('\n')
+
+      this.progressIterationsTotal = lines.length - 2
+
       for (let i = 1; i < (lines.length - 1); i++) {
+        this.currentAction = 'Создается задача'
+        console.log(this.currentAction)
+
         let modifiedLine = []
         modifiedLine = lines[i].split(';')
+
+        if (modifiedLine[0] === '') {
+          continue
+        }
+
+        const pattern = /(\d{2})\.(\d{2})\.(\d{4}) (\d{2}:\d{2})/g
+        const dateBegin = modifiedLine[8].replace(pattern, '$3-$2-$1T$4:00')
+        const dateEnd = modifiedLine[9].replace(pattern, '$3-$2-$1T$4:00')
 
         const task = {
           name: modifiedLine[0],
@@ -48,20 +74,25 @@ export default {
           email_performer: '',
           type: 1,
           comment: '',
-          _addToList: true
+          _addToList: true,
+          date_begin: dateBegin,
+          date_end: dateEnd
         }
-
+        console.log(task)
         if (modifiedLine[15] !== '') {
           if (!this.projects[modifiedLine[15]]) {
             this.addSubProject(modifiedLine[15])
           }
           task.uid_project = this.projects[modifiedLine[15]]
-          console.log(this.projects)
         }
         this.$store.dispatch(CREATE_TASK, task)
       }
+
+      this.showProgress = false
     },
     addBitrixProject () {
+      this.currentAction = 'Создается проект Битрикс24'
+      console.log(this.currentAction)
       const project = {
         uid_parent: '00000000-0000-0000-0000-000000000000',
         color: '#A998B6',
@@ -84,8 +115,11 @@ export default {
       }
       this.$store.dispatch(CREATE_PROJECT_REQUEST, project)
       this.bitrixProjectUid = project.uid
+      this.currentAction = 'Создан проект Битрикс24'
     },
     addSubProject (name) {
+      this.currentAction = 'Создается проект'
+      console.log(this.currentAction)
       const project = {
         uid_parent: this.bitrixProjectUid,
         color: '#A998B6',
@@ -130,6 +164,21 @@ export default {
         @change="readFile"
       >
     </div>
+    <ModalBox
+      v-if="showProgress"
+      title="Импорт выполняется"
+      @cancel="showProgress = falseы"
+    >
+      <div class="flex flex-col w-full">
+        <div class="w-full bg-gray-200 h-1">
+          <div
+            class="bg-blue-600 h-1"
+            :style="{ width: progressPercents + '%' }"
+          />
+        </div>
+        <p>{{ currentAction }}</p>
+      </div>
+    </ModalBox>
   </form>
 </template>
 
