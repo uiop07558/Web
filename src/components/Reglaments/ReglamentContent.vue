@@ -35,13 +35,15 @@
     />
     <div
       class="flex font-['Roboto'] text-[#7E7E80] dark:bg-gray-700 dark:text-gray-100 rounded-lg text-[13px] font-medium"
-    <PopMenuItem
-      v-if="!isTesting"
-      class="bg-white mr-1"
-      icon="edit"
-      @click="isEdit"
     >
-      В тесте будут представлены следующие вопросы:
+      <PopMenuItem
+        v-if="!isTesting"
+        class="bg-white mr-1"
+        icon="edit"
+        @click="isEdit"
+      >
+        В тесте будут представлены следующие вопросы:
+      </popmenuitem>
     </div>
   </div>
   <div v-else>
