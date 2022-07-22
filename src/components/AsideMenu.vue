@@ -2,9 +2,7 @@
 import EventAlert from '@/components/EventAlert.vue'
 import ModalBox from '@/components/ModalBox.vue'
 import { DatePicker } from 'v-calendar'
-import NavBarItem from '@/components/NavBarItem.vue'
 import DoitnowLimit from '@/components/Doitnow/DoitnowLimit.vue'
-import Icon from '@/components/Icon.vue'
 import AccModal from '@/components/AccModal.vue'
 import AccTarif from '@/components/AccTarif.vue'
 import AsideMenuList from '@/components/AsideMenuList.vue'
@@ -27,8 +25,6 @@ export default {
     ModalBox,
     DoitnowLimit,
     DatePicker,
-    NavBarItem,
-    Icon,
     AccModal,
     AccTarif,
     AsideMenuSkeleton,
@@ -64,9 +60,6 @@ export default {
     },
     isPropertiesMobileExpanded () {
       return this.$store.state.isPropertiesMobileExpanded
-    },
-    isAsideLgActive () {
-      return this.$store.state.isAsideLgActive
     },
     isDark () {
       return this.$store.state.darkMode
@@ -333,18 +326,6 @@ export default {
     <AsideMenuSkeleton v-if="status == 'loading'" />
     <div v-if="status == 'success'">
       <div class="flex flex-row w-full text-dark px-[16px] mt-[22px] h-[32px] items-center">
-        <nav-bar-item
-          type="hidden lg:flex xl:hidden"
-          active-color="text-dark"
-          active
-          @click="asideLgClose"
-        >
-          <icon
-            :path="mdiMenu"
-            class="cursor-pointer"
-            size="24"
-          />
-        </nav-bar-item>
         <div
           class="group w-full cursor-pointer"
           @click="modalOneActive = true"
