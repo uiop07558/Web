@@ -68,7 +68,7 @@
     class="flex justify-end"
   >
     <button
-      v-if="!isPassed"
+      v-if="reglament.is_passed !== 1"
       class="flex items-end bg-[#FF912380] p-3 px-10 rounded-[8px] text-black text-sm mr-1 hover:bg-[#F5DEB3]"
       @click="isTesting = true"
     >
@@ -328,6 +328,9 @@ export default {
       }
       console.log(this.questions)
       this.$store.dispatch('CRATE_USER_REGLAMENT_ANSWER', data).then((resp) => {
+        const reglament = { ...this.reglament }
+        reglament.is_passed = resp.data.is_passed
+        this.$store.commit('NAVIGATOR_UPDATE_REGLAMENT', reglament)
         this.showCompleteMessage = true
         this.isPassed = resp.data.is_passed
       })
