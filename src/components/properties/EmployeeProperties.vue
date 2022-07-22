@@ -112,12 +112,31 @@
     >
       {{ selectedEmployeeDep || 'Вне отдела' }}
     </div>
+    <div
+      v-if="uniquePassedReglaments.length"
+      class="mt-[30px] font-roboto text-[16px] leading-[19px] font-medium text-[#4c4c4d]"
+    >
+      Пройденные регламенты
+    </div>
+    <div
+      v-if="uniquePassedReglaments.length"
+      class="mt-[15px] w-full font-roboto text-[15px] leading-[18px] text-[#606061] overflow-hidden text-ellipsis whitespace-nowrap"
+    >
+      <template
+        v-for="reglament, index in uniquePassedReglaments"
+        :key="index"
+      >
+        <a :href="currentLocation + 'reglament/' + reglament.uid">{{ reglament.name }}</a>
+        <br>
+      </template>
+    </div>
   </div>
 </template>
 
 <script>
 import * as EMPLOYEE from '@/store/actions/employees'
 import { NAVIGATOR_REMOVE_EMPLOYEE } from '@/store/actions/navigator'
+import { GET_REGLAMENTS_BY_USER } from '@/store/actions/reglaments'
 import ModalBoxDelete from '@/components/Common/ModalBoxDelete.vue'
 import PopMenu from '@/components/modals/PopMenu.vue'
 import PopMenuItem from '@/components/modals/PopMenuItem.vue'
@@ -135,6 +154,8 @@ export default {
   data () {
     return {
       showConfirm: false,
+      currentLocation: window.location.href,
+      passedReglaments: [],
       currEmpName: ''
     }
   },
@@ -208,12 +229,18 @@ export default {
         name: 'Вне отдела'
       })
       return deps
+    },
+    uniquePassedReglaments () {
+      return [...new Map(this.passedReglaments.map(item => [item.uid, item])).values()]
     }
   },
   watch: {
     selectedEmployeeName: {
       immediate: true,
       handler: function (val) {
+        this.$store.dispatch(GET_REGLAMENTS_BY_USER, this.selectedEmployee.uid).then(resp => {
+          this.passedReglaments = resp.data
+        })
         this.currEmpName = val
       }
     }

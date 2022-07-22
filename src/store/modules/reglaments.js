@@ -93,6 +93,17 @@ const actions = {
           reject(err)
         })
     })
+  },
+  [REGLAMENTS.GET_REGLAMENTS_BY_USER]: ({ commit, dispatch }, userUid) => {
+    return new Promise((resolve, reject) => {
+      const url = process.env.VUE_APP_INSPECTOR_API + 'usersPassedReglaments?uid_user=' + userUid
+      axios({ url: url, method: 'GET' })
+        .then(resp => {
+          resolve(resp)
+        }).catch(err => {
+          reject(err)
+        })
+    })
   }
 }
 
