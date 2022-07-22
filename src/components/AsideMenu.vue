@@ -2,9 +2,7 @@
 import EventAlert from '@/components/EventAlert.vue'
 import ModalBox from '@/components/ModalBox.vue'
 import { DatePicker } from 'v-calendar'
-import NavBarItem from '@/components/NavBarItem.vue'
 import DoitnowLimit from '@/components/Doitnow/DoitnowLimit.vue'
-import Icon from '@/components/Icon.vue'
 import AccModal from '@/components/AccModal.vue'
 import AccTarif from '@/components/AccTarif.vue'
 import AsideMenuList from '@/components/AsideMenuList.vue'
@@ -27,8 +25,6 @@ export default {
     ModalBox,
     DoitnowLimit,
     DatePicker,
-    NavBarItem,
-    Icon,
     AccModal,
     AccTarif,
     AsideMenuSkeleton,
@@ -64,9 +60,6 @@ export default {
     },
     isPropertiesMobileExpanded () {
       return this.$store.state.isPropertiesMobileExpanded
-    },
-    isAsideLgActive () {
-      return this.$store.state.isAsideLgActive
     },
     isDark () {
       return this.$store.state.darkMode
@@ -328,23 +321,11 @@ export default {
     id="aside"
     style="overflow-x:hidden; scrollbar-width: none;"
     class="w-[292px] fixed top-0 z-30 h-screen transition-position lg:left-0 bg-[#f4f5f7] font-SfProDisplayNormal text-sm"
-    :class="[ isAsideMobileExpanded ? 'left-0' : '-left-[292px]', isAsideLgActive ? 'block' : 'lg:hidden xl:block' ]"
+    :class="[ isAsideMobileExpanded ? 'left-0' : '-left-[292px]', isAsideMobileExpanded ? 'left-0' : 'lg:hidden xl:block -left-[292px]' ]"
   >
     <AsideMenuSkeleton v-if="status == 'loading'" />
     <div v-if="status == 'success'">
       <div class="flex flex-row w-full text-dark px-[16px] mt-[22px] h-[32px] items-center">
-        <nav-bar-item
-          type="hidden lg:flex xl:hidden"
-          active-color="text-dark"
-          active
-          @click="asideLgClose"
-        >
-          <icon
-            :path="mdiMenu"
-            class="cursor-pointer"
-            size="24"
-          />
-        </nav-bar-item>
         <div
           class="group w-full cursor-pointer"
           @click="modalOneActive = true"

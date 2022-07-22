@@ -325,7 +325,6 @@ export default {
             >
               {{ $store.state.user.user?.current_user_email }}
             </div>
-            <!-- <button type="button" class="mt-2 text-base text-blue-600" @click="showEditemail = true">Изменить email</button> -->
           </div>
           <div class="mb-2 mt-6">
             <form>

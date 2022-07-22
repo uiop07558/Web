@@ -197,14 +197,6 @@
         class="flex flex-col max-w-1/2 border-t mt-2 pt-2"
         :class="task.uid_marker !== '00000000-0000-0000-0000-000000000000' ? 'bg-white p-1 mt-1 rounded-lg' : ''"
       >
-        <!-- <p
-        v-if="taskMessages.length > 2 && !showAllMessages"
-        class="text-gray-500 dark:text-gray-100 text-sm text-center cursor-pointer"
-        style="border-bottom: 1px dashed; padding-bottom: 0; width: 125px; margin: 0 auto;"
-        @click="scrollDown"
-      >
-        ПОКАЗАТЬ ВСЕ
-      </p> -->
         <!-- input -->
         <TaskPropsInputForm
           :task="task"
