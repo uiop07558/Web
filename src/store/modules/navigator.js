@@ -9,6 +9,7 @@ import {
   NAVIGATOR_ERROR,
   NAVIGATOR_PUSH_BOARD,
   NAVIGATOR_PUSH_COLOR,
+  NAVIGATOR_UPDATE_REGLAMENT,
   NAVIGATOR_PUSH_REGLAMENT,
   NAVIGATOR_REMOVE_REGLAMENT,
   NAVIGATOR_PUSH_DEPARTAMENT,
@@ -227,7 +228,7 @@ const mutations = {
 
     console.log('navigator ', resp)
 
-    state.memu = []
+    state.menu = []
     state.menu.push([
       {
         label: 'Очередь',
@@ -581,6 +582,14 @@ const mutations = {
         Object.assign(value, colors)
       }
     })
+  },
+  [NAVIGATOR_UPDATE_REGLAMENT]: (state, reglament) => {
+    for (let i = 0; i < state.navigator.reglaments.items.length; i++) {
+      if (state.navigator.reglaments.items[i].uid === reglament.uid) {
+        Object.assign(state.navigator.reglaments.items[i], reglament)
+        return
+      }
+    }
   },
   NAVIGATOR_UPDATE_TAG: (state, tag) => {
     visitChildren(state.navigator.tags.items, (value) => {
