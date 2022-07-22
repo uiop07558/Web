@@ -119,6 +119,9 @@ export default {
       const text = this.getElementText(e.target)
       this.isEditable = false
       if (text === this.comment) return
+      if (e?.key) {
+        document.getElementById('taskPropsCommentEditor').blur()
+      }
       //
       this.$emit('changeComment', text)
     }
