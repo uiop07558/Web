@@ -6,6 +6,7 @@ export default {
   data () {
     return {
       fileString: '',
+      bitrixProjectUid: null,
       projects: {}
     }
   },
@@ -30,16 +31,18 @@ export default {
       }
     },
     parseFile () {
-      const rows = this.fileString.split('\n')
-      for (let i = 1; i < (rows.length - 1); i++) {
-        let modifiedRow = []
-        modifiedRow = rows[i].split(';')
+      this.addBitrixProject()
+
+      const lines = this.fileString.split('\n')
+      for (let i = 1; i < (lines.length - 1); i++) {
+        let modifiedLine = []
+        modifiedLine = lines[i].split(';')
 
         const task = {
-          name: modifiedRow[0],
+          name: modifiedLine[0],
           uid: this.uuidv4(),
           uid_customer: this.user.current_user_uid,
-          uid_project: '00000000-0000-0000-0000-000000000000',
+          uid_project: this.bitrixProjectUid,
           uid_parent: '00000000-0000-0000-0000-000000000000',
           status: 0,
           email_performer: '',
@@ -48,21 +51,43 @@ export default {
           _addToList: true
         }
 
-        if (modifiedRow[15] !== '') {
-          if (!this.projects[modifiedRow[15]]) {
-            this.addProject(modifiedRow[15])
+        if (modifiedLine[15] !== '') {
+          if (!this.projects[modifiedLine[15]]) {
+            this.addSubProject(modifiedLine[15])
           }
-          task.uid_project = this.projects[modifiedRow[15]]
+          task.uid_project = this.projects[modifiedLine[15]]
           console.log(this.projects)
         }
-
-        console.log(task)
         this.$store.dispatch(CREATE_TASK, task)
       }
     },
-    addProject (name) {
+    addBitrixProject () {
       const project = {
         uid_parent: '00000000-0000-0000-0000-000000000000',
+        color: '#A998B6',
+        comment: '',
+        plugin: '',
+        collapsed: 0,
+        isclosed: 0,
+        order: 0,
+        group: 0,
+        show: 1,
+        favorite: 0,
+        quiet: 0,
+        email_creator: this.user.current_user_email,
+        members: [
+          ''
+        ],
+        uid: this.uuidv4(),
+        name: 'Битрикс24',
+        bold: 0
+      }
+      this.$store.dispatch(CREATE_PROJECT_REQUEST, project)
+      this.bitrixProjectUid = project.uid
+    },
+    addSubProject (name) {
+      const project = {
+        uid_parent: this.bitrixProjectUid,
         color: '#A998B6',
         comment: '',
         plugin: '',
