@@ -31,6 +31,19 @@ export default {
         }
       }
       return shouldShow
+  methods: {
+    showQuestion () {
+      let selected = 0
+      let right = 0
+      for (let i = 0; i < this.question.answers.length; i++) {
+        if (this.question.answers[i].is_right) {
+          right++
+        }
+        if (this.question.answers[i].selected && this.question.answers[i].is_right) {
+          selected++
+        }
+      }
+      return right !== selected
     }
   }
 }
