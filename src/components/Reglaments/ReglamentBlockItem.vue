@@ -2,7 +2,6 @@
   <ListBlocItem
     :title="reglament.name"
     :right-icon="iconCheck"
-    :color="reglament.color"
   >
     <svg
       class="flex-none"
