@@ -21,11 +21,11 @@ export default {
     </p>
     <p
       v-else
-      class="text-left font-[500] text-[20px] w-full"
+      class="font-[500] text-[20px]"
     >
       Пожалуйста, еще раз внимательно ознакомьтесь с регламентом и пройдите текст повторно
     </p>
-    <div class="w-full">
+    <div class="w-full flex justify-center">
       <button
         class="flex bg-[#FF912380] p-3 px-10 rounded-[8px] text-black text-sm mr-1 hover:bg-[#F5DEB3]"
         @click="$emit('confirm')"

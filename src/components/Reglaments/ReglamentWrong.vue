@@ -23,10 +23,12 @@ export default {
       let shouldShow = 0
       for (let i = 0; i < this.question.answers.length; i++) {
         if (this.question.answers[i].is_right && this.question.answers[i].selected) {
-          shouldShow++
-        }
-        if (!this.question.answers[i].is_right && this.question.answers[i].selected) {
           shouldShow = -1
+        } else if (!this.question.answers[i].is_right && this.question.answers[i].selected) {
+          shouldShow = 1
+          return shouldShow
+        } else {
+          shouldShow = 1
           return shouldShow
         }
       }
