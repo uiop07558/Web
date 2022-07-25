@@ -414,7 +414,6 @@ export default {
         name: '',
         uid_reglament: this.reglament.uid
       }
-      console.log(this.reglament)
       this.$store.dispatch('CREATE_REGLAMENT_QUESTION_REQUEST', question).then(() => {
         const questionToPush = {
           uid: question.uid,
