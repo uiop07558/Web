@@ -157,7 +157,13 @@ export default {
 <template>
   <form class="px-5">
     <div class="my-2">
+      <label
+        class="block text-base font-mediums"
+      >
+        Битрикс24 (.csv файл)
+      </label>
       <input
+        id="import-bitrix"
         class="file:mt-2 file:border-0 file:border-orange-400 file:text-white file:bg-orange-400 file:rounded-md file:px-6 file:p-2 file:text-base"
         type="file"
         accept=".csv"
