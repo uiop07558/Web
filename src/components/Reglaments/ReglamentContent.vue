@@ -108,7 +108,6 @@
     class="flex justify-end"
   >
     <button
-      v-if="!isPassed"
       class="flex items-end bg-[#FF912380] p-3 px-10 rounded-[8px] text-black text-sm mr-1 hover:bg-[#F5DEB3]"
       @click="startTheReglament"
     >
