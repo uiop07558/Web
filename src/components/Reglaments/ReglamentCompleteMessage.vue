@@ -28,7 +28,7 @@ export default {
     <div class="w-full flex justify-center">
       <button
         class="flex bg-[#FF912380] p-3 px-10 rounded-[8px] text-black text-sm mr-1 hover:bg-[#F5DEB3]"
-        @click="$emit('confirm')"
+        @click="$emit('confirm', isPassed)"
       >
         Завершить
       </button>

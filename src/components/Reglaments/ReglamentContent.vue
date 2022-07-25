@@ -263,9 +263,16 @@ export default {
         ).toString(16)
       )
     },
-    confirm () {
-      this.$store.dispatch('popNavStack')
-      this.$store.dispatch('asidePropertiesToggle', false)
+    confirm (val) {
+      if (val) {
+        this.$store.dispatch('popNavStack')
+        this.$store.dispatch('asidePropertiesToggle', false)
+        return
+      }
+      // обнуляем значения, чтобы юзер ещё раз прочитал регламент
+      this.showCompleteMessage = false
+      this.isEditing = false
+      this.isTesting = false
     },
     updateQuestionName (data) {
       for (let i = 0; i < this.questions.length; i++) {
