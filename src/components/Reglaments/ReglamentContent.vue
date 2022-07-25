@@ -1,76 +1,108 @@
 <template>
   <div
-    v-if="canEdit && !showCompleteMessage"
-    class="flex justify-end mb-2"
+    v-if="isEditing"
   >
-    <PopMenuItem
-      v-if="!isTesting"
-      class="bg-white mr-1"
-      icon="edit"
-      @click="isEdit"
+    <div
+      class="flex justify-end gap-[8px] mb-2"
     >
-      {{ editButtonText }}
-    </PopMenuItem>
+      <ReglamentSmallButton
+        :icon="shouldClear ? 'check' : 'uncheck'"
+        @click="shouldClear = !shouldClear"
+      >
+        Очистить сотрудников, прошедших регламент
+      </ReglamentSmallButton>
+      <ReglamentSmallButton
+        class="w-[224px]"
+        icon="edit"
+        @click="setEdit"
+      >
+        {{ editButtonText }}
+      </ReglamentSmallButton>
+    </div>
+    <div class="bg-white p-3 rounded mb-3">
+      <input
+        v-model="currName"
+        type="text"
+        placeholder="Наименование"
+        class="p-0 font-roboto font-bold font-[18px] leading-[21px] text-[#424242] w-full border-none focus:ring-0 focus:outline-none"
+      >
+    </div>
+    <QuillEditor
+      v-model:content="text"
+      content-type="html"
+      :toolbar="'full'"
+      class="h-auto mb-5 bg-white"
+    />
+    <div
+      class="flex font-['Roboto'] text-[#7E7E80] dark:bg-gray-700 dark:text-gray-100 rounded-lg text-[13px] font-medium"
+    >
+      В тесте будут представлены следующие вопросы:
+    </div>
   </div>
-  <ReglamentInfo
-    v-if="!isTesting"
-    :is-editing="isEditing"
-  />
-  <QuillEditor
-    v-if="!isEditing && text?.length && !isTesting"
-    v-model:content="text"
-    content-type="html"
-    :read-only="true"
-    :toolbar="['']"
-    class="h-auto mb-5 bg-white"
-  />
-  <QuillEditor
-    v-if="isEditing"
-    v-model:content="text"
-    content-type="html"
-    :toolbar="'full'"
-    class="h-auto mb-5 bg-white"
+  <div v-else>
+    <div
+      v-if="canEdit && !showCompleteMessage"
+      class="flex justify-end mb-2"
+    >
+      <ReglamentSmallButton
+        v-if="!isTesting"
+        class="w-[224px]"
+        icon="edit"
+        @click="setEdit"
+      >
+        {{ editButtonText }}
+      </ReglamentSmallButton>
+    </div>
+    <ReglamentInfo
+      v-if="!isTesting"
+      :title="reglament?.name ?? ''"
+      :creator="reglament?.email_creator ?? ''"
+      :contributors="contributors"
+    />
+    <QuillEditor
+      v-if="text?.length && !isTesting"
+      v-model:content="text"
+      content-type="html"
+      :read-only="true"
+      :toolbar="['']"
+      class="h-auto mb-5 bg-white"
+    />
+  </div>
+
+  <div
+    v-if="(isTesting || isEditing) && !showCompleteMessage"
+  >
+    <template
+      v-for="(question , index) in questions"
+      :key="index"
+    >
+      <ReglamentQuestion
+        :ref="question.uid"
+        :is-editing="isEditing"
+        :question="question"
+        @deleteQuestion="onDeleteQuestion"
+        @deleteAnswer="deleteAnswer"
+        @addQuestion="onAddQuestion"
+        @updateQuestionName="updateQuestionName"
+        @updateAnswerName="updateAnswerName"
+        @pushAnswer="pushAnswer"
+        @selectAnswer="selectAnswer"
+        @setRightAnswer="setRightAnswer"
+      />
+    </template>
+  </div>
+  <ListBlocAdd
+    v-if="canEdit && isEditing"
+    class="mt-5 w-full mb-5"
+    @click.stop="onAddQuestion"
   />
   <div
-    v-if="isEditing"
-    class="flex font-['Roboto'] text-[#7E7E80] dark:bg-gray-700 dark:text-gray-100 rounded-lg text-[13px] font-medium"
-  >
-    В тесте будут представлены следующие вопросы:
-  </div>
-  <template
-    v-for="(question , index) in questions"
-    :key="index"
-  >
-    <ReglamentQuestion
-      v-if="(isTesting || isEditing) && !showCompleteMessage"
-      :ref="question.uid"
-      :is-editing="isEditing"
-      :question="question"
-      @deleteQuestion="onDeleteQuestion"
-      @deleteAnswer="deleteAnswer"
-      @addQuestion="onAddQuestion"
-      @updateQuestionName="updateQuestionName"
-      @updateAnswerName="updateAnswerName"
-      @pushAnswer="pushAnswer"
-      @selectAnswer="selectAnswer"
-      @setRightAnswer="setRightAnswer"
-    />
-  </template>
-  <div class="flex w-full pb-5">
-    <ListBlocAdd
-      v-if="canEdit && isEditing"
-      class="mt-5 w-full"
-      @click.stop="onAddQuestion"
-    />
-  </div>
-  <div
-    v-if="!isEditing && !isTesting && questions.length > 0"
+    v-if="!isEditing && !isTesting && questions.length > 0 && reglament.is_passed !== 1"
     class="flex justify-end"
   >
     <button
-      v-if="!isPassed"
       class="flex items-end bg-[#FF912380] p-3 px-10 rounded-[8px] text-black text-sm mr-1 hover:bg-[#F5DEB3]"
-      @click="isTesting = true"
+      @click="startTheReglament"
     >
       Пройти тест
     </button>
@@ -108,15 +140,17 @@
   />
   <div class="h-[20px]" />
 </template>
+
 <script>
 import { QuillEditor } from '@vueup/vue-quill'
+import * as REGLAMENTS from '@/store/actions/reglaments.js'
 
 import ReglamentWrong from '@/components/Reglaments/ReglamentWrong.vue'
 import ReglamentInfo from '@/components/Reglaments/ReglamentInfo.vue'
 import ListBlocAdd from '@/components/Common/ListBlocAdd.vue'
 import ReglamentQuestion from './ReglamentQuestion.vue'
 import ReglamentCompleteMessage from './ReglamentCompleteMessage.vue'
-import PopMenuItem from '@/components/modals/PopMenuItem.vue'
+import ReglamentSmallButton from '@/components/Reglaments/ReglamentSmallButton.vue'
 
 import '@vueup/vue-quill/dist/vue-quill.snow.css'
 
@@ -128,7 +162,7 @@ export default {
     ReglamentInfo,
     ReglamentCompleteMessage,
     ReglamentWrong,
-    PopMenuItem
+    ReglamentSmallButton
   },
   props: {
     reglament: {
@@ -137,25 +171,26 @@ export default {
     }
   },
   data () {
+    console.log('reglament', this.reglament)
     return {
-      text: this.reglament?.content,
-      isEditing: this.$store.state.greedSource.email_creator === this.$store.state.user.user.current_user_email,
+      currName: this.reglament?.name ?? '',
+      text: this.reglament?.content ?? '',
+      isEditing: false,
       questions: [],
+      contributors: [],
       isTesting: false,
       saveContentStatus: 1, // 1 - is saved, 2 error, 0 request processing
       showCompleteMessage: false,
-      isPassed: 0
+      isPassed: 0,
+      shouldClear: false
     }
   },
   computed: {
-    navStack () {
-      return this.$store.state.navbar.navStack
-    },
-    currentReglament () {
-      return this.$store.state.greedSource
+    needStartEdit () {
+      return this.reglament?.needStartEdit ?? false
     },
     canEdit () {
-      return this.currentReglament?.email_creator === this.user.current_user_email
+      return this.reglament?.email_creator === this.user.current_user_email
     },
     user () {
       return this.$store.state.user.user
@@ -182,11 +217,36 @@ export default {
           } catch (e) {}
         }, 50)
       }
+    },
+    needStartEdit: {
+      immediate: true,
+      handler: function (val) {
+        if (val) {
+          // убираем needStartEdit - чтобы следующий раз не редактировался
+          const reglaments = this.$store.state.navigator.navigator.reglaments
+          const index = reglaments.items.findIndex(item => item.uid === this.reglament?.uid)
+          if (index !== -1) reglaments.items[index].needStartEdit = false
+          //
+          this.setEdit()
+        }
+      }
     }
   },
   mounted () {
     this.$store.dispatch('REGLAMENT_REQUEST', this.reglament.uid).then(resp => {
       this.questions = resp.data
+    })
+    this.$store.dispatch('GET_USERS_REGLAMENT_ANSWERS', this.reglament.uid).then(resp => {
+      const contributors = resp.data
+      const seen = []
+      const cleared = []
+      for (let i = 0; i < contributors.length; i++) {
+        if (!(seen.includes(contributors[i].uid_user))) {
+          seen.push(contributors[i].uid_user)
+          cleared.push(contributors[i])
+        }
+      }
+      this.contributors = cleared
     })
     try {
       if (!this.isEditing) {
@@ -250,11 +310,44 @@ export default {
       }
     },
     selectAnswer (data) {
+      let rightAnswers = 0
+      // считаем кол-во правильных ответов в вопросе и решаем, что будем делать дальше
       for (let i = 0; i < this.questions.length; i++) {
-        for (let j = 0; j < this.questions[i].answers.length; j++) {
-          if (this.questions[i].answers[j].uid === data[0].uid) {
-            this.questions[i].answers[j].selected = data[1]
-            return
+        // ищем вопрос, который мы выбрали, а потом проверяем считаем ответы
+        if (this.questions[i].uid === data[0].uid_question) {
+          for (let j = 0; j < this.questions[i].answers.length; j++) {
+            if (this.questions[i].answers[j].is_right) {
+              rightAnswers++
+            }
+          }
+        }
+      }
+      // запускаем логику для одного вопроса
+      if (rightAnswers === 1) {
+        for (let i = 0; i < this.questions.length; i++) {
+          if (this.questions[i].uid === data[0].uid_question) {
+            for (let j = 0; j < this.questions[i].answers.length; j++) {
+              // убираем selected с предыдущего вопроса
+              if (this.questions[i].answers[j].selected && (this.questions[i].answers[j].uid !== data[0].uid)) {
+                this.questions[i].answers[j].selected = false
+              }
+              // ставим selected новому вопросу
+              if (!this.questions[i].answers[j].selected && (this.questions[i].answers[j].uid === data[0].uid)) {
+                this.questions[i].answers[j].selected = true
+              } else {
+                this.questions[i].answers[j].selected = false
+              }
+            }
+          }
+        }
+      } else {
+        // выделяет/развыделяет множество ответов
+        for (let i = 0; i < this.questions.length; i++) {
+          for (let j = 0; j < this.questions[i].answers.length; j++) {
+            if (this.questions[i].answers[j].uid === data[0].uid) {
+              this.questions[i].answers[j].selected = data[1]
+              return
+            }
           }
         }
       }
@@ -284,7 +377,7 @@ export default {
             {
               uid: this.uuidv4(),
               uid_question: question.uid,
-              name: 'Новый вопрос',
+              name: '',
               is_right: 0
             }
           ]
@@ -306,18 +399,34 @@ export default {
         }
       })
     },
-    isEdit () {
-      this.currentReglament.content = this.text
+    setEdit () {
       if (this.isEditing) {
+        const reglament = { ...this.reglament }
+        reglament.content = this.text
+        reglament.name = this.currName.trim()
+        if (!reglament.name.length) {
+          reglament.name = 'Регламент без названия'
+        }
+        //
         this.saveContentStatus = 0
-        this.$store.dispatch('UPDATE_REGLAMENT_REQUEST', this.currentReglament).then(() => {
+        this.$store.dispatch('UPDATE_REGLAMENT_REQUEST', reglament).then(() => {
+          if (this.shouldClear) {
+            this.$store.dispatch(REGLAMENTS.DELETE_USERS_REGLAMENT_ANSWERS, reglament.uid)
+            this.shouldClear = false
+          }
           this.isEditing = !this.isEditing
           this.saveContentStatus = 1
+          // обновляем регламент в сторе
+          // надо бы сделать по нормальному через мутацию
+          const reglaments = this.$store.state.navigator.navigator.reglaments
+          const index = reglaments.items.findIndex(item => item.uid === reglament.uid)
+          if (index !== -1) reglaments.items[index] = reglament
         }).catch(() => {
           this.saveContentStatus = 2
         })
-      } else {
-        this.isEditing = !this.isEditing
+      } else if (this.canEdit) {
+        this.isEditing = true
+        this.currName = this.reglament?.name
       }
     },
     clickComplete () {
@@ -328,9 +437,16 @@ export default {
       }
       console.log(this.questions)
       this.$store.dispatch('CRATE_USER_REGLAMENT_ANSWER', data).then((resp) => {
+        const reglament = { ...this.reglament }
+        reglament.is_passed = resp.data.is_passed
+        this.$store.commit('NAVIGATOR_UPDATE_REGLAMENT', reglament)
         this.showCompleteMessage = true
         this.isPassed = resp.data.is_passed
       })
+    },
+    startTheReglament () {
+      this.isTesting = true
+      window.scrollTo(0, 0)
     }
   }
 }

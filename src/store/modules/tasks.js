@@ -78,7 +78,7 @@ const getters = {
 }
 
 const actions = {
-  [TASK.TASKS_REQUEST]: ({ commit, dispatch }, chosenDate) => {
+  [TASK.TASKS_REQUEST]: ({ commit, dispatch, state }, chosenDate) => {
     commit('abortDoitnowAbortController')
     return new Promise((resolve, reject) => {
       commit(TASK.TASKS_REQUEST)
@@ -111,6 +111,7 @@ const actions = {
           if (resp.data.anothers_markers.length) {
             commit(PUSH_COLOR, resp.data.anothers_markers)
           }
+          dispatch(TASK.GET_INSPECTABLE_TASKS, { uids: state.newConfig.roots })
           resolve(resp)
         })
         .catch((err) => {
@@ -134,7 +135,7 @@ const actions = {
         })
     })
   },
-  [TASK.ONE_TASK_REQUEST]: ({ commit, dispatch }, uid) => {
+  [TASK.ONE_TASK_REQUEST]: ({ commit, dispatch, state }, uid) => {
     return new Promise((resolve, reject) => {
       commit(TASK.TASKS_REQUEST)
       const url =
@@ -149,6 +150,7 @@ const actions = {
           if (resp.data.anothers_markers.length) {
             commit(PUSH_COLOR, resp.data.anothers_markers)
           }
+          dispatch(TASK.GET_INSPECTABLE_TASKS, { uids: state.newConfig.roots })
           resolve(resp)
         })
         .catch((err) => {
@@ -216,6 +218,7 @@ const actions = {
           if (resp.data.anothers_markers.length) {
             commit(PUSH_COLOR, resp.data.anothers_markers)
           }
+          dispatch(TASK.GET_INSPECTABLE_TASKS, { uids: state.newtasks[taskUid]?.children })
           resolve(resp)
         })
         .catch((err) => {
@@ -224,7 +227,7 @@ const actions = {
         })
     })
   },
-  [TASK.OPENED_TASKS_REQUEST]: ({ commit, dispatch }) => {
+  [TASK.OPENED_TASKS_REQUEST]: ({ commit, dispatch, state }) => {
     return new Promise((resolve, reject) => {
       commit(TASK.TASKS_REQUEST)
       const url = process.env.VUE_APP_LEADERTASK_API + 'api/v1/tasks/opened'
@@ -239,6 +242,7 @@ const actions = {
           if (resp.data.anothers_markers.length) {
             commit(PUSH_COLOR, resp.data.anothers_markers)
           }
+          dispatch(TASK.GET_INSPECTABLE_TASKS, { uids: state.newConfig.roots })
           resolve(resp)
         })
         .catch((err) => {
@@ -267,7 +271,7 @@ const actions = {
         })
     })
   },
-  [TASK.OVERDUE_TASKS_REQUEST]: ({ commit, dispatch }) => {
+  [TASK.OVERDUE_TASKS_REQUEST]: ({ commit, dispatch, state }) => {
     return new Promise((resolve, reject) => {
       commit(TASK.TASKS_REQUEST)
       const url = process.env.VUE_APP_LEADERTASK_API + 'api/v1/tasks/overdue'
@@ -282,6 +286,7 @@ const actions = {
           if (resp.data.anothers_markers.length) {
             commit(PUSH_COLOR, resp.data.anothers_markers)
           }
+          dispatch(TASK.GET_INSPECTABLE_TASKS, { uids: state.newConfig.roots })
           resolve(resp)
         })
         .catch((err) => {
@@ -361,7 +366,7 @@ const actions = {
         })
     })
   },
-  [TASK.UNREAD_TASKS_REQUEST]: ({ commit, dispatch }) => {
+  [TASK.UNREAD_TASKS_REQUEST]: ({ commit, dispatch, state }) => {
     return new Promise((resolve, reject) => {
       commit(TASK.TASKS_REQUEST)
       const url = process.env.VUE_APP_LEADERTASK_API + 'api/v1/tasks/unread'
@@ -376,6 +381,7 @@ const actions = {
           if (resp.data.anothers_markers.length) {
             commit(PUSH_COLOR, resp.data.anothers_markers)
           }
+          dispatch(TASK.GET_INSPECTABLE_TASKS, { uids: state.newConfig.roots })
           resolve(resp)
         })
         .catch((err) => {
@@ -384,7 +390,7 @@ const actions = {
         })
     })
   },
-  [TASK.IN_WORK_TASKS_REQUEST]: ({ commit, dispatch }) => {
+  [TASK.IN_WORK_TASKS_REQUEST]: ({ commit, dispatch, state }) => {
     return new Promise((resolve, reject) => {
       commit(TASK.TASKS_REQUEST)
       const url = process.env.VUE_APP_LEADERTASK_API + 'api/v1/tasks/inwork'
@@ -399,6 +405,7 @@ const actions = {
           if (resp.data.anothers_markers.length) {
             commit(PUSH_COLOR, resp.data.anothers_markers)
           }
+          dispatch(TASK.GET_INSPECTABLE_TASKS, { uids: state.newConfig.roots })
           resolve(resp)
         })
         .catch((err) => {
@@ -407,7 +414,7 @@ const actions = {
         })
     })
   },
-  [TASK.IN_FOCUS_TASKS_REQUEST]: ({ commit, dispatch }) => {
+  [TASK.IN_FOCUS_TASKS_REQUEST]: ({ commit, dispatch, state }) => {
     return new Promise((resolve, reject) => {
       commit(TASK.TASKS_REQUEST)
       const url = process.env.VUE_APP_LEADERTASK_API + 'api/v1/tasks/infocus'
@@ -422,6 +429,7 @@ const actions = {
           if (resp.data.anothers_markers.length) {
             commit(PUSH_COLOR, resp.data.anothers_markers)
           }
+          dispatch(TASK.GET_INSPECTABLE_TASKS, { uids: state.newConfig.roots })
           resolve(resp)
         })
         .catch((err) => {
@@ -430,7 +438,7 @@ const actions = {
         })
     })
   },
-  [TASK.READY_FOR_COMPLITION_TASKS_REQUEST]: ({ commit, dispatch }) => {
+  [TASK.READY_FOR_COMPLITION_TASKS_REQUEST]: ({ commit, dispatch, state }) => {
     return new Promise((resolve, reject) => {
       commit(TASK.TASKS_REQUEST)
       const url = process.env.VUE_APP_LEADERTASK_API + 'api/v1/tasks/ready'
@@ -442,6 +450,7 @@ const actions = {
           if (resp.data.anothers_tags.length) {
             commit(TASK.ADD_TASK_TAGS, resp.data.anothers_tags)
           }
+          dispatch(TASK.GET_INSPECTABLE_TASKS, { uids: state.newConfig.roots })
           resolve(resp)
         })
         .catch((err) => {
@@ -450,7 +459,7 @@ const actions = {
         })
     })
   },
-  [TASK.DELEGATED_TASKS_REQUEST]: ({ commit, dispatch }, email) => {
+  [TASK.DELEGATED_TASKS_REQUEST]: ({ commit, dispatch, state }, email) => {
     return new Promise((resolve, reject) => {
       commit(TASK.TASKS_REQUEST)
       const url =
@@ -467,6 +476,7 @@ const actions = {
           if (resp.data.anothers_markers.length) {
             commit(PUSH_COLOR, resp.data.anothers_markers)
           }
+          dispatch(TASK.GET_INSPECTABLE_TASKS, { uids: state.newConfig.roots })
           resolve(resp)
         })
         .catch((err) => {
@@ -475,7 +485,7 @@ const actions = {
         })
     })
   },
-  [TASK.DELEGATED_TO_USER_TASKS_REQUEST]: ({ commit, dispatch }, email) => {
+  [TASK.DELEGATED_TO_USER_TASKS_REQUEST]: ({ commit, dispatch, state }, email) => {
     return new Promise((resolve, reject) => {
       commit(TASK.TASKS_REQUEST)
       const url =
@@ -492,6 +502,7 @@ const actions = {
           if (resp.data.anothers_markers.length) {
             commit(PUSH_COLOR, resp.data.anothers_markers)
           }
+          dispatch(TASK.GET_INSPECTABLE_TASKS, { uids: state.newConfig.roots })
           resolve(resp)
         })
         .catch((err) => {
@@ -500,7 +511,7 @@ const actions = {
         })
     })
   },
-  [TASK.PROJECT_TASKS_REQUEST]: ({ commit, dispatch }, uid) => {
+  [TASK.PROJECT_TASKS_REQUEST]: ({ commit, dispatch, state }, uid) => {
     return new Promise((resolve, reject) => {
       commit(TASK.TASKS_REQUEST)
       const url =
@@ -515,6 +526,7 @@ const actions = {
           if (resp.data.anothers_markers.length) {
             commit(PUSH_COLOR, resp.data.anothers_markers)
           }
+          dispatch(TASK.GET_INSPECTABLE_TASKS, { uids: state.newConfig.roots })
           resolve(resp)
         })
         .catch((err) => {
@@ -523,7 +535,7 @@ const actions = {
         })
     })
   },
-  [TASK.TAG_TASKS_REQUEST]: ({ commit, dispatch }, uid) => {
+  [TASK.TAG_TASKS_REQUEST]: ({ commit, dispatch, state }, uid) => {
     return new Promise((resolve, reject) => {
       commit(TASK.TASKS_REQUEST)
       const url =
@@ -538,6 +550,7 @@ const actions = {
           if (resp.data.anothers_tags.length) {
             commit(TASK.ADD_TASK_TAGS, resp.data.anothers_tags)
           }
+          dispatch(TASK.GET_INSPECTABLE_TASKS, { uids: state.newConfig.roots })
           resolve(resp)
         })
         .catch((err) => {
@@ -546,7 +559,7 @@ const actions = {
         })
     })
   },
-  [TASK.COLOR_TASKS_REQUEST]: ({ commit, dispatch }, uid) => {
+  [TASK.COLOR_TASKS_REQUEST]: ({ commit, dispatch, state }, uid) => {
     return new Promise((resolve, reject) => {
       commit(TASK.TASKS_REQUEST)
       const url =
@@ -561,6 +574,7 @@ const actions = {
           if (resp.data.anothers_markers.length) {
             commit(PUSH_COLOR, resp.data.anothers_markers)
           }
+          dispatch(TASK.GET_INSPECTABLE_TASKS, { uids: state.newConfig.roots })
           resolve(resp)
         })
         .catch((err) => {
@@ -569,7 +583,7 @@ const actions = {
         })
     })
   },
-  [TASK.EMPLOYEE_TASKS_REQUEST]: ({ commit, dispatch }, uid) => {
+  [TASK.EMPLOYEE_TASKS_REQUEST]: ({ commit, dispatch, state }, uid) => {
     return new Promise((resolve, reject) => {
       commit(TASK.TASKS_REQUEST)
       const url =
@@ -584,6 +598,7 @@ const actions = {
           if (resp.data.anothers_markers.length) {
             commit(PUSH_COLOR, resp.data.anothers_markers)
           }
+          dispatch(TASK.GET_INSPECTABLE_TASKS, { uids: state.newConfig.roots })
           resolve(resp)
         })
         .catch((err) => {
@@ -1058,6 +1073,20 @@ const actions = {
           reject(err)
         })
     })
+  },
+  [TASK.GET_INSPECTABLE_TASKS]: ({ commit, dispatch }, data) => {
+    return new Promise((resolve, reject) => {
+      const url =
+        process.env.VUE_APP_INSPECTOR_API + 'tasksFromList'
+      axios({ url: url, method: 'POST', data: data })
+        .then((resp) => {
+          commit(TASK.GET_INSPECTABLE_TASKS, resp.data)
+          resolve(resp)
+        })
+        .catch((err) => {
+          reject(err)
+        })
+    })
   }
 }
 
@@ -1429,6 +1458,12 @@ const mutations = {
   },
   [TASK.RESET_COPY_TASK]: (state) => {
     state.copiedTasks = {}
+  },
+  [TASK.GET_INSPECTABLE_TASKS]: (state, uids) => {
+    for (const uid of uids) {
+      state.newtasks[uid].info.is_inspectable = true
+      state.newtasks[uid].info.has_msgs = true
+    }
   },
   initDoitnowAbortController (state, controller) {
     state.doitnowAbortController = controller

@@ -23,12 +23,6 @@
       >
         Поручить
       </button>
-      <!-- <div
-        v-if="header"
-        class="font-Roboto flex ml-2 text-base"
-      >
-        {{ header }}
-      </div> -->
     </div>
     <button
       class="border border-slate-600 py-3 px-4 rounded-lg mr-5 hover:bg-gray-300 text-sm bg-opacity-70 font-medium flex w-[181px] items-center justify-center"
