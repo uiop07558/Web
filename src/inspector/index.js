@@ -17,6 +17,7 @@ export default function initInspectorSocket () {
       type: 'auth',
       message: user.value.current_user_uid,
       data: user.value.current_user_email,
+      organization: user.value.owner_email,
       employee: JSON.stringify(employees.value[user.value.current_user_uid])
     }
     socket.send(JSON.stringify(auth))
