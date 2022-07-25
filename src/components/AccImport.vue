@@ -51,7 +51,6 @@ export default {
 
       for (let i = 1; i < (lines.length - 1); i++) {
         this.currentAction = 'Создается задача'
-        console.log(this.currentAction)
 
         let modifiedLine = []
         modifiedLine = lines[i].split(';')
@@ -78,7 +77,6 @@ export default {
           date_begin: dateBegin,
           date_end: dateEnd
         }
-        console.log(task)
         if (modifiedLine[15] !== '') {
           if (!this.projects[modifiedLine[15]]) {
             this.addSubProject(modifiedLine[15])
@@ -92,7 +90,6 @@ export default {
     },
     addBitrixProject () {
       this.currentAction = 'Создается проект Битрикс24'
-      console.log(this.currentAction)
       const project = {
         uid_parent: '00000000-0000-0000-0000-000000000000',
         color: '#A998B6',
@@ -119,7 +116,6 @@ export default {
     },
     addSubProject (name) {
       this.currentAction = 'Создается проект'
-      console.log(this.currentAction)
       const project = {
         uid_parent: this.bitrixProjectUid,
         color: '#A998B6',
