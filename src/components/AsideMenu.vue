@@ -417,11 +417,7 @@ export default {
             v-else
             :key="`b-${index}`"
             :menu="menuGroup"
-            :favorite-boards="favoriteBoards"
-            :favorite-projects="favoriteProjects"
             @menu-click="menuClick"
-            @go-to-favorite-board="board => goToBoard(board)"
-            @go-to-favorite-project="proj => goToProject(proj)"
           />
         </template>
         <ul
