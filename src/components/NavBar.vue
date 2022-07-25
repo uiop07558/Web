@@ -145,6 +145,7 @@ export default {
         @click.prevent="menuToggleMobile"
       >
         <icon
+          :box="'0 0 20 20'"
           :path="menuToggleMobileIcon"
           size="24"
         />
@@ -154,6 +155,7 @@ export default {
         @click.prevent="menuToggleMobile"
       >
         <icon
+          :box="'0 0 20 20'"
           :path="menuToggleMobileIcon"
           size="24"
         />
