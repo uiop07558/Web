@@ -273,6 +273,14 @@ export default {
       this.showCompleteMessage = false
       this.isEditing = false
       this.isTesting = false
+      // обнуляем значение selected
+      for (let i = 0; i < this.questions.length; i++) {
+        for (let j = 0; j < this.questions[i].answers.length; j++) {
+          if (this.questions[i].answers[j].selected) {
+            this.questions[i].answers[j].selected = false
+          }
+        }
+      }
     },
     updateQuestionName (data) {
       for (let i = 0; i < this.questions.length; i++) {
