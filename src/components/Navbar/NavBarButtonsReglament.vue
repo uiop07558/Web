@@ -60,11 +60,11 @@ export default {
     currentReglament () {
       return this.$store.state.greedSource
     },
-    user () {
-      return this.$store.state.user.user
+    currentUserEmail () {
+      return this.$store.state.user?.user?.current_user_email.toLowerCase() ?? ''
     },
     canEdit () {
-      return this.currentReglament?.email_creator === this.user.current_user_email
+      return this.currentReglament?.email_creator.toLowerCase() === this.currentUserEmail
     }
   },
   methods: {
