@@ -5,6 +5,19 @@
     <div
       class="flex justify-end gap-[8px] mb-2"
     >
+      <PopMenu>
+        <ReglamentSmallButton>Добавить редактора</ReglamentSmallButton>
+        <template #menu>
+          <div class="max-h-[220px] overflow-y-auto w-[220px]">
+            <BoardPropsMenuItemUser
+              v-for="editor in usersCanAddToAccess"
+              :key="editor.email"
+              :user-email="editor.email"
+              @click="addReglamentEditor(editor.uid)"
+            />
+          </div>
+        </template>
+      </PopMenu>
       <ReglamentSmallButton
         :icon="shouldClear ? 'check' : 'uncheck'"
         @click="shouldClear = !shouldClear"
@@ -57,6 +70,7 @@
       v-if="!isTesting"
       :title="reglament?.name ?? ''"
       :creator="reglament?.email_creator ?? ''"
+      :editor="reglament?.email_editor ?? ''"
       :contributors="contributors"
     />
     <QuillEditor
@@ -151,6 +165,8 @@ import ListBlocAdd from '@/components/Common/ListBlocAdd.vue'
 import ReglamentQuestion from './ReglamentQuestion.vue'
 import ReglamentCompleteMessage from './ReglamentCompleteMessage.vue'
 import ReglamentSmallButton from '@/components/Reglaments/ReglamentSmallButton.vue'
+import PopMenu from '@/components/modals/PopMenu.vue'
+import BoardPropsMenuItemUser from '@/components/Board/BoardPropsMenuItemUser.vue'
 
 import '@vueup/vue-quill/dist/vue-quill.snow.css'
 
@@ -162,7 +178,9 @@ export default {
     ReglamentInfo,
     ReglamentCompleteMessage,
     ReglamentWrong,
-    ReglamentSmallButton
+    ReglamentSmallButton,
+    PopMenu,
+    BoardPropsMenuItemUser
   },
   props: {
     reglament: {
@@ -282,6 +300,20 @@ export default {
         }
       }
     },
+    usersCanAddToAccess () {
+      const users = []
+      const employees = Object.values(this.$store.state.employees.employees)
+      const editors = this.reglament.editors || {}
+      for (const emp of employees) {
+        if (editors[emp.uid] === undefined) {
+          users.push({
+            uid: emp.uid,
+            email: emp.email
+          })
+        }
+      }
+      return users
+    },
     updateQuestionName (data) {
       for (let i = 0; i < this.questions.length; i++) {
         if (this.questions[i].uid === data.uid) {
@@ -294,7 +326,6 @@ export default {
       this.$refs[uid][0].onFocus()
     },
     deleteAnswer (uid) {
-      console.log(uid)
       for (let i = 0; i < this.questions.length; i++) {
         for (let j = 0; j < this.questions[i].answers.length; j++) {
           if (this.questions[i].answers[j].uid === uid) {
@@ -383,6 +414,7 @@ export default {
         name: '',
         uid_reglament: this.reglament.uid
       }
+      console.log(this.reglament)
       this.$store.dispatch('CREATE_REGLAMENT_QUESTION_REQUEST', question).then(() => {
         const questionToPush = {
           uid: question.uid,
