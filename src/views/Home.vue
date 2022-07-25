@@ -339,12 +339,12 @@ const getNavigator = () => {
       organization: store?.state?.user?.user?.owner_email,
       user_uid: store?.state?.user?.user?.current_user_uid
     }
-    store.dispatch(NAVIGATOR_REQUEST).then(() => {
-      initWebSync()
-      initInspectorSocket()
-      initNavStackGreedView()
-      store.dispatch('REGLAMENTS_REQUEST', data).then(resp => {
+    store.dispatch('REGLAMENTS_REQUEST', data).then(resp => {
+      store.dispatch(NAVIGATOR_REQUEST).then(() => {
         storeNavigator.value.reglaments = { uid: 'fake-uid', items: resp.data }
+        initWebSync()
+        initInspectorSocket()
+        initNavStackGreedView()
       })
     })
   }
