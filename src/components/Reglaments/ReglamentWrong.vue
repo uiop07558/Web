@@ -27,7 +27,7 @@ export default {
       const creatorAnswers = []
       // ответы пользователя
       const userAnswers = []
-      let shouldShow = true
+      let shouldShow = creatorAnswers.length
       for (let i = 0; i < this.question.answers.length; i++) {
         if (this.question.answers[i].is_right) {
           creatorAnswers.push(this.question.answers[i])
@@ -38,7 +38,7 @@ export default {
       }
       // проверяем совпадают ли элементы в массивах
       for (let i = 0; i < userAnswers.length; i++) {
-        if (userAnswers[i].uid === creatorAnswers[i].uid) {
+        if (userAnswers[i]?.uid === creatorAnswers[i]?.uid) {
           shouldShow = false
         } else {
           shouldShow = true
