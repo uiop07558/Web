@@ -95,7 +95,6 @@ if (navStack) {
   }
 }
 
-/* Default title tag */
 const defaultDocumentTitle = 'Leadertask 2.0'
 
 /* Collapse mobile aside menu on route change */
