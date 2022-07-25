@@ -339,9 +339,16 @@ const getNavigator = () => {
       organization: store?.state?.user?.user?.owner_email,
       user_uid: store?.state?.user?.user?.current_user_uid
     }
+    let reglaments = []
+    // ставим что навигатор сейчас загружается перед загрузкой реламентов
+    store.commit(NAVIGATOR_REQUEST)
     store.dispatch('REGLAMENTS_REQUEST', data).then(resp => {
+      reglaments = resp.data
+    }).finally(() => {
+      // независимо от того успешно ли получение регламентов
+      // ставим загрузку навигатора
       store.dispatch(NAVIGATOR_REQUEST).then(() => {
-        storeNavigator.value.reglaments = { uid: 'fake-uid', items: resp.data }
+        storeNavigator.value.reglaments = { uid: 'fake-uid', items: reglaments }
         initWebSync()
         initInspectorSocket()
         initNavStackGreedView()
