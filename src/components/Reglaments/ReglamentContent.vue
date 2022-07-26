@@ -13,7 +13,7 @@
               v-for="editor in usersCanAddToAccess"
               :key="editor.email"
               :user-email="editor.email"
-              @click="addReglamentEditor(editor.uid)"
+              @click="addReglamentEditor(editor.email)"
             />
           </div>
         </template>
@@ -70,8 +70,9 @@
       v-if="!isTesting"
       :title="reglament?.name ?? ''"
       :creator="reglament?.email_creator ?? ''"
-      :editor="reglament?.email_editor ?? ''"
+      :editors="editors"
       :contributors="contributors"
+      :has-editors="hasEditors"
     />
     <QuillEditor
       v-if="text?.length && !isTesting"
@@ -196,17 +197,16 @@ export default {
       isEditing: false,
       questions: [],
       contributors: [],
+      editors: [],
       isTesting: false,
       saveContentStatus: 1, // 1 - is saved, 2 error, 0 request processing
       showCompleteMessage: false,
       isPassed: 0,
-      shouldClear: false
+      shouldClear: false,
+      hasEditors: false
     }
   },
   computed: {
-    currentReglament () {
-      return this.reglament
-    },
     needStartEdit () {
       return this.reglament?.needStartEdit ?? false
     },
@@ -231,7 +231,7 @@ export default {
     usersCanAddToAccess () {
       const users = []
       const employees = Object.values(this.$store.state.employees.employees)
-      const editors = this.currentReglament.editors || {}
+      const editors = this.editors || {}
       for (const emp of employees) {
         if (editors[emp.uid] === undefined) {
           users.push({
@@ -494,15 +494,18 @@ export default {
         this.isPassed = resp.data.is_passed
       })
     },
-    addReglamentEditor (userUid) {
-      if (
-        this.currentReglament.editors &&
-        this.currentReglament.editors[userUid] === undefined
-      ) {
-        const users = { ...this.currentReglament.editors }
-        users[userUid] = 0
-        this.currentReglament.editors = users
+    addReglamentEditor (email) {
+      for (let i = 0; i < this.editors.length; i++) {
+        if (this.editors[i] === email) {
+          this.editors.splice(i, 1)
+          return
+        }
       }
+      this.editors.push(email)
+      if (this.editors.length > 0) {
+        this.hasEditors = true
+      }
+      console.log(this.editors)
     },
     startTheReglament () {
       this.isTesting = true
