@@ -260,7 +260,7 @@ export default {
       const employees = Object.values(this.$store.state.employees.employees)
       const editors = this.editors || {}
       for (const emp of employees) {
-        if (editors[emp.uid] === undefined) {
+        if (editors[emp.uid] === undefined && emp.email !== this.reglament.email_creator) {
           users.push({
             uid: emp.uid,
             email: emp.email
