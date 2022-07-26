@@ -15,7 +15,8 @@ export default {
       showProgress: false,
       currentAction: '',
       progressIterations: 0,
-      progressIterationsTotal: 0
+      progressIterationsTotal: 0,
+      error: ''
     }
   },
   computed: {
@@ -49,6 +50,13 @@ export default {
 
       this.progressIterationsTotal = lines.length - 2
 
+      const headerLine = lines[0].split(';')
+      if (headerLine.length !== 20 && headerLine[19]) {
+        this.showProgress = false
+        this.error = 'Некорректный файл'
+        return
+      }
+
       for (let i = 1; i < (lines.length - 1); i++) {
         this.currentAction = 'Создается задача'
 
@@ -59,9 +67,13 @@ export default {
           continue
         }
 
-        const pattern = /(\d{2})\.(\d{2})\.(\d{4}) (\d{2}:\d{2})/g
-        const dateBegin = modifiedLine[8].replace(pattern, '$3-$2-$1T$4:00')
-        const dateEnd = modifiedLine[9].replace(pattern, '$3-$2-$1T$4:00')
+        let dateBegin = ''
+        let dateEnd = ''
+        if (modifiedLine[8] !== '' && modifiedLine[9] !== '') {
+          const pattern = /(\d{2})\.(\d{2})\.(\d{4}) (\d{2}:\d{2})/g
+          dateBegin = modifiedLine[8].replace(pattern, '$3-$2-$1T$4:00')
+          dateEnd = modifiedLine[9].replace(pattern, '$3-$2-$1T$4:00')
+        }
 
         const task = {
           name: modifiedLine[0],
@@ -169,7 +181,7 @@ export default {
     <ModalBox
       v-if="showProgress"
       title="Импорт выполняется"
-      @cancel="showProgress = falseы"
+      @cancel="showProgress = false"
     >
       <div class="flex flex-col w-full">
         <div class="w-full bg-gray-200 h-1">
@@ -179,6 +191,15 @@ export default {
           />
         </div>
         <p>{{ currentAction }}</p>
+      </div>
+    </ModalBox>
+    <ModalBox
+      v-if="error !== ''"
+      title="Ошибка"
+      @cancel="error = ''"
+    >
+      <div class="flex flex-col w-full">
+        <p>{{ error }}</p>
       </div>
     </ModalBox>
   </form>
