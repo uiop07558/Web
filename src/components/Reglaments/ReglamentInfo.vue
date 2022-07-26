@@ -18,16 +18,23 @@
         </span>
       </div>
     </div>
-    <div class="flex font-['Roboto'] text-[#7E7E80] dark:bg-gray-700 dark:text-gray-100 rounded-lg text-[13px] font-medium">
+    <div
+      v-if="hasEditors"
+      class="flex font-['Roboto'] text-[#7E7E80] dark:bg-gray-700 dark:text-gray-100 rounded-lg text-[13px] font-medium"
+    >
       Редакторы:
-      <div class="flex items-center">
+      <div
+        v-for="editor in editors"
+        :key="editor"
+        class="flex items-center"
+      >
         <img
-          v-if="editorFoto"
-          :src="editorFoto"
+          v-if="editorFoto(editor)"
+          :src="editorFoto(editor)"
           class="h-[20px] w-[20px] rounded mx-2"
         >
         <span class="text-[12px]">
-          {{ editorName }}
+          {{ editorName(editor) }}
         </span>
       </div>
     </div>
@@ -61,13 +68,17 @@ export default {
       type: String,
       default: ''
     },
-    editor: {
+    editors: {
       type: String,
       default: ''
     },
     contributors: {
       type: Array,
       default: () => ([])
+    },
+    hasEditors: {
+      type: Boolean,
+      default: false
     }
   },
   computed: {
@@ -76,12 +87,14 @@ export default {
     },
     creatorFoto () {
       return this.$store.state.employees.employeesByEmail[this.creator]?.fotolink
+    }
+  },
+  methods: {
+    editorName (email) {
+      return this.$store.state.employees.employeesByEmail[email]?.name
     },
-    editorName () {
-      return this.$store.state.employees.employeesByEmail[this.editor]?.name || this.editor
-    },
-    editorFoto () {
-      return this.$store.state.employees.employeesByEmail[this.editor]?.fotolink
+    editorFoto (email) {
+      return this.$store.state.employees.employeesByEmail[email]?.fotolink
     }
   }
 }
