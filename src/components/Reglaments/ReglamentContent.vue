@@ -1,4 +1,14 @@
 <template>
+  <ReglamentTestLimit
+    v-if="showTestLimit"
+    @cancel="showTestLimit = false"
+    @ok="showTestLimit = false"
+  />
+  <ReglamentEditLimit
+    v-if="showEditLimit"
+    @cancel="showEditLimit = false"
+    @ok="showEditLimit = false"
+  />
   <div
     v-if="isEditing"
   >
@@ -8,12 +18,13 @@
       <PopMenu>
         <ReglamentSmallButton>Добавить редактора</ReglamentSmallButton>
         <template #menu>
-          <div class="max-h-[220px] overflow-y-auto w-[220px]">
+          <div class="max-h-[220px] overflow-y-auto scroll-style max-w-[260px]">
             <BoardPropsMenuItemUser
               v-for="editor in usersCanAddToAccess"
               :key="editor.email"
+              :show-check-mark="checkEditor(editor.email)"
               :user-email="editor.email"
-              @click="addReglamentEditor(editor.uid)"
+              @click="addReglamentEditor(editor.email)"
             />
           </div>
         </template>
@@ -70,7 +81,7 @@
       v-if="!isTesting"
       :title="reglament?.name ?? ''"
       :creator="reglament?.email_creator ?? ''"
-      :editor="reglament?.email_editor ?? ''"
+      :editors="editors"
       :contributors="contributors"
     />
     <QuillEditor
@@ -111,7 +122,7 @@
     @click.stop="onAddQuestion"
   />
   <div
-    v-if="!isEditing && !isTesting && questions.length > 0 && reglament.is_passed !== 1"
+    v-if="!isEditing && !isTesting && questions.length > 0 && reglament.is_passed !== 1 && shouldShowButton"
     class="flex justify-end"
   >
     <button
@@ -161,6 +172,8 @@ import * as REGLAMENTS from '@/store/actions/reglaments.js'
 
 import ReglamentWrong from '@/components/Reglaments/ReglamentWrong.vue'
 import ReglamentInfo from '@/components/Reglaments/ReglamentInfo.vue'
+import ReglamentTestLimit from '@/components/Reglaments/ReglamentTestLimit.vue'
+import ReglamentEditLimit from '@/components/Reglaments/ReglamentEditLimit.vue'
 import ListBlocAdd from '@/components/Common/ListBlocAdd.vue'
 import ReglamentQuestion from './ReglamentQuestion.vue'
 import ReglamentCompleteMessage from './ReglamentCompleteMessage.vue'
@@ -180,7 +193,9 @@ export default {
     ReglamentWrong,
     ReglamentSmallButton,
     PopMenu,
-    BoardPropsMenuItemUser
+    BoardPropsMenuItemUser,
+    ReglamentEditLimit,
+    ReglamentTestLimit
   },
   props: {
     reglament: {
@@ -189,18 +204,21 @@ export default {
     }
   },
   data () {
-    console.log('reglament', this.reglament)
     return {
       currName: this.reglament?.name ?? '',
+      showTestLimit: false,
       text: this.reglament?.content ?? '',
       isEditing: false,
+      showEditLimit: false,
       questions: [],
       contributors: [],
+      editors: [],
       isTesting: false,
       saveContentStatus: 1, // 1 - is saved, 2 error, 0 request processing
       showCompleteMessage: false,
       isPassed: 0,
-      shouldClear: false
+      shouldClear: false,
+      showCheckMark: false
     }
   },
   computed: {
@@ -224,6 +242,32 @@ export default {
         return 'Сохраняется'
       }
       return 'Сохраняется'
+    },
+    shouldShowButton () {
+      let hasRightAnswers = false
+      for (let i = 0; i < this.questions.length; i++) {
+        for (let j = 0; j < this.questions[i].answers.length; j++) {
+          if (this.questions[i].answers[j].is_right) {
+            hasRightAnswers = true
+            return hasRightAnswers
+          }
+        }
+      }
+      return hasRightAnswers
+    },
+    usersCanAddToAccess () {
+      const users = []
+      const employees = Object.values(this.$store.state.employees.employees)
+      const editors = this.editors || {}
+      for (const emp of employees) {
+        if (editors[emp.uid] === undefined && emp.email !== this.reglament.email_creator) {
+          users.push({
+            uid: emp.uid,
+            email: emp.email
+          })
+        }
+      }
+      return users
     }
   },
   watch: {
@@ -300,20 +344,6 @@ export default {
         }
       }
     },
-    usersCanAddToAccess () {
-      const users = []
-      const employees = Object.values(this.$store.state.employees.employees)
-      const editors = this.reglament.editors || {}
-      for (const emp of employees) {
-        if (editors[emp.uid] === undefined) {
-          users.push({
-            uid: emp.uid,
-            email: emp.email
-          })
-        }
-      }
-      return users
-    },
     updateQuestionName (data) {
       for (let i = 0; i < this.questions.length; i++) {
         if (this.questions[i].uid === data.uid) {
@@ -336,6 +366,7 @@ export default {
       }
     },
     pushAnswer (data) {
+      console.log(this.reglament.editors)
       for (let i = 0; i < this.questions.length; i++) {
         if (this.questions[i].uid === data.uid_question) {
           if (!this.questions[i].answers) {
@@ -446,6 +477,10 @@ export default {
       })
     },
     setEdit () {
+      if (this.user.tarif !== 'alpha') {
+        this.showEditLimit = true
+        return
+      }
       if (this.isEditing) {
         const reglament = { ...this.reglament }
         reglament.content = this.text
@@ -490,7 +525,24 @@ export default {
         this.isPassed = resp.data.is_passed
       })
     },
+    addReglamentEditor (email) {
+      for (let i = 0; i < this.editors.length; i++) {
+        if (this.editors[i] === email) {
+          this.editors.splice(i, 1)
+          return
+        }
+      }
+      this.editors.push(email)
+      console.log(this.editors)
+    },
+    checkEditor (email) {
+      return this.editors.includes(email)
+    },
     startTheReglament () {
+      if (this.user.tarif !== 'alpha') {
+        this.showTestLimit = true
+        return
+      }
       this.isTesting = true
       window.scrollTo(0, 0)
     }

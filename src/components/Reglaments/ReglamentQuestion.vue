@@ -140,6 +140,7 @@ export default {
     @yes="deleteQuestion"
   />
   <div
+    v-if="isEditing ? true: rightAnswersAmount(question)"
     class="bg-white p-3 rounded-[10px] mb-2"
   >
     <div class="px-1 flex justify-between items-center group">

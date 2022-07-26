@@ -113,22 +113,39 @@
       {{ selectedEmployeeDep || 'Вне отдела' }}
     </div>
     <div
-      v-if="uniquePassedReglaments.length"
+      v-if="openedReglaments.length"
       class="mt-[30px] font-roboto text-[16px] leading-[19px] font-medium text-[#4c4c4d]"
     >
-      Пройденные регламенты
+      Доступные регламенты
     </div>
     <div
-      v-if="uniquePassedReglaments.length"
+      v-if="openedReglaments.length"
       class="mt-[15px] w-full font-roboto text-[15px] leading-[18px] text-[#606061] overflow-hidden text-ellipsis whitespace-nowrap"
     >
-      <template
-        v-for="reglament, index in uniquePassedReglaments"
-        :key="index"
+      <div
+        v-for="reglament in openedReglaments"
+        :key="reglament.uid"
+        class="w-full h-[34px] flex items-center border-[2px] px-2 mb-1 rounded cursor-pointer"
+        @click="clickReglament(reglament.uid)"
       >
-        <a :href="currentLocation + 'reglament/' + reglament.uid">{{ reglament.name }}</a>
-        <br>
-      </template>
+        <span class="grow font-roboto text-[13px] leading-[20px] font-medium text-[#4c4c4d] overflow-hidden truncate">
+          {{ reglament.name }}
+        </span>
+        <svg
+          v-if="passedReglaments[reglament.uid]"
+          class="flex-none ml-[10px]"
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M18.2246 7.10844C18.4805 7.36437 18.4805 7.77123 18.2246 8.02715L10.783 15.4688C10.7229 15.5296 10.6514 15.5778 10.5725 15.6108C10.4937 15.6437 10.4091 15.6607 10.3236 15.6607C10.2382 15.6607 10.1535 15.6437 10.0747 15.6108C9.99584 15.5778 9.92431 15.5296 9.86425 15.4688L7.1081 12.7126C7.04731 12.6526 6.99904 12.581 6.9661 12.5022C6.93316 12.4233 6.91619 12.3387 6.91619 12.2533C6.91619 12.1678 6.93316 12.0832 6.9661 12.0043C6.99904 11.9255 7.04731 11.854 7.1081 11.7939C7.16816 11.7331 7.23969 11.6848 7.31854 11.6519C7.3974 11.619 7.482 11.602 7.56746 11.602C7.65292 11.602 7.73752 11.619 7.81638 11.6519C7.89523 11.6848 7.96676 11.7331 8.02682 11.7939L10.3236 14.0907L17.3059 7.10844C17.3659 7.04764 17.4375 6.99938 17.5163 6.96644C17.5952 6.93349 17.6798 6.91653 17.7652 6.91653C17.8507 6.91653 17.9353 6.93349 18.0141 6.96644C18.093 6.99938 18.1645 7.04764 18.2246 7.10844ZM16.8399 5.71724L10.3236 12.2336L8.49274 10.4027C7.98088 9.89084 7.14747 9.89084 6.63562 10.4027L5.7169 11.3214C5.20504 11.8333 5.20504 12.6667 5.7169 13.1785L9.39177 16.8534C9.90363 17.3653 10.737 17.3653 11.2489 16.8534L19.6158 8.49307C20.1276 7.98122 20.1276 7.14781 19.6158 6.63595L18.6971 5.71724C18.1786 5.20538 17.3518 5.20538 16.8399 5.71724Z"
+            fill="#44944A"
+          />
+        </svg>
+      </div>
     </div>
   </div>
 </template>
@@ -136,7 +153,6 @@
 <script>
 import * as EMPLOYEE from '@/store/actions/employees'
 import { NAVIGATOR_REMOVE_EMPLOYEE } from '@/store/actions/navigator'
-import { GET_REGLAMENTS_BY_USER } from '@/store/actions/reglaments'
 import ModalBoxDelete from '@/components/Common/ModalBoxDelete.vue'
 import PopMenu from '@/components/modals/PopMenu.vue'
 import PopMenuItem from '@/components/modals/PopMenuItem.vue'
@@ -155,13 +171,15 @@ export default {
     return {
       showConfirm: false,
       currentLocation: window.location.href,
-      passedReglaments: [],
       currEmpName: ''
     }
   },
   computed: {
     selectedEmployee () {
       return this.$store.state.employees.selectedEmployee
+    },
+    selectedEmployeeUid () {
+      return this.selectedEmployee?.uid || ''
     },
     selectedEmployeeName () {
       return this.selectedEmployee?.name || ''
@@ -195,7 +213,7 @@ export default {
     },
     isSelectedEmployeeCurrentUser () {
       const user = this.$store.state.user.user
-      return user.current_user_uid === this.selectedEmployee?.uid
+      return user.current_user_uid === this.selectedEmployeeUid
     },
     isCanChangeDepartments () {
       const employees = this.$store.state.employees.employees
@@ -230,17 +248,24 @@ export default {
       })
       return deps
     },
-    uniquePassedReglaments () {
-      return [...new Map(this.passedReglaments.map(item => [item.uid, item])).values()]
+    openedReglaments () {
+      const reglaments = this.$store.getters.reglamentsList
+      // здесь сделать фильтрацию доступных этому пользователю
+      // регламентов (по уиду отдела или общие)
+      // сейчас доступны все - по этому тут ничего не делаем
+      return reglaments
+    },
+    passedReglaments () {
+      return this.openedReglaments.reduce((acc, reglament) => {
+        if (reglament.passed.includes(this.selectedEmployeeUid)) acc[reglament.uid] = reglament
+        return acc
+      }, {})
     }
   },
   watch: {
     selectedEmployeeName: {
       immediate: true,
       handler: function (val) {
-        this.$store.dispatch(GET_REGLAMENTS_BY_USER, this.selectedEmployee.uid).then(resp => {
-          this.passedReglaments = resp.data
-        })
         this.currEmpName = val
       }
     }
@@ -248,6 +273,10 @@ export default {
   methods: {
     print (msg, param) {
       console.log(msg, param)
+    },
+    clickReglament (reglamentUid) {
+      const link = `${window.location.origin}/reglament/${reglamentUid}`
+      window.location = link
     },
     removeEmployee () {
       this.showConfirm = false
