@@ -1,10 +1,33 @@
 <template>
+  <ReglamentTestLimit
+    v-if="showTestLimit"
+    @cancel="showTestLimit = false"
+    @ok="showTestLimit = false"
+  />
+  <ReglamentEditLimit
+    v-if="showEditLimit"
+    @cancel="showEditLimit = false"
+    @ok="showEditLimit = false"
+  />
   <div
     v-if="isEditing"
   >
     <div
       class="flex justify-end gap-[8px] mb-2"
     >
+      <PopMenu>
+        <ReglamentSmallButton>Добавить редактора</ReglamentSmallButton>
+        <template #menu>
+          <div class="max-h-[220px] overflow-y-auto w-[220px]">
+            <BoardPropsMenuItemUser
+              v-for="editor in usersCanAddToAccess"
+              :key="editor.email"
+              :user-email="editor.email"
+              @click="addReglamentEditor(editor.uid)"
+            />
+          </div>
+        </template>
+      </PopMenu>
       <ReglamentSmallButton
         :icon="shouldClear ? 'check' : 'uncheck'"
         @click="shouldClear = !shouldClear"
@@ -57,6 +80,7 @@
       v-if="!isTesting"
       :title="reglament?.name ?? ''"
       :creator="reglament?.email_creator ?? ''"
+      :editor="reglament?.email_editor ?? ''"
       :contributors="contributors"
     />
     <QuillEditor
@@ -147,10 +171,14 @@ import * as REGLAMENTS from '@/store/actions/reglaments.js'
 
 import ReglamentWrong from '@/components/Reglaments/ReglamentWrong.vue'
 import ReglamentInfo from '@/components/Reglaments/ReglamentInfo.vue'
+import ReglamentTestLimit from '@/components/Reglaments/ReglamentTestLimit.vue'
+import ReglamentEditLimit from '@/components/Reglaments/ReglamentEditLimit.vue'
 import ListBlocAdd from '@/components/Common/ListBlocAdd.vue'
 import ReglamentQuestion from './ReglamentQuestion.vue'
 import ReglamentCompleteMessage from './ReglamentCompleteMessage.vue'
 import ReglamentSmallButton from '@/components/Reglaments/ReglamentSmallButton.vue'
+import PopMenu from '@/components/modals/PopMenu.vue'
+import BoardPropsMenuItemUser from '@/components/Board/BoardPropsMenuItemUser.vue'
 
 import '@vueup/vue-quill/dist/vue-quill.snow.css'
 
@@ -162,7 +190,11 @@ export default {
     ReglamentInfo,
     ReglamentCompleteMessage,
     ReglamentWrong,
-    ReglamentSmallButton
+    ReglamentSmallButton,
+    PopMenu,
+    BoardPropsMenuItemUser,
+    ReglamentEditLimit,
+    ReglamentTestLimit
   },
   props: {
     reglament: {
@@ -171,11 +203,12 @@ export default {
     }
   },
   data () {
-    console.log('reglament', this.reglament)
     return {
       currName: this.reglament?.name ?? '',
+      showTestLimit: false,
       text: this.reglament?.content ?? '',
       isEditing: false,
+      showEditLimit: false,
       questions: [],
       contributors: [],
       isTesting: false,
@@ -273,6 +306,28 @@ export default {
       this.showCompleteMessage = false
       this.isEditing = false
       this.isTesting = false
+      // обнуляем значение selected
+      for (let i = 0; i < this.questions.length; i++) {
+        for (let j = 0; j < this.questions[i].answers.length; j++) {
+          if (this.questions[i].answers[j].selected) {
+            this.questions[i].answers[j].selected = false
+          }
+        }
+      }
+    },
+    usersCanAddToAccess () {
+      const users = []
+      const employees = Object.values(this.$store.state.employees.employees)
+      const editors = this.reglament.editors || {}
+      for (const emp of employees) {
+        if (editors[emp.uid] === undefined) {
+          users.push({
+            uid: emp.uid,
+            email: emp.email
+          })
+        }
+      }
+      return users
     },
     updateQuestionName (data) {
       for (let i = 0; i < this.questions.length; i++) {
@@ -286,7 +341,6 @@ export default {
       this.$refs[uid][0].onFocus()
     },
     deleteAnswer (uid) {
-      console.log(uid)
       for (let i = 0; i < this.questions.length; i++) {
         for (let j = 0; j < this.questions[i].answers.length; j++) {
           if (this.questions[i].answers[j].uid === uid) {
@@ -407,6 +461,10 @@ export default {
       })
     },
     setEdit () {
+      if (this.user.tarif !== 'alpha') {
+        this.showEditLimit = true
+        return
+      }
       if (this.isEditing) {
         const reglament = { ...this.reglament }
         reglament.content = this.text
@@ -452,6 +510,10 @@ export default {
       })
     },
     startTheReglament () {
+      if (this.user.tarif !== 'alpha') {
+        this.showTestLimit = true
+        return
+      }
       this.isTesting = true
       window.scrollTo(0, 0)
     }

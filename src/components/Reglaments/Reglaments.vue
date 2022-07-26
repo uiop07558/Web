@@ -1,5 +1,10 @@
 <template>
   <div class="w-full">
+    <ReglamentAddLimit
+      v-if="showAddLimit"
+      @cancel="showAddLimit = false"
+      @ok="showAddLimit = false"
+    />
     <BoardModalBoxRename
       v-if="showAddReglament"
       :show="showAddReglament"
@@ -80,6 +85,7 @@ import BoardModalBoxRename from '@/components/Board/BoardModalBoxRename.vue'
 import { setLocalStorageItem } from '@/store/helpers/functions'
 import ReglamentBlocItem from '@/components/Reglaments/ReglamentBlockItem.vue'
 import ListBlocAdd from '@/components/Common/ListBlocAdd.vue'
+import ReglamentAddLimit from '@/components/Reglaments/ReglamentAddLimit.vue'
 import EmptyTasksListPics from '@/components/TasksList/EmptyTasksListPics'
 
 import * as TASK from '@/store/actions/tasks'
@@ -93,6 +99,7 @@ export default {
     Icon,
     BoardModalBoxRename,
     ReglamentBlocItem,
+    ReglamentAddLimit,
     ListBlocAdd,
     EmptyTasksListPics
   },
@@ -105,6 +112,7 @@ export default {
   data () {
     return {
       showAddReglament: false,
+      showAddLimit: false,
       gridView,
       listView
     }
@@ -179,6 +187,10 @@ export default {
       )
     },
     clickAddReglament () {
+      if (this.user.tarif !== 'alpha') {
+        this.showAddLimit = true
+        return
+      }
       this.showAddReglament = true
     },
     onAddNewReglament (name) {
