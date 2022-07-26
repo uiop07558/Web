@@ -1,4 +1,14 @@
 <template>
+  <ReglamentTestLimit
+    v-if="showTestLimit"
+    @cancel="showTestLimit = false"
+    @ok="showTestLimit = false"
+  />
+  <ReglamentEditLimit
+    v-if="showEditLimit"
+    @cancel="showEditLimit = false"
+    @ok="showEditLimit = false"
+  />
   <div
     v-if="isEditing"
   >
@@ -112,7 +122,7 @@
     @click.stop="onAddQuestion"
   />
   <div
-    v-if="!isEditing && !isTesting && questions.length > 0 && reglament.is_passed !== 1"
+    v-if="!isEditing && !isTesting && questions.length > 0 && reglament.is_passed !== 1 && shouldShowButton"
     class="flex justify-end"
   >
     <button
@@ -162,6 +172,8 @@ import * as REGLAMENTS from '@/store/actions/reglaments.js'
 
 import ReglamentWrong from '@/components/Reglaments/ReglamentWrong.vue'
 import ReglamentInfo from '@/components/Reglaments/ReglamentInfo.vue'
+import ReglamentTestLimit from '@/components/Reglaments/ReglamentTestLimit.vue'
+import ReglamentEditLimit from '@/components/Reglaments/ReglamentEditLimit.vue'
 import ListBlocAdd from '@/components/Common/ListBlocAdd.vue'
 import ReglamentQuestion from './ReglamentQuestion.vue'
 import ReglamentCompleteMessage from './ReglamentCompleteMessage.vue'
@@ -181,7 +193,9 @@ export default {
     ReglamentWrong,
     ReglamentSmallButton,
     PopMenu,
-    BoardPropsMenuItemUser
+    BoardPropsMenuItemUser,
+    ReglamentEditLimit,
+    ReglamentTestLimit
   },
   props: {
     reglament: {
@@ -190,11 +204,12 @@ export default {
     }
   },
   data () {
-    console.log('reglament', this.reglament)
     return {
       currName: this.reglament?.name ?? '',
+      showTestLimit: false,
       text: this.reglament?.content ?? '',
       isEditing: false,
+      showEditLimit: false,
       questions: [],
       contributors: [],
       editors: [],
@@ -228,6 +243,18 @@ export default {
       }
       return 'Сохраняется'
     },
+    shouldShowButton () {
+      let hasRightAnswers = false
+      for (let i = 0; i < this.questions.length; i++) {
+        for (let j = 0; j < this.questions[i].answers.length; j++) {
+          if (this.questions[i].answers[j].is_right) {
+            hasRightAnswers = true
+            return hasRightAnswers
+          }
+        }
+      }
+      return hasRightAnswers
+   },
     usersCanAddToAccess () {
       const users = []
       const employees = Object.values(this.$store.state.employees.employees)
@@ -450,6 +477,10 @@ export default {
       })
     },
     setEdit () {
+      if (this.user.tarif !== 'alpha') {
+        this.showEditLimit = true
+        return
+      }
       if (this.isEditing) {
         const reglament = { ...this.reglament }
         reglament.content = this.text
@@ -508,6 +539,10 @@ export default {
       console.log(this.editors)
     },
     startTheReglament () {
+      if (this.user.tarif !== 'alpha') {
+        this.showTestLimit = true
+        return
+      }
       this.isTesting = true
       window.scrollTo(0, 0)
     }
