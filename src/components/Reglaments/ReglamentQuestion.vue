@@ -140,6 +140,7 @@ export default {
     @yes="deleteQuestion"
   />
   <div
+    v-if="isEditing ? true: rightAnswersAmount(question)"
     class="bg-white p-3 rounded-[10px] mb-2"
   >
     <div class="px-1 flex justify-between items-center group">
@@ -154,13 +155,13 @@ export default {
       />
       <span
         v-if="rightAnswersAmount(question) === 1"
-        class="font-['Roboto'] text-[#7E7E80] dark:bg-gray-700 dark:text-gray-100 rounded-lg text-[13px] breadcrumbs font-medium"
+        class="flex whitespace-nowrap font-['Roboto'] text-[#7E7E80] dark:bg-gray-700 dark:text-gray-100 rounded-lg text-[13px] breadcrumbs font-medium"
       >
         В данном вопросе один правильный ответ.
       </span>
       <span
         v-if="rightAnswersAmount(question) > 1"
-        class="font-['Roboto'] text-[#7E7E80] dark:bg-gray-700 dark:text-gray-100 rounded-lg text-[13px] breadcrumbs font-medium"
+        class="flex whitespace-nowrap font-['Roboto'] text-[#7E7E80] dark:bg-gray-700 dark:text-gray-100 rounded-lg text-[13px] breadcrumbs font-medium"
       >
         В данном вопросе более одного правильного ответа.
       </span>

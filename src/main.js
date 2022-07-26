@@ -38,7 +38,10 @@ if (token) {
 axios.interceptors.response.use(
   (resp) => resp,
   function (error) {
-    const errorMessage = error?.response?.data.error || error?.message
+    const errorMessage =
+      error?.response?.data.message ||
+      error?.response?.data.error ||
+      error?.message
     const avoidedErrorMessages = [
       'old_password invalid',
       "in user's org present employees",
@@ -47,7 +50,7 @@ axios.interceptors.response.use(
       'limit. invalid license.',
       'Request failed with status code 404'
     ]
-    if (errorMessage) {
+    if (typeof errorMessage === 'string') {
       if (errorMessage === 'canceled') return
       //
       if (

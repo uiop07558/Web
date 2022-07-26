@@ -1,9 +1,10 @@
+import { computed } from 'vue'
 import store from '@/store/index.js'
+import * as TYPES from '@/websync/types.js'
+
 import processCreate from '@/websync/create.js'
 import processRemove from '@/websync/remove.js'
-import * as TYPES from '@/websync/types.js'
 import processUpdate from '@/websync/update.js'
-import { computed } from 'vue'
 
 const storeNavigator = computed(() => store.state.navigator.navigator)
 

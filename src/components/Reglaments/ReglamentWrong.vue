@@ -19,14 +19,29 @@ export default {
     }
   },
   computed: {
+    test () {
+      return 1
+    },
     showQuestion () {
-      let shouldShow = 0
+      // правильные ответы
+      const creatorAnswers = []
+      // ответы пользователя
+      const userAnswers = []
+      let shouldShow = creatorAnswers.length
       for (let i = 0; i < this.question.answers.length; i++) {
-        if (this.question.answers[i].is_right && this.question.answers[i].selected) {
-          shouldShow++
+        if (this.question.answers[i].is_right) {
+          creatorAnswers.push(this.question.answers[i])
         }
-        if (!this.question.answers[i].is_right && this.question.answers[i].selected) {
-          shouldShow = -1
+        if (this.question.answers[i].selected) {
+          userAnswers.push(this.question.answers[i])
+        }
+      }
+      // проверяем совпадают ли элементы в массивах
+      for (let i = 0; i < userAnswers.length; i++) {
+        if (userAnswers[i]?.uid === creatorAnswers[i]?.uid) {
+          shouldShow = false
+        } else {
+          shouldShow = true
           return shouldShow
         }
       }

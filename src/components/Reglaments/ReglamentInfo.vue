@@ -19,6 +19,26 @@
       </div>
     </div>
     <div
+      v-if="hasEditors"
+      class="flex font-['Roboto'] text-[#7E7E80] dark:bg-gray-700 dark:text-gray-100 rounded-lg text-[13px] font-medium"
+    >
+      Редакторы:
+      <div
+        v-for="editor in editors"
+        :key="editor"
+        class="flex items-center"
+      >
+        <img
+          v-if="editorFoto(editor)"
+          :src="editorFoto(editor)"
+          class="h-[20px] w-[20px] rounded mx-2"
+        >
+        <span class="text-[12px]">
+          {{ editorName(editor) }}
+        </span>
+      </div>
+    </div>
+    <div
       v-if="contributors.length"
       class="mt-[30px] mb-[8px] font-roboto text-[16px] leading-[19px] font-medium text-[#4c4c4d]"
     >
@@ -48,9 +68,17 @@ export default {
       type: String,
       default: ''
     },
+    editors: {
+      type: String,
+      default: ''
+    },
     contributors: {
       type: Array,
       default: () => ([])
+    },
+    hasEditors: {
+      type: Boolean,
+      default: false
     }
   },
   computed: {
@@ -59,6 +87,14 @@ export default {
     },
     creatorFoto () {
       return this.$store.state.employees.employeesByEmail[this.creator]?.fotolink
+    }
+  },
+  methods: {
+    editorName (email) {
+      return this.$store.state.employees.employeesByEmail[email]?.name
+    },
+    editorFoto (email) {
+      return this.$store.state.employees.employeesByEmail[email]?.fotolink
     }
   }
 }
