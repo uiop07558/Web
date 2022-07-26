@@ -218,7 +218,9 @@ const actions = {
           if (resp.data.anothers_markers.length) {
             commit(PUSH_COLOR, resp.data.anothers_markers)
           }
-          dispatch(TASK.GET_INSPECTABLE_TASKS, { uids: state.newtasks[taskUid]?.children })
+          dispatch(TASK.GET_INSPECTABLE_TASKS, {
+            uids: state.newtasks[taskUid]?.children
+          })
           resolve(resp)
         })
         .catch((err) => {
@@ -485,7 +487,10 @@ const actions = {
         })
     })
   },
-  [TASK.DELEGATED_TO_USER_TASKS_REQUEST]: ({ commit, dispatch, state }, email) => {
+  [TASK.DELEGATED_TO_USER_TASKS_REQUEST]: (
+    { commit, dispatch, state },
+    email
+  ) => {
     return new Promise((resolve, reject) => {
       commit(TASK.TASKS_REQUEST)
       const url =
@@ -1075,8 +1080,7 @@ const actions = {
   },
   [TASK.GET_INSPECTABLE_TASKS]: ({ commit, dispatch }, data) => {
     return new Promise((resolve, reject) => {
-      const url =
-        process.env.VUE_APP_INSPECTOR_API + 'tasksFromList'
+      const url = process.env.VUE_APP_INSPECTOR_API + 'tasksFromList'
       axios({ url: url, method: 'POST', data: data })
         .then((resp) => {
           commit(TASK.GET_INSPECTABLE_TASKS, resp.data)
@@ -1196,6 +1200,7 @@ const mutations = {
     state.loadedTasks = {}
   },
   [TASK.SELECT_TASK]: (state, task) => {
+    if (task) console.log('select task', task)
     state.selectedTask = task
   },
   [TASK.ADD_TASK_TAGS]: (state, tags) => {
