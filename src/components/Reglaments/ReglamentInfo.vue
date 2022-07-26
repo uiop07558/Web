@@ -19,7 +19,7 @@
       </div>
     </div>
     <div
-      v-if="hasEditors"
+      v-if="editors.length"
       class="flex font-['Roboto'] text-[#7E7E80] dark:bg-gray-700 dark:text-gray-100 rounded-lg text-[13px] font-medium"
     >
       Редакторы:
@@ -75,10 +75,6 @@ export default {
     contributors: {
       type: Array,
       default: () => ([])
-    },
-    hasEditors: {
-      type: Boolean,
-      default: false
     }
   },
   computed: {
