@@ -246,7 +246,7 @@ export default {
         for (let j = 0; j < this.questions[i].answers.length; j++) {
           if (this.questions[i].answers[j].is_right) {
             hasRightAnswers = true
-            return
+            return hasRightAnswers
           }
         }
       }
