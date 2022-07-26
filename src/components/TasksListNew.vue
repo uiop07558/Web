@@ -852,6 +852,9 @@ export default {
       this.$store.commit(TASK.COPY_TASK, copiedTask)
     },
     nodeSelected (arg) {
+      if (arg.info.name === '') {
+        this.editTaskName(arg.info.uid)
+      }
       this.lastSelectedTask = arg.info
       if (!this.isPropertiesMobileExpanded && arg.info.name) {
         this.$store.dispatch('asidePropertiesToggle', true)
