@@ -224,6 +224,20 @@ export default {
         return 'Сохраняется'
       }
       return 'Сохраняется'
+    },
+    usersCanAddToAccess () {
+      const users = []
+      const employees = Object.values(this.$store.state.employees.employees)
+      const editors = this.reglament.editors || {}
+      for (const emp of employees) {
+        if (editors[emp.uid] === undefined) {
+          users.push({
+            uid: emp.uid,
+            email: emp.email
+          })
+        }
+      }
+      return users
     }
   },
   watch: {
@@ -300,20 +314,6 @@ export default {
         }
       }
     },
-    usersCanAddToAccess () {
-      const users = []
-      const employees = Object.values(this.$store.state.employees.employees)
-      const editors = this.reglament.editors || {}
-      for (const emp of employees) {
-        if (editors[emp.uid] === undefined) {
-          users.push({
-            uid: emp.uid,
-            email: emp.email
-          })
-        }
-      }
-      return users
-    },
     updateQuestionName (data) {
       for (let i = 0; i < this.questions.length; i++) {
         if (this.questions[i].uid === data.uid) {
@@ -336,6 +336,7 @@ export default {
       }
     },
     pushAnswer (data) {
+      console.log(this.reglament.editors)
       for (let i = 0; i < this.questions.length; i++) {
         if (this.questions[i].uid === data.uid_question) {
           if (!this.questions[i].answers) {
