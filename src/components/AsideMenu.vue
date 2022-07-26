@@ -127,6 +127,9 @@ export default {
       if (this.isPropertiesMobileExpanded) {
         this.$store.dispatch('asidePropertiesToggle', false)
       }
+      if (this.isAsideMobileExpanded) {
+        this.$store.dispatch('asideMobileToggle', false)
+      }
 
       // do it now
       if (item.uid === '2cf6b167-6506-4b05-bc34-70a8d88e3b25') {
@@ -224,6 +227,9 @@ export default {
       if (this.isPropertiesMobileExpanded) {
         this.$store.dispatch('asidePropertiesToggle', false)
       }
+      if (this.isAsideMobileExpanded) {
+        this.$store.dispatch('asideMobileToggle', false)
+      }
 
       this.$store.commit('basic', { key: 'mainSectionState', value: 'greed' })
       const path = 'new_private_boards'
@@ -260,6 +266,9 @@ export default {
     goToProject (project) {
       if (this.isPropertiesMobileExpanded) {
         this.$store.dispatch('asidePropertiesToggle', false)
+      }
+      if (this.isAsideMobileExpanded) {
+        this.$store.dispatch('asideMobileToggle', false)
       }
 
       this.$store.commit('basic', { key: 'mainSectionState', value: 'greed' })
