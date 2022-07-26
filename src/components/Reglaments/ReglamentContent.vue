@@ -121,7 +121,7 @@
     @click.stop="onAddQuestion"
   />
   <div
-    v-if="!isEditing && !isTesting && questions.length > 0 && reglament.is_passed !== 1"
+    v-if="!isEditing && !isTesting && questions.length > 0 && reglament.is_passed !== 1 && shouldShowButton"
     class="flex justify-end"
   >
     <button
@@ -239,6 +239,18 @@ export default {
         return 'Сохраняется'
       }
       return 'Сохраняется'
+    },
+    shouldShowButton () {
+      let hasRightAnswers = false
+      for (let i = 0; i < this.questions.length; i++) {
+        for (let j = 0; j < this.questions[i].answers.length; j++) {
+          if (this.questions[i].answers[j].is_right) {
+            hasRightAnswers = true
+            return
+          }
+        }
+      }
+      return hasRightAnswers
     }
   },
   watch: {
