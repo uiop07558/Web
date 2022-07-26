@@ -211,6 +211,8 @@
               :animation="100"
               :disabled="!board || board.type_access === 0"
               :move="checkMoveDragCard"
+              :scroll-sensitivity="250"
+              :force-fallback="true"
               @start="startDragCard"
               @end="endDragCard"
               @change="changeDragCard"
