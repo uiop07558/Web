@@ -254,7 +254,7 @@ export default {
         }
       }
       return hasRightAnswers
-   },
+    },
     usersCanAddToAccess () {
       const users = []
       const employees = Object.values(this.$store.state.employees.employees)
