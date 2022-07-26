@@ -15,7 +15,7 @@
       </div>
       <div
         v-if="showCheckMark"
-        class="ml-[5px]"
+        class="ml-[10px]"
       >
         <svg
           width="14"
