@@ -18,10 +18,11 @@
       <PopMenu>
         <ReglamentSmallButton>Добавить редактора</ReglamentSmallButton>
         <template #menu>
-          <div class="max-h-[220px] overflow-y-auto scroll-style w-[220px]">
+          <div class="max-h-[220px] overflow-y-auto scroll-style max-w-[260px]">
             <BoardPropsMenuItemUser
               v-for="editor in usersCanAddToAccess"
               :key="editor.email"
+              :show-check-mark="checkEditor(editor.email)"
               :user-email="editor.email"
               @click="addReglamentEditor(editor.email)"
             />
@@ -216,7 +217,8 @@ export default {
       saveContentStatus: 1, // 1 - is saved, 2 error, 0 request processing
       showCompleteMessage: false,
       isPassed: 0,
-      shouldClear: false
+      shouldClear: false,
+      showCheckMark: false
     }
   },
   computed: {
@@ -532,6 +534,9 @@ export default {
       }
       this.editors.push(email)
       console.log(this.editors)
+    },
+    checkEditor (email) {
+      return this.editors.includes(email)
     },
     startTheReglament () {
       if (this.user.tarif !== 'alpha') {
