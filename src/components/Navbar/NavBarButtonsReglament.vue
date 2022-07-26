@@ -64,7 +64,7 @@ export default {
       return this.$store.state.user?.user
     },
     canEdit () {
-      return (this.currentReglament?.email_creator.toLowerCase() === this.user.current_user_email) || (this.user.current_user_email === this.user.owner_email)
+      return (this.currentReglament?.email_creator?.toLowerCase() === this.user?.current_user_email?.toLowerCase()) || (this.user?.current_user_email?.toLowerCase() === this.user?.owner_email?.toLowerCase())
     }
   },
   methods: {
