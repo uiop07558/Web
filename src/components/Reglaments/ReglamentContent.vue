@@ -204,6 +204,9 @@ export default {
     }
   },
   computed: {
+    currentReglament () {
+      return this.reglament
+    },
     needStartEdit () {
       return this.reglament?.needStartEdit ?? false
     },
@@ -228,7 +231,7 @@ export default {
     usersCanAddToAccess () {
       const users = []
       const employees = Object.values(this.$store.state.employees.employees)
-      const editors = this.reglament.editors || {}
+      const editors = this.currentReglament.editors || {}
       for (const emp of employees) {
         if (editors[emp.uid] === undefined) {
           users.push({
@@ -490,6 +493,16 @@ export default {
         this.showCompleteMessage = true
         this.isPassed = resp.data.is_passed
       })
+    },
+    addReglamentEditor (userUid) {
+      if (
+        this.currentReglament.editors &&
+        this.currentReglament.editors[userUid] === undefined
+      ) {
+        const users = { ...this.currentReglament.editors }
+        users[userUid] = 0
+        this.currentReglament.editors = users
+      }
     },
     startTheReglament () {
       this.isTesting = true
