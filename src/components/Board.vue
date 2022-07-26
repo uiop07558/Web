@@ -682,9 +682,8 @@ export default {
       const fromColumn = this.storeCards.find(
         (column) => column.UID === fromColumnId
       )
-      // const cardId = start.item.dataset.cardId
       const card = fromColumn?.cards[start.oldIndex] || null
-      //
+
       this.dragCardParam.move.column = fromColumn
       this.dragCardParam.move.card = card
     },
