@@ -153,7 +153,6 @@
 <script>
 import * as EMPLOYEE from '@/store/actions/employees'
 import { NAVIGATOR_REMOVE_EMPLOYEE } from '@/store/actions/navigator'
-import { GET_REGLAMENTS_BY_USER } from '@/store/actions/reglaments'
 import ModalBoxDelete from '@/components/Common/ModalBoxDelete.vue'
 import PopMenu from '@/components/modals/PopMenu.vue'
 import PopMenuItem from '@/components/modals/PopMenuItem.vue'
@@ -172,8 +171,7 @@ export default {
     return {
       showConfirm: false,
       currentLocation: window.location.href,
-      currEmpName: '',
-      passedReglaments: {}
+      currEmpName: ''
     }
   },
   computed: {
@@ -256,6 +254,12 @@ export default {
       // регламентов (по уиду отдела или общие)
       // сейчас доступны все - по этому тут ничего не делаем
       return reglaments
+    },
+    passedReglaments () {
+      return this.openedReglaments.reduce((acc, reglament) => {
+        if (reglament.passed.includes(this.selectedEmployeeUid)) acc[reglament.uid] = reglament
+        return acc
+      }, {})
     }
   },
   watch: {
@@ -263,19 +267,6 @@ export default {
       immediate: true,
       handler: function (val) {
         this.currEmpName = val
-      }
-    },
-    selectedEmployeeUid: {
-      immediate: true,
-      handler: function (val) {
-        this.passedReglaments = []
-        this.$store.dispatch(GET_REGLAMENTS_BY_USER, val).then(resp => {
-          this.passedReglaments = resp.data.reduce((acc, reglament) => {
-            acc[reglament.uid] = reglament
-            return acc
-          }, {})
-          console.log('GET_REGLAMENTS_BY_USER', resp, this.passedReglaments)
-        })
       }
     }
   },

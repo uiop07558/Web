@@ -1,6 +1,6 @@
+import { visitChildren } from '@/store/helpers/functions'
 import axios from 'axios'
 import * as BOARD from '../actions/boards'
-import { visitChildren } from '@/store/helpers/functions'
 
 function uuidv4 () {
   return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, (c) =>
@@ -196,7 +196,7 @@ const actions = {
         .then((resp) => {
           // В resp.data сервер возвращает всю доску
           // по уму нужно мутировать доску, а не самим пересчитывать
-          // console.log('DELETE_STAGE_BOARD_REQUEST', resp)
+          //
           // удаляем
           board.stages.splice(index, 1)
           // пересчитываем порядок
@@ -294,7 +294,10 @@ const actions = {
 
 const mutations = {
   [BOARD.REMOVE_BOARD_REQUEST]: (state, uid) => {
-    visitChildren([state.boards[uid]], value => (delete state.boards[value.uid]))
+    visitChildren(
+      [state.boards[uid]],
+      (value) => delete state.boards[value.uid]
+    )
     delete state.boards[uid]
   },
   [BOARD.PUSH_BOARD]: (state, boards) => {
@@ -308,7 +311,10 @@ const mutations = {
   [BOARD.SHOW_BOARD_ARCHIVE]: (state, showArchive) => {
     state.showArchive = showArchive
   },
-  [BOARD.SHOW_BOARD_MY_CARDS_WHERE_IAM_RESPONSIBLE]: (state, showCardsWhereIAmResponsible) => {
+  [BOARD.SHOW_BOARD_MY_CARDS_WHERE_IAM_RESPONSIBLE]: (
+    state,
+    showCardsWhereIAmResponsible
+  ) => {
     state.showOnlyCardsWhereIAmResponsible = showCardsWhereIAmResponsible
   },
   [BOARD.SHOW_BOARD_MY_CREATED_CARDS]: (state, showMyCreatedCards) => {

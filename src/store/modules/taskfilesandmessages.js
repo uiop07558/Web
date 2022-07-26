@@ -265,7 +265,6 @@ const mutations = {
     state.hasLoadedOnce = true
   },
   [CHANGE_MESSAGE]: (state, data) => {
-    console.log('changing state in task messages')
     for (let i = 0; i < state.messages.length; i++) {
       if (state.messages[i].uid === data.uid) {
         state.messages[i][data.key] = data.value
