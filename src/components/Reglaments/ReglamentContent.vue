@@ -1,4 +1,14 @@
 <template>
+  <ReglamentTestLimit
+    v-if="showTestLimit"
+    @cancel="showTestLimit = false"
+    @ok="showTestLimit = false"
+  />
+  <ReglamentEditLimit
+    v-if="showEditLimit"
+    @cancel="showEditLimit = false"
+    @ok="showEditLimit = false"
+  />
   <div
     v-if="isEditing"
   >
@@ -161,6 +171,8 @@ import * as REGLAMENTS from '@/store/actions/reglaments.js'
 
 import ReglamentWrong from '@/components/Reglaments/ReglamentWrong.vue'
 import ReglamentInfo from '@/components/Reglaments/ReglamentInfo.vue'
+import ReglamentTestLimit from '@/components/Reglaments/ReglamentTestLimit.vue'
+import ReglamentEditLimit from '@/components/Reglaments/ReglamentEditLimit.vue'
 import ListBlocAdd from '@/components/Common/ListBlocAdd.vue'
 import ReglamentQuestion from './ReglamentQuestion.vue'
 import ReglamentCompleteMessage from './ReglamentCompleteMessage.vue'
@@ -180,7 +192,9 @@ export default {
     ReglamentWrong,
     ReglamentSmallButton,
     PopMenu,
-    BoardPropsMenuItemUser
+    BoardPropsMenuItemUser,
+    ReglamentEditLimit,
+    ReglamentTestLimit
   },
   props: {
     reglament: {
@@ -189,11 +203,12 @@ export default {
     }
   },
   data () {
-    console.log('reglament', this.reglament)
     return {
       currName: this.reglament?.name ?? '',
+      showTestLimit: false,
       text: this.reglament?.content ?? '',
       isEditing: false,
+      showEditLimit: false,
       questions: [],
       contributors: [],
       isTesting: false,
@@ -446,6 +461,10 @@ export default {
       })
     },
     setEdit () {
+      if (this.user.tarif !== 'alpha') {
+        this.showEditLimit = true
+        return
+      }
       if (this.isEditing) {
         const reglament = { ...this.reglament }
         reglament.content = this.text
@@ -491,6 +510,10 @@ export default {
       })
     },
     startTheReglament () {
+      if (this.user.tarif !== 'alpha') {
+        this.showTestLimit = true
+        return
+      }
       this.isTesting = true
       window.scrollTo(0, 0)
     }
