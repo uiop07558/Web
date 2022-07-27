@@ -15,8 +15,10 @@
     <div
       class="flex justify-end gap-[8px] mb-2"
     >
-      <PopMenu>
-        <ReglamentSmallButton>Добавить редактора</ReglamentSmallButton>
+      <PopMenu v-if="!editorsCanEdit">
+        <ReglamentSmallButton>
+          Добавить редактора
+        </ReglamentSmallButton>
         <template #menu>
           <div class="max-h-[220px] overflow-y-auto scroll-style max-w-[260px]">
             <BoardPropsMenuItemUser
@@ -105,6 +107,7 @@
         :ref="question.uid"
         :is-editing="isEditing"
         :question="question"
+        :reglament="reglament"
         @deleteQuestion="onDeleteQuestion"
         @deleteAnswer="deleteAnswer"
         @addQuestion="onAddQuestion"
@@ -231,8 +234,12 @@ export default {
     needStartEdit () {
       return this.reglament?.needStartEdit ?? false
     },
+    editorsCanEdit () {
+      return this.reglament?.editors?.includes(this.$store.state.user.user.current_user_email)
+    },
     canEdit () {
-      return (this.reglament?.email_creator === this.user.current_user_email) || this.editorsCanEdit()
+      const userType = this.$store.state.employees.employees[this.$store.state.user.user.current_user_uid].type
+      return (this.reglament?.email_creator === this.user.current_user_email) || (this.editorsCanEdit) || (userType === 2 || userType === 1)
     },
     user () {
       return this.$store.state.user.user
@@ -310,13 +317,6 @@ export default {
     } catch (e) {}
   },
   methods: {
-    editorsCanEdit () {
-      for (let i = 0; i < this.currentEditors.length; i++) {
-        if (this.currentEditors[i] === this.user.current_user_email) {
-          return true
-        }
-      }
-    },
     uuidv4 () {
       return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, (c) =>
         (
