@@ -228,7 +228,7 @@ export default {
       return this.reglament?.needStartEdit ?? false
     },
     canEdit () {
-      return this.reglament?.email_creator === this.user.current_user_email
+      return this.reglament?.email_creator === this.user.current_user_email || this.editorsCanEdit
     },
     user () {
       return this.$store.state.user.user
@@ -319,6 +319,13 @@ export default {
     } catch (e) {}
   },
   methods: {
+    editorsCanEdit () {
+      for (let i = 0; i < this.currentEditors.length; i++) {
+        if (this.currentEditors[i] === this.user.current_user_email) {
+          return true
+        }
+      }
+    },
     uuidv4 () {
       return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, (c) =>
         (
@@ -368,7 +375,6 @@ export default {
       }
     },
     pushAnswer (data) {
-      console.log(this.currentEditors)
       for (let i = 0; i < this.questions.length; i++) {
         if (this.questions[i].uid === data.uid_question) {
           if (!this.questions[i].answers) {
@@ -535,7 +541,6 @@ export default {
         }
       }
       this.currentEditors.push(email)
-      console.log(this.currentEditors)
     },
     checkEditor (email) {
       return this.currentEditors.includes(email)
