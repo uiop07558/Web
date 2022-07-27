@@ -185,7 +185,7 @@ export default {
       return this.lastNavStackType === 'color'
     },
     isTagTaskList () {
-      return this.navStack[this.navStack.length - 1]?.greedPath === 'tags_children'
+      return this.lastGreedPath === 'tags_children'
     }
   },
   watch: {
