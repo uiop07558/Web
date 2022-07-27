@@ -28,7 +28,7 @@ const pics = [
   'GIF'
 ]
 const movies = ['mov', 'mp4', 'wmv', 'avi', 'avchd', 'mkv', 'webm', 'mpeg-2']
-const docs = ['doc', 'xls', 'xlsx', 'txt', 'pdf']
+const docs = ['doc', 'docx', 'xls', 'xlsx', 'txt', 'pdf']
 const audio = ['mp3', 'wav', 'm4a']
 const isImageLoaded = ref(false)
 
@@ -92,12 +92,21 @@ const getImgUrl = (uid, extension, filename, counter) => {
 }
 
 onMounted(() => {
-  getImgUrl(
-    props.file.uid,
-    props.file.file_name.split('.').pop(),
-    props.file.file_name,
-    0
-  )
+  if (pics.includes(props.file.file_name.split('.').pop())) {
+    getImgUrl(
+      props.file.uid,
+      props.file.file_name.split('.').pop(),
+      props.file.file_name,
+      0
+    )
+  }
+  if (docs.includes(props.file.file_name.split('.').pop())) {
+    getDocUrl(
+      props.file.uid,
+      props.file.file_name.split('.').pop(),
+      props.file.file_name
+    )
+  }
 })
 
 const getMovUrl = (uid, extension, filename) => {
