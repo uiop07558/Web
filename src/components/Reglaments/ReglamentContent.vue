@@ -15,8 +15,10 @@
     <div
       class="flex justify-end gap-[8px] mb-2"
     >
-      <PopMenu>
-        <ReglamentSmallButton>Добавить редактора</ReglamentSmallButton>
+      <PopMenu v-if="!editorsCanEdit">
+        <ReglamentSmallButton>
+          Добавить редактора
+        </ReglamentSmallButton>
         <template #menu>
           <div class="max-h-[220px] overflow-y-auto scroll-style max-w-[260px]">
             <BoardPropsMenuItemUser
@@ -229,7 +231,7 @@ export default {
       return this.reglament?.needStartEdit ?? false
     },
     editorsCanEdit () {
-      return this.reglament.editors.includes(this.$store.state.user.user.current_user_email)
+      return this.reglament?.editors?.includes(this.$store.state.user.user.current_user_email)
     },
     canEdit () {
       const userType = this.$store.state.employees.employees[this.$store.state.user.user.current_user_uid].type
