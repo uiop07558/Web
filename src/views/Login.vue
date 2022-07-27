@@ -191,6 +191,7 @@ export default {
         :path="mdiChevronLeft"
         class="cursor-pointer"
         size="24"
+        :box="'0 0 24 24'"
         @click="getBack"
       />
       <p class="pb-4 pt-5 text-center text-2xl font-bold dark:text-white">
