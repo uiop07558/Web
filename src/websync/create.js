@@ -27,7 +27,6 @@ function currentUserEmail () {
 export default function processCreate (obj) {
   switch (obj.type) {
     case TYPES.TYPE_OBJECT_REGLAMENT:
-      console.log('creating!')
       createReglament(obj)
       break
     case TYPES.TYPE_OBJECT_TAG:
