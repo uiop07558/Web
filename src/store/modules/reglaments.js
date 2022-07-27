@@ -105,6 +105,7 @@ const actions = {
         uidReglament
       axios({ url: url, method: 'DELETE' })
         .then((resp) => {
+          commit(REGLAMENTS.DELETE_USERS_REGLAMENT_ANSWERS)
           resolve(resp)
         })
         .catch((err) => {
@@ -145,6 +146,9 @@ const actions = {
 const mutations = {
   [REGLAMENTS.REGLAMENT_SUCCESS]: (state, data) => {
     state.reglamentQuestions = data
+  },
+  [REGLAMENTS.DELETE_USERS_REGLAMENT_ANSWERS]: (state) => {
+    state.contributors = []
   },
   [REGLAMENTS.GET_USERS_REGLAMENT_ANSWERS]: (state, data) => {
     const contributors = data

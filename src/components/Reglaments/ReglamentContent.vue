@@ -125,7 +125,7 @@
     @click.stop="onAddQuestion"
   />
   <div
-    v-if="!isEditing && !isTesting && questions.length > 0 && reglament.is_passed !== 1 && shouldShowButton"
+    v-if="!isEditing && !isTesting && questions.length > 0 && !isContributor && shouldShowButton"
     class="flex justify-end"
   >
     <button
@@ -224,6 +224,14 @@ export default {
   computed: {
     questions () {
       return this.$store?.state?.reglaments?.reglamentQuestions
+    },
+    isContributor () {
+      for (let i = 0; i < this.contributors.length; i++) {
+        if (this.contributors[i].uid_user === this.user.current_user_uid) {
+          return true
+        }
+      }
+      return false
     },
     contributors () {
       return this.$store?.state?.reglaments?.contributors
