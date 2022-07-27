@@ -105,6 +105,7 @@
         :ref="question.uid"
         :is-editing="isEditing"
         :question="question"
+        :reglament="reglament"
         @deleteQuestion="onDeleteQuestion"
         @deleteAnswer="deleteAnswer"
         @addQuestion="onAddQuestion"

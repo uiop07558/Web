@@ -17,6 +17,10 @@ export default {
     isEditing: {
       type: Boolean,
       default: false
+    },
+    reglament: {
+      type: Object,
+      default: () => ({})
     }
   },
   emits: ['deleteQuestion', 'deleteAnswer', 'setRightAnswer', 'addQuestion', 'pushAnswer', 'selectAnswer', 'updateAnswerName', 'updateQuestionName'],
@@ -30,10 +34,17 @@ export default {
   },
   computed: {
     canEdit () {
-      return this.$store.state.greedSource?.email_creator === this.$store.state.user.user.current_user_email
+      return this.$store.state.greedSource?.email_creator === this.$store.state.user.user.current_user_email || this.editorsCanEdit()
     }
   },
   methods: {
+    editorsCanEdit () {
+      for (let i = 0; i < this.reglament.editors.length; i++) {
+        if (this.reglament.editors[i] === this.$store.state.user.user.current_user_email) {
+          return true
+        }
+      }
+    },
     gotoNode (uid) {
       this.$refs[uid][0].onFocus()
     },
