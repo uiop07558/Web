@@ -233,7 +233,7 @@ export default {
     },
     canEdit () {
       const userType = this.$store.state.employees.employees[this.$store.state.user.user.current_user_uid].type
-      return (this.reglament?.email_creator === this.user.current_user_email) || (this.editorsCanEdit && (userType === 2 || userType === 3))
+      return (this.reglament?.email_creator === this.user.current_user_email) || (this.editorsCanEdit && (userType === 2 || userType === 1))
     },
     user () {
       return this.$store.state.user.user

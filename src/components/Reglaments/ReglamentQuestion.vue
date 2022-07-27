@@ -35,7 +35,7 @@ export default {
   computed: {
     canEdit () {
       const userType = this.$store.state.employees.employees[this.$store.state.user.user.current_user_uid].type
-      return this.$store.state.greedSource?.email_creator === this.$store.state.user.user.current_user_email || (this.editorsCanEdit && (userType === 2 || userType === 3))
+      return this.$store.state.greedSource?.email_creator === this.$store.state.user.user.current_user_email || (this.editorsCanEdit && (userType === 2 || userType === 1))
     },
     editorsCanEdit () {
       return this.reglament.editors.includes(this.$store.state.user.user.current_user_email)
