@@ -2,7 +2,9 @@ import axios from 'axios'
 import * as REGLAMENTS from '../actions/reglaments'
 
 const state = {
-  reglaments: {}
+  reglaments: {},
+  reglamentQuestions: [], // вопросы по текущему регламенту
+  contributors: [] // сотрудники, прошедшие текущий регламент
 }
 
 const actions = {
@@ -15,6 +17,7 @@ const actions = {
         uidReglament
       axios({ url: url, method: 'GET' })
         .then((resp) => {
+          commit(REGLAMENTS.REGLAMENT_SUCCESS, resp.data)
           resolve(resp)
         })
         .catch((err) => {
@@ -78,10 +81,7 @@ const actions = {
         })
     })
   },
-  [REGLAMENTS.GET_USERS_REGLAMENT_ANSWERS]: (
-    { commit, dispatch },
-    uidReglament
-  ) => {
+  [REGLAMENTS.GET_USERS_REGLAMENT_ANSWERS]: ({ commit, dispatch }, uidReglament) => {
     return new Promise((resolve, reject) => {
       const url =
         process.env.VUE_APP_INSPECTOR_API +
@@ -89,6 +89,7 @@ const actions = {
         uidReglament
       axios({ url: url, method: 'GET' })
         .then((resp) => {
+          commit(REGLAMENTS.GET_USERS_REGLAMENT_ANSWERS, resp.data)
           resolve(resp)
         })
         .catch((err) => {
@@ -96,10 +97,7 @@ const actions = {
         })
     })
   },
-  [REGLAMENTS.DELETE_USERS_REGLAMENT_ANSWERS]: (
-    { commit, dispatch },
-    uidReglament
-  ) => {
+  [REGLAMENTS.DELETE_USERS_REGLAMENT_ANSWERS]: ({ commit, dispatch }, uidReglament) => {
     return new Promise((resolve, reject) => {
       const url =
         process.env.VUE_APP_INSPECTOR_API +
@@ -145,6 +143,131 @@ const actions = {
 }
 
 const mutations = {
+  [REGLAMENTS.REGLAMENT_SUCCESS]: (state, data) => {
+    state.reglamentQuestions = data
+  },
+  [REGLAMENTS.GET_USERS_REGLAMENT_ANSWERS]: (state, data) => {
+    const contributors = data
+    const seen = []
+    const cleared = []
+    for (let i = 0; i < contributors.length; i++) {
+      if (!(seen.includes(contributors[i].uid_user))) {
+        seen.push(contributors[i].uid_user)
+        cleared.push(contributors[i])
+      }
+    }
+    state.contributors = cleared
+  },
+  [REGLAMENTS.REGLAMENT_RESTORE_SELECTED]: (state) => {
+    for (let i = 0; i < state.reglamentQuestions.length; i++) {
+      for (let j = 0; j < state.reglamentQuestions[i].answers.length; j++) {
+        if (state.reglamentQuestions[i].answers[j].selected) {
+          state.reglamentQuestions[i].answers[j].selected = false
+        }
+      }
+    }
+  },
+  [REGLAMENTS.REGLAMENT_UPDATE_QUESTION_NAME]: (state, data) => {
+    for (let i = 0; i < state.reglamentQuestions.length; i++) {
+      if (state.reglamentQuestions[i].uid === data.uid) {
+        state.reglamentQuestions[i].name = data.name
+        return
+      }
+    }
+  },
+  [REGLAMENTS.REGLAMENT_DELETE_ANSWER]: (state, uid) => {
+    for (let i = 0; i < state.reglamentQuestions.length; i++) {
+      for (let j = 0; j < state.reglamentQuestions[i].answers.length; j++) {
+        if (state.reglamentQuestions[i].answers[j].uid === uid) {
+          state.reglamentQuestions[i].answers.splice(j, 1)
+          return
+        }
+      }
+    }
+  },
+  [REGLAMENTS.REGLAMENT_PUSH_ANSWER]: (state, data) => {
+    for (let i = 0; i < state.reglamentQuestions.length; i++) {
+      if (state.reglamentQuestions[i].uid === data.uid_question) {
+        if (!state.reglamentQuestions[i].answers) {
+          state.reglamentQuestions[i].answers = []
+        }
+        state.reglamentQuestions[i].answers.push(data)
+        return
+      }
+    }
+  },
+  [REGLAMENTS.REGLAMENT_UPDATE_ANSWER_NAME]: (state, data) => {
+    for (let i = 0; i < state.reglamentQuestions.length; i++) {
+      for (let j = 0; j < state.reglamentQuestions[i].answers.length; j++) {
+        if (state.reglamentQuestions[i].answers[j].uid === data.uid) {
+          state.reglamentQuestions[i].answers[j] = data
+        }
+      }
+    }
+  },
+  [REGLAMENTS.REGLAMENT_SELECT_ANSWER]: (state, data) => {
+    let rightAnswers = 0
+    // считаем кол-во правильных ответов в вопросе и решаем, что будем делать дальше
+    for (let i = 0; i < state.reglamentQuestions.length; i++) {
+      // ищем вопрос, который мы выбрали, а потом проверяем считаем ответы
+      if (state.reglamentQuestions[i].uid === data[0].uid_question) {
+        for (let j = 0; j < state.reglamentQuestions[i].answers.length; j++) {
+          if (state.reglamentQuestions[i].answers[j].is_right) {
+            rightAnswers++
+          }
+        }
+      }
+    }
+    // запускаем логику для одного вопроса
+    if (rightAnswers === 1) {
+      for (let i = 0; i < state.reglamentQuestions.length; i++) {
+        if (state.reglamentQuestions[i].uid === data[0].uid_question) {
+          for (let j = 0; j < state.reglamentQuestions[i].answers.length; j++) {
+            // убираем selected с предыдущего вопроса
+            if (state.reglamentQuestions[i].answers[j].selected && (state.reglamentQuestions[i].answers[j].uid !== data[0].uid)) {
+              state.reglamentQuestions[i].answers[j].selected = false
+            }
+            // ставим selected новому вопросу
+            if (!state.reglamentQuestions[i].answers[j].selected && (state.reglamentQuestions[i].answers[j].uid === data[0].uid)) {
+              state.reglamentQuestions[i].answers[j].selected = true
+            } else {
+              state.reglamentQuestions[i].answers[j].selected = false
+            }
+          }
+        }
+      }
+    } else {
+      // выделяет/развыделяет множество ответов
+      for (let i = 0; i < state.reglamentQuestions.length; i++) {
+        for (let j = 0; j < state.reglamentQuestions[i].answers.length; j++) {
+          if (state.reglamentQuestions[i].answers[j].uid === data[0].uid) {
+            state.reglamentQuestions[i].answers[j].selected = data[1]
+            return
+          }
+        }
+      }
+    }
+  },
+  [REGLAMENTS.REGLAMENT_SET_RIGHT_ANSWER]: (state, data) => {
+    for (let i = 0; i < state.reglamentQuestions.length; i++) {
+      for (let j = 0; j < state.reglamentQuestions[i].answers.length; j++) {
+        if (state.reglamentQuestions[i].answers[j].uid === data.uid) {
+          state.reglamentQuestions[i].answers[j] = data
+          return
+        }
+      }
+    }
+  },
+  [REGLAMENTS.REGLAMENT_PUSH_QUESTION]: (state, data) => {
+    state.reglamentQuestions.push(data)
+  },
+  [REGLAMENTS.REGLAMENT_DELETE_QUESTION]: (state, uid) => {
+    for (let i = 0; i < state.reglamentQuestions.length; i++) {
+      if (state.reglamentQuestions[i].uid === uid) {
+        state.reglamentQuestions.splice(i, 1)
+      }
+    }
+  },
   ChangeReglaments: (state, reglaments) => {
     for (const reglament of reglaments) {
       state.reglaments[reglament.uid] = reglament

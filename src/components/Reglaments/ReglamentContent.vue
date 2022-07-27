@@ -210,8 +210,6 @@ export default {
       text: this.reglament?.content ?? '',
       isEditing: false,
       showEditLimit: false,
-      questions: [],
-      contributors: [],
       isTesting: false,
       saveContentStatus: 1, // 1 - is saved, 2 error, 0 request processing
       showCompleteMessage: false,
@@ -221,6 +219,12 @@ export default {
     }
   },
   computed: {
+    questions () {
+      return this.$store?.state?.reglaments?.reglamentQuestions
+    },
+    contributors () {
+      return this.$store?.state?.reglaments?.contributors
+    },
     currentEditors () {
       return this.reglament.editors
     },
@@ -297,21 +301,8 @@ export default {
     }
   },
   mounted () {
-    this.$store.dispatch('REGLAMENT_REQUEST', this.reglament.uid).then(resp => {
-      this.questions = resp.data
-    })
-    this.$store.dispatch('GET_USERS_REGLAMENT_ANSWERS', this.reglament.uid).then(resp => {
-      const contributors = resp.data
-      const seen = []
-      const cleared = []
-      for (let i = 0; i < contributors.length; i++) {
-        if (!(seen.includes(contributors[i].uid_user))) {
-          seen.push(contributors[i].uid_user)
-          cleared.push(contributors[i])
-        }
-      }
-      this.contributors = cleared
-    })
+    this.$store.dispatch(REGLAMENTS.REGLAMENT_REQUEST, this.reglament.uid)
+    this.$store.dispatch(REGLAMENTS.GET_USERS_REGLAMENT_ANSWERS, this.reglament.uid)
     try {
       if (!this.isEditing) {
         document.querySelector('div.ql-toolbar').remove()
@@ -345,107 +336,28 @@ export default {
       this.isEditing = false
       this.isTesting = false
       // обнуляем значение selected
-      for (let i = 0; i < this.questions.length; i++) {
-        for (let j = 0; j < this.questions[i].answers.length; j++) {
-          if (this.questions[i].answers[j].selected) {
-            this.questions[i].answers[j].selected = false
-          }
-        }
-      }
+      this.$store.commit(REGLAMENTS.REGLAMENT_RESTORE_SELECTED)
     },
     updateQuestionName (data) {
-      for (let i = 0; i < this.questions.length; i++) {
-        if (this.questions[i].uid === data.uid) {
-          this.questions[i].name = data.name
-          return
-        }
-      }
+      this.$store.commit(REGLAMENTS.REGLAMENT_UPDATE_QUESTION_NAME, data)
     },
     gotoNode (uid) {
       this.$refs[uid][0].onFocus()
     },
     deleteAnswer (uid) {
-      for (let i = 0; i < this.questions.length; i++) {
-        for (let j = 0; j < this.questions[i].answers.length; j++) {
-          if (this.questions[i].answers[j].uid === uid) {
-            this.questions[i].answers.splice(j, 1)
-            return
-          }
-        }
-      }
+      this.$store.commit(REGLAMENTS.REGLAMENT_DELETE_ANSWER, uid)
     },
     pushAnswer (data) {
-      for (let i = 0; i < this.questions.length; i++) {
-        if (this.questions[i].uid === data.uid_question) {
-          if (!this.questions[i].answers) {
-            this.questions[i].answers = []
-          }
-          this.questions[i].answers.push(data)
-          return
-        }
-      }
+      this.$store.commit(REGLAMENTS.REGLAMENT_PUSH_ANSWER, data)
     },
     updateAnswerName (data) {
-      for (let i = 0; i < this.questions.length; i++) {
-        for (let j = 0; j < this.questions[i].answers.length; j++) {
-          if (this.questions[i].answers[j].uid === data.uid) {
-            this.questions[i].answers[j] = data
-          }
-        }
-      }
+      this.$store.commit(REGLAMENTS.REGLAMENT_UPDATE_ANSWER_NAME, data)
     },
     selectAnswer (data) {
-      let rightAnswers = 0
-      // считаем кол-во правильных ответов в вопросе и решаем, что будем делать дальше
-      for (let i = 0; i < this.questions.length; i++) {
-        // ищем вопрос, который мы выбрали, а потом проверяем считаем ответы
-        if (this.questions[i].uid === data[0].uid_question) {
-          for (let j = 0; j < this.questions[i].answers.length; j++) {
-            if (this.questions[i].answers[j].is_right) {
-              rightAnswers++
-            }
-          }
-        }
-      }
-      // запускаем логику для одного вопроса
-      if (rightAnswers === 1) {
-        for (let i = 0; i < this.questions.length; i++) {
-          if (this.questions[i].uid === data[0].uid_question) {
-            for (let j = 0; j < this.questions[i].answers.length; j++) {
-              // убираем selected с предыдущего вопроса
-              if (this.questions[i].answers[j].selected && (this.questions[i].answers[j].uid !== data[0].uid)) {
-                this.questions[i].answers[j].selected = false
-              }
-              // ставим selected новому вопросу
-              if (!this.questions[i].answers[j].selected && (this.questions[i].answers[j].uid === data[0].uid)) {
-                this.questions[i].answers[j].selected = true
-              } else {
-                this.questions[i].answers[j].selected = false
-              }
-            }
-          }
-        }
-      } else {
-        // выделяет/развыделяет множество ответов
-        for (let i = 0; i < this.questions.length; i++) {
-          for (let j = 0; j < this.questions[i].answers.length; j++) {
-            if (this.questions[i].answers[j].uid === data[0].uid) {
-              this.questions[i].answers[j].selected = data[1]
-              return
-            }
-          }
-        }
-      }
+      this.$store.commit(REGLAMENTS.REGLAMENT_SELECT_ANSWER, data)
     },
     setRightAnswer (data) {
-      for (let i = 0; i < this.questions.length; i++) {
-        for (let j = 0; j < this.questions[i].answers.length; j++) {
-          if (this.questions[i].answers[j].uid === data.uid) {
-            this.questions[i].answers[j] = data
-            return
-          }
-        }
-      }
+      this.$store.commit(REGLAMENTS.REGLAMENT_SET_RIGHT_ANSWER, data)
     },
     onAddQuestion () {
       const question = {
@@ -468,7 +380,7 @@ export default {
           ]
         }
 
-        this.questions.push(questionToPush)
+        this.$store.commit(REGLAMENTS.REGLAMENT_PUSH_QUESTION, questionToPush)
         this.$nextTick(() => {
           this.gotoNode(questionToPush.uid)
         })
@@ -477,11 +389,7 @@ export default {
     onDeleteQuestion (uid) {
       this.$store.dispatch('DELETE_REGLAMENT_QUESTION_REQUEST', uid).then(() => {
         this.showDeleteQuestion = false
-        for (let i = 0; i < this.questions.length; i++) {
-          if (this.questions[i].uid === uid) {
-            this.questions.splice(i, 1)
-          }
-        }
+        this.$store.commit(REGLAMENTS.REGLAMENT_DELETE_QUESTION, uid)
       })
     },
     setEdit () {
