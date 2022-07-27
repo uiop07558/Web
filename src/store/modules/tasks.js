@@ -12,6 +12,16 @@ import { PUSH_COLOR } from '../actions/colors'
 import { NAVIGATOR_UPDATE_ASSIGNMENTS } from '../actions/navigator'
 import * as TASK from '../actions/tasks'
 
+const getDefaultState = () => {
+  return {
+    navigator: false,
+    status: '',
+    computedNavigator: false,
+    hasLoadedOnce: false,
+    menu: []
+  }
+}
+
 function arrayRemove (arr, value) {
   return arr.filter(function (ele) {
     return ele !== value
@@ -1426,6 +1436,9 @@ const mutations = {
   },
   [TASK.SELECT_TAG]: (state, tag) => {
     state.selectedTag = tag
+  },
+  [TASK.RESET_STATE_TASKS]: (state) => {
+    Object.assign(state, getDefaultState())
   },
   [TASK.CHANGE_TASK_COMMENT]: (state, data) => {
     state.comment.push(data.value)
