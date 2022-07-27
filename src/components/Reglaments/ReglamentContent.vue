@@ -81,7 +81,7 @@
       v-if="!isTesting"
       :title="reglament?.name ?? ''"
       :creator="reglament?.email_creator ?? ''"
-      :editors="editors"
+      :editors="currentEditors"
       :contributors="contributors"
     />
     <QuillEditor
@@ -212,7 +212,6 @@ export default {
       showEditLimit: false,
       questions: [],
       contributors: [],
-      editors: [],
       isTesting: false,
       saveContentStatus: 1, // 1 - is saved, 2 error, 0 request processing
       showCompleteMessage: false,
@@ -222,6 +221,9 @@ export default {
     }
   },
   computed: {
+    currentEditors () {
+      return this.reglament.editors
+    },
     needStartEdit () {
       return this.reglament?.needStartEdit ?? false
     },
@@ -258,7 +260,7 @@ export default {
     usersCanAddToAccess () {
       const users = []
       const employees = Object.values(this.$store.state.employees.employees)
-      const editors = this.editors || {}
+      const editors = this.currentEditors || {}
       for (const emp of employees) {
         if (editors[emp.uid] === undefined && emp.email !== this.reglament.email_creator) {
           users.push({
@@ -366,7 +368,7 @@ export default {
       }
     },
     pushAnswer (data) {
-      console.log(this.reglament.editors)
+      console.log(this.currentEditors)
       for (let i = 0; i < this.questions.length; i++) {
         if (this.questions[i].uid === data.uid_question) {
           if (!this.questions[i].answers) {
@@ -526,17 +528,17 @@ export default {
       })
     },
     addReglamentEditor (email) {
-      for (let i = 0; i < this.editors.length; i++) {
-        if (this.editors[i] === email) {
-          this.editors.splice(i, 1)
+      for (let i = 0; i < this.currentEditors.length; i++) {
+        if (this.currentEditors[i] === email) {
+          this.currentEditors.splice(i, 1)
           return
         }
       }
-      this.editors.push(email)
-      console.log(this.editors)
+      this.currentEditors.push(email)
+      console.log(this.currentEditors)
     },
     checkEditor (email) {
-      return this.editors.includes(email)
+      return this.currentEditors.includes(email)
     },
     startTheReglament () {
       if (this.user.tarif !== 'alpha') {
@@ -549,3 +551,5 @@ export default {
   }
 }
 </script>
+<style scoped>
+</style>
