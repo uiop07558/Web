@@ -34,17 +34,13 @@ export default {
   },
   computed: {
     canEdit () {
-      return this.$store.state.greedSource?.email_creator === this.$store.state.user.user.current_user_email || this.editorsCanEdit()
+      return this.$store.state.greedSource?.email_creator === this.$store.state.user.user.current_user_email || this.editorsCanEdit
+    },
+    editorsCanEdit () {
+      return this.reglament.editors.includes(this.$store.state.user.user.current_user_email)
     }
   },
   methods: {
-    editorsCanEdit () {
-      for (let i = 0; i < this.reglament.editors.length; i++) {
-        if (this.reglament.editors[i] === this.$store.state.user.user.current_user_email) {
-          return true
-        }
-      }
-    },
     gotoNode (uid) {
       this.$refs[uid][0].onFocus()
     },
