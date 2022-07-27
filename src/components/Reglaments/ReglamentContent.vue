@@ -228,7 +228,7 @@ export default {
       return this.reglament?.needStartEdit ?? false
     },
     canEdit () {
-      return this.reglament?.email_creator === this.user.current_user_email || this.editorsCanEdit
+      return (this.reglament?.email_creator === this.user.current_user_email) || this.editorsCanEdit
     },
     user () {
       return this.$store.state.user.user
