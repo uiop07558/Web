@@ -543,7 +543,7 @@ export default {
       this.currentEditors.push(email)
     },
     checkEditor (email) {
-      return this.currentEditors.includes(email)
+      return this.currentEditors?.includes(email)
     },
     startTheReglament () {
       if (this.user.tarif !== 'alpha') {
