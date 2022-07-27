@@ -1,4 +1,3 @@
-// icons for navigator
 import axios from 'axios'
 import { PUSH_BOARD } from '../actions/boards'
 import { PUSH_COLOR, PUSH_MYCOLOR } from '../actions/colors'
@@ -47,12 +46,6 @@ function getAllMembersByDepartmentUID (emps, departmentUID) {
   }
   return employeesStuck
 }
-
-// function arrayRemove (arr, value) {
-//   return arr.filter(function (ele) {
-//     return ele.uid !== value.uid
-//   })
-// }
 
 const state = getDefaultState()
 
@@ -152,7 +145,6 @@ const actions = {
             const myTags = []
             visitChildren(resp.data.tags.items, (value) => {
               // TODO: how to remove children without hurt actual data?
-              // if (value.children) value.children = []
               value.global_property_uid = resp.data.tags.uid
               myTags.push(value)
             })
