@@ -2,7 +2,7 @@ import axios from 'axios'
 import * as REGLAMENTS from '../actions/reglaments'
 
 const state = {
-  reglaments: [],
+  reglaments: {},
   reglamentQuestions: [], // вопросы по текущему регламенту
   contributors: [] // сотрудники, прошедшие текущий регламент
 }
@@ -274,7 +274,7 @@ const mutations = {
   },
   [REGLAMENTS.REGLAMENT_CHANGE_REGLAMENTS]: (state, reglaments) => {
     for (const reglament of reglaments) {
-      state.reglaments.push(reglament)
+      state.reglaments[reglament.uid] = reglament
     }
   },
   RemoveReglamentByUid: (state, reglamentUid) => {

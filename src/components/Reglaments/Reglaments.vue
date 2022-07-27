@@ -133,9 +133,7 @@ export default {
     },
     reglaments () {
       const currentUserEmail = this.user.current_user_email.toLowerCase()
-      // const unsorted = this.$store.state.reglaments.reglaments
-      // общий список регламентов, ещё используется items, нужен рефакторинг
-      const reglaments = [] // this.$store.state.reglaments.reglaments
+      const reglaments = []
       const myItems = this.items.filter(reglament => reglament.email_creator.toLowerCase() === currentUserEmail)
       const otherItems = this.items.filter(reglament => reglament.email_creator.toLowerCase() !== currentUserEmail)
       reglaments.push({
