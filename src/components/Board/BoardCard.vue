@@ -398,7 +398,7 @@ export default {
       return this.employeesByEmail[userEmail.toLowerCase()]?.fotolink ?? ''
     },
     getEmpNameByEmail (userEmail) {
-      return this.employeesByEmail[userEmail.toLowerCase()]?.name ?? userEmail
+      return this.employeesByEmail[userEmail.toLowerCase()]?.name || userEmail
     },
     lockVisibility (cardUid) {
       const icon = this.$refs[`card-icon-${cardUid}`]
