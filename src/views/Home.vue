@@ -298,19 +298,19 @@ export default {
       if (this.$store.state.auth.token) {
         if (this.navStack.length && this.navStack.length > 0) {
           if (this.navStack[this.navStack.length - 1].key === 'taskListSource') {
-            const action = UID_TO_ACTION[this.navStack[this.navStack.length - 1].uid]
+            const action = UID_TO_ACTION[this.navStack[this.navStack.length - 1].value.uid]
             if (!action) {
               console.error('UID_TO_ACTION in undefined', this.navStack[this.navStack.length - 1].uid)
               return
             }
-            this.$store.dispatch(action, this.navStack[this.navStack.length - 1].param)
+            this.$store.dispatch(action, this.navStack[this.navStack.length - 1].value.param)
             this.$store.commit('basic', {
               key: 'mainSectionState',
               value: 'tasks'
             })
             this.$store.commit('basic', {
               key: this.navStack[this.navStack.length - 1].key,
-              value: this.navStack[this.navStack.length - 1]
+              value: this.navStack[this.navStack.length - 1].value
             })
           }
         } else {
