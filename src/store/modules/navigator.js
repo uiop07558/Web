@@ -166,7 +166,7 @@ const actions = {
   },
   [PATCH_SETTINGS]: ({ commit, dispatch }, settings) => {
     return new Promise((resolve, reject) => {
-      commit(NAVIGATOR_REQUEST)
+      dispatch(NAVIGATOR_REQUEST)
       const url = process.env.VUE_APP_LEADERTASK_API + 'api/v1/settings/all'
       axios({ url: url, method: 'PATCH', data: settings })
         .then((resp) => {
