@@ -687,7 +687,6 @@ export default {
 
       this.dragCardParam.move.column = fromColumn
       this.dragCardParam.move.card = card
-      console.log(this.dragCardParam.move)
     },
     endDragCard (end) {
       if (this.dragCardParam?.change?.length) {
