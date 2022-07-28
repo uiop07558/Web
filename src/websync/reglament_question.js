@@ -19,10 +19,7 @@ export function createReglamentQuestion (obj) {
 }
 
 export function deleteReglamentQuestion (obj) {
-  const lastNavStack = store.getters.lastNavStackElement
-  if (shouldDoAnything(lastNavStack, obj.obj.uid_reglament)) {
-    store.commit(REGLAMENT.REGLAMENT_DELETE_QUESTION, obj.obj) // second param is question uuid
-  }
+  store.commit(REGLAMENT.REGLAMENT_DELETE_QUESTION, obj.obj) // second param is question uuid
 }
 
 export function updateReglamentQuestion (obj) {
