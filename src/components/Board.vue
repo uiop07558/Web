@@ -440,7 +440,8 @@ export default {
       // скрываем архив
       if (column.Archive) return false
       // скрываем пустое неразобранное
-      if (column.Unsorted && column.cards.length === 0 && !this.dragCardParam) return false
+      const isDragCardFromUnsortedNow = this.dragCardParam?.move?.column?.Unsorted ?? false
+      if (column.Unsorted && column.cards.length === 0 && !isDragCardFromUnsortedNow) return false
       return true
     },
     totalItem (cards) {
@@ -686,6 +687,7 @@ export default {
 
       this.dragCardParam.move.column = fromColumn
       this.dragCardParam.move.card = card
+      console.log(this.dragCardParam.move)
     },
     endDragCard (end) {
       if (this.dragCardParam?.change?.length) {
