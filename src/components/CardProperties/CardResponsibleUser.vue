@@ -113,7 +113,7 @@ export default {
   emits: ['changeResponsible'],
   computed: {
     userName () {
-      return (this.employeesByEmail[this.responsible.toLowerCase()]?.name || this.employeesByEmail[this.responsible.toLowerCase()]?.email) ?? this.responsible
+      return (this.employeesByEmail[this.responsible.toLowerCase()]?.name || this.responsible
     },
     userPhoto () {
       return this.employeesByEmail[this.responsible.toLowerCase()]?.fotolink ?? ''
