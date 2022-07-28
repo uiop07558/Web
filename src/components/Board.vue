@@ -677,7 +677,7 @@ export default {
           willInsertAfter: true
         }
       }
-      //
+
       const fromColumnId = start.from.dataset.columnId
       const fromColumn = this.storeCards.find(
         (column) => column.UID === fromColumnId
