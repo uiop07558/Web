@@ -41,7 +41,7 @@
       <div
         v-if="!readOnly"
         :ref="`card-icon-${card.uid}`"
-        class="flex-none h-[18px] w-[18px] cursor-pointer invisible group-hover:visible"
+        class="flex-none h-[18px] w-[18px] overflow-hidden cursor-pointer invisible group-hover:visible"
         @click.stop=""
       >
         <PopMenu
