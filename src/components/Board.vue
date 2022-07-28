@@ -211,7 +211,7 @@
               :delay="80"
               :touch-start-threshold="10"
               :animation="100"
-              :disabled="!board || board.type_access === 0"
+              :disabled="!board || board.type_access === 0 || isFiltered"
               :move="checkMoveDragCard"
               :scroll-sensitivity="100"
               :force-fallback="true"
@@ -238,7 +238,7 @@
           </div>
           <!--кнопка добавить карточку -->
           <div
-            v-if="column.AddCard && !showOnlyMyCreatedCards && !showOnlyCardsWithNoResponsible && !showOnlyCardsWhereIAmResponsible && !showOnlySearchText"
+            v-if="column.AddCard && !isFiltered"
             class="mt-2 h-[40px]"
           >
             <button
@@ -402,6 +402,9 @@ export default {
     },
     isPropertiesMobileExpanded () {
       return this.$store.state.isPropertiesMobileExpanded
+    },
+    isFiltered () {
+      return this.showOnlyMyCreatedCards || this.showOnlyCardsWithNoResponsible || this.showOnlyCardsWhereIAmResponsible || this.showOnlySearchText
     }
   },
   watch: {
