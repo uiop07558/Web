@@ -303,14 +303,14 @@ export default {
               console.error('UID_TO_ACTION in undefined', this.navStack[this.navStack.length - 1].uid)
               return
             }
-            this.$store.dispatch(action, this.navStack[this.navStack.length - 1].param)
+            this.$store.dispatch(action, this.navStack[this.navStack.length - 1].value.param)
             this.$store.commit('basic', {
               key: 'mainSectionState',
               value: 'tasks'
             })
             this.$store.commit('basic', {
               key: this.navStack[this.navStack.length - 1].key,
-              value: this.navStack[this.navStack.length - 1]
+              value: this.navStack[this.navStack.length - 1].value
             })
           }
         } else {
