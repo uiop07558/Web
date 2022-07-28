@@ -440,7 +440,7 @@ export default {
       // скрываем архив
       if (column.Archive) return false
       // скрываем пустое неразобранное
-      if (column.Unsorted && column.cards.length === 0) return false
+      if (column.Unsorted && column.cards.length === 0 && !this.dragCardParam) return false
       return true
     },
     totalItem (cards) {
