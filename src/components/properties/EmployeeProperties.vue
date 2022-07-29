@@ -116,7 +116,7 @@
       v-if="openedReglaments.length"
       class="mt-[30px] font-roboto text-[16px] leading-[19px] font-medium text-[#4c4c4d]"
     >
-      Доступные регламенты
+      Регламенты отдела
     </div>
     <div
       v-if="openedReglaments.length"
@@ -154,8 +154,8 @@
 import * as EMPLOYEE from '@/store/actions/employees'
 import { NAVIGATOR_REMOVE_EMPLOYEE } from '@/store/actions/navigator'
 import ModalBoxDelete from '@/components/Common/ModalBoxDelete.vue'
-import PopMenu from '@/components/modals/PopMenu.vue'
-import PopMenuItem from '@/components/modals/PopMenuItem.vue'
+import PopMenu from '@/components/Common/PopMenu.vue'
+import PopMenuItem from '@/components/Common/PopMenuItem.vue'
 import PropsButtonClose from '@/components/Common/PropsButtonClose.vue'
 import PropsButtonMenu from '@/components/Common/PropsButtonMenu.vue'
 
@@ -249,15 +249,20 @@ export default {
       return deps
     },
     openedReglaments () {
+      const employees = this.$store.state.employees.employees
+      const user = this.$store.state.user.user
+      const userType = employees[user.current_user_uid].type
+      const userAdmin = userType === 1 || userType === 2
+      if (!userAdmin) return []
+      //
       const reglaments = this.$store.getters.reglamentsList
-      // здесь сделать фильтрацию доступных этому пользователю
-      // регламентов (по уиду отдела или общие)
-      // сейчас доступны все - по этому тут ничего не делаем
-      return reglaments
+      const dep = this.$store.state.departments.deps[this.selectedEmployee?.uid_dep]
+      const depUid = dep?.uid
+      return reglaments.filter(reg => reg.department_uid === depUid)
     },
     passedReglaments () {
       return this.openedReglaments.reduce((acc, reglament) => {
-        if (reglament.passed.includes(this.selectedEmployeeUid)) acc[reglament.uid] = reglament
+        if (reglament.passed?.includes(this.selectedEmployeeUid)) acc[reglament.uid] = reglament
         return acc
       }, {})
     }
