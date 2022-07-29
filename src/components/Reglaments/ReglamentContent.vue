@@ -40,7 +40,7 @@
             <PopMenuItem
               @click="currDep = ''"
             >
-              Доступно для всех отделов
+              Общий для всех отделов
             </PopMenuItem>
             <PopMenuItem
               v-for="dep in allDepartments"
@@ -334,7 +334,7 @@ export default {
     },
     currDepTitle () {
       const dep = this.$store.state.departments.deps[this.currDep]
-      return dep?.name || 'Доступно для всех отделов'
+      return dep?.name || 'Общий для всех отделов'
     },
     allDepartments () {
       const deps = Object.values(this.$store.state.departments.deps)

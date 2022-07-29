@@ -99,7 +99,7 @@ export default {
     },
     departmentTitle () {
       const dep = this.$store.state.departments.deps[this.department]
-      return dep?.name || 'Доступно для всех отделов'
+      return dep?.name || 'Общий для всех отделов'
     }
   },
   methods: {
