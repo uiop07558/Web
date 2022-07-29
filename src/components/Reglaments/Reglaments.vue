@@ -78,6 +78,15 @@
         />
       </div>
     </div>
+    <div
+      v-if="currentUserIsAdmin"
+      class="flex items-center w-full my-[28px] text-[#7e7e80] hover:text-[#424242] cursor-pointer"
+      @click.stop="clickShowAll"
+    >
+      <p class="font-roboto text-[17px] leading-[22px]">
+        {{ showAllReglaments ? 'Показать только доступные' : 'Показать все регламенты' }}
+      </p>
+    </div>
   </div>
   <EmptyTasksListPics v-if="isEmpty" />
 </template>
@@ -117,7 +126,9 @@ export default {
   data () {
     return {
       showAddReglament: false,
+      addReglamentDepartment: '',
       showAddLimit: false,
+      showAllReglaments: false,
       gridView,
       listView
     }
@@ -135,6 +146,11 @@ export default {
     },
     user () {
       return this.$store.state.user.user
+    },
+    currentUserIsAdmin () {
+      const employees = this.$store.state.employees.employees
+      const userType = employees[this.user.current_user_uid]?.type ?? 0
+      return userType === 1 || userType === 2
     },
     allDepartments () {
       const deps = Object.values(this.$store.state.departments.deps)
@@ -194,7 +210,8 @@ export default {
           common.items.push(item)
         }
       }
-      return reglaments
+      if (this.showAllReglaments) return reglaments
+      return reglaments.filter(reg => reg.is_my_dep)
     }
   },
   created () {
@@ -234,14 +251,20 @@ export default {
         ).toString(16)
       )
     },
-    clickAddReglament () {
+    clickShowAll () {
+      this.showAllReglaments = !this.showAllReglaments
+    },
+    clickAddReglament (uid) {
       if (this.user.tarif !== 'alpha' && this.user.tarif !== 'trial') {
         this.showAddLimit = true
         return
       }
+      this.addReglamentDepartment = uid
       this.showAddReglament = true
     },
     onAddNewReglament (name) {
+      const departmentUid = this.addReglamentDepartment
+      this.addReglamentDepartment = ''
       this.showAddReglament = false
       const title = name.trim()
       if (title) {
@@ -252,6 +275,7 @@ export default {
           email_creator: this.user.current_user_email,
           name: title,
           content: '',
+          department_uid: departmentUid,
           uid: this.uuidv4()
         }
 
