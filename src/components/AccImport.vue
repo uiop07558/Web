@@ -44,18 +44,19 @@ export default {
       }
     },
     parseFile () {
-      this.addBitrixProject()
-
       const lines = this.fileString.split('\n')
 
       this.progressIterationsTotal = lines.length - 2
 
       const headerLine = lines[0].split(';')
-      if (headerLine.length !== 20 && headerLine[19] && (headerLine[0] === 'TITLE' || headerLine[0] === 'Название')) {
+      console.log(headerLine)
+      if (headerLine.length !== 20 || !headerLine[19] || (headerLine[0] !== 'TITLE' && headerLine[0] !== 'Название')) {
         this.showProgress = false
         this.error = 'Некорректный файл'
         return
       }
+
+      this.addBitrixProject()
 
       for (let i = 1; i < (lines.length - 1); i++) {
         this.currentAction = 'Создается задача'
