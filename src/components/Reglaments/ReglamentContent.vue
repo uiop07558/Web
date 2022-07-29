@@ -347,7 +347,12 @@ export default {
         if (item1.name < item2.name) return -1
         return 0
       })
-      return deps
+      if (this.showAllReglaments) return deps
+      const currentUserEmail = this.$store.state.user.user.current_user_email.toLowerCase()
+      return deps.filter(dep => dep.emails.find(email => email.toLowerCase() === currentUserEmail))
+    },
+    showAllReglaments () {
+      return this.$store.state.reglaments.showAll
     }
   },
   watch: {
