@@ -208,8 +208,6 @@
               ghost-class="ghost-card"
               item-key="uid"
               group="cards"
-              :delay="80"
-              :touch-start-threshold="10"
               :animation="100"
               :disabled="!board || board.type_access === 0 || isFiltered"
               :move="checkMoveDragCard"
