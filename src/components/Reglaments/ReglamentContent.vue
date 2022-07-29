@@ -433,24 +433,25 @@ export default {
         name: '',
         uid_reglament: this.currReglament.uid
       }
+      const answer = {
+        uid: this.uuidv4(),
+        uid_question: question.uid,
+        name: '',
+        is_right: 0
+      }
       this.$store.dispatch('CREATE_REGLAMENT_QUESTION_REQUEST', question).then(() => {
-        const questionToPush = {
-          uid: question.uid,
-          name: question.name,
-          uid_reglament: question.uid_reglament,
-          answers: [
-            {
-              uid: this.uuidv4(),
-              uid_question: question.uid,
-              name: '',
-              is_right: 0
-            }
-          ]
-        }
+        this.$store.dispatch('CREATE_REGLAMENT_ANSWER_REQUEST', answer).then(() => {
+          const questionToPush = {
+            uid: question.uid,
+            name: question.name,
+            uid_reglament: question.uid_reglament,
+            answers: [answer]
+          }
 
-        this.$store.commit(REGLAMENTS.REGLAMENT_PUSH_QUESTION, questionToPush)
-        this.$nextTick(() => {
-          this.gotoNode(questionToPush.uid)
+          this.$store.commit(REGLAMENTS.REGLAMENT_PUSH_QUESTION, questionToPush)
+          this.$nextTick(() => {
+            this.gotoNode(questionToPush.uid)
+          })
         })
       })
     },
