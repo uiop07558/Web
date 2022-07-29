@@ -49,7 +49,6 @@ export default {
       this.progressIterationsTotal = lines.length - 2
 
       const headerLine = lines[0].split(';')
-      console.log(headerLine)
       if (headerLine.length !== 20 || !headerLine[19] || (headerLine[0] !== 'TITLE' && headerLine[0] !== 'Название')) {
         this.showProgress = false
         this.error = 'Некорректный файл'
