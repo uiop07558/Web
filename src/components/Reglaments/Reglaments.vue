@@ -128,7 +128,6 @@ export default {
       showAddReglament: false,
       addReglamentDepartment: '',
       showAddLimit: false,
-      showAllReglaments: false,
       gridView,
       listView
     }
@@ -212,6 +211,9 @@ export default {
       }
       if (this.showAllReglaments) return reglaments
       return reglaments.filter(reg => reg.is_my_dep)
+    },
+    showAllReglaments () {
+      return this.$store.state.reglaments.showAll
     }
   },
   created () {
@@ -252,7 +254,7 @@ export default {
       )
     },
     clickShowAll () {
-      this.showAllReglaments = !this.showAllReglaments
+      this.$store.state.reglaments.showAll = !this.showAllReglaments
     },
     clickAddReglament (uid) {
       if (this.user.tarif !== 'alpha' && this.user.tarif !== 'trial') {
