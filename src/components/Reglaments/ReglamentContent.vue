@@ -416,7 +416,7 @@ export default {
       })
     },
     setEdit () {
-      if (this.user.tarif !== 'alpha') {
+      if (this.user.tarif !== 'alpha' && this.user.tarif !== 'trial') {
         this.showEditLimit = true
         return
       }
@@ -479,7 +479,7 @@ export default {
       return this.currEditors.includes(email)
     },
     startTheReglament () {
-      if (this.user.tarif !== 'alpha') {
+      if (this.user.tarif !== 'alpha' && this.user.tarif !== 'trial') {
         this.showTestLimit = true
         return
       }
