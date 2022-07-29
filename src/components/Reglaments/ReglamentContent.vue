@@ -85,6 +85,7 @@
       :creator="reglamentCreatorEmail"
       :editors="reglamentEditors"
       :contributors="contributors"
+      :department="reglamentDep"
     />
     <QuillEditor
       v-if="reglamentContent.length && !isTesting"
@@ -237,6 +238,9 @@ export default {
     },
     reglamentCreatorEmail () {
       return this.currReglament?.email_creator ?? ''
+    },
+    reglamentDep () {
+      return this.currReglament?.department_uid ?? ''
     },
     reglamentEditors () {
       return this.currReglament?.editors ?? []
