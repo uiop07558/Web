@@ -725,6 +725,9 @@ export default {
           newOrder
         )
       }
+      if (this.dragCardParam?.change?.length === 0 && this.dragCardParam?.move?.card) {
+        this.selectCard(this.dragCardParam?.move?.card)
+      }
       this.dragCardParam = null
     },
     changeDragCard (change) {
