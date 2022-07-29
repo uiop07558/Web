@@ -1,6 +1,6 @@
 <template>
   <div
-    class="bg-white py-6 px-5 rounded-lg flex justify-between"
+    class="flex justify-between"
     :style="{ borderColor: colors[task.uid_marker] ? colors[task.uid_marker].back_color : ''}"
     :class="{
       'bg-gray-200 dark:bg-gray-800':
@@ -8,7 +8,7 @@
         task.uid_marker !== '00000000-0000-0000-0000-000000000000'
     }"
   >
-    <div class="w-5/6">
+    <div class="py-6 px-5 w-5/6 bg-white rounded-lg">
       <div
         class="flex justify-between items-center mb-6 p-2 rounded-[8px]"
         :style="{ backgroundColor: colors[task.uid_marker] ? colors[task.uid_marker].back_color : '', color: getValidForeColor(colors[task.uid_marker]?.fore_color) }"
@@ -222,10 +222,10 @@
       </div>
     </div>
     <!-- accept/redo/decline -->
-    <div>
+    <div class="mr-2">
       <div
         v-if="task"
-        class="flex flex-col min-w-[200px] items-end"
+        class="flex flex-col min-w-[200px] items-center"
       >
         <!-- accept -->
         <button
@@ -248,7 +248,7 @@
         <!-- redo -->
         <button
           v-if="task.uid_customer === user.current_user_uid || task.uid_performer === user.current_user_uid"
-          class="flex py-0.5 items-center justify-center text-sm bg-gray-100 w-[181px] hover:bg-red-200 hover:border hover:border-red-300 min-h-[40px] hover:bg-opacity-90 font-medium rounded-lg hover:text-red-500 mb-2 hover:animate-fadeIn"
+          class="flex py-0.5 items-center justify-center text-sm bg-white w-[181px] hover:bg-red-200 hover:border hover:border-red-300 min-h-[40px] hover:bg-opacity-90 font-medium rounded-lg hover:text-red-500 mb-2 hover:animate-fadeIn"
           @click="reDo"
         >
           <span
@@ -266,7 +266,7 @@
         <!-- decline -->
         <button
           v-if="task.uid_customer === user.current_user_uid || task.uid_performer === user.current_user_uid"
-          class="flex py-0.5 w-[181px] justify-center items-center text-sm bg-gray-100 hover:bg-gray-50 hover:border hover:border-gray-500 hover:bg-opacity-90 font-medium min-h-[40px] rounded-lg mb-2 hover:animate-fadeIn"
+          class="flex py-0.5 w-[181px] justify-center items-center text-sm bg-white hover:bg-gray-50 hover:border hover:border-gray-500 hover:bg-opacity-90 font-medium min-h-[40px] rounded-lg mb-2 hover:animate-fadeIn"
           @click="decline"
         >
           <span class="ml-8 w-[70px]">Отложить</span>
@@ -290,7 +290,7 @@
         <!-- Change access -->
         <button
           v-if="task.status !== 3 && (task.type !== 4 || task.emails.includes(user.current_user_email)) && task.uid_customer !== user.current_user_uid && task.uid_performer !== user.current_user_uid"
-          class="flex py-0.5 items-center justify-center text-sm bg-gray-100 w-[181px] hover:bg-red-200 hover:border hover:border-red-300 min-h-[40px] hover:bg-opacity-90 font-medium rounded-lg hover:text-red-500 mb-2 hover:animate-fadeIn"
+          class="flex py-0.5 items-center justify-center text-sm bg-white w-[181px] hover:bg-red-200 hover:border hover:border-red-300 min-h-[40px] hover:bg-opacity-90 font-medium rounded-lg hover:text-red-500 mb-2 hover:animate-fadeIn"
           @click="() => onChangeAccess(task.emails)"
         >
           <span

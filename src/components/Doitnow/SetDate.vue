@@ -258,7 +258,7 @@
       </div>
     </template>
     <a
-      class="group flex items-center justify-center text-sm bg-gray-100 hover:bg-gray-50 hover:border hover:border-gray-500 hover:bg-opacity-90 font-medium min-h-[40px] w-[181px] rounded-lg mb-2 hover:animate-fadeIn"
+      class="group flex items-center justify-center text-sm bg-white hover:bg-gray-50 hover:border hover:border-gray-500 hover:bg-opacity-90 font-medium min-h-[40px] w-[181px] rounded-lg mb-2 hover:animate-fadeIn"
     >
       <span
         v-if="dateText !== ''"
