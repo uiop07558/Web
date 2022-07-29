@@ -208,9 +208,13 @@
               ghost-class="ghost-card"
               item-key="uid"
               group="cards"
+              :delay="80"
+              :touch-start-threshold="10"
               :animation="100"
-              :disabled="!board || board.type_access === 0"
+              :disabled="!board || board.type_access === 0 || isFiltered"
               :move="checkMoveDragCard"
+              :scroll-sensitivity="100"
+              :force-fallback="true"
               @start="startDragCard"
               @end="endDragCard"
               @change="changeDragCard"
@@ -234,7 +238,7 @@
           </div>
           <!--кнопка добавить карточку -->
           <div
-            v-if="column.AddCard && !showOnlyMyCreatedCards && !showOnlyCardsWhereIAmResponsible && !showOnlySearchText"
+            v-if="column.AddCard && !isFiltered"
             class="mt-2 h-[40px]"
           >
             <button
@@ -387,6 +391,9 @@ export default {
     showOnlyCardsWhereIAmResponsible () {
       return this.$store.state.boards.showOnlyCardsWhereIAmResponsible
     },
+    showOnlyCardsWithNoResponsible () {
+      return this.$store.state.boards.showOnlyCardsWithNoResponsible
+    },
     showOnlyMyCreatedCards () {
       return this.$store.state.boards.showOnlyMyCreatedCards
     },
@@ -395,6 +402,9 @@ export default {
     },
     isPropertiesMobileExpanded () {
       return this.$store.state.isPropertiesMobileExpanded
+    },
+    isFiltered () {
+      return this.showOnlyMyCreatedCards || this.showOnlyCardsWithNoResponsible || this.showOnlyCardsWhereIAmResponsible || this.showOnlySearchText
     }
   },
   watch: {
@@ -438,7 +448,8 @@ export default {
       // скрываем архив
       if (column.Archive) return false
       // скрываем пустое неразобранное
-      if (column.Unsorted && column.cards.length === 0) return false
+      const isDragCardFromUnsortedNow = this.dragCardParam?.move?.column?.Unsorted ?? false
+      if (column.Unsorted && column.cards.length === 0 && !isDragCardFromUnsortedNow) return false
       return true
     },
     totalItem (cards) {
@@ -468,6 +479,11 @@ export default {
       } else if (this.showOnlyCardsWhereIAmResponsible) {
         const currentUserEmail = this.$store.state.user.user.current_user_email.toLowerCase()
         return column.cards.filter(card => card.user.toLowerCase() === currentUserEmail)
+      } else if (this.showOnlyCardsWithNoResponsible && this.showOnlyMyCreatedCards) {
+        const currentUserEmail = this.$store.state.user.user.current_user_email.toLowerCase()
+        return column.cards.filter(card => !card.user && card.email_creator.toLowerCase() === currentUserEmail)
+      } else if (this.showOnlyCardsWithNoResponsible) {
+        return column.cards.filter(card => !card.user)
       } else if (this.showOnlyMyCreatedCards) {
         const currentUserEmail = this.$store.state.user.user.current_user_email.toLowerCase()
         return column.cards.filter(card => card.email_creator.toLowerCase() === currentUserEmail)
@@ -675,14 +691,13 @@ export default {
           willInsertAfter: true
         }
       }
-      //
+
       const fromColumnId = start.from.dataset.columnId
       const fromColumn = this.storeCards.find(
         (column) => column.UID === fromColumnId
       )
-      // const cardId = start.item.dataset.cardId
       const card = fromColumn?.cards[start.oldIndex] || null
-      //
+
       this.dragCardParam.move.column = fromColumn
       this.dragCardParam.move.card = card
     },

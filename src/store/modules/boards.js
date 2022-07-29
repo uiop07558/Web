@@ -1,6 +1,6 @@
+import { visitChildren } from '@/store/helpers/functions'
 import axios from 'axios'
 import * as BOARD from '../actions/boards'
-import { visitChildren } from '@/store/helpers/functions'
 
 function uuidv4 () {
   return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, (c) =>
@@ -16,20 +16,12 @@ const state = {
   selectedBoard: undefined,
   showArchive: false,
   showOnlyCardsWhereIAmResponsible: false,
+  showOnlyCardsWithNoResponsible: false,
   showOnlyMyCreatedCards: false,
   showOnlySearchText: undefined
 }
 
 const getters = {}
-// const getDefaultState = () => {
-//   return {
-//     boards: false,
-//     status: '',
-//     computedNavigator: false,
-//     hasLoadedOnce: false,
-//     selectedBoard: undefined
-//   }
-// }
 
 const actions = {
   [BOARD.CREATE_BOARD_REQUEST]: ({ commit, dispatch }, data) => {
@@ -196,7 +188,7 @@ const actions = {
         .then((resp) => {
           // В resp.data сервер возвращает всю доску
           // по уму нужно мутировать доску, а не самим пересчитывать
-          // console.log('DELETE_STAGE_BOARD_REQUEST', resp)
+          //
           // удаляем
           board.stages.splice(index, 1)
           // пересчитываем порядок
@@ -294,7 +286,10 @@ const actions = {
 
 const mutations = {
   [BOARD.REMOVE_BOARD_REQUEST]: (state, uid) => {
-    visitChildren([state.boards[uid]], value => (delete state.boards[value.uid]))
+    visitChildren(
+      [state.boards[uid]],
+      (value) => delete state.boards[value.uid]
+    )
     delete state.boards[uid]
   },
   [BOARD.PUSH_BOARD]: (state, boards) => {
@@ -308,8 +303,11 @@ const mutations = {
   [BOARD.SHOW_BOARD_ARCHIVE]: (state, showArchive) => {
     state.showArchive = showArchive
   },
-  [BOARD.SHOW_BOARD_MY_CARDS_WHERE_IAM_RESPONSIBLE]: (state, showCardsWhereIAmResponsible) => {
-    state.showOnlyCardsWhereIAmResponsible = showCardsWhereIAmResponsible
+  [BOARD.SHOW_BOARD_MY_CARDS_WHERE_IAM_RESPONSIBLE]: (state, show) => {
+    state.showOnlyCardsWhereIAmResponsible = show
+  },
+  [BOARD.SHOW_BOARD_CARDS_WITH_NO_RESPONSIBLE]: (state, show) => {
+    state.showOnlyCardsWithNoResponsible = show
   },
   [BOARD.SHOW_BOARD_MY_CREATED_CARDS]: (state, showMyCreatedCards) => {
     state.showOnlyMyCreatedCards = showMyCreatedCards
@@ -320,6 +318,7 @@ const mutations = {
   [BOARD.BOARD_CLEAR_FILTER]: (state) => {
     state.showArchive = false
     state.showOnlyCardsWhereIAmResponsible = false
+    state.showOnlyCardsWithNoResponsible = false
     state.showOnlyMyCreatedCards = false
   }
 }

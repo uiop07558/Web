@@ -69,6 +69,7 @@
       class="mt-3 h-32 break-words"
       :comment="selectedCard?.comment"
       :can-edit="canEdit"
+      @scrollToEnd="scrollToEnd"
       @changeComment="changeComment"
     />
     <!-- Chat skeleton -->
@@ -190,6 +191,9 @@ export default {
     }
   },
   methods: {
+    scrollToEnd () {
+      document.getElementById('aside-right').scrollTo(0, document.getElementById('taskPropsCommentEditor').scrollHeight)
+    },
     onPasteEvent (e) {
       const items = (e.clipboardData || e.originalEvent.clipboardData).items
       for (const index in items) {

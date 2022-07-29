@@ -1,4 +1,3 @@
-// icons for navigator
 import axios from 'axios'
 import { PUSH_BOARD } from '../actions/boards'
 import { PUSH_COLOR, PUSH_MYCOLOR } from '../actions/colors'
@@ -9,24 +8,24 @@ import {
   NAVIGATOR_ERROR,
   NAVIGATOR_PUSH_BOARD,
   NAVIGATOR_PUSH_COLOR,
-  NAVIGATOR_UPDATE_REGLAMENT,
-  NAVIGATOR_PUSH_REGLAMENT,
-  NAVIGATOR_REMOVE_REGLAMENT,
   NAVIGATOR_PUSH_DEPARTAMENT,
   NAVIGATOR_PUSH_EMPLOYEE,
   NAVIGATOR_PUSH_PROJECT,
+  NAVIGATOR_PUSH_REGLAMENT,
   NAVIGATOR_PUSH_TAG,
   NAVIGATOR_REMOVE_BOARD,
   NAVIGATOR_REMOVE_COLOR,
   NAVIGATOR_REMOVE_DEPARTAMENT,
   NAVIGATOR_REMOVE_EMPLOYEE,
   NAVIGATOR_REMOVE_PROJECT,
+  NAVIGATOR_REMOVE_REGLAMENT,
   NAVIGATOR_REMOVE_TAG,
   NAVIGATOR_REQUEST,
   NAVIGATOR_SUCCESS,
   NAVIGATOR_UPDATE_ASSIGNMENTS,
   NAVIGATOR_UPDATE_DEPARTMENT,
   NAVIGATOR_UPDATE_EMPLOYEE,
+  NAVIGATOR_UPDATE_REGLAMENT,
   PATCH_SETTINGS,
   PATCH_SETTINGS_SUCCESS,
   RESET_STATE_NAVIGATOR
@@ -55,12 +54,6 @@ function getAllMembersByDepartmentUID (emps, departmentUID) {
   return employeesStuck
 }
 
-// function arrayRemove (arr, value) {
-//   return arr.filter(function (ele) {
-//     return ele.uid !== value.uid
-//   })
-// }
-
 const state = getDefaultState()
 
 const getters = {
@@ -85,16 +78,6 @@ const actions = {
           if (resp.data.delegate_to_me) {
             for (const dt of resp.data.delegate_to_me.items) {
               dt.parentID = resp.data.delegate_to_me.uid
-            }
-          }
-          if (resp.data.invites) {
-            for (const dt of resp.data.invites.items) {
-              if (!dt.uid_dep) {
-                dt.uid_dep = '00000000-0000-0000-0000-000000000000'
-              }
-              dt.type = 4
-              commit(PUSH_EMPLOYEE, dt)
-              commit(PUSH_EMPLOYEE_BY_EMAIL, dt)
             }
           }
           if (resp.data.emps.items) {
@@ -159,7 +142,6 @@ const actions = {
             const myTags = []
             visitChildren(resp.data.tags.items, (value) => {
               // TODO: how to remove children without hurt actual data?
-              // if (value.children) value.children = []
               value.global_property_uid = resp.data.tags.uid
               myTags.push(value)
             })
@@ -176,7 +158,6 @@ const actions = {
   },
   [PATCH_SETTINGS]: ({ commit, dispatch }, settings) => {
     return new Promise((resolve, reject) => {
-      commit(NAVIGATOR_REQUEST)
       const url = process.env.VUE_APP_LEADERTASK_API + 'api/v1/settings/all'
       axios({ url: url, method: 'PATCH', data: settings })
         .then((resp) => {
@@ -357,7 +338,7 @@ const mutations = {
     resp.data.new_delegate = newAssignments
 
     // Merge emps to deps like new private projects
-    const dataEmps = [...resp.data.emps?.items, ...resp.data.invites?.items]
+    const dataEmps = [...resp.data.emps?.items]
     const newEmps = []
     newEmps.push({
       dep: { uid: '', name: 'Вне отдела' },
@@ -505,7 +486,6 @@ const mutations = {
     )
     const empsOld = state.navigator.new_emps[indexEmpsOld]
     const empsNew = state.navigator.new_emps[indexEmpsNew]
-    console.log('NAVIGATOR_CHANGE_EMPLOYEE_DEPARTMENT', empsOld, empsNew)
     if (empsOld && empsNew && empsOld.dep.uid !== empsNew.dep.uid) {
       // отдел поменялся - перемещаем сотрудника
       const indexEmp = empsOld.items.findIndex((emp) => emp.uid === data.uidEmp)

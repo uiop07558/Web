@@ -12,6 +12,16 @@ import { PUSH_COLOR } from '../actions/colors'
 import { NAVIGATOR_UPDATE_ASSIGNMENTS } from '../actions/navigator'
 import * as TASK from '../actions/tasks'
 
+const getDefaultState = () => {
+  return {
+    navigator: false,
+    status: '',
+    computedNavigator: false,
+    hasLoadedOnce: false,
+    menu: []
+  }
+}
+
 function arrayRemove (arr, value) {
   return arr.filter(function (ele) {
     return ele !== value
@@ -218,7 +228,9 @@ const actions = {
           if (resp.data.anothers_markers.length) {
             commit(PUSH_COLOR, resp.data.anothers_markers)
           }
-          dispatch(TASK.GET_INSPECTABLE_TASKS, { uids: state.newtasks[taskUid]?.children })
+          dispatch(TASK.GET_INSPECTABLE_TASKS, {
+            uids: state.newtasks[taskUid]?.children
+          })
           resolve(resp)
         })
         .catch((err) => {
@@ -485,7 +497,10 @@ const actions = {
         })
     })
   },
-  [TASK.DELEGATED_TO_USER_TASKS_REQUEST]: ({ commit, dispatch, state }, email) => {
+  [TASK.DELEGATED_TO_USER_TASKS_REQUEST]: (
+    { commit, dispatch, state },
+    email
+  ) => {
     return new Promise((resolve, reject) => {
       commit(TASK.TASKS_REQUEST)
       const url =
@@ -1075,8 +1090,7 @@ const actions = {
   },
   [TASK.GET_INSPECTABLE_TASKS]: ({ commit, dispatch }, data) => {
     return new Promise((resolve, reject) => {
-      const url =
-        process.env.VUE_APP_INSPECTOR_API + 'tasksFromList'
+      const url = process.env.VUE_APP_INSPECTOR_API + 'tasksFromList'
       axios({ url: url, method: 'POST', data: data })
         .then((resp) => {
           commit(TASK.GET_INSPECTABLE_TASKS, resp.data)
@@ -1109,11 +1123,7 @@ const mutations = {
     state.daysWithTasks = resp.data.calendar.dates_with_tasks
   },
   [TASK.REMOVE_TASK_FROM_LEAVES]: (state, uid) => {
-    for (let i = 0; i < state.newConfig.leaves.length; i++) {
-      if (uid === state.newConfig.leaves[i]) {
-        state.newConfig.leaves.splice(i, 1)
-      }
-    }
+    state.newConfig.leaves = state.newConfig.leaves.filter(item => item !== uid)
   },
   [TASK.ADD_TASK_TO_ROOTS]: (state, taskUid) => {
     if (!state.newConfig.roots.includes(taskUid)) {
@@ -1196,6 +1206,7 @@ const mutations = {
     state.loadedTasks = {}
   },
   [TASK.SELECT_TASK]: (state, task) => {
+    if (task) console.log('select task', task)
     state.selectedTask = task
   },
   [TASK.ADD_TASK_TAGS]: (state, tags) => {
@@ -1409,18 +1420,12 @@ const mutations = {
     state.open = resp.data
     state.open.title = 'Открытые задачи'
     state.open.link = '017a3e8c-79ac-452c-abb7-6652deecbd1c'
-    // for (const elem in state.open.tasks) {
-    //   if (state.open.tasks[elem].customer_date_end !== state.open.tasks[elem].customer_date_begin) {
-    //     if (new Date(state.open.tasks[elem].customer_date_end) > new Date()) {
-    //       state.today.tasks.push(state.open.tasks[elem])
-    //     } else {
-    //       state.overdue.tasks.push(state.open.tasks[elem])
-    //     }
-    //   }
-    // }
   },
   [TASK.SELECT_TAG]: (state, tag) => {
     state.selectedTag = tag
+  },
+  [TASK.RESET_STATE_TASKS]: (state) => {
+    Object.assign(state, getDefaultState())
   },
   [TASK.CHANGE_TASK_COMMENT]: (state, data) => {
     state.comment.push(data.value)
