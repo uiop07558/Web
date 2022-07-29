@@ -31,6 +31,27 @@
           </div>
         </template>
       </PopMenu>
+      <PopMenu>
+        <ReglamentSmallButton>
+          {{ currDepTitle }}
+        </ReglamentSmallButton>
+        <template #menu>
+          <div class="max-h-[220px] overflow-y-auto scroll-style max-w-[260px]">
+            <PopMenuItem
+              @click="currDep = ''"
+            >
+              Доступно для всех отделов
+            </PopMenuItem>
+            <PopMenuItem
+              v-for="dep in allDepartments"
+              :key="dep.uid"
+              @click="currDep = dep.uid"
+            >
+              {{ dep.name }}
+            </PopMenuItem>
+          </div>
+        </template>
+      </PopMenu>
       <ReglamentSmallButton
         :icon="shouldClear ? 'check' : 'uncheck'"
         @click="shouldClear = !shouldClear"
@@ -183,6 +204,7 @@ import ReglamentQuestion from './ReglamentQuestion.vue'
 import ReglamentCompleteMessage from './ReglamentCompleteMessage.vue'
 import ReglamentSmallButton from '@/components/Reglaments/ReglamentSmallButton.vue'
 import PopMenu from '@/components/modals/PopMenu.vue'
+import PopMenuItem from '@/components/modals/PopMenuItem.vue'
 import BoardPropsMenuItemUser from '@/components/Board/BoardPropsMenuItemUser.vue'
 
 import '@vueup/vue-quill/dist/vue-quill.snow.css'
@@ -197,6 +219,7 @@ export default {
     ReglamentWrong,
     ReglamentSmallButton,
     PopMenu,
+    PopMenuItem,
     BoardPropsMenuItemUser,
     ReglamentEditLimit,
     ReglamentTestLimit
@@ -211,8 +234,10 @@ export default {
     return {
       currEditors: [],
       currName: '',
-      showTestLimit: false,
+      currDep: '',
       currText: '',
+      //
+      showTestLimit: false,
       isEditing: false,
       showEditLimit: false,
       isTesting: false,
@@ -306,6 +331,23 @@ export default {
         }
       }
       return users
+    },
+    currDepTitle () {
+      const dep = this.$store.state.departments.deps[this.currDep]
+      return dep?.name || 'Доступно для всех отделов'
+    },
+    allDepartments () {
+      const deps = Object.values(this.$store.state.departments.deps)
+      deps.sort((item1, item2) => {
+        // сначала по порядку
+        if (item1.order > item2.order) return 1
+        if (item1.order < item2.order) return -1
+        // если одинаковый, то по имени
+        if (item1.name > item2.name) return 1
+        if (item1.name < item2.name) return -1
+        return 0
+      })
+      return deps
     }
   },
   watch: {
@@ -326,7 +368,6 @@ export default {
           const reglaments = this.$store.state.navigator.navigator.reglaments
           const index = reglaments.items.findIndex(item => item.uid === this.currReglament?.uid)
           if (index !== -1) reglaments.items[index].needStartEdit = false
-
           //
           this.setEdit()
         }
@@ -428,6 +469,7 @@ export default {
         const reglament = { ...this.currReglament }
         reglament.content = this.currText
         reglament.name = this.currName.trim()
+        reglament.department_uid = this.currDep
         reglament.editors = [...this.currEditors]
         if (!reglament.name.length) {
           reglament.name = 'Регламент без названия'
@@ -454,6 +496,7 @@ export default {
         this.currName = this.reglamentTitle
         this.currText = this.reglamentContent
         this.currEditors = [...this.reglamentEditors]
+        this.currDep = this.reglamentDep
       }
     },
     clickComplete () {
