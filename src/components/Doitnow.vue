@@ -37,7 +37,7 @@
       />
     </button>
   </div>
-  <DoitnowSkeleton v-if="isLoading"/>
+  <DoitnowSkeleton v-if="isLoading" />
   <transition :name="taskTransition">
     <DoitnowTask
       v-if="tasksCount && !isLoading"
@@ -56,6 +56,20 @@
       @readTask="readTask"
     />
   </transition>
+  <div class="flex">
+    <svg
+      width="20"
+      height="20"
+      viewBox="0 0 20 20"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M10.8355 9.17277L10.8414 4.11107C10.8414 3.88915 10.7533 3.67632 10.5964 3.5194C10.4394 3.36248 10.2266 3.27432 10.0047 3.27432C9.78277 3.27432 9.56994 3.36248 9.41302 3.5194C9.2561 3.67632 9.16795 3.88915 9.16795 4.11106L9.17384 9.17277L4.11213 9.16688C3.89022 9.16688 3.67739 9.25504 3.52047 9.41196C3.36355 9.56888 3.27539 9.7817 3.27539 10.0036C3.27539 10.2255 3.36355 10.4384 3.52047 10.5953C3.67739 10.7522 3.89022 10.8404 4.11213 10.8404L9.17384 10.8345L9.16795 15.8962C9.1675 16.0062 9.18883 16.1152 9.23072 16.2169C9.27261 16.3186 9.33423 16.4111 9.41202 16.4889C9.48981 16.5666 9.58223 16.6283 9.68395 16.6701C9.78567 16.712 9.89468 16.7334 10.0047 16.7329C10.1147 16.7334 10.2237 16.712 10.3254 16.6701C10.4272 16.6283 10.5196 16.5666 10.5974 16.4889C10.6752 16.4111 10.7368 16.3186 10.7787 16.2169C10.8206 16.1152 10.8419 16.0062 10.8414 15.8962L10.8355 10.8345L15.8972 10.8404C16.0073 10.8408 16.1163 10.8195 16.218 10.7776C16.3197 10.7357 16.4121 10.6741 16.4899 10.5963C16.5677 10.5185 16.6293 10.4261 16.6712 10.3244C16.7131 10.2226 16.7344 10.1136 16.734 10.0036C16.7344 9.89361 16.7131 9.7846 16.6712 9.68288C16.6293 9.58116 16.5677 9.48874 16.4899 9.41095C16.4121 9.33316 16.3197 9.27154 16.218 9.22965C16.1163 9.18776 16.0073 9.16643 15.8972 9.16688L10.8355 9.17277Z"
+        fill="#7E7E80"
+      />
+    </svg>
+  </div>
   <DoitnowEmpty
     v-if="(tasksCount === 0 && !isLoading)"
     @clickPlanning="goToNextDay"
@@ -103,7 +117,8 @@ export default {
     unsortedTasks: [],
     overdueReaded: [],
     showInspector: false,
-    tasksLoaded: false
+    tasksLoaded: false,
+    childrens: []
   }),
   computed: {
     tasksCount () {
@@ -163,6 +178,10 @@ export default {
   watch: {
     firstTask (newtask, oldtask) {
       if (newtask) {
+        this.$store.dispatch(TASK.GET_TASK_CHILDRENS, newtask.uid)
+          .then((resp) => {
+            this.childrens = resp.data.tasks
+          })
         this.$store.commit(TASK.SELECT_TASK, newtask)
         this.$store.dispatch(MSG.MESSAGES_REQUEST, newtask.uid)
           .then(() => {
