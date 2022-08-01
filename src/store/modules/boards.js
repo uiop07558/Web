@@ -123,17 +123,10 @@ const actions = {
   [BOARD.ADD_STAGE_BOARD_REQUEST]: ({ commit, dispatch }, data) => {
     return new Promise((resolve, reject) => {
       const board = state.boards[data.boardUid]
-      if (!board) return reject(new Error(`not find board ${data.boardUid}`))
-      const newStage = {
-        Color: '',
-        Name: data.newStageTitle,
-        Order: board.stages.length,
-        UID: uuidv4()
-      }
-      board.stages.push(newStage)
+      commit(BOARD.ADD_STAGE_BOARD, { ...data, stageUid: uuidv4() })
       dispatch(BOARD.UPDATE_BOARD_REQUEST, board)
         .then((resp) => {
-          resolve(newStage)
+          resolve(board.stages[board.stages.length - 1])
         })
         .catch((err) => {
           reject(err)
@@ -142,21 +135,12 @@ const actions = {
   },
   [BOARD.RENAME_STAGE_BOARD_REQUEST]: ({ commit, dispatch }, data) => {
     return new Promise((resolve, reject) => {
+      commit(BOARD.RENAME_STAGE_BOARD, data)
       const board = state.boards[data.boardUid]
-      if (!board) return reject(new Error(`not find board ${data.boardUid}`))
       const index = board.stages.findIndex(
         (stage) => stage.UID === data.stageUid
       )
-      if (index === -1) {
-        return reject(
-          new Error(`not find stage ${data.stageUid} at board ${data.boardUid}`)
-        )
-      }
-      const stage = board.stages[index]
-      const newStage = { ...stage }
-      newStage.Name = data.newStageTitle
-      // заменяем
-      board.stages.splice(index, 1, newStage)
+      const newStage = board.stages[index]
       // отправляем на сервер изменения
       dispatch(BOARD.UPDATE_BOARD_REQUEST, board)
         .then((resp) => {
@@ -170,27 +154,13 @@ const actions = {
   [BOARD.DELETE_STAGE_BOARD_REQUEST]: ({ commit, dispatch }, data) => {
     return new Promise((resolve, reject) => {
       const board = state.boards[data.boardUid]
-      if (!board) return reject(new Error(`not find board ${data.boardUid}`))
-      const index = board.stages.findIndex(
-        (stage) => stage.UID === data.stageUid
-      )
-      if (index === -1) {
-        return reject(
-          new Error(`not find stage ${data.stageUid} at board ${data.boardUid}`)
-        )
-      }
-      //
+      commit(BOARD.DELETE_STAGE_BOARD, data)
       const url =
         process.env.VUE_APP_LEADERTASK_API +
         '/api/v1/boardsstages?uid=' +
         data.stageUid
       axios({ url: url, method: 'DELETE' })
         .then((resp) => {
-          // В resp.data сервер возвращает всю доску
-          // по уму нужно мутировать доску, а не самим пересчитывать
-          //
-          // удаляем
-          board.stages.splice(index, 1)
           // пересчитываем порядок
           board.stages.forEach((stage, index) => {
             stage.Order = index
@@ -233,23 +203,7 @@ const actions = {
   [BOARD.CHANGE_ORDER_STAGE_BOARD_REQUEST]: ({ commit, dispatch }, data) => {
     return new Promise((resolve, reject) => {
       const board = state.boards[data.boardUid]
-      if (!board) return reject(new Error(`not find board ${data.boardUid}`))
-      const index = board.stages.findIndex(
-        (stage) => stage.UID === data.stageUid
-      )
-      if (index === -1) {
-        return reject(
-          new Error(`not find stage ${data.stageUid} at board ${data.boardUid}`)
-        )
-      }
-      // вырезаем и вставляем на новое место
-      const stages = board.stages.splice(index, 1)
-      board.stages.splice(data.newOrder, 0, ...stages)
-      // пересчитываем порядок
-      board.stages.forEach((stage, index) => {
-        stage.Order = index
-      })
-      //
+      commit(BOARD.CHANGE_ORDER_STAGE_BOARD, data)
       // отправляем на сервер изменения
       dispatch(BOARD.UPDATE_BOARD_REQUEST, board)
         .then((resp) => {
@@ -338,6 +292,9 @@ const mutations = {
     const index = board.stages.findIndex(
       (stage) => stage.UID === data.stageUid
     )
+    if (index === -1) {
+      console.error(`not find stage ${data.stageUid} at board ${data.boardUid}`)
+    }
     board.stages.splice(index, 1)
   },
   [BOARD.RENAME_STAGE_BOARD]: (state, data) => {
