@@ -320,6 +320,54 @@ const mutations = {
     state.showOnlyCardsWhereIAmResponsible = false
     state.showOnlyCardsWithNoResponsible = false
     state.showOnlyMyCreatedCards = false
+  },
+  [BOARD.ADD_STAGE_BOARD]: (state, data) => {
+    const board = state.boards[data.boardUid]
+    if (!board) console.error(`not find board ${data.boardUid}`)
+    const newStage = {
+      Color: '',
+      Name: data.newStageTitle,
+      Order: board.stages.length,
+      UID: data.stageUid
+    }
+    board.stages.push(newStage)
+  },
+  [BOARD.DELETE_STAGE_BOARD]: (state, data) => {
+    const board = state.boards[data.boardUid]
+    if (!board) console.error(`not find board ${data.boardUid}`)
+    const index = board.stages.findIndex(
+      (stage) => stage.UID === data.stageUid
+    )
+    board.stages.splice(index, 1)
+  },
+  [BOARD.RENAME_STAGE_BOARD]: (state, data) => {
+    const board = state.boards[data.boardUid]
+    if (!board) console.error(`not find board ${data.boardUid}`)
+    const index = board.stages.findIndex(
+      (stage) => stage.UID === data.stageUid
+    )
+
+    const stage = board.stages[index]
+    const newStage = { ...stage }
+    newStage.Name = data.newStageTitle
+    board.stages.splice(index, 1, newStage)
+  },
+  [BOARD.CHANGE_ORDER_STAGE_BOARD]: (state, data) => {
+    const board = state.boards[data.boardUid]
+    if (!board) console.error(`not find board ${data.boardUid}`)
+    const index = board.stages.findIndex(
+      (stage) => stage.UID === data.stageUid
+    )
+    if (index === -1) {
+      console.error(`not find stage ${data.stageUid} at board ${data.boardUid}`)
+    }
+    // вырезаем и вставляем на новое место
+    const stages = board.stages.splice(index, 1)
+    board.stages.splice(data.newOrder, 0, ...stages)
+    // пересчитываем порядок
+    board.stages.forEach((stage, index) => {
+      stage.Order = index
+    })
   }
 }
 
