@@ -54,14 +54,13 @@
     >
       Показать сотрудников, прошедших регламент
     </button>
-    <button
-      v-if="contributors.length && showEmployees"
-      class="flex font-['Roboto'] text-[#6a6a6b] mt-1 mb-1 dark:bg-gray-700 dark:text-gray-100 rounded-lg text-[13px] font-medium hover:text-black transition"
-      @click="showEmployees = false"
-    >
-      Cкрыть сотрудников, прошедших регламент
-    </button>
     <div v-if="showEmployees">
+      <button
+        class="flex font-['Roboto'] text-[#6a6a6b] mt-1 mb-1 dark:bg-gray-700 dark:text-gray-100 rounded-lg text-[13px] font-medium hover:text-black transition"
+        @click="showEmployees = false"
+      >
+        Cкрыть сотрудников, прошедших регламент
+      </button>
       <ReglamentPropsUser
         v-for="contributor in contributors"
         :key="contributor.uid_user"
