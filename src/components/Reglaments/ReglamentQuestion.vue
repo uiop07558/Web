@@ -159,7 +159,7 @@ export default {
         :contenteditable="isEditing && canEdit"
         @blur="changeQuestionName($event)"
         @keydown.enter.exact.prevent="$emit('addQuestion')"
-        v-html="question.name"
+        v-text="question.name"
       />
       <span
         v-if="rightAnswersAmount(question) === 1"

@@ -263,6 +263,9 @@ export default {
         }
       }
       return users
+    },
+    navStack () {
+      return this.$store.state.navbar.navStack
     }
   },
   watch: {
@@ -318,6 +321,9 @@ export default {
           })
           .then((resp) => {
             console.log('changeBoardName', resp, title)
+            const lastNavEl = JSON.parse(JSON.stringify(this.navStack[this.navStack.length - 1]))
+            this.$store.commit('removeAllFromStackAfterIndex', 0)
+            this.$store.commit('pushIntoNavStack', { ...lastNavEl, name: title })
           })
       }
     },
