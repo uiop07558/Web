@@ -39,13 +39,13 @@
   </div>
   <DoitnowSkeleton v-if="isLoading" />
   <transition :name="taskTransition">
-    <div v-if="childrens.length && !(tasksCount === 0 && !isLoading)">
+    <div v-if="!(tasksCount === 0 && !isLoading)">
       <a
         class="dark:bg-gray-700 cursor-pointer dark:text-gray-100 rounded-lg text-[14px] breadcrumbs text-[#7E7E80] font-medium"
         target="_blank"
         :href="`${currentLocation}/task/${firstTask?.uid}`"
       >
-        Посмотреть подзадачи
+        Открыть задачу
       </a>
     </div>
   </transition>

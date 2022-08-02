@@ -2,7 +2,7 @@
   <DoitnowStatusModal
     v-if="showStatusModal"
     :title="'Внимание'"
-    :text="'У выбранной Вами задачи имеются подзадачи. Вы уверены, что хотите изменить её статус?'"
+    :text="'При завершении этой задачи все подзадачи будут завершены. Завершить?'"
     @cancel="showStatusModal = false"
     @yes="changeStatus(lastSelectedStatus, true)"
   />
@@ -242,8 +242,9 @@
         >
           <span
             class="ml-8 w-[70px]"
-          >{{ task.uid_customer === user.current_user_uid ? (task.uid_performer === user.current_user_uid ? 'Завершить' : 'Принять и завершить') : 'Готово к сдаче'
-          }}</span>
+          >
+            {{ task.uid_customer === user.current_user_uid ? (task.uid_performer === user.current_user_uid ? 'Завершить' : 'Принять и завершить') : 'Готово к сдаче' }}
+          </span>
           <Icon
             :path="check.path"
             :width="check.width"
@@ -888,6 +889,19 @@ export default {
       this.$emit('clickTask', task)
     },
     reDo () {
+      if (this.childrens?.length) {
+        this.showStatusModal = true
+        if (this.task.uid_performer === this.user.current_user_uid && this.task.uid_customer === this.user.current_user_uid) {
+          this.lastSelectedStatus = 7
+        }
+        if (this.task.uid_performer === this.user.current_user_uid && this.task.uid_customer !== this.user.current_user_uid) {
+          this.lastSelectedStatus = 8
+        }
+        if (this.task.uid_performer !== this.user.current_user_uid && this.task.uid_customer === this.user.current_user_uid) {
+          this.lastSelectedStatus = 9
+        }
+        return
+      }
       this.readTask()
       if (this.task.uid_performer === this.user.current_user_uid && this.task.uid_customer === this.user.current_user_uid) {
         this.$store.dispatch(TASK.CHANGE_TASK_STATUS, {
@@ -913,6 +927,16 @@ export default {
       this.nextTask()
     },
     accept () {
+      if (this.childrens?.length) {
+        this.showStatusModal = true
+        if ((this.task.uid_performer === this.user.current_user_uid && this.task.uid_customer === this.user.current_user_uid) ||
+        (this.task.uid_performer !== this.user.current_user_uid && this.task.uid_customer === this.user.current_user_uid)) {
+          this.lastSelectedStatus = 1
+        } else {
+          this.lastSelectedStatus = 5
+        }
+        return
+      }
       this.readTask()
       if ((this.task.uid_performer === this.user.current_user_uid && this.task.uid_customer === this.user.current_user_uid) ||
         (this.task.uid_performer !== this.user.current_user_uid && this.task.uid_customer === this.user.current_user_uid)) {
