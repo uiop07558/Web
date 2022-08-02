@@ -47,17 +47,27 @@
         </span>
       </div>
     </div>
-    <div
-      v-if="contributors.length"
-      class="mt-[30px] mb-[8px] font-roboto text-[16px] leading-[19px] font-medium text-[#4c4c4d]"
+    <button
+      v-if="contributors.length && !showEmployees"
+      class="flex font-['Roboto'] text-[#6a6a6b] mt-1 mb-1 dark:bg-gray-700 dark:text-gray-100 rounded-lg text-[13px] font-medium hover:text-black transition"
+      @click="showEmployees = true"
     >
-      Сотрудники, прошедшие регламент:
+      Показать сотрудников, прошедших регламент
+    </button>
+    <button
+      v-if="contributors.length && showEmployees"
+      class="flex font-['Roboto'] text-[#6a6a6b] mt-1 mb-1 dark:bg-gray-700 dark:text-gray-100 rounded-lg text-[13px] font-medium hover:text-black transition"
+      @click="showEmployees = false"
+    >
+      Cкрыть сотрудников, прошедших регламент
+    </button>
+    <div v-if="showEmployees">
+      <ReglamentPropsUser
+        v-for="contributor in contributors"
+        :key="contributor.uid_user"
+        :user-uid="contributor.uid_user"
+      />
     </div>
-    <ReglamentPropsUser
-      v-for="contributor in contributors"
-      :key="contributor.uid_user"
-      :user-uid="contributor.uid_user"
-    />
   </div>
 </template>
 
@@ -88,6 +98,11 @@ export default {
     department: {
       type: String,
       default: ''
+    }
+  },
+  data () {
+    return {
+      showEmployees: false
     }
   },
   computed: {
