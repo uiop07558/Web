@@ -1,4 +1,11 @@
 <template>
+  <DoitnowStatusModal
+    v-if="showStatusModal"
+    :title="'Внимание'"
+    :text="'У выбранной Вами задачи имеются подзадачи. Вы уверены, что хотите изменить её статус?'"
+    @cancel="showStatusModal = false"
+    @yes="changeStatus(lastSelectedStatus, true)"
+  />
   <div
     class="flex justify-between"
     :style="{ borderColor: colors[task.uid_marker] ? colors[task.uid_marker].back_color : ''}"
@@ -10,7 +17,7 @@
   >
     <div class="py-6 px-5 w-5/6 bg-white rounded-lg">
       <div
-        class="flex justify-between items-center mb-6 p-2 rounded-[8px]"
+        class="flex justify-between items-center mb-6 rounded-[8px]"
         :style="{ backgroundColor: colors[task.uid_marker] ? colors[task.uid_marker].back_color : '', color: getValidForeColor(colors[task.uid_marker]?.fore_color) }"
       >
         <!-- task info/status -->
@@ -326,6 +333,7 @@ import contenteditable from 'vue-contenteditable'
 import linkify from 'vue-linkify'
 import TaskPropsCommentEditor from '@/components/TaskProperties/TaskPropsCommentEditor.vue'
 import PerformButton from '@/components/Doitnow/PerformButton.vue'
+import DoitnowStatusModal from '@/components/Doitnow/DoitnowStatusModal.vue'
 import Popper from 'vue3-popper'
 import SetDate from '@/components/Doitnow/SetDate.vue'
 import Checklist from '@/components/Doitnow/Checklist.vue'
@@ -376,6 +384,7 @@ export default {
     PerformButton,
     Checklist,
     TaskPropsInputForm,
+    DoitnowStatusModal,
     contenteditable,
     Popper,
     TaskStatus
@@ -415,6 +424,10 @@ export default {
     taskMessages: {
       type: Array,
       default: () => ([])
+    },
+    childrens: {
+      type: Array,
+      default: () => ([])
     }
   },
   emits: ['clickTask', 'nextTask', 'changeValue', 'readTask'],
@@ -448,6 +461,8 @@ export default {
       isTaskHoverPopperActive,
       toggleTaskHoverPopper,
       isChatVisible,
+      showStatusModal: false,
+      lastSelectedStatus: '',
       createChecklist,
       showConfirm,
       checklistshow,
@@ -1035,13 +1050,19 @@ export default {
             this.readTask()
           })
     },
-    changeStatus (status) {
+    changeStatus (status, isModalAnswer) {
+      if (this.childrens?.length && !(isModalAnswer) && [1, 5, 7, 8].includes(status)) {
+        this.lastSelectedStatus = status
+        this.showStatusModal = true
+        return
+      }
       this.$store.dispatch(TASK.CHANGE_TASK_STATUS, {
         uid: this.task.uid,
         value: status
       }).then(() => {
         this.$emit('changeValue', { status: status })
       })
+      this.showStatusModal = false
     }
   }
 }
