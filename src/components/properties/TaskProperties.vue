@@ -216,6 +216,7 @@
       />
       <!-- Comment -->
       <TaskPropsCommentEditor
+        v-if="canEditComment || selectedTask.comment.length > 0"
         :comment="selectedTask.comment ?? ''"
         :can-edit="canEditComment"
         @scrollToEnd="scrollToEnd"
