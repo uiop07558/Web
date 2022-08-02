@@ -40,6 +40,7 @@ export default {
   },
   data () {
     return {
+      dateToday: '',
       mdiMenu,
       warn,
       showFreeModal: false,
@@ -124,6 +125,9 @@ export default {
     },
     // TODO: clean up messy logic
     menuClick (event, item) {
+      if (item.uid === '901841d9-0016-491d-ad66-8ee42d2b496b') {
+        this.dateToday = new Date()
+      }
       if (this.isPropertiesMobileExpanded) {
         this.$store.dispatch('asidePropertiesToggle', false)
       }
@@ -382,6 +386,7 @@ export default {
         <DatePicker
           id="Maincalendar"
           ref="calendarclass"
+          v-model="dateToday"
           dot="true"
           class="border-none pl-[22px] pr-[16px] calendar-nav-custom"
           :style="{ backgroundColor: datePickerBG }"
