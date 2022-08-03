@@ -930,6 +930,7 @@ export default {
       })
     },
     shouldShowInspector () {
+      window.ym(89796698, 'reachGoal', 'inspector')
       if (this.user.tarif !== 'alpha' && this.user.tarif !== 'trial') {
         this.showFreeModal = true
         return
