@@ -39,49 +39,46 @@ export default {
       fileReader.readAsText(file)
 
       fileReader.onload = () => {
-        this.fileString = fileReader.result
-        this.parseFile()
+        this.parseFile(fileReader.result)
       }
     },
-    parseFile () {
-      const lines = this.fileString.split('\n')
+    parseFile (fileString) {
+      if (fileString.substr(0, 70) !== `
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8"/>
 
-      this.progressIterationsTotal = lines.length - 2
-
-      const headerLine = lines[0].split(';')
-      if (headerLine.length !== 20 || !headerLine[19] || (headerLine[0] !== 'TITLE' && headerLine[0] !== 'Название')) {
+`) {
         this.showProgress = false
         this.error = 'Некорректный файл'
         return
       }
 
+      const elem = document.createElement('template')
+
+      elem.innerHTML = fileString
+
+      const table = elem.content.lastElementChild.cloneNode(true)
+      const rows = table.tBodies[0].rows
+
       this.addBitrixProject()
 
-      for (let i = 1; i < (lines.length - 1); i++) {
-        this.currentAction = 'Создается задача'
-
-        let modifiedLine = []
-        modifiedLine = lines[i].split(';')
-
-        if (modifiedLine[0] === '') {
-          continue
-        }
-        const name = modifiedLine[0]
+      for (let i = 0; i < rows.length; i++) {
+        const row = rows[i].cells
+        const name = row[0].textContent
 
         let dateBegin = ''
         let dateEnd = ''
-        if (/* modifiedLine[8] !== '' && */modifiedLine[9] !== '') {
+        if (row[1].textContent !== '' || row[2].textContent !== '') {
           const pattern = /(\d{2})\.(\d{2})\.(\d{4}) (\d{2}:\d{2})/g
-          dateBegin = modifiedLine[8].replace(pattern, '$3-$2-$1T$4:00')
-          dateEnd = modifiedLine[9].replace(pattern, '$3-$2-$1T$4:00')
+          dateBegin = row[1].textContent.replace(pattern, '$3-$2-$1T$4:00')
+          dateEnd = row[2].textContent.replace(pattern, '$3-$2-$1T$4:00')
         }
 
         let projectUid = this.bitrixProjectUid
-        if (modifiedLine[15] !== '') {
-          if (!this.projects[modifiedLine[15]]) {
-            this.addSubProject(modifiedLine[15])
+        if (row[5].textContent !== '') {
+          if (!this.projects[row[5].textContent]) {
+            this.addSubProject(row[5].textContent)
           }
-          projectUid = this.projects[modifiedLine[15]]
+          projectUid = this.projects[row[5].textContent]
         }
 
         this.addTask(name, dateBegin, dateEnd, projectUid)
@@ -90,6 +87,8 @@ export default {
       this.showProgress = false
     },
     addTask (name, dateBegin, dateEnd, projectUid) {
+      this.currentAction = 'Создается задача'
+
       const task = {
         name: name,
         uid: this.uuidv4(),
@@ -180,7 +179,7 @@ export default {
         id="import-bitrix"
         class="file:mt-2 file:border-0 file:border-orange-400 file:text-white file:bg-orange-400 file:rounded-md file:px-6 file:p-2 file:text-base"
         type="file"
-        accept=".csv"
+        accept=".xls"
         @change="readFile"
       >
     </div>
