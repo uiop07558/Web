@@ -61,9 +61,9 @@
     <BoardModalBoxCardMove
       v-if="showMoveCard"
       :show="showMoveCard"
-      :position="currentCardColumnOrder"
-      :names="columnsNames"
-      :count-all="usersColumnsCount"
+      :another-boards="anotherBoards"
+      :current-board="board"
+      :current-card="currentCard"
       @cancel="showMoveCard = false"
       @changePosition="onChangeCardPosition"
     />
@@ -404,6 +404,12 @@ export default {
     },
     isFiltered () {
       return this.showOnlyMyCreatedCards || this.showOnlyCardsWithNoResponsible || this.showOnlyCardsWhereIAmResponsible || this.showOnlySearchText
+    },
+    anotherBoards () {
+      const currentUserUid = this.$store.state.user.user.current_user_uid
+      return Object.values(this.$store.state.boards.boards).filter(
+        item => item.members[currentUserUid] === 1 || item.members[currentUserUid] === 2
+      )
     }
   },
   watch: {
@@ -661,12 +667,18 @@ export default {
       this.showMoveCard = true
       this.currentCard = card
     },
-    onChangeCardPosition (order) {
-      this.showMoveCard = false
-      const column = this.usersColumns[order]
-      if (this.currentCard && column) {
-        this.moveCard(this.currentCard.uid, column.UID)
+    onChangeCardPosition (position) {
+      if (typeof position !== 'object' && typeof position === 'number') {
+        const column = this.usersColumns[position]
+        if (this.currentCard && column) {
+          this.moveCard(this.currentCard.uid, column.UID)
+        }
+      } else {
+        this.$store.dispatch('asidePropertiesToggle', false)
+        const newCard = { ...this.currentCard, uid_board: position.boardUid, uid_stage: position.stageUid }
+        this.$store.dispatch(CARD.MOVE_CARD_TO_ANOTHER_BOARD, newCard)
       }
+      this.showMoveCard = false
     },
     onDeleteCard () {
       this.$store.dispatch('asidePropertiesToggle', false)
