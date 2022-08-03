@@ -9,9 +9,9 @@
   <BoardModalBoxCardMove
     v-if="showMoveCard"
     :show="showMoveCard"
-    :position="currentCardColumnOrder"
-    :names="columnsNames"
-    :count-all="usersColumnsCount"
+    :another-boards="anotherBoards"
+    :current-board="currentBoard"
+    :current-card="currentCard"
     @cancel="showMoveCard = false"
     @changePosition="onChangeCardPosition"
   />
@@ -205,13 +205,23 @@ export default {
       }
       return true
     },
-    columnsNames () {
-      return this.usersColumns.map((column) => column.Name)
-    },
     usersColumnsCount () {
       return this.usersColumns.length
     },
-    canEdit () { return this.boards[this.selectedCard?.uid_board]?.type_access !== 0 }
+    canEdit () { return this.boards[this.selectedCard?.uid_board]?.type_access !== 0 },
+    currentBoard () {
+      const boards = this.$store.state.boards.boards
+      const navStack = this.$store.state.navbar.navStack
+      const currBoardUid = navStack[navStack.length - 1].uid
+      const board = boards[currBoardUid]
+      return board
+    },
+    anotherBoards () {
+      const currentUserUid = this.$store.state.user.user.current_user_uid
+      return Object.values(this.$store.state.boards.boards).filter(
+        item => item.members[currentUserUid] === 1 || item.members[currentUserUid] === 2
+      )
+    }
   },
   watch: {
     selectedCard (oldValue, newValue) {
@@ -479,21 +489,19 @@ export default {
       const rejectStage = 'e70af5e2-6108-4c02-9a7d-f4efee78d28c'
       this.moveCard(this.selectedCard.uid, rejectStage, this.getNewMinCardsOrderAtColumn(rejectStage))
     },
-    currentCardColumnOrder () {
+    onChangeCardPosition (position) {
       this.currentCard = this.$store.state.cards.selectedCard
-      if (!this.currentCard) return -1
-      return this.usersColumns.findIndex(
-        (column) => column.UID === this.currentCard.uid_stage
-      )
-    },
-    onChangeCardPosition (order) {
-      this.currentCard = this.$store.state.cards.selectedCard
-      this.showMoveCard = false
-      const column = this.usersColumns[order]
-      console.log(this.$store.state.cards)
-      if (this.currentCard && column) {
-        this.moveCard(this.currentCard.uid, column.UID, order)
+      if (typeof position !== 'object' && typeof position === 'number') {
+        const column = this.usersColumns[position]
+        if (this.currentCard && column) {
+          this.moveCard(this.currentCard.uid, column.UID)
+        }
+      } else {
+        this.$store.dispatch('asidePropertiesToggle', false)
+        const newCard = { ...this.currentCard, uid_board: position.boardUid, uid_stage: position.stageUid }
+        this.$store.dispatch(CARD.MOVE_CARD_TO_ANOTHER_BOARD, newCard)
       }
+      this.showMoveCard = false
     },
     moveColumnCard (card) {
       this.currentCard = this.$store.state.cards.selectedCard
