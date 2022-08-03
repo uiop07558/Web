@@ -104,7 +104,7 @@
         <template #before-input="props">
           <div
             :id="props.node.info.uid"
-            class="border border-gray-300 group shrink-0 w-full pl-[31px] pr-[6px] py-[11px] mb-[4px] min-h-[42px] font-roboto flex flex-col bg-white rounded-[8px] relative"
+            class="border wrapperChild border-gray-300 group shrink-0 w-full pl-[31px] pr-[6px] py-[11px] mb-[4px] min-h-[42px] font-roboto flex flex-col bg-white rounded-[8px] relative"
             :style="{ backgroundColor: getValidBackColor(colors[props.node.info?.uid_marker]?.back_color) }"
             :class="{ 'ring ring-orange-400': props.node.id === lastSelectedTaskUid}"
           >
@@ -367,6 +367,7 @@ export default {
       showConfirm: false,
       showTasksLimit: false,
       showFreeModal: false,
+      focusedElem: '',
       showInspector: false,
       stop: true,
       SHOW_TASK_INPUT_UIDS: {
@@ -939,6 +940,9 @@ export default {
         this.$nextTick(() => {
           this.$store.commit('basic', { key: 'propertiesState', value: 'task' })
           this.$store.dispatch(TASK.SELECT_TASK, arg.info)
+            .then(() => {
+              console.log(document.getElementById('4830f40e-dae3-4bab-9112-b26e2a06ac38'))
+            })
         })
       }
     },
@@ -1107,6 +1111,11 @@ export default {
 
 .node-wrapper.disabled .checkbox-wrapper {
   border-color: #00000042
+}
+
+.node-wrapper.focused .wrapperChild {
+  @apply ring ring-orange-500;
+  opacity: 1;
 }
 
 .checkbox-wrapper, checked:after {
