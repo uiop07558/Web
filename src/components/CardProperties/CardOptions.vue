@@ -1,26 +1,45 @@
-<script setup>
-import { computed } from 'vue'
-import { useStore } from 'vuex'
+<script>
 import PopMenu from '@/components/Common/PopMenu.vue'
 import PopMenuItem from '@/components/Common/PopMenuItem.vue'
 import PopMenuHeader from '@/components/Common/PopMenuHeader.vue'
-defineEmits(['clickRemoveButton', 'toggleShowOnlyFiles'])
+import PopMenuDivider from '@/components/Common/PopMenuDivider.vue'
+export default {
+  components: {
+    PopMenu,
+    PopMenuItem,
+    PopMenuHeader,
+    PopMenuDivider
+  },
+  props: {
+    dateCreate: String,
+    showFilesOnly: Boolean,
+    creator: String,
+    canEdit: Boolean
+  },
 
-const store = useStore()
-
-const props = defineProps({
-  dateCreate: String,
-  showFilesOnly: Boolean,
-  creator: String,
-  canEdit: Boolean
-})
-
-const employees = computed(() => store.state.employees.employees)
-
-const cardDateCreate = computed(() => {
-  return new Date(props.dateCreate).toLocaleString()
-})
-
+  emits: ['clickRemoveButton', 'toggleShowOnlyFiles', 'moveColumnCard', 'moveSuccess', 'moveReject'],
+  computed: {
+    employees () { return this.$store.state.employees.employees },
+    cardDateCreate () { return new Date(this.dateCreate).toLocaleString() },
+    isArchive () {
+      return (
+        this.$store.state.cards.selectedCard.uid_stage === 'f98d6979-70ad-4dd5-b3f8-8cd95cb46c67' ||
+        this.$store.state.cards.selectedCard.uid_stage === 'e70af5e2-6108-4c02-9a7d-f4efee78d28c'
+      )
+    }
+  },
+  methods: {
+    clickMove () {
+      this.$emit('moveColumnCard')
+    },
+    clickSuccess () {
+      this.$emit('moveSuccess')
+    },
+    clickReject () {
+      this.$emit('moveReject')
+    }
+  }
+}
 </script>
 <template>
   <div class="flex items-center bg-[#F4F5F7] rounded-[6px] text-[#575758] text-[12px] font-[500]">
@@ -65,19 +84,39 @@ const cardDateCreate = computed(() => {
           </div>
         </PopMenuHeader>
         <PopMenuItem
-          v-if="!props.showFilesOnly"
+          icon="move"
+          @click="clickMove"
+        >
+          Переместить
+        </PopMenuItem>
+        <PopMenuDivider v-if="!isArchive" />
+        <PopMenuItem
+          v-if="!isArchive"
+          @click="clickSuccess"
+        >
+          Архивировать: Успех
+        </PopMenuItem>
+        <PopMenuItem
+          v-if="!isArchive"
+          @click="clickReject"
+        >
+          Архивировать: Отказ
+        </PopMenuItem>
+        <PopMenuDivider />
+        <PopMenuItem
+          v-if="!showFilesOnly"
           @click="$emit('toggleShowOnlyFiles')"
         >
           Показать только файлы
         </PopMenuItem>
         <PopMenuItem
-          v-if="props.showFilesOnly"
+          v-if="showFilesOnly"
           @click="$emit('toggleShowOnlyFiles')"
         >
           Отображать файлы и сообщения
         </PopMenuItem>
         <PopMenuItem
-          v-if="props.canEdit"
+          v-if="canEdit"
           @click="$emit('clickRemoveButton')"
         >
           Удалить
