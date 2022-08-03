@@ -66,39 +66,45 @@ export default {
         if (modifiedLine[0] === '') {
           continue
         }
+        const name = modifiedLine[0]
 
         let dateBegin = ''
         let dateEnd = ''
-        if (modifiedLine[8] !== '' && modifiedLine[9] !== '') {
+        if (/* modifiedLine[8] !== '' && */modifiedLine[9] !== '') {
           const pattern = /(\d{2})\.(\d{2})\.(\d{4}) (\d{2}:\d{2})/g
           dateBegin = modifiedLine[8].replace(pattern, '$3-$2-$1T$4:00')
           dateEnd = modifiedLine[9].replace(pattern, '$3-$2-$1T$4:00')
         }
 
-        const task = {
-          name: modifiedLine[0],
-          uid: this.uuidv4(),
-          uid_customer: this.user.current_user_uid,
-          uid_project: this.bitrixProjectUid,
-          uid_parent: '00000000-0000-0000-0000-000000000000',
-          status: 0,
-          email_performer: '',
-          type: 1,
-          comment: '',
-          _addToList: true,
-          date_begin: dateBegin,
-          date_end: dateEnd
-        }
+        let projectUid = this.bitrixProjectUid
         if (modifiedLine[15] !== '') {
           if (!this.projects[modifiedLine[15]]) {
             this.addSubProject(modifiedLine[15])
           }
-          task.uid_project = this.projects[modifiedLine[15]]
+          projectUid = this.projects[modifiedLine[15]]
         }
-        this.$store.dispatch(CREATE_TASK, task)
+
+        this.addTask(name, dateBegin, dateEnd, projectUid)
       }
 
       this.showProgress = false
+    },
+    addTask (name, dateBegin, dateEnd, projectUid) {
+      const task = {
+        name: name,
+        uid: this.uuidv4(),
+        uid_customer: this.user.current_user_uid,
+        uid_project: projectUid,
+        uid_parent: '00000000-0000-0000-0000-000000000000',
+        status: 0,
+        email_performer: '',
+        type: 1,
+        comment: '',
+        _addToList: true,
+        date_begin: dateBegin,
+        date_end: dateEnd
+      }
+      this.$store.dispatch(CREATE_TASK, task)
     },
     addBitrixProject () {
       this.currentAction = 'Создается проект Битрикс24'
