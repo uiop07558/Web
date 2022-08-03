@@ -61,9 +61,9 @@
     <BoardModalBoxCardMove
       v-if="showMoveCard"
       :show="showMoveCard"
-      :position="currentCardColumnOrder"
-      :names="columnsNames"
-      :count-all="usersColumnsCount"
+      :another-boards="anotherBoards"
+      :current-board="board"
+      :current-card="currentCard"
       @cancel="showMoveCard = false"
       @changePosition="onChangeCardPosition"
     />
@@ -208,13 +208,12 @@
               ghost-class="ghost-card"
               item-key="uid"
               group="cards"
-              :delay="80"
-              :touch-start-threshold="10"
-              :animation="100"
               :disabled="!board || board.type_access === 0 || isFiltered"
               :move="checkMoveDragCard"
-              :scroll-sensitivity="100"
+              :fallback-tolerance="1"
               :force-fallback="true"
+              :animation="180"
+              :scroll-sensitivity="250"
               @start="startDragCard"
               @end="endDragCard"
               @change="changeDragCard"
@@ -301,8 +300,8 @@
 </template>
 
 <script>
-import PopMenu from '@/components/modals/PopMenu.vue'
-import PopMenuItem from '@/components/modals/PopMenuItem.vue'
+import PopMenu from '@/components/Common/PopMenu.vue'
+import PopMenuItem from '@/components/Common/PopMenuItem.vue'
 import draggable from 'vuedraggable'
 import BoardCard from '@/components/Board/BoardCard.vue'
 import BoardModalBoxRename from '@/components/Board/BoardModalBoxRename.vue'
@@ -405,6 +404,12 @@ export default {
     },
     isFiltered () {
       return this.showOnlyMyCreatedCards || this.showOnlyCardsWithNoResponsible || this.showOnlyCardsWhereIAmResponsible || this.showOnlySearchText
+    },
+    anotherBoards () {
+      const currentUserUid = this.$store.state.user.user.current_user_uid
+      return Object.values(this.$store.state.boards.boards).filter(
+        item => item.members[currentUserUid] === 1 || item.members[currentUserUid] === 2
+      )
     }
   },
   watch: {
@@ -662,12 +667,18 @@ export default {
       this.showMoveCard = true
       this.currentCard = card
     },
-    onChangeCardPosition (order) {
-      this.showMoveCard = false
-      const column = this.usersColumns[order]
-      if (this.currentCard && column) {
-        this.moveCard(this.currentCard.uid, column.UID)
+    onChangeCardPosition (position) {
+      if (typeof position !== 'object' && typeof position === 'number') {
+        const column = this.usersColumns[position]
+        if (this.currentCard && column) {
+          this.moveCard(this.currentCard.uid, column.UID)
+        }
+      } else {
+        this.$store.dispatch('asidePropertiesToggle', false)
+        const newCard = { ...this.currentCard, uid_board: position.boardUid, uid_stage: position.stageUid }
+        this.$store.dispatch(CARD.MOVE_CARD_TO_ANOTHER_BOARD, newCard)
       }
+      this.showMoveCard = false
     },
     onDeleteCard () {
       this.$store.dispatch('asidePropertiesToggle', false)
@@ -726,6 +737,9 @@ export default {
           targetColumn.UID,
           newOrder
         )
+      }
+      if (this.dragCardParam?.change?.length === 0 && this.dragCardParam?.move?.card) {
+        this.selectCard(this.dragCardParam?.move?.card)
       }
       this.dragCardParam = null
     },

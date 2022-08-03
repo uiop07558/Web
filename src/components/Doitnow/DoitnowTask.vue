@@ -1,6 +1,13 @@
 <template>
+  <DoitnowStatusModal
+    v-if="showStatusModal"
+    :title="'Внимание'"
+    :text="'При завершении этой задачи все подзадачи будут завершены. Завершить?'"
+    @cancel="showStatusModal = false"
+    @yes="changeStatus(lastSelectedStatus, true)"
+  />
   <div
-    class="bg-white py-6 px-5 rounded-lg flex justify-between"
+    class="flex justify-between"
     :style="{ borderColor: colors[task.uid_marker] ? colors[task.uid_marker].back_color : ''}"
     :class="{
       'bg-gray-200 dark:bg-gray-800':
@@ -8,9 +15,9 @@
         task.uid_marker !== '00000000-0000-0000-0000-000000000000'
     }"
   >
-    <div class="w-5/6">
+    <div class="py-6 px-5 w-5/6 bg-white rounded-lg">
       <div
-        class="flex justify-between items-center mb-6 p-2 rounded-[8px]"
+        class="flex justify-between items-center mb-6 rounded-[8px]"
         :style="{ backgroundColor: colors[task.uid_marker] ? colors[task.uid_marker].back_color : '', color: getValidForeColor(colors[task.uid_marker]?.fore_color) }"
       >
         <!-- task info/status -->
@@ -222,10 +229,10 @@
       </div>
     </div>
     <!-- accept/redo/decline -->
-    <div>
+    <div class="mr-2">
       <div
         v-if="task"
-        class="flex flex-col min-w-[200px] items-end"
+        class="flex flex-col min-w-[200px] items-center"
       >
         <!-- accept -->
         <button
@@ -235,8 +242,9 @@
         >
           <span
             class="ml-8 w-[70px]"
-          >{{ task.uid_customer === user.current_user_uid ? (task.uid_performer === user.current_user_uid ? 'Завершить' : 'Принять и завершить') : 'Готово к сдаче'
-          }}</span>
+          >
+            {{ task.uid_customer === user.current_user_uid ? (task.uid_performer === user.current_user_uid ? 'Завершить' : 'Принять и завершить') : 'Готово к сдаче' }}
+          </span>
           <Icon
             :path="check.path"
             :width="check.width"
@@ -248,7 +256,7 @@
         <!-- redo -->
         <button
           v-if="task.uid_customer === user.current_user_uid || task.uid_performer === user.current_user_uid"
-          class="flex py-0.5 items-center justify-center text-sm bg-gray-100 w-[181px] hover:bg-red-200 hover:border hover:border-red-300 min-h-[40px] hover:bg-opacity-90 font-medium rounded-lg hover:text-red-500 mb-2 hover:animate-fadeIn"
+          class="flex py-0.5 items-center justify-center text-sm bg-white w-[181px] hover:bg-red-200 hover:border hover:border-red-300 min-h-[40px] hover:bg-opacity-90 font-medium rounded-lg hover:text-red-500 mb-2 hover:animate-fadeIn"
           @click="reDo"
         >
           <span
@@ -266,7 +274,7 @@
         <!-- decline -->
         <button
           v-if="task.uid_customer === user.current_user_uid || task.uid_performer === user.current_user_uid"
-          class="flex py-0.5 w-[181px] justify-center items-center text-sm bg-gray-100 hover:bg-gray-50 hover:border hover:border-gray-500 hover:bg-opacity-90 font-medium min-h-[40px] rounded-lg mb-2 hover:animate-fadeIn"
+          class="flex py-0.5 w-[181px] justify-center items-center text-sm bg-white hover:bg-gray-50 hover:border hover:border-gray-500 hover:bg-opacity-90 font-medium min-h-[40px] rounded-lg mb-2 hover:animate-fadeIn"
           @click="decline"
         >
           <span class="ml-8 w-[70px]">Отложить</span>
@@ -290,7 +298,7 @@
         <!-- Change access -->
         <button
           v-if="task.status !== 3 && (task.type !== 4 || task.emails.includes(user.current_user_email)) && task.uid_customer !== user.current_user_uid && task.uid_performer !== user.current_user_uid"
-          class="flex py-0.5 items-center justify-center text-sm bg-gray-100 w-[181px] hover:bg-red-200 hover:border hover:border-red-300 min-h-[40px] hover:bg-opacity-90 font-medium rounded-lg hover:text-red-500 mb-2 hover:animate-fadeIn"
+          class="flex py-0.5 items-center justify-center text-sm bg-white w-[181px] hover:bg-red-200 hover:border hover:border-red-300 min-h-[40px] hover:bg-opacity-90 font-medium rounded-lg hover:text-red-500 mb-2 hover:animate-fadeIn"
           @click="() => onChangeAccess(task.emails)"
         >
           <span
@@ -326,6 +334,7 @@ import contenteditable from 'vue-contenteditable'
 import linkify from 'vue-linkify'
 import TaskPropsCommentEditor from '@/components/TaskProperties/TaskPropsCommentEditor.vue'
 import PerformButton from '@/components/Doitnow/PerformButton.vue'
+import DoitnowStatusModal from '@/components/Doitnow/DoitnowStatusModal.vue'
 import Popper from 'vue3-popper'
 import SetDate from '@/components/Doitnow/SetDate.vue'
 import Checklist from '@/components/Doitnow/Checklist.vue'
@@ -376,6 +385,7 @@ export default {
     PerformButton,
     Checklist,
     TaskPropsInputForm,
+    DoitnowStatusModal,
     contenteditable,
     Popper,
     TaskStatus
@@ -415,6 +425,10 @@ export default {
     taskMessages: {
       type: Array,
       default: () => ([])
+    },
+    childrens: {
+      type: Array,
+      default: () => ([])
     }
   },
   emits: ['clickTask', 'nextTask', 'changeValue', 'readTask'],
@@ -448,6 +462,8 @@ export default {
       isTaskHoverPopperActive,
       toggleTaskHoverPopper,
       isChatVisible,
+      showStatusModal: false,
+      lastSelectedStatus: '',
       createChecklist,
       showConfirm,
       checklistshow,
@@ -873,6 +889,19 @@ export default {
       this.$emit('clickTask', task)
     },
     reDo () {
+      if (this.childrens?.length) {
+        this.showStatusModal = true
+        if (this.task.uid_performer === this.user.current_user_uid && this.task.uid_customer === this.user.current_user_uid) {
+          this.lastSelectedStatus = 7
+        }
+        if (this.task.uid_performer === this.user.current_user_uid && this.task.uid_customer !== this.user.current_user_uid) {
+          this.lastSelectedStatus = 8
+        }
+        if (this.task.uid_performer !== this.user.current_user_uid && this.task.uid_customer === this.user.current_user_uid) {
+          this.lastSelectedStatus = 9
+        }
+        return
+      }
       this.readTask()
       if (this.task.uid_performer === this.user.current_user_uid && this.task.uid_customer === this.user.current_user_uid) {
         this.$store.dispatch(TASK.CHANGE_TASK_STATUS, {
@@ -898,6 +927,16 @@ export default {
       this.nextTask()
     },
     accept () {
+      if (this.childrens?.length) {
+        this.showStatusModal = true
+        if ((this.task.uid_performer === this.user.current_user_uid && this.task.uid_customer === this.user.current_user_uid) ||
+        (this.task.uid_performer !== this.user.current_user_uid && this.task.uid_customer === this.user.current_user_uid)) {
+          this.lastSelectedStatus = 1
+        } else {
+          this.lastSelectedStatus = 5
+        }
+        return
+      }
       this.readTask()
       if ((this.task.uid_performer === this.user.current_user_uid && this.task.uid_customer === this.user.current_user_uid) ||
         (this.task.uid_performer !== this.user.current_user_uid && this.task.uid_customer === this.user.current_user_uid)) {
@@ -1035,13 +1074,19 @@ export default {
             this.readTask()
           })
     },
-    changeStatus (status) {
+    changeStatus (status, isModalAnswer) {
+      if (this.childrens?.length && !(isModalAnswer) && [1, 5, 7, 8].includes(status)) {
+        this.lastSelectedStatus = status
+        this.showStatusModal = true
+        return
+      }
       this.$store.dispatch(TASK.CHANGE_TASK_STATUS, {
         uid: this.task.uid,
         value: status
       }).then(() => {
         this.$emit('changeValue', { status: status })
       })
+      this.showStatusModal = false
     }
   }
 }

@@ -63,6 +63,31 @@
       </svg>
       <template #menu>
         <PopMenuItem
+          v-if="showMoveButton"
+          @click="$emit('changeTaskPosition', 'up')"
+        >
+          &#8593; Вверх
+        </PopMenuItem>
+        <PopMenuItem
+          v-if="showMoveButton"
+          @click="$emit('changeTaskPosition', 'down')"
+        >
+          &#8595; Вниз
+        </PopMenuItem>
+        <PopMenuItem
+          v-if="showMoveButton"
+          @click="$emit('changeTaskPosition', 'left')"
+        >
+          &#8592; Влево
+        </PopMenuItem>
+        <PopMenuItem
+          v-if="showMoveButton"
+          @click="$emit('changeTaskPosition', 'right')"
+        >
+          &#8594; Вправо
+        </PopMenuItem>
+        <PopMenuDivider v-if="showMoveButton" />
+        <PopMenuItem
           v-if="isMyTask && showTomorrow"
           icon="tomorrow"
           @click="tomorrow"
@@ -108,16 +133,22 @@
 </template>
 
 <script>
-import PopMenu from '@/components/modals/PopMenu.vue'
-import PopMenuItem from '@/components/modals/PopMenuItem.vue'
+import PopMenu from '@/components/Common/PopMenu.vue'
+import PopMenuItem from '@/components/Common/PopMenuItem.vue'
+import PopMenuDivider from '@/components/Common/PopMenuDivider.vue'
 
 export default {
   components: {
     PopMenu,
-    PopMenuItem
+    PopMenuItem,
+    PopMenuDivider
   },
   props: {
     isMyTask: {
+      type: Boolean,
+      default: false
+    },
+    showMoveButton: {
       type: Boolean,
       default: false
     },
@@ -133,6 +164,7 @@ export default {
     'changeFocus',
     'tomorrow',
     'copy',
+    'changeTaskPosition',
     'copyName',
     'cut',
     'paste',

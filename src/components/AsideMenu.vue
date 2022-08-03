@@ -42,6 +42,7 @@ export default {
   },
   data () {
     return {
+      dateToday: '',
       mdiMenu,
       warn,
       showFreeModal: false,
@@ -126,6 +127,9 @@ export default {
     },
     // TODO: clean up messy logic
     menuClick (event, item) {
+      if (item.uid === '901841d9-0016-491d-ad66-8ee42d2b496b') {
+        this.dateToday = new Date()
+      }
       if (this.isPropertiesMobileExpanded) {
         this.$store.dispatch('asidePropertiesToggle', false)
       }
@@ -135,6 +139,7 @@ export default {
 
       // do it now
       if (item.uid === '2cf6b167-6506-4b05-bc34-70a8d88e3b25') {
+        window.ym(89796698, 'reachGoal', 'doitnow')
         if (this.user.tarif !== 'alpha' && this.user.tarif !== 'trial') {
           this.showFreeModal = true
           return
@@ -388,6 +393,7 @@ export default {
         <DatePicker
           id="Maincalendar"
           ref="calendarclass"
+          v-model="dateToday"
           dot="true"
           class="border-none pl-[22px] pr-[16px] calendar-nav-custom"
           :style="{ backgroundColor: datePickerBG }"

@@ -1,5 +1,4 @@
 <script setup>
-import contenteditable from 'vue-contenteditable'
 import * as TASK from '@/store/actions/tasks.js'
 import { useStore } from 'vuex'
 import Icon from '@/components/Icon.vue'
@@ -156,7 +155,7 @@ onMounted(() => {
           >
           <label />
         </div>
-        <contenteditable
+        <input
           :id="'check_' + index"
           v-model="check.text"
           tag="div"
@@ -168,7 +167,7 @@ onMounted(() => {
           :no-h-t-m-l="true"
           @keyup.enter="updateChecklist(index)"
           @blur="saveChecklist(index)"
-        />
+        >
         <Icon
           v-show="isCustomer"
           :path="close.path"

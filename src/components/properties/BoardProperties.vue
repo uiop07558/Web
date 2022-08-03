@@ -139,8 +139,8 @@
 <script>
 import ModalBoxDelete from '@/components/Common/ModalBoxDelete.vue'
 import PropsColorBoxItem from '@/components/Common/PropsColorBoxItem.vue'
-import PopMenu from '@/components/modals/PopMenu.vue'
-import PopMenuItem from '@/components/modals/PopMenuItem.vue'
+import PopMenu from '@/components/Common/PopMenu.vue'
+import PopMenuItem from '@/components/Common/PopMenuItem.vue'
 import PropsButtonClose from '@/components/Common/PropsButtonClose.vue'
 import PropsButtonMenu from '@/components/Common/PropsButtonMenu.vue'
 import BoardPropsUserButton from '@/components/Board/BoardPropsUserButton.vue'
@@ -263,6 +263,9 @@ export default {
         }
       }
       return users
+    },
+    navStack () {
+      return this.$store.state.navbar.navStack
     }
   },
   watch: {
@@ -318,6 +321,9 @@ export default {
           })
           .then((resp) => {
             console.log('changeBoardName', resp, title)
+            const lastNavEl = JSON.parse(JSON.stringify(this.navStack[this.navStack.length - 1]))
+            this.$store.commit('removeAllFromStackAfterIndex', 0)
+            this.$store.commit('pushIntoNavStack', { ...lastNavEl, name: title })
           })
       }
     },

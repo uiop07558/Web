@@ -10,6 +10,7 @@ export const ADD_CARD = 'ADD_CARD'
 
 export const DELETE_CARD = 'DELETE_CARD'
 export const MOVE_CARD = 'MOVE_CARD'
+export const MOVE_CARD_TO_ANOTHER_BOARD = 'MOVE_CARD_TO_ANOTHER_BOARD'
 
 export const CHANGE_CARD = 'CHANGE_CARD'
 

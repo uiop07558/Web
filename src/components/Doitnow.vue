@@ -37,12 +37,24 @@
       />
     </button>
   </div>
-  <DoitnowSkeleton v-if="isLoading"/>
+  <DoitnowSkeleton v-if="isLoading" />
+  <transition :name="taskTransition">
+    <div v-if="!(tasksCount === 0 && !isLoading)">
+      <a
+        class="dark:bg-gray-700 cursor-pointer dark:text-gray-100 rounded-lg text-[14px] breadcrumbs text-[#7E7E80] font-medium"
+        target="_blank"
+        :href="`${currentLocation}/task/${firstTask?.uid}`"
+      >
+        Открыть задачу
+      </a>
+    </div>
+  </transition>
   <transition :name="taskTransition">
     <DoitnowTask
       v-if="tasksCount && !isLoading"
       :key="firstTask.uid"
       :task="firstTask"
+      :childrens="childrens"
       :sub-tasks="subTasks"
       :colors="colors"
       :tags="tags"
@@ -63,6 +75,7 @@
 </template>
 
 <script>
+import { copyText } from 'vue3-clipboard'
 import * as FILES from '@/store/actions/taskfiles.js'
 import * as MSG from '@/store/actions/taskmessages.js'
 import * as TASK from '@/store/actions/tasks.js'
@@ -103,7 +116,8 @@ export default {
     unsortedTasks: [],
     overdueReaded: [],
     showInspector: false,
-    tasksLoaded: false
+    tasksLoaded: false,
+    childrens: []
   }),
   computed: {
     tasksCount () {
@@ -113,6 +127,9 @@ export default {
         this.readyTasks.length +
         this.todayTasks.length
       )
+    },
+    currentLocation () {
+      return window.location.origin
     },
     firstTask () {
       if (this.unreadTasks.length) {
@@ -163,6 +180,10 @@ export default {
   watch: {
     firstTask (newtask, oldtask) {
       if (newtask) {
+        this.$store.dispatch(TASK.GET_TASK_CHILDRENS, newtask.uid)
+          .then((resp) => {
+            this.childrens = resp.data.tasks
+          })
         this.$store.commit(TASK.SELECT_TASK, newtask)
         this.$store.dispatch(MSG.MESSAGES_REQUEST, newtask.uid)
           .then(() => {
@@ -248,6 +269,15 @@ export default {
         .then(() => {
           this.tasksLoaded = true
         })
+    },
+    linkToTask () {
+      copyText(`${window.location.origin}/task/${this.firstTask.uid}`, undefined, (error, event) => {
+        if (error) {
+          console.log(error)
+        } else {
+          console.log(event)
+        }
+      })
     },
     readTask: function () {
       this.$store.dispatch(TASK.CHANGE_TASK_READ, this.firstTask.uid)
