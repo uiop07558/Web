@@ -523,77 +523,77 @@ export default {
     })
   },
   methods: {
-    sortByOrderNew () {
-      const sorted = []
-      const reverseSorted = []
-      for (const elem in this.$store.state.tasks.newtasks) {
-        sorted.push(this.$store.state.tasks.newtasks[elem])
-      }
+    // sortByOrderNew () {
+    //   const sorted = []
+    //   const reverseSorted = []
+    //   for (const elem in this.$store.state.tasks.newtasks) {
+    //     sorted.push(this.$store.state.tasks.newtasks[elem])
+    //   }
 
-      console.log('before sort', sorted)
+    //   console.log('before sort', sorted)
 
-      sorted.sort((a, b) => {
-        return a.info.order_new < b.info.order_new
-      })
-      for (let i = sorted.length - 1; i >= 0; i--) {
-        reverseSorted.push(sorted[i])
-      }
+    //   sorted.sort((a, b) => {
+    //     return a.info.order_new < b.info.order_new
+    //   })
+    //   for (let i = sorted.length - 1; i >= 0; i--) {
+    //     reverseSorted.push(sorted[i])
+    //   }
 
-      console.log('after sort', reverseSorted)
+    //   console.log('after sort', reverseSorted)
 
-      console.log('before', this.$store.state.tasks.newConfig)
+    //   console.log('before', this.$store.state.tasks.newConfig)
 
-      this.$store.state.tasks.newtasks = {}
-      this.$store.state.tasks.newConfig.roots = []
-      this.$store.state.tasks.newConfig.leaves = []
+    //   this.$store.state.tasks.newtasks = {}
+    //   this.$store.state.tasks.newConfig.roots = []
+    //   this.$store.state.tasks.newConfig.leaves = []
 
-      for (let i = 0; i < reverseSorted.length; i++) {
-        this.$store.state.tasks.newtasks[reverseSorted[i].id] = reverseSorted[i]
-        this.$store.state.tasks.newConfig.roots.push(reverseSorted[i].id)
-        this.$store.state.tasks.newConfig.leaves.push(reverseSorted[i].id)
-      }
+    //   for (let i = 0; i < reverseSorted.length; i++) {
+    //     this.$store.state.tasks.newtasks[reverseSorted[i].id] = reverseSorted[i]
+    //     this.$store.state.tasks.newConfig.roots.push(reverseSorted[i].id)
+    //     this.$store.state.tasks.newConfig.leaves.push(reverseSorted[i].id)
+    //   }
 
-      console.log('after', this.$store.state.tasks.newConfig)
-    },
-    changeTaskPosition (position) {
-      const selectedTaskPosition = this.lastSelectedTask.order_new
-      console.log('before', this.storeTasks[this.lastSelectedTask.uid].info.order_new)
-      switch (position) {
-        case 'up':
-          break
-        case 'down':
-          for (const elem in this.storeTasks) {
-            if (this.storeTasks[elem].info.order_new === selectedTaskPosition + 0.1 || this.storeTasks[elem].info.order_new === selectedTaskPosition + 1) {
-              this.storeTasks[this.lastSelectedTask.uid].info.order_new = this.storeTasks[elem].info.order_new
-              this.storeTasks[elem].info.order_new = selectedTaskPosition
+    //   console.log('after', this.$store.state.tasks.newConfig)
+    // },
+    // changeTaskPosition (position) {
+    //   const selectedTaskPosition = this.lastSelectedTask.order_new
+    //   console.log('before', this.storeTasks[this.lastSelectedTask.uid].info.order_new)
+    //   switch (position) {
+    //     case 'up':
+    //       break
+    //     case 'down':
+    //       for (const elem in this.storeTasks) {
+    //         if (this.storeTasks[elem].info.order_new === selectedTaskPosition + 0.1 || this.storeTasks[elem].info.order_new === selectedTaskPosition + 1) {
+    //           this.storeTasks[this.lastSelectedTask.uid].info.order_new = this.storeTasks[elem].info.order_new
+    //           this.storeTasks[elem].info.order_new = selectedTaskPosition
 
-              console.log('after', this.storeTasks[this.lastSelectedTask.uid].info.order_new)
+    //           console.log('after', this.storeTasks[this.lastSelectedTask.uid].info.order_new)
 
-              this.$store.dispatch(TASK.CHANGE_TASK_PARENT_AND_ORDER, {
-                uid: this.lastSelectedTask.uid,
-                parent: this.lastSelectedTask.uid_parent,
-                order: this.lastSelectedTask.order_new
-              }).then(() => {
-                this.$store.dispatch(TASK.CHANGE_TASK_PARENT_AND_ORDER, {
-                  uid: elem,
-                  parent: this.storeTasks[elem].info.uid_parent,
-                  order: this.storeTasks[elem].info.order_new
-                }).then(() => {
-                  this.sortByOrderNew()
-                })
-              })
-              return
-            } else {
-              console.log('false')
-            }
-          }
-          break
-        case 'left':
-          break
-        case 'right':
-          break
-      }
-    },
+    //           this.$store.dispatch(TASK.CHANGE_TASK_PARENT_AND_ORDER, {
+    //             uid: this.lastSelectedTask.uid,
+    //             parent: this.lastSelectedTask.uid_parent,
+    //             order: this.lastSelectedTask.order_new
+    //           }).then(() => {
+    //             this.$store.dispatch(TASK.CHANGE_TASK_PARENT_AND_ORDER, {
+    //               uid: elem,
+    //               parent: this.storeTasks[elem].info.uid_parent,
+    //               order: this.storeTasks[elem].info.order_new
+    //             }).then(() => {
+    //               this.sortByOrderNew()
+    //             })
+    //           })
+    //           return
+    //         } else {
+    //           console.log('false')
+    //         }
+    //       }
+    //       break
+    //     case 'left':
+    //       break
+    //     case 'right':
+    //       break
+    //   }
+    // },
     scroll (step) {
       const scrollY = window.scrollTop()
       window.scrollTop(scrollY + step)
