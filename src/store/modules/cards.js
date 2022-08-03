@@ -214,6 +214,19 @@ const actions = {
   },
   [CARD.BOARD_CARDS_CHANGE_ORDER_STAGE]: ({ commit }, board) => {
     commit('ChangeStagesOrder', board)
+  },
+  [CARD.MOVE_CARD_TO_ANOTHER_BOARD]: ({ commit }, data) => {
+    return new Promise((resolve, reject) => {
+      const url = process.env.VUE_APP_LEADERTASK_API + 'api/v1/cards'
+      axios({ url, method: 'PATCH', data })
+        .then((resp) => {
+          commit(CARD.DELETE_CARD, data.uid)
+          resolve(resp)
+        })
+        .catch((err) => {
+          reject(err)
+        })
+    })
   }
 }
 
