@@ -212,6 +212,7 @@ export default {
       }
     },
     selectBoard (board) {
+      this.selectedStage = null
       this.selectedBoard = board
     },
     selectStage (stage, index) {
