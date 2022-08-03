@@ -91,7 +91,7 @@
     <!-- vue3-treeview -->
     <div
       v-if="status == 'success' && Object.keys(storeTasks).length"
-      class="overflow-y-auto pt-[4px] px-px min-h-[300px] w-full"
+      class="overflow-y-auto pt-[4px] px-px min-h-[600px] w-full"
     >
       <tree
         :nodes="storeTasks"
@@ -106,7 +106,7 @@
             :id="props.node.info.uid"
             class="border border-gray-300 group shrink-0 w-full pl-[31px] pr-[6px] py-[11px] mb-[4px] min-h-[42px] font-roboto flex flex-col bg-white rounded-[8px] relative"
             :style="{ backgroundColor: getValidBackColor(colors[props.node.info?.uid_marker]?.back_color) }"
-            :class="{ 'ring-1 ring-orange-400': props.node.id === lastSelectedTaskUid}"
+            :class="{ 'ring ring-orange-400': props.node.id === lastSelectedTaskUid}"
           >
             <!-- Name, Status -->
             <div
@@ -267,12 +267,12 @@
                 class="h-[22px]"
               />
             </div>
-
             <TaskListActionHoverPanel
               :id="`hover-panel-${props.node.id}`"
               class="absolute right-[8px] top-[calc(50%-18px)] invisible group-hover:visible"
               :is-my-task="props.node.info.uid_customer == currentUserUid"
               :can-paste="!!Object.keys(copiedTasks).length"
+              :show-move-button="props.node.id === lastSelectedTaskUid"
               @click.stop
               @addSubtask="addSubtask(props.node.info)"
               @changeFocus="changeFocus(props.node.info)"
@@ -282,6 +282,7 @@
               @copyName="copyTaskName(props.node.info)"
               @copy="copyTask(props.node.info)"
               @cut="cutTask(props.node.info)"
+              @changeTaskPosition="changeTaskPosition"
               @paste="pasteCopiedTasks(props.node.id)"
               @delete="clickDeleteTask(props.node.id)"
             />
@@ -522,6 +523,77 @@ export default {
     })
   },
   methods: {
+    // sortByOrderNew () {
+    //   const sorted = []
+    //   const reverseSorted = []
+    //   for (const elem in this.$store.state.tasks.newtasks) {
+    //     sorted.push(this.$store.state.tasks.newtasks[elem])
+    //   }
+
+    //   console.log('before sort', sorted)
+
+    //   sorted.sort((a, b) => {
+    //     return a.info.order_new < b.info.order_new
+    //   })
+    //   for (let i = sorted.length - 1; i >= 0; i--) {
+    //     reverseSorted.push(sorted[i])
+    //   }
+
+    //   console.log('after sort', reverseSorted)
+
+    //   console.log('before', this.$store.state.tasks.newConfig)
+
+    //   this.$store.state.tasks.newtasks = {}
+    //   this.$store.state.tasks.newConfig.roots = []
+    //   this.$store.state.tasks.newConfig.leaves = []
+
+    //   for (let i = 0; i < reverseSorted.length; i++) {
+    //     this.$store.state.tasks.newtasks[reverseSorted[i].id] = reverseSorted[i]
+    //     this.$store.state.tasks.newConfig.roots.push(reverseSorted[i].id)
+    //     this.$store.state.tasks.newConfig.leaves.push(reverseSorted[i].id)
+    //   }
+
+    //   console.log('after', this.$store.state.tasks.newConfig)
+    // },
+    // changeTaskPosition (position) {
+    //   const selectedTaskPosition = this.lastSelectedTask.order_new
+    //   console.log('before', this.storeTasks[this.lastSelectedTask.uid].info.order_new)
+    //   switch (position) {
+    //     case 'up':
+    //       break
+    //     case 'down':
+    //       for (const elem in this.storeTasks) {
+    //         if (this.storeTasks[elem].info.order_new === selectedTaskPosition + 0.1 || this.storeTasks[elem].info.order_new === selectedTaskPosition + 1) {
+    //           this.storeTasks[this.lastSelectedTask.uid].info.order_new = this.storeTasks[elem].info.order_new
+    //           this.storeTasks[elem].info.order_new = selectedTaskPosition
+
+    //           console.log('after', this.storeTasks[this.lastSelectedTask.uid].info.order_new)
+
+    //           this.$store.dispatch(TASK.CHANGE_TASK_PARENT_AND_ORDER, {
+    //             uid: this.lastSelectedTask.uid,
+    //             parent: this.lastSelectedTask.uid_parent,
+    //             order: this.lastSelectedTask.order_new
+    //           }).then(() => {
+    //             this.$store.dispatch(TASK.CHANGE_TASK_PARENT_AND_ORDER, {
+    //               uid: elem,
+    //               parent: this.storeTasks[elem].info.uid_parent,
+    //               order: this.storeTasks[elem].info.order_new
+    //             }).then(() => {
+    //               this.sortByOrderNew()
+    //             })
+    //           })
+    //           return
+    //         } else {
+    //           console.log('false')
+    //         }
+    //       }
+    //       break
+    //     case 'left':
+    //       break
+    //     case 'right':
+    //       break
+    //   }
+    // },
     scroll (step) {
       const scrollY = window.scrollTop()
       window.scrollTop(scrollY + step)
