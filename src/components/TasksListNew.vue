@@ -106,7 +106,7 @@
             :id="props.node.info.uid"
             class="border border-gray-300 group shrink-0 w-full pl-[31px] pr-[6px] py-[11px] mb-[4px] min-h-[42px] font-roboto flex flex-col bg-white rounded-[8px] relative"
             :style="{ backgroundColor: getValidBackColor(colors[props.node.info?.uid_marker]?.back_color) }"
-            :class="{ 'ring-1 ring-orange-400': props.node.id === lastSelectedTaskUid}"
+            :class="{ 'ring ring-orange-400': props.node.id === lastSelectedTaskUid}"
           >
             <!-- Name, Status -->
             <div
