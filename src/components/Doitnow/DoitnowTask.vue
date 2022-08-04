@@ -201,31 +201,33 @@
         :task="task"
       />
       <div
-        class="flex flex-col max-w-1/2 border-t mt-2 pt-2"
+        class="max-w-1/2 border-t mt-2 pt-2"
         :class="task.uid_marker !== '00000000-0000-0000-0000-000000000000' ? 'bg-white p-1 mt-1 rounded-lg' : ''"
       >
-        <!-- input -->
-        <TaskPropsInputForm
-          :task="task"
-          @readTask="readTask"
-        />
-        <!-- chat -->
-        <TaskPropsChatMessages
-          v-if="taskMessages?.length"
-          id="content"
-          class="mt-3"
-          :task="task"
-          :task-messages="taskMessages"
-          :current-user-uid="user.current_user_uid"
-          :show-all-messages="true"
-          :show-only-files="showOnlyFiles"
-          @answerMessage="answerMessage"
-          @sendTaskMsg="sendTaskMsg"
-          @onPasteEvent="onPasteEvent"
-          @deleteFiles="deleteFiles"
-          @deleteTaskMsg="deleteTaskMsg"
-          @readTask="readTask"
-        />
+        <div class="mx-auto max-w-[540px]">
+          <!-- input -->
+          <TaskPropsInputForm
+            :task="task"
+            @readTask="readTask"
+          />
+          <!-- chat -->
+          <TaskPropsChatMessages
+            v-if="taskMessages?.length"
+            id="content"
+            class="mt-3"
+            :task="task"
+            :task-messages="taskMessages"
+            :current-user-uid="user.current_user_uid"
+            :show-all-messages="true"
+            :show-only-files="showOnlyFiles"
+            @answerMessage="answerMessage"
+            @sendTaskMsg="sendTaskMsg"
+            @onPasteEvent="onPasteEvent"
+            @deleteFiles="deleteFiles"
+            @deleteTaskMsg="deleteTaskMsg"
+            @readTask="readTask"
+          />
+        </div>
       </div>
     </div>
     <!-- accept/redo/decline -->
