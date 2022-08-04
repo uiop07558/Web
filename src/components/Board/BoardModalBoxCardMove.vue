@@ -152,7 +152,7 @@ export default {
       require: true
     },
     currentCard: {
-      type: Object,
+      type: Object || Array,
       default: () => {},
       require: true
     }
@@ -170,7 +170,13 @@ export default {
       return this.$store.state.user.user
     },
     currentStageName () {
-      const current = this.selectedBoard?.stages.filter(stage => stage.UID === this.currentCard.uid_stage)[0]?.Name
+      let current
+      if (Array.isArray(this.currentCard)) {
+        // if we move several cards
+        current = this.selectedBoard?.stages.filter(stage => stage.UID === this.currentCard[0].uid_stage)[0]?.Name
+      } else {
+        current = this.selectedBoard?.stages.filter(stage => stage.UID === this.currentCard.uid_stage)[0]?.Name
+      }
       if (current) {
         return current + ' (текущая)'
       }
@@ -195,7 +201,11 @@ export default {
       this.$emit('cancel')
     },
     onSave () {
-      if (!this.selectedStage || this.selectedStage?.UID === this.currentCard.uid_stage) {
+      if (
+        !this.selectedStage ||
+        this.selectedStage?.UID === this.currentCard.uid_stage ||
+        this.selectedStage?.UID === this.currentCard[0]?.uid_stage
+      ) {
         this.onCancel()
         return
       }
