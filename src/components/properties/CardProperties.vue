@@ -38,8 +38,8 @@
         :show-files-only="showFilesOnly"
         @clickRemoveButton="showDeleteCard = true"
         @toggleShowOnlyFiles="showFilesOnly = !showFilesOnly"
-        @moveSuccess="moveSuccessCard(element)"
-        @moveReject="moveRejectCard(element)"
+        @moveSuccess="moveSuccessCard"
+        @moveReject="moveRejectCard"
         @moveColumnCard="moveColumnCard"
       />
       <PropsButtonClose
@@ -481,11 +481,11 @@ export default {
       )
       return Math.floor(minOrder) - 1
     },
-    moveSuccessCard (card) {
+    moveSuccessCard () {
       const successStage = 'f98d6979-70ad-4dd5-b3f8-8cd95cb46c67'
       this.moveCard(this.selectedCard.uid, successStage, this.getNewMinCardsOrderAtColumn(successStage))
     },
-    moveRejectCard (card) {
+    moveRejectCard () {
       const rejectStage = 'e70af5e2-6108-4c02-9a7d-f4efee78d28c'
       this.moveCard(this.selectedCard.uid, rejectStage, this.getNewMinCardsOrderAtColumn(rejectStage))
     },
