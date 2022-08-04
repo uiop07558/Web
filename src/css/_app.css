@@ -20,7 +20,7 @@ html
 }
 
 .m-clipped, .m-clipped body {
-  @apply overflow-hidden lg:overflow-visible;
+  @apply overflow-hidden xl:overflow-visible;
 }
 
 .full-screen body {

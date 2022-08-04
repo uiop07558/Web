@@ -6,6 +6,15 @@
     @cancel="showDeleteCard = false"
     @yes="removeCard"
   />
+  <BoardModalBoxCardMove
+    v-if="showMoveCard"
+    :show="showMoveCard"
+    :another-boards="anotherBoards"
+    :current-board="currentBoard"
+    :current-card="currentCard"
+    @cancel="showMoveCard = false"
+    @changePosition="onChangeCardPosition"
+  />
   <CardMessagesModalBoxLimit
     v-if="showMessagesLimit"
     @cancel="showMessagesLimit = false"
@@ -22,12 +31,16 @@
   <div class="relative min-h-full">
     <div class="flex items-center justify-between mb-[10px]">
       <card-options
+        :store-cards="storeCards"
         :date-create="selectedCard?.date_create"
         :can-edit="canEdit"
         :creator="selectedCard?.uid_creator"
         :show-files-only="showFilesOnly"
         @clickRemoveButton="showDeleteCard = true"
         @toggleShowOnlyFiles="showFilesOnly = !showFilesOnly"
+        @moveSuccess="moveSuccessCard"
+        @moveReject="moveRejectCard"
+        @moveColumnCard="moveColumnCard"
       />
       <PropsButtonClose
         @click="closeProperties"
@@ -66,6 +79,7 @@
     </div>
 
     <TaskPropsCommentEditor
+      v-if="canEditComment || selectedCard?.comment.length > 0"
       class="mt-3 h-32 break-words"
       :comment="selectedCard?.comment"
       :can-edit="canEdit"
@@ -140,6 +154,8 @@ import CardMessageQuoteUnderInput from '@/components/CardProperties/CardMessageQ
 import CardMessagesModalBoxLimit from '../CardProperties/CardMessagesModalBoxLimit.vue'
 import MessageSkeleton from '@/components/TaskProperties/MessageSkeleton.vue'
 import PropsButtonClose from '@/components/Common/PropsButtonClose.vue'
+import BoardModalBoxCardMove from '@/components/Board/BoardModalBoxCardMove.vue'
+import * as CARD from '@/store/actions/cards'
 
 export default {
   components: {
@@ -156,7 +172,8 @@ export default {
     CardMessageQuoteUnderInput,
     CardMessagesModalBoxLimit,
     MessageSkeleton,
-    PropsButtonClose
+    PropsButtonClose,
+    BoardModalBoxCardMove
   },
   data () {
     return {
@@ -165,10 +182,16 @@ export default {
       showFilesOnly: false,
       currentQuote: false,
       showDeleteCard: false,
-      cardMessageInputValue: ''
+      cardMessageInputValue: '',
+      showMoveCard: false,
+      currentCard: null
     }
   },
   computed: {
+    usersColumns () {
+      return this.storeCards.filter((stage) => stage.UserStage === true)
+    },
+    storeCards () { return this.$store.state.cards.cards },
     status () { return this.$store.state.cardfilesandmessages.status },
     selectedCard () { return this.$store.state.cards.selectedCard },
     user () { return this.$store.state.user.user },
@@ -182,7 +205,23 @@ export default {
       }
       return true
     },
-    canEdit () { return this.boards[this.selectedCard?.uid_board]?.type_access !== 0 }
+    usersColumnsCount () {
+      return this.usersColumns.length
+    },
+    canEdit () { return this.boards[this.selectedCard?.uid_board]?.type_access !== 0 },
+    currentBoard () {
+      const boards = this.$store.state.boards.boards
+      const navStack = this.$store.state.navbar.navStack
+      const currBoardUid = navStack[navStack.length - 1].uid
+      const board = boards[currBoardUid]
+      return board
+    },
+    anotherBoards () {
+      const currentUserUid = this.$store.state.user.user.current_user_uid
+      return Object.values(this.$store.state.boards.boards).filter(
+        item => item.members[currentUserUid] === 1 || item.members[currentUserUid] === 2
+      )
+    }
   },
   watch: {
     selectedCard (oldValue, newValue) {
@@ -423,8 +462,52 @@ export default {
           this.closeProperties()
           this.showDeleteCard = false
         })
+    },
+    moveCard (cardUid, stageUid, newOrder) {
+      console.log(cardUid, stageUid, newOrder)
+      this.closeProperties()
+      this.$store
+        .dispatch(CARD.MOVE_CARD, { uid: cardUid, stageUid, newOrder })
+        .then((resp) => {
+          console.log('Card is moved')
+        })
+    },
+    getNewMinCardsOrderAtColumn (columnUid) {
+      const column = this.storeCards.find((stage) => stage.UID === columnUid)
+      if (!column || !column.cards.length) return 1.0
+      const minOrder = column.cards.reduce(
+        (minOrder, card) => (card.order < minOrder ? card.order : minOrder),
+        Number.MAX_VALUE
+      )
+      return Math.floor(minOrder) - 1
+    },
+    moveSuccessCard () {
+      const successStage = 'f98d6979-70ad-4dd5-b3f8-8cd95cb46c67'
+      this.moveCard(this.selectedCard.uid, successStage, this.getNewMinCardsOrderAtColumn(successStage))
+    },
+    moveRejectCard () {
+      const rejectStage = 'e70af5e2-6108-4c02-9a7d-f4efee78d28c'
+      this.moveCard(this.selectedCard.uid, rejectStage, this.getNewMinCardsOrderAtColumn(rejectStage))
+    },
+    onChangeCardPosition (position) {
+      this.currentCard = this.$store.state.cards.selectedCard
+      if (typeof position !== 'object' && typeof position === 'number') {
+        const column = this.usersColumns[position]
+        if (this.currentCard && column) {
+          this.moveCard(this.currentCard.uid, column.UID)
+        }
+      } else {
+        this.$store.dispatch('asidePropertiesToggle', false)
+        const newCard = { ...this.currentCard, uid_board: position.boardUid, uid_stage: position.stageUid }
+        this.$store.dispatch(CARD.MOVE_CARD_TO_ANOTHER_BOARD, newCard)
+      }
+      this.showMoveCard = false
+    },
+    moveColumnCard (card) {
+      this.currentCard = this.$store.state.cards.selectedCard
+      this.showMoveCard = true
+      card = this.currentCard
     }
   }
 }
-
 </script>
