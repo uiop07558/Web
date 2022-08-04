@@ -124,7 +124,7 @@
         />
         <!-- Повтор -->
         <TaskRepeat
-          v-if="selectedTask.uid_customer === user.current_user_uid"
+          v-if="selectedTask.uid_customer === user.current_user_uid && selectedTask.SeriesType !== 0"
           :class="isDark ? 'dark' : 'light'"
           @click="showFreeModalRepeat = (user.tarif === 'free')"
         />
