@@ -6,17 +6,6 @@
     @cancel="showConfirm = false"
     @yes="deleteTask(selectedTask)"
   />
-  <ModalBox
-    v-if="showNoneInspectable"
-    title="Не все параметры установлены"
-    ok="Хорошо"
-    @ok="showNoneInspectable = false"
-    @cancel="showNoneInspectable = false"
-  >
-    <div class="text-[#7e7e80] text-[13px] leading-[18px] font-roboto whitespace-pre-line">
-      {{ inspectorMissedField }}
-    </div>
-  </ModalBox>
   <ChatLimit
     v-if="showFreeModalChat"
     @cancel="showFreeModalChat = false"
@@ -118,7 +107,7 @@
         />
         <!-- Кнопка Доступ -->
         <TaskPropsButtonAccess
-          v-if="isAccessVisible && !((selectedTask.uid_customer !== user?.current_user_uid) && (selectedTask.status === 1))"
+          v-if="isAccessVisible && !((selectedTask.uid_customer !== user?.current_user_uid) && (selectedTask.status === 1)) && selectedTask.emails ? selectedTask.emails.split('..') : [] > 0"
           :current-user-uid="user?.current_user_uid"
           :access-emails="selectedTask.emails ? selectedTask.emails.split('..') : []"
           :can-edit="selectedTask.type === 1 || selectedTask.type === 2"
@@ -135,7 +124,7 @@
         />
         <!-- Повтор -->
         <TaskRepeat
-          v-if="selectedTask.uid_customer === user.current_user_uid"
+          v-if="selectedTask.uid_customer === user.current_user_uid && selectedTask.SeriesType !== 0"
           :class="isDark ? 'dark' : 'light'"
           @click="showFreeModalRepeat = (user.tarif === 'free')"
         />
@@ -187,11 +176,6 @@
           v-if="!((selectedTask.uid_customer !== user?.current_user_uid) && (selectedTask.status === 1))"
           :focus="isInFocus"
           @toggle-focus="changeFocus(selectedTask.uid, isInFocus ? 0 : 1)"
-        />
-        <!-- Передать инспектору -->
-        <TaskPropsButtonInspector
-          v-if="(selectedTask.type === 1 || selectedTask.type === 2) && !isInspectable"
-          @click="addInspector"
         />
         <!-- Три точки -->
         <TaskPropsButtonDots
@@ -321,9 +305,7 @@ import { maska } from 'maska'
 
 import { shouldAddTaskIntoList } from '@/websync/utils'
 import ModalBoxDelete from '@/components/Common/ModalBoxDelete.vue'
-import ModalBox from '@/components/modals/ModalBox.vue'
 import TaskPropsButtonDots from '@/components/TaskProperties/TaskPropsButtonDots.vue'
-import TaskPropsButtonInspector from '@/components/TaskProperties/TaskPropsButtonInspector.vue'
 import TaskPropsButtonFocus from '@/components/TaskProperties/TaskPropsButtonFocus.vue'
 import TaskPropsChatMessages from '@/components/TaskProperties/TaskPropsChatMessages.vue'
 import TaskPropsCommentEditor from '@/components/TaskProperties/TaskPropsCommentEditor.vue'
@@ -347,7 +329,6 @@ export default {
   components: {
     CardMessageInput,
     TaskPropsButtonDots,
-    TaskPropsButtonInspector,
     TaskPropsButtonFocus,
     TaskPropsChatMessages,
     PerformerLimit,
@@ -362,7 +343,6 @@ export default {
     TaskPropsButtonProject,
     TaskPropsButtonColor,
     ModalBoxDelete,
-    ModalBox,
     TaskPropsCommentEditor,
     TaskPropsChecklist,
     TaskRepeat
@@ -388,8 +368,6 @@ export default {
       isEditableTaskName: false,
       showOnlyFiles: false,
       showConfirm: false,
-      showNoneInspectable: false,
-      inspectorMissedField: '',
 
       currentAnswerMessageUid: '',
       taskMsg: '',
@@ -421,9 +399,6 @@ export default {
     daysWithTasks () { return this.$store.state.tasks.daysWithTasks },
     navStack () { return this.$store.state.navbar.navStack },
     isInFocus () { return this.selectedTask?.focus === 1 },
-    isInspectable () {
-      return this.selectedTask?.is_inspectable ?? false
-    },
     isAccessVisible () {
       if (this.selectedTask.emails) return true
       if (this.selectedTask.type === 1 || this.selectedTask.type === 2) return true
@@ -488,36 +463,6 @@ export default {
         resp => {
           this.selectedTask.focus = value
         })
-    },
-    addInspector () {
-      let message = ''
-      if (this.selectedTask.type !== 2) message += 'Исполнителя\n'
-      if (this.selectedTask.term_user === '') message += 'Срок\n'
-      if (message) {
-        this.inspectorMissedField = 'Пожалуйста, установите:\n' + message
-        this.showNoneInspectable = true
-        return
-      }
-      this.$store.dispatch('CREATE_INSPECTOR_TASK', {
-        uid: this.selectedTask.uid,
-        uid_customer: this.selectedTask.uid_customer,
-        is_inspectable: 1,
-        taskJson: JSON.stringify(this.selectedTask)
-      }).then((resp) => {
-        this.selectedTask.is_inspectable = true
-        // update both, performer and customer in inspector service
-        const performer = this.employees[this.selectedTask.uid_performer]
-        const customer = this.employees[this.selectedTask.uid_customer]
-        this.$store.dispatch('CREATE_OR_UPDATE_INSPECTOR_USER', {
-          uid: performer.uid,
-          userJson: JSON.stringify(performer)
-        })
-        this.$store.dispatch('CREATE_OR_UPDATE_INSPECTOR_USER', {
-          uid: customer.uid,
-          userJson: JSON.stringify(customer)
-        })
-      })
-      console.log('addInspector')
     },
     createTaskFile (event) {
       this.files = event.target.files ? event.target.files : event.dataTransfer.files

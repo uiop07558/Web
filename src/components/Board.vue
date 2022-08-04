@@ -87,7 +87,7 @@
             </p>
             <!-- Три точки -->
             <div
-              v-if="column.CanEditStage"
+              v-if="column.CanEditStage || column.AddCard"
               :ref="`stage-icon-${column.UID}`"
               class="flex-none h-[18px] w-[18px] cursor-pointer invisible stage-column-hover:visible"
             >
@@ -118,24 +118,35 @@
                 </div>
                 <template #menu>
                   <PopMenuItem
+                    v-if="column.CanEditStage"
                     icon="edit"
                     @click="clickRenameColumn(column, $event)"
                   >
                     Переименовать
                   </PopMenuItem>
                   <PopMenuItem
+                    v-if="column.CanEditStage"
                     icon="color"
                     @click="clickColorColumn(column, $event)"
                   >
                     Выбрать цвет
                   </PopMenuItem>
                   <PopMenuItem
+                    v-if="column.CanEditStage"
                     icon="move"
                     @click="clickMoveColumn(column, $event)"
                   >
                     Переместить
                   </PopMenuItem>
                   <PopMenuItem
+                    v-if="column.AddCard"
+                    icon="move"
+                    @click="moveColumnCard('', column)"
+                  >
+                    Переместить все карточки
+                  </PopMenuItem>
+                  <PopMenuItem
+                    v-if="column.CanEditStage"
                     icon="delete"
                     @click="clickDeleteColumn(column, $event)"
                   >
@@ -663,22 +674,46 @@ export default {
       const rejectStage = 'e70af5e2-6108-4c02-9a7d-f4efee78d28c'
       this.moveCard(card.uid, rejectStage, this.getNewMinCardsOrderAtColumn(rejectStage))
     },
-    moveColumnCard (card) {
+    moveColumnCard (card, column) {
       this.showMoveCard = true
+      if (card === '' && column) {
+        this.currentCard = column.cards
+        return
+      }
       this.currentCard = card
     },
     onChangeCardPosition (position) {
-      if (typeof position !== 'object' && typeof position === 'number') {
+      this.showMoveCard = false
+
+      const moveInCurrentBoard = (itemUid) => {
         const column = this.usersColumns[position]
         if (this.currentCard && column) {
-          this.moveCard(this.currentCard.uid, column.UID)
+          this.moveCard(itemUid, column.UID)
         }
-      } else {
-        this.$store.dispatch('asidePropertiesToggle', false)
-        const newCard = { ...this.currentCard, uid_board: position.boardUid, uid_stage: position.stageUid }
+      }
+      const moveInAnotherBoard = (card) => {
+        const newCard = { ...card, uid_board: position.boardUid, uid_stage: position.stageUid }
         this.$store.dispatch(CARD.MOVE_CARD_TO_ANOTHER_BOARD, newCard)
       }
-      this.showMoveCard = false
+
+      if (typeof position !== 'object' && typeof position === 'number') {
+        if (Array.isArray(this.currentCard)) {
+          this.currentCard.forEach(item => {
+            moveInCurrentBoard(item.uid)
+          })
+          return
+        }
+        moveInCurrentBoard(this.currentCard.uid)
+      } else {
+        this.$store.dispatch('asidePropertiesToggle', false)
+        if (Array.isArray(this.currentCard)) {
+          this.currentCard.forEach(card => {
+            moveInAnotherBoard(card)
+          })
+          return
+        }
+        moveInAnotherBoard(this.currentCard)
+      }
     },
     onDeleteCard () {
       this.$store.dispatch('asidePropertiesToggle', false)

@@ -79,7 +79,7 @@
     </div>
 
     <TaskPropsCommentEditor
-      v-if="canEditComment || selectedCard?.comment.length > 0"
+      v-if="canEdit || selectedCard?.comment.length > 0"
       class="mt-3 h-32 break-words"
       :comment="selectedCard?.comment"
       :can-edit="canEdit"

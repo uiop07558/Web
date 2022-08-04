@@ -4,14 +4,12 @@
     src="/ajaxloader.gif"
   >
   <div class="w-full mt-[40px]">
-    <div class="mx-auto max-w-[520px]">
-      <card-message-input
-        v-model="taskMsg"
-        :can-add-files="true"
-        @createCardMessage="sendTaskMsg"
-        @createCardFile="createTaskFile($event)"
-      />
-    </div>
+    <card-message-input
+      v-model="taskMsg"
+      :can-add-files="true"
+      @createCardMessage="sendTaskMsg"
+      @createCardFile="createTaskFile($event)"
+    />
   </div>
 </template>
 <script>

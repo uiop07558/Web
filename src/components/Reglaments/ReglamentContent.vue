@@ -61,6 +61,13 @@
       <ReglamentSmallButton
         class="w-[224px]"
         icon="edit"
+        @click="saveReglament"
+      >
+        {{ saveButtonText }}
+      </ReglamentSmallButton>
+      <ReglamentSmallButton
+        class="w-[224px]"
+        icon="edit"
         @click="setEdit"
       >
         {{ editButtonText }}
@@ -242,6 +249,7 @@ export default {
       showEditLimit: false,
       isTesting: false,
       saveContentStatus: 1, // 1 - is saved, 2 error, 0 request processing
+      buttonSaveReglament: 1, // то же самое что и saveContentStatus, сделано для того, чтобы 2 кнопки не принимали 1 статус
       showCompleteMessage: false,
       isPassed: 0,
       shouldClear: false,
@@ -306,6 +314,16 @@ export default {
       }
       return 'Сохраняется'
     },
+    saveButtonText () {
+      if (this.isEditing && this.buttonSaveReglament === 1) {
+        return 'Сохранить'
+      } else if (this.buttonSaveReglament === 2) {
+        return 'Ошибка сохранения регламента'
+      } else if (this.buttonSaveReglament === 0) {
+        return 'Сохраняется'
+      }
+      return 'Сохраняется'
+    },
     shouldShowButton () {
       let hasRightAnswers = false
       for (let i = 0; i < this.questions.length; i++) {
@@ -361,6 +379,16 @@ export default {
         setTimeout(() => {
           try {
             document.querySelector('div.ql-toolbar').remove()
+          } catch (e) {}
+        }, 50)
+      } else {
+        setTimeout(() => {
+          try {
+            const toolBar = document.querySelector('div.ql-toolbar')
+            toolBar.style.position = 'sticky'
+            toolBar.style.top = '56px'
+            toolBar.style.zIndex = '5'
+            toolBar.style.background = '#f4f5f7'
           } catch (e) {}
         }, 50)
       }
@@ -459,6 +487,34 @@ export default {
           })
         })
       })
+    },
+    saveReglament () {
+      if (this.isEditing) {
+        const reglament = { ...this.currReglament }
+        reglament.content = this.currText
+        reglament.name = this.currName.trim()
+        reglament.department_uid = this.currDep
+        reglament.editors = [...this.currEditors]
+        if (!reglament.name.length) {
+          reglament.name = 'Регламент без названия'
+        }
+        //
+        this.buttonSaveReglament = 0
+        this.$store.dispatch('UPDATE_REGLAMENT_REQUEST', reglament).then(() => {
+          if (this.shouldClear) {
+            this.$store.dispatch(REGLAMENTS.DELETE_USERS_REGLAMENT_ANSWERS, reglament.uid)
+            this.shouldClear = false
+          }
+          this.buttonSaveReglament = 1
+          // обновляем регламент в сторе
+          // надо бы сделать по нормальному через мутацию
+          const reglaments = this.$store.state.navigator.navigator.reglaments
+          const index = reglaments.items.findIndex(item => item.uid === reglament.uid)
+          if (index !== -1) reglaments.items[index] = reglament
+        }).catch(() => {
+          this.buttonSaveReglament = 2
+        })
+      }
     },
     onDeleteQuestion (uid) {
       this.$store.dispatch('DELETE_REGLAMENT_QUESTION_REQUEST', uid).then(() => {
