@@ -118,7 +118,7 @@
         />
         <!-- Кнопка Доступ -->
         <TaskPropsButtonAccess
-          v-if="isAccessVisible && !((selectedTask.uid_customer !== user?.current_user_uid) && (selectedTask.status === 1))"
+          v-if="isAccessVisible && !((selectedTask.uid_customer !== user?.current_user_uid) && (selectedTask.status === 1)) && selectedTask.emails ? selectedTask.emails.split('..') : [] > 0"
           :current-user-uid="user?.current_user_uid"
           :access-emails="selectedTask.emails ? selectedTask.emails.split('..') : []"
           :can-edit="selectedTask.type === 1 || selectedTask.type === 2"
